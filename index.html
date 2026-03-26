@@ -1,10 +1,2145 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Bonjour</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta http-equiv="Permissions-Policy" content="microphone=*">
+<title>Guide de Lecture — Axel</title>
+<style>
+:root {
+  --bleu:#2E5FA3; --bleuC:#D6E4F7;
+  --vert:#2E7D32; --vertC:#E8F5E9;
+  --orange:#E65100; --orangeC:#FFF3E0;
+  --violet:#6A1B9A; --violetC:#F3E5F5;
+  --rouge:#c0392b; --rougeC:#FFEBEE;
+  --jaune:#F9A825; --jauneC:#FFFDE7;
+  --gris:#F0F2F5; --gris2:#e0e0e0; --texte:#1a1a2e;
+  --blanc:#ffffff; --ombre:0 2px 12px rgba(0,0,0,0.08); --r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gris);color:var(--texte);display:flex;flex-direction:column;}
+
+/* ── ÉCRAN BIBLIOTHÈQUE ── */
+#screen-biblio{display:flex;flex-direction:column;height:100%;}
+#biblio-header{background:var(--bleu);color:#fff;padding:14px 16px;flex-shrink:0;}
+#biblio-header h1{font-size:1.1rem;font-weight:900;}
+#biblio-header p{font-size:.72rem;opacity:.8;margin-top:2px;}
+#biblio-content{flex:1;overflow-y:auto;padding:14px;}
+#biblio-list{display:flex;flex-direction:column;gap:10px;}
+.livre-card{background:var(--blanc);border-radius:var(--r);padding:14px 16px;box-shadow:var(--ombre);cursor:pointer;border-left:5px solid var(--bleu);transition:box-shadow .15s;}
+.livre-card:active{box-shadow:0 1px 4px rgba(0,0,0,.1);}
+.livre-card .lc-titre{font-weight:800;font-size:1rem;color:var(--bleu);margin-bottom:4px;}
+.livre-card .lc-auteur{font-size:.82rem;color:#666;margin-bottom:6px;}
+.livre-card .lc-meta{display:flex;gap:10px;font-size:.72rem;color:#999;}
+.livre-card .lc-meta span{background:var(--gris);border-radius:8px;padding:2px 8px;}
+.btn-nouveau{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--bleu);color:#fff;border:none;border-radius:var(--r);padding:14px;font-family:inherit;font-weight:800;font-size:.95rem;cursor:pointer;box-shadow:0 4px 14px rgba(46,95,163,.3);}
+
+/* ── ÉCRAN GUIDE ── */
+#screen-guide{display:none;flex-direction:column;height:100%;}
+#guide-header{background:var(--bleu);color:#fff;padding:10px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+#btn-retour{background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:8px;padding:6px 10px;font-family:inherit;font-weight:700;font-size:.82rem;cursor:pointer;}
+#header-titre{flex:1;font-weight:900;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#header-date{font-size:.65rem;opacity:.75;white-space:nowrap;}
+
+#tabs{display:flex;background:var(--blanc);border-bottom:2px solid var(--gris2);flex-shrink:0;overflow-x:auto;scrollbar-width:none;}
+#tabs::-webkit-scrollbar{display:none;}
+.tab{flex:0 0 auto;padding:9px 12px;font-size:.75rem;font-weight:800;color:#999;border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;}
+.tab.active{color:var(--bleu);border-bottom-color:var(--bleu);}
+
+#content{flex:1;overflow-y:auto;padding:12px;padding-bottom:60px;}
+.section{display:none;}
+.section.active{display:block;}
+
+/* ── CARDS ── */
+.card{background:var(--blanc);border-radius:var(--r);padding:14px;box-shadow:var(--ombre);margin-bottom:10px;}
+.card-title{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;}
+
+/* ── CHAMPS ── */
+.field{width:100%;font-family:inherit;font-size:.93rem;font-weight:600;border:2px solid var(--gris2);border-radius:10px;padding:9px 12px;outline:none;color:var(--texte);background:var(--blanc);resize:vertical;}
+.field:focus{border-color:var(--bleu);}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+.field-mb{margin-bottom:8px;}
+
+/* ── BOUTONS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;border:none;border-radius:10px;padding:9px 13px;font-family:inherit;font-weight:800;font-size:.82rem;cursor:pointer;}
+.btn:active{opacity:.75;}
+.btn-bleu{background:var(--bleu);color:#fff;}
+.btn-vert{background:var(--vert);color:#fff;}
+.btn-rouge{background:var(--rouge);color:#fff;}
+.btn-gris{background:#e8e8e8;color:#555;}
+.btn-orange{background:var(--orange);color:#fff;}
+.btn-sm{padding:6px 10px;font-size:.75rem;border-radius:8px;}
+.btn-xs{padding:4px 8px;font-size:.68rem;border-radius:7px;}
+.btn-full{width:100%;}
+
+/* ── ENTITÉS ── */
+.add-bar{display:flex;gap:8px;margin-bottom:10px;}
+.add-bar input{flex:1;font-family:inherit;font-size:.93rem;font-weight:700;border:2px solid var(--gris2);border-radius:10px;padding:9px 12px;outline:none;color:var(--texte);}
+.add-bar input:focus{border-color:var(--bleu);}
+.entity-list{display:flex;flex-direction:column;gap:8px;}
+.entity-item{background:var(--blanc);border-radius:12px;box-shadow:var(--ombre);overflow:hidden;border:1.5px solid var(--gris2);}
+.entity-header{display:flex;align-items:center;gap:9px;padding:11px 12px;cursor:pointer;user-select:none;}
+.entity-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.entity-name{font-weight:800;font-size:.92rem;flex:1;}
+.entity-acts{display:flex;gap:5px;}
+.entity-chv{color:#bbb;font-size:.7rem;transition:transform .2s;margin-left:4px;}
+.entity-body{display:none;padding:0 12px 12px;border-top:1px solid #f0f0f0;}
+.entity-body.open{display:block;}
+
+/* ── CITATIONS ── */
+.cit-bar{display:flex;gap:7px;margin-bottom:8px;flex-wrap:wrap;}
+.cit-notice{background:var(--jauneC);border:1.5px solid var(--jaune);border-radius:9px;padding:7px 10px;font-size:.78rem;color:#7a5200;margin-bottom:8px;display:none;}
+.cit-notice.on{display:block;}
+
+/* ── IMPORT/EXPORT ── */
+.export-card{background:var(--bleuC);border-radius:var(--r);padding:14px;margin-bottom:10px;}
+.import-card{background:var(--vertC);border-radius:var(--r);padding:14px;margin-bottom:10px;}
+
+/* ── MODAL ── */
+#modal-overlay{display:none;position:fixed;inset:0;background:#0007;z-index:100;align-items:flex-end;}
+#modal-overlay.open{display:flex;}
+#modal{background:var(--blanc);border-radius:20px 20px 0 0;padding:20px 16px;width:100%;max-height:80vh;overflow-y:auto;}
+#modal h3{font-size:.98rem;font-weight:900;margin-bottom:12px;}
+#modal-actions{display:flex;gap:8px;margin-top:12px;}
+
+/* ── MODAL NOUVEAU LIVRE ── */
+#modal-livre-overlay{display:none;position:fixed;inset:0;background:#0008;z-index:200;align-items:center;justify-content:center;padding:20px;}
+#modal-livre-overlay.open{display:flex;}
+#modal-livre{background:var(--blanc);border-radius:20px;padding:22px 18px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;}
+#modal-livre h2{font-size:1.05rem;font-weight:900;color:var(--bleu);margin-bottom:14px;}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(80px);color:#fff;padding:9px 18px;border-radius:22px;font-size:.8rem;font-weight:700;z-index:999;box-shadow:0 4px 14px #0003;white-space:nowrap;transition:transform .25s cubic-bezier(.34,1.56,.64,1);pointer-events:none;}
+#toast.show{transform:translateX(-50%) translateY(0);}
+
+
+/* ── ZONES RÉDACTION ── */
+.redac-zone{margin-bottom:12px;}
+.redac-label{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--zc,var(--bleu));margin-bottom:3px;display:flex;align-items:center;gap:6px;}
+.redac-label::before{content:'';display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--zc,var(--bleu));}
+.redac-hint{font-size:.72rem;color:#999;font-style:italic;margin-bottom:5px;line-height:1.4;}
+.redac-ta{width:100%;font-family:inherit;font-size:.93rem;font-weight:500;border:2px solid;border-color:var(--zc,var(--bleu));border-radius:10px;padding:9px 12px;outline:none;color:var(--texte);background:#fff;resize:vertical;min-height:80px;line-height:1.6;}
+.redac-ta:focus{background:#fafffe;}
+/* ── HELP ── */
+.help-card{background:var(--jauneC);border:1.5px solid var(--jaune);border-radius:var(--r);padding:14px;margin-bottom:10px;font-size:.8rem;line-height:1.65;color:#555;}
+.help-card b{color:var(--texte);}
+
+/* ── ACCORDÉON AIDE ── */
+.aide-toggle{display:flex;align-items:center;gap:8px;background:var(--jauneC);border:1.5px solid var(--jaune);border-radius:10px;padding:9px 13px;cursor:pointer;font-size:.78rem;font-weight:800;color:#7a5200;margin-bottom:8px;user-select:none;}
+.aide-toggle::after{content:'▼';font-size:.6rem;margin-left:auto;transition:transform .2s;}
+.aide-toggle.open::after{transform:rotate(180deg);}
+.aide-body{display:none;background:var(--jauneC);border:1.5px solid var(--jaune);border-top:none;border-radius:0 0 10px 10px;padding:10px 13px;font-size:.78rem;line-height:1.7;color:#555;margin-top:-10px;margin-bottom:8px;}
+.aide-body.open{display:block;}
+.aide-body b{color:#444;}
+.aide-section{margin-bottom:8px;}
+.aide-section:last-child{margin-bottom:0;}
+
+/* ── MATRICE DES RELATIONS ── */
+.matrice-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:12px;}
+.matrice-table{border-collapse:collapse;font-size:.72rem;min-width:100%;}
+.matrice-table th,.matrice-table td{border:1.5px solid var(--gris2);padding:4px 5px;text-align:center;vertical-align:middle;}
+.matrice-table th{background:var(--bleuC);color:var(--bleu);font-weight:800;font-size:.68rem;white-space:nowrap;max-width:80px;overflow:hidden;text-overflow:ellipsis;}
+.matrice-table th.row-head{text-align:left;padding-left:8px;max-width:90px;}
+.matrice-table td.diag{background:#f5f5f5;cursor:not-allowed;}
+.matrice-rel{font-size:.65rem;border:1.5px solid var(--gris2);border-radius:6px;padding:3px 4px;background:#fff;width:100%;min-width:80px;font-family:inherit;color:var(--texte);cursor:pointer;}
+.matrice-rel:focus{border-color:var(--bleu);outline:none;}
+
+/* ── GRAPHE D3 ── */
+#graphe-container{background:#fff;border-radius:var(--r);box-shadow:var(--ombre);margin-bottom:10px;position:relative;overflow:hidden;}
+#graphe-svg{width:100%;display:block;}
+.graphe-vide{text-align:center;padding:30px;color:#bbb;font-size:.82rem;}
+.link-line{stroke:#aaa;stroke-width:1.5px;fill:none;}
+.link-line.fort{stroke:var(--bleu);stroke-width:2px;}
+.link-line.conflit{stroke:var(--rouge);stroke-width:2px;}
+.link-line.amour{stroke:#e91e8c;stroke-width:2px;}
+.link-label{font-size:9px;fill:#666;text-anchor:middle;pointer-events:none;}
+.node-circle{cursor:grab;stroke:#fff;stroke-width:2px;}
+.node-circle:active{cursor:grabbing;}
+.node-label{font-size:10px;font-weight:700;text-anchor:middle;pointer-events:none;fill:#1a1a2e;}
+
+/* ── SCHÉMA NARRATIF ── */
+.schema-modeles{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+.schema-btn{flex:1;min-width:80px;padding:10px 6px;font-size:.75rem;font-weight:800;border:2px solid var(--gris2);border-radius:10px;background:#fff;color:#555;cursor:pointer;transition:all .15s;text-align:center;line-height:1.4;}
+.schema-btn.active{background:var(--bleu);color:#fff!important;border-color:var(--bleu);}
+.schema-btn.active span{color:#fff!important;}
+.schema-modeles{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+.schema-phases{display:flex;flex-direction:column;gap:8px;}
+.phase-card{border-radius:10px;overflow:hidden;border:1.5px solid var(--gris2);}
+.phase-header{padding:10px 13px;display:flex;align-items:center;gap:8px;cursor:pointer;}
+.phase-header *{color:#fff!important;}
+.phase-num{font-size:.72rem;font-weight:900;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(255,255,255,.22);color:#fff!important;}
+.phase-nom{font-weight:800;font-size:.88rem;flex:1;color:#fff!important;}
+.phase-def{font-size:.72rem;opacity:.88;font-style:italic;color:#fff!important;}
+.phase-chv{font-size:.6rem;transition:transform .2s;color:rgba(255,255,255,.8)!important;}
+.phase-body{display:none;padding:10px 13px;border-top:1px solid var(--gris2);}
+.phase-body.open{display:block;}
+.phase-ta{width:100%;font-family:inherit;font-size:.9rem;font-weight:500;border:2px solid var(--gris2);border-radius:8px;padding:8px 11px;outline:none;color:var(--texte);background:#fff;resize:vertical;min-height:70px;line-height:1.6;}
+.phase-ta:focus{border-color:var(--bleu);}
+.phase-hint{font-size:.7rem;color:#999;font-style:italic;margin-bottom:6px;line-height:1.4;}
+</style>
 </head>
 <body>
-  <h1>Bonjour divinité absolue</h1>
+
+<!-- ══════════════════════════════════════════
+     ÉCRAN 1 : BIBLIOTHÈQUE
+══════════════════════════════════════════ -->
+<div id="screen-biblio">
+  <div id="biblio-header">
+    <h1>📚 Ma Bibliothèque</h1>
+    <p>Guide de lecture — Axel · 6ème</p>
+  </div>
+  <div id="biblio-content">
+    <div style="display:flex;gap:10px;margin-bottom:12px;">
+      <button class="btn-nouveau" style="flex:1" onclick="ouvrirModalNouveauLivre()">＋ Nouveau livre</button>
+      <label style="flex:1;display:flex;">
+        <input type="file" id="import-biblio" accept=".txt" style="display:none" onchange="importTxtBiblio(this)">
+        <span class="btn-nouveau" style="flex:1;background:var(--vert);cursor:pointer;" onclick="document.getElementById('import-biblio').click()">📂 Importer .txt</span>
+      </label>
+    </div>
+    <div id="biblio-list"></div>
+    <div id="biblio-vide" style="text-align:center;padding:40px 20px;color:#bbb;font-size:.9rem;font-weight:600;display:none;">
+      Aucun livre pour le moment.<br>Appuie sur <b>+ Nouveau livre</b> pour commencer !
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ÉCRAN 2 : GUIDE DE LECTURE
+══════════════════════════════════════════ -->
+<div id="screen-guide">
+  <div id="guide-header">
+    <button id="btn-retour" onclick="retourBiblio()">← Livres</button>
+    <div style="flex:1;min-width:0;">
+      <div id="header-titre">—</div>
+      <div id="header-date"></div>
+    </div>
+  </div>
+
+  <div id="tabs">
+    <button class="tab active" onclick="showTab('livre',this)">📚 Livre</button>
+    <button class="tab" onclick="showTab('personnages',this)">👤 Persos</button>
+    <button class="tab" onclick="showTab('lieux',this)">🗺️ Lieux</button>
+    <button class="tab" onclick="showTab('temps',this)">⏳ Temps</button>
+    <button class="tab" onclick="showTab('mots',this)">💬 Mots</button>
+    <button class="tab" onclick="showTab('comprehension',this)">💭 Avis</button>
+    <button class="tab" onclick="showTab('intrigue',this)">🎭 Intrigue</button>
+    <button class="tab" onclick="showTab('redaction',this)">✍️ Rédac</button>
+    <button class="tab" onclick="showTab('dissertation',this)">✍️ Dissert</button>
+    <button class="tab" onclick="showTab('pdf',this)">🖨️ PDF</button>
+  </div>
+
+  <div id="content">
+
+    <!-- LIVRE -->
+    <div class="section active" id="sec-livre">
+      <div class="card">
+        <div class="card-title" style="color:var(--bleu)">📚 Informations du livre</div>
+        <input id="livre-titre"  class="field field-mb" type="text" placeholder="Titre du livre…" oninput="saveLivre()">
+        <div class="field-row">
+          <input id="livre-auteur" class="field" type="text" placeholder="Auteur(e)…" oninput="saveLivre()">
+          <input id="livre-genre"  class="field" type="text" placeholder="Genre…"     oninput="saveLivre()">
+        </div>
+        <div class="field-row">
+          <input id="livre-pages"  class="field" type="text" placeholder="Nb de pages…" oninput="saveLivre()">
+          <input id="livre-annee"  class="field" type="text" placeholder="Époque…"       oninput="saveLivre()">
+        </div>
+      </div>
+
+      <!-- ZONE 1 : CONTEXTE HISTORIQUE -->
+      <div class="card" style="border-left:4px solid var(--orange)">
+        <div class="card-title" style="color:var(--orange)">🌍 L'époque — contexte historique &amp; culturel</div>
+        <div style="font-size:.73rem;color:#888;margin-bottom:6px;">Que se passait-il dans le monde quand ce livre a été écrit ? (politique, guerres, société, culture…)</div>
+        <textarea id="livre-contexte" class="field" rows="5"
+          placeholder="Ex. : L'Angleterre victorienne (1837-1901) est une époque de révolution industrielle, d'expansion coloniale et de grandes inégalités sociales. Les villes s'industrialisent rapidement mais les ouvriers vivent dans des conditions difficiles…"
+          oninput="saveLivreContexte()"></textarea>
+      </div>
+
+      <!-- ZONE 2 : L'AUTEUR AU MOMENT DE L'ÉCRITURE -->
+      <div class="card" style="border-left:4px solid var(--violet)">
+        <div class="card-title" style="color:var(--violet)">✍️ L'auteur·e au moment de l'écriture</div>
+        <div style="font-size:.73rem;color:#888;margin-bottom:6px;">Quel âge avait-il/elle ? Sa vie à cette époque (santé, famille, argent, rencontres importantes…)</div>
+        <textarea id="livre-auteur-vie" class="field" rows="5"
+          placeholder="Ex. : À l'époque où il écrit ce livre, l'auteur a 38 ans. Il vient de traverser une période difficile… Il est marié, père de famille… Sa situation financière est…"
+          oninput="saveLivreContexte()"></textarea>
+      </div>
+
+      <!-- ZONE 3 : PLACE DANS L'ŒUVRE -->
+      <div class="card" style="border-left:4px solid var(--vert)">
+        <div class="card-title" style="color:var(--vert)">📖 Place dans la trajectoire de l'auteur·e</div>
+        <div style="font-size:.73rem;color:#888;margin-bottom:6px;">Est-ce son premier livre ? Une œuvre majeure ? Une rupture dans son style ? Ce que ce livre représente dans sa carrière.</div>
+        <textarea id="livre-trajectoire" class="field" rows="4"
+          placeholder="Ex. : Ce roman est l'œuvre la plus célèbre de l'auteur. Écrit après… il marque un tournant dans son écriture car… Avant ce livre, il/elle avait publié… Après, il/elle écrira…"
+          oninput="saveLivreContexte()"></textarea>
+      </div>
+
+      <div class="export-card">
+        <div class="card-title" style="color:var(--bleu);margin-bottom:6px;">📤 Exporter mes notes</div>
+        <button class="btn btn-bleu btn-full" onclick="exportTxt()">📄 Télécharger (.txt)</button>
+      </div>
+
+      <div class="import-card">
+        <div class="card-title" style="color:var(--vert);margin-bottom:6px;">📥 Importer des notes</div>
+        <p style="font-size:.78rem;color:#555;margin-bottom:8px;">Recharge un fichier .txt exporté précédemment.</p>
+        <label style="display:block;">
+          <input type="file" id="import-file" accept=".txt" style="display:none" onchange="importTxt(this)">
+          <span class="btn btn-vert btn-full" onclick="document.getElementById('import-file').click()">📂 Choisir un fichier .txt</span>
+        </label>
+      </div>
+
+      <div class="help-card">
+        <b>💡 Comment dicter ?</b><br>
+        <b>iPad :</b> touche un champ → micro 🎤 dans la barre au-dessus du clavier.<br>
+        <b>Android :</b> touche un champ → micro 🎤 sur le clavier Google.<br><br>
+        <b>Personnages & Lieux :</b> crée une fiche avec <b>＋</b>, ouvre-la, dicte tes notes.<br>
+        <b>Citations :</b> appuie sur <b>« Début</b>, dicte, puis <b>Fin »</b>.<br>
+        <b>Sauvegarde :</b> automatique à chaque frappe.
+      </div>
+    </div>
+
+    <!-- PERSONNAGES -->
+    <div class="section" id="sec-personnages">
+      <div class="card">
+        <div class="card-title" style="color:var(--bleu)">👤 Nouveau personnage</div>
+        <div class="add-bar">
+          <input id="perso-input" type="text" placeholder="Nom du personnage…"
+            onkeydown="if(event.key==='Enter')addEntity('personnages')">
+          <button class="btn btn-bleu" onclick="addEntity('personnages')">＋</button>
+        </div>
+      </div>
+      <div class="entity-list" id="list-personnages"></div>
+
+      <!-- MATRICE DES RELATIONS -->
+      <div class="card" id="card-matrice" style="display:none">
+        <div class="card-title" style="color:var(--bleu)">🔗 Relations entre personnages</div>
+        <p style="font-size:.75rem;color:#888;margin-bottom:8px;">Pour chaque paire, choisis le lien de A → B. La relation peut être différente dans le sens inverse.</p>
+        <div class="matrice-wrap" id="matrice-wrap"></div>
+        <button class="btn btn-bleu btn-sm" onclick="renderGraphe()">🔄 Mettre à jour le graphe</button>
+      </div>
+
+      <!-- GRAPHE D3 -->
+      <div class="card" id="card-graphe" style="display:none">
+        <div class="card-title" style="color:var(--bleu)">🕸️ Graphe des relations</div>
+        <div id="graphe-container">
+          <div class="graphe-vide" id="graphe-vide">Ajoute des personnages et remplis la matrice pour voir le graphe</div>
+          <svg id="graphe-svg" style="display:none"></svg>
+        </div>
+        <div style="font-size:.7rem;color:#aaa;margin-top:6px;line-height:1.5;">
+          💡 Glisse les personnages pour réorganiser · Arc simple = relation symétrique · Double arc = relations différentes
+        </div>
+      </div>
+    </div>
+
+    <!-- LIEUX -->
+    <div class="section" id="sec-lieux">
+      <div class="card">
+        <div class="card-title" style="color:var(--vert)">🗺️ Nouveau lieu</div>
+        <div class="add-bar">
+          <input id="lieu-input" type="text" placeholder="Nom du lieu…"
+            onkeydown="if(event.key==='Enter')addEntity('lieux')">
+          <button class="btn btn-vert" onclick="addEntity('lieux')">＋</button>
+        </div>
+      </div>
+
+      <!-- AIDE STRUCTURÉE LIEUX -->
+      <div id="aide-lieux-toggle" class="aide-toggle" onclick="toggleAide('lieux')">
+        💡 Aide : comment analyser un lieu ?
+      </div>
+      <div id="aide-lieux-body" class="aide-body">
+        <div class="aide-section"><b>Espace réel ou symbolique ?</b><br>
+          La maison peut représenter la famille, la prison le déterminisme social, la nature la liberté.</div>
+        <div class="aide-section"><b>Espace ouvert ou fermé ?</b><br>
+          Un espace <em>fermé</em> crée un sentiment d'oppression ou de protection. Un espace <em>ouvert</em> suggère la liberté ou le danger.</div>
+        <div class="aide-section"><b>Mouvements des personnages</b><br>
+          Les déplacements révèlent une quête, une fuite, une progression intérieure.</div>
+        <div class="aide-section"><b>Géographie symbolique</b><br>
+          Ville / campagne · Haut / bas · Intérieur / extérieur — ces oppositions ont souvent un sens idéologique.</div>
+        <div class="aide-section"><b>Questions à poser</b><br>
+          Qui va dans ce lieu ? Pourquoi ? Qu'est-ce qui s'y passe d'important ? Qu'est-ce que ce lieu représente pour le personnage ?</div>
+      </div>
+
+      <div class="entity-list" id="list-lieux"></div>
+    </div>
+
+    <!-- TEMPS -->
+    <div class="section" id="sec-temps">
+      <!-- AIDE STRUCTURÉE TEMPS -->
+      <div id="aide-temps-toggle" class="aide-toggle" onclick="toggleAide('temps')">
+        💡 Aide : comment analyser le temps dans un récit ?
+      </div>
+      <div id="aide-temps-body" class="aide-body">
+        <div class="aide-section"><b>📐 L'Ordre</b> — Chronologie vs anachronies<br>
+          L'histoire est-elle racontée dans l'ordre ? Y a-t-il des <em>retours en arrière</em> (flashback / analepse) ou des <em>anticipations</em> (prolepse) ? → Effets : suspense, révélation progressive, surprise.</div>
+        <div class="aide-section"><b>⏱️ La Durée</b> — Rythme narratif<br>
+          Quels moments sont dilatés (racontés lentement) ? Quels moments sont accélérés ou résumés en une phrase (ellipse) ? Certaines scènes s'arrêtent sur un détail (pause descriptive). → Effets : mise en valeur des moments importants.</div>
+        <div class="aide-section"><b>🔁 La Fréquence</b> — Répétitions<br>
+          Certains événements sont-ils racontés une seule fois (singulatif), résumés en « il faisait souvent » (itératif), ou au contraire racontés plusieurs fois (répétitif) ? → Effets : insistance, habitude, obsession.</div>
+        <div class="aide-section"><b>Questions à poser</b><br>
+          Quelle est l'époque du récit ? La narration suit-elle l'ordre des événements ? Quels moments sont les plus longs à lire, et pourquoi ?</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="color:var(--orange)">⏳ Époque &amp; Chronologie</div>
+        <textarea id="temps-text" class="field" rows="14"
+          placeholder="L'époque, les dates importantes, l'ordre des événements…"
+          oninput="saveTexte('temps')"></textarea>
+      </div>
+    </div>
+
+    <!-- MOTS & CITATIONS -->
+    <div class="section" id="sec-mots">
+      <div class="card">
+        <div class="card-title" style="color:var(--violet)">💬 Mots difficiles &amp; Citations</div>
+        <div class="cit-bar">
+          <button class="btn btn-orange btn-sm" onclick="debutCitation()">« Début citation</button>
+          <button class="btn btn-gris btn-sm" onclick="finCitation()">Fin citation »</button>
+          <button class="btn btn-gris btn-sm" onclick="insertSep()">── Mot ──</button>
+        </div>
+        <div class="cit-notice" id="cit-notice">✏️ Mode citation — dicte le texte puis <b>Fin citation »</b></div>
+        <textarea id="mots-zone" class="field" rows="15"
+          placeholder="── Mot inconnu ──&#10;Nautilus : sous-marin du Capitaine Nemo&#10;&#10;« Il plongea dans les abysses. »&#10;(page 47)"
+          oninput="saveTexte('mots')"></textarea>
+      </div>
+    </div>
+
+    <!-- COMPRÉHENSION -->
+    <div class="section" id="sec-comprehension">
+      <div class="card">
+        <div class="card-title" style="color:var(--violet)">💭 Compréhension &amp; Avis</div>
+        <textarea id="compre-text" class="field" rows="16"
+          placeholder="Ce que tu as compris, ce que tu penses, les moments importants…"
+          oninput="saveTexte('comprehension')"></textarea>
+      </div>
+    </div>
+
+
+    <!-- DISSERTATION -->
+    <div class="section" id="sec-dissertation">
+      <div class="card" style="border-left:5px solid var(--violet)">
+        <div class="card-title" style="color:var(--violet)">✍️ Ma Dissertation</div>
+        <div style="background:var(--violetC);border-radius:10px;padding:10px 12px;font-size:.78rem;line-height:1.6;color:#555;margin-bottom:12px;">
+          <b>Méthode 6ème :</b> Introduction → Développement (arguments + exemples) → Conclusion<br>
+          <b>Connecteurs :</b> <i>Tout d'abord • Ensuite • De plus • Par exemple • En effet • Enfin • Pour conclure</i>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="color:var(--violet)">📌 Sujet de la dissertation</div>
+        <textarea id="diss-sujet" class="field" rows="2"
+          placeholder="Colle ici le sujet donné par le professeur…"
+          oninput="saveDiss()"></textarea>
+      </div>
+
+      <div class="card" style="border-top:4px solid #2E5FA3">
+        <div class="card-title" style="color:#2E5FA3">① Introduction</div>
+        <div style="font-size:.75rem;color:#888;margin-bottom:6px;">Présente le livre, l'auteur, et pose la question du sujet.</div>
+        <textarea id="diss-intro" class="field" rows="5"
+          placeholder="Exemple : Le Petit Prince, écrit par Antoine de Saint-Exupéry en 1943, est un conte philosophique qui nous raconte l'histoire d'un petit garçon venu d'une autre planète. Dans ce livre, l'auteur nous pose une question importante : qu'est-ce qui compte vraiment dans la vie ?"
+          oninput="saveDiss()"></textarea>
+      </div>
+
+      <div class="card" style="border-top:4px solid #2E7D32">
+        <div class="card-title" style="color:#2E7D32">② Argument 1 + exemple</div>
+        <div style="font-size:.75rem;color:#888;margin-bottom:6px;">Tout d'abord… / En premier lieu… + Par exemple…</div>
+        <textarea id="diss-arg1" class="field" rows="5"
+          placeholder="Tout d'abord, l'auteur montre que l'amitié est la chose la plus précieuse. Par exemple, quand le Petit Prince rencontre le Renard, celui-ci lui apprend que pour avoir un ami, il faut l'apprivoiser, c'est-à-dire créer des liens."
+          oninput="saveDiss()"></textarea>
+      </div>
+
+      <div class="card" style="border-top:4px solid #E65100">
+        <div class="card-title" style="color:#E65100">③ Argument 2 + exemple</div>
+        <div style="font-size:.75rem;color:#888;margin-bottom:6px;">Ensuite… / De plus… + En effet… / Ainsi…</div>
+        <textarea id="diss-arg2" class="field" rows="5"
+          placeholder="Ensuite, Saint-Exupéry nous montre que les adultes ont oublié ce qui est essentiel. En effet, le Petit Prince visite plusieurs planètes où les adultes sont ridicules : le roi qui veut commander, le vaniteux qui veut être admiré…"
+          oninput="saveDiss()"></textarea>
+      </div>
+
+      <div class="card" style="border-top:4px solid #6A1B9A">
+        <div class="card-title" style="color:#6A1B9A">④ Argument 3 + exemple (facultatif)</div>
+        <div style="font-size:.75rem;color:#888;margin-bottom:6px;">De plus… / Par ailleurs… + Par exemple…</div>
+        <textarea id="diss-arg3" class="field" rows="5"
+          placeholder="(optionnel — laisse vide si tu n'as que 2 arguments)"
+          oninput="saveDiss()"></textarea>
+      </div>
+
+      <div class="card" style="border-top:4px solid #c0392b">
+        <div class="card-title" style="color:#c0392b">⑤ Conclusion</div>
+        <div style="font-size:.75rem;color:#888;margin-bottom:6px;">Pour conclure… / En résumé… — rappelle tes idées principales.</div>
+        <textarea id="diss-conclu" class="field" rows="5"
+          placeholder="Pour conclure, Le Petit Prince nous rappelle que l'essentiel est invisible pour les yeux : l'amitié, l'amour et la simplicité sont plus importants que la richesse ou le pouvoir. Ce livre nous invite à garder notre regard d'enfant pour voir ce qui compte vraiment."
+          oninput="saveDiss()"></textarea>
+      </div>
+
+      <div class="card" style="background:var(--jauneC);border:1.5px solid var(--jaune)">
+        <div class="card-title" style="color:var(--jaune)">💡 Connecteurs utiles</div>
+        <div style="font-size:.8rem;line-height:1.8;color:#555;">
+          <b>Pour introduire :</b> Tout d'abord • En premier lieu • Pour commencer<br>
+          <b>Pour ajouter :</b> Ensuite • De plus • Par ailleurs • En outre<br>
+          <b>Pour illustrer :</b> Par exemple • En effet • Ainsi • C'est le cas de<br>
+          <b>Pour conclure :</b> Pour conclure • En résumé • Finalement • En somme
+        </div>
+      </div>
+    </div>
+
+    <!-- PDF -->
+    <div class="section" id="sec-pdf">
+      <div class="card">
+        <div class="card-title" style="color:var(--bleu)">🖨️ Générer mon PDF</div>
+        <p style="font-size:.8rem;color:#666;margin-bottom:12px;">Choisis le style puis génère ton PDF. Il s'ouvrira dans un nouvel onglet, prêt à imprimer.</p>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <button class="btn btn-bleu btn-full" onclick="genererPDF('couleur')" style="padding:14px;font-size:.9rem;">
+            🎨 PDF Coloré (écran &amp; impression couleur)
+          </button>
+          <button class="btn btn-gris btn-full" onclick="genererPDF('sobre')" style="padding:14px;font-size:.9rem;color:#333;">
+            🖤 PDF Sobre (impression noir &amp; blanc)
+          </button>
+        </div>
+      </div>
+      <div class="help-card">
+        <b>Comment imprimer ?</b><br>
+        Une fois le PDF ouvert dans l'onglet, appuie sur <b>Ctrl+P</b> (PC) ou le bouton imprimer du navigateur.<br><br>
+        <b>Contenu du PDF :</b> toutes les fiches du livre actif — informations, personnages, lieux, époque, mots, compréhension et dissertation.
+      </div>
+    </div>
+
+
+    <!-- INTRIGUE — SCHÉMA NARRATIF -->
+    <div class="section" id="sec-intrigue">
+      <div class="card" style="border-left:5px solid #00838F">
+        <div class="card-title" style="color:#00838F">🎭 Structure de l'intrigue</div>
+        <p style="font-size:.78rem;color:#888;margin-bottom:12px;">Choisis un modèle narratif, puis remplis chaque phase de l'histoire.</p>
+        <div class="schema-modeles">
+          <button class="schema-btn active" id="sbtn-aristote" onclick="setSchema('aristote',this)">
+            🏛️ Aristote<br><span style="font-size:.62rem;font-weight:500">3 actes</span>
+          </button>
+          <button class="schema-btn" id="sbtn-freytag" onclick="setSchema('freytag',this)">
+            🔺 Freytag<br><span style="font-size:.62rem;font-weight:500">5 actes</span>
+          </button>
+          <button class="schema-btn" id="sbtn-moderne" onclick="setSchema('moderne',this)">
+            🌊 Arc moderne<br><span style="font-size:.62rem;font-weight:500">8 étapes</span>
+          </button>
+        </div>
+      </div>
+      <div class="schema-phases" id="schema-phases"></div>
+
+      <div class="card" style="background:var(--jauneC);border:1.5px solid var(--jaune)">
+        <div class="card-title" style="color:var(--jaune)">💡 À quoi servent ces modèles ?</div>
+        <p style="font-size:.78rem;line-height:1.65;color:#555;">
+          <b>Aristote (3 actes)</b> : le plus simple — début, milieu, fin. Parfait pour un premier résumé.<br>
+          <b>Freytag (5 actes)</b> : montre comment la tension monte puis redescend (pyramide).<br>
+          <b>Arc moderne (8 étapes)</b> : le plus précis — donne un mot sur chaque moment clé du récit.
+        </p>
+      </div>
+    </div>
+
+    <!-- RÉDACTION -->
+    <div class="section" id="sec-redaction">
+      <div class="card" style="border-left:4px solid var(--vert);">
+        <div class="card-title" style="color:var(--vert)">✍️ Rédaction guidée</div>
+        <p style="font-size:.78rem;color:#888;margin-bottom:10px;">Deux types de rédaction : <b>Récit</b> (raconter une histoire) ou <b>Texte argumentatif</b> (donner son avis). Sélectionne le type puis dicte dans chaque zone.</p>
+        <div style="display:flex;gap:8px;margin-bottom:14px;">
+          <button class="btn btn-vert btn-sm" onclick="setTypeRedac('recit')" id="btn-recit" style="flex:1">📖 Récit</button>
+          <button class="btn btn-gris btn-sm" onclick="setTypeRedac('argument')" id="btn-argument" style="flex:1">💬 Argumentatif</button>
+        </div>
+        <!-- TYPE RÉCIT -->
+        <div id="redac-recit">
+          <div class="redac-zone" data-label="1. Situation initiale" data-hint="Qui ? Où ? Quand ? Présente les personnages et le cadre au début de l'histoire." data-key="redac_r1" style="--zc:var(--bleu)"></div>
+          <div class="redac-zone" data-label="2. Élément déclencheur" data-hint="Quel événement vient perturber la situation initiale ? Qu'est-ce qui change tout ?" data-key="redac_r2" style="--zc:var(--orange)"></div>
+          <div class="redac-zone" data-label="3. Péripéties" data-hint="Quelles aventures, difficultés, rebondissements le personnage traverse-t-il ?" data-key="redac_r3" style="--zc:var(--violet)"></div>
+          <div class="redac-zone" data-label="4. Dénouement" data-hint="Comment le problème est-il résolu ? Quelle est la solution trouvée ?" data-key="redac_r4" style="--zc:var(--vert)"></div>
+          <div class="redac-zone" data-label="5. Situation finale" data-hint="Comment les choses sont-elles à la fin ? Qu'est-ce qui a changé par rapport au début ?" data-key="redac_r5" style="--zc:#00838F"></div>
+        </div>
+        <!-- TYPE ARGUMENTATIF -->
+        <div id="redac-argument" style="display:none">
+          <div class="redac-zone" data-label="1. Introduction" data-hint="Présente le sujet, pose la question, annonce ce que tu vas démontrer." data-key="redac_a1" style="--zc:var(--bleu)"></div>
+          <div class="redac-zone" data-label="2. Argument principal" data-hint="Ton idée la plus forte. Explique-la et donne un exemple tiré du livre." data-key="redac_a2" style="--zc:var(--vert)"></div>
+          <div class="redac-zone" data-label="3. Deuxième argument" data-hint="Une deuxième idée qui appuie ta réponse. Donne un autre exemple." data-key="redac_a3" style="--zc:var(--orange)"></div>
+          <div class="redac-zone" data-label="4. Conclusion" data-hint="Résume ta réponse en 2-3 phrases. Tu peux donner ton avis personnel." data-key="redac_a4" style="--zc:var(--violet)"></div>
+        </div>
+      </div>
+
+      <div class="card" style="background:var(--jauneC);border:1.5px solid var(--jaune);">
+        <div class="card-title" style="color:var(--jaune)">💡 Conseils de rédaction</div>
+        <p style="font-size:.8rem;line-height:1.65;color:#555;">
+          <b>Chaque zone = un paragraphe.</b> Saute une ligne entre chaque partie.<br>
+          <b>Ne commence jamais par</b> "il", "elle", "car", "parce que".<br>
+          <b>Utilise des connecteurs :</b> D'abord... Ensuite... Puis... Enfin... En conclusion...<br>
+          <b>Cite le livre :</b> mets le titre en italique ou entre guillemets.<br>
+          <b>Relis-toi</b> à voix haute pour repérer les erreurs.
+        </p>
+      </div>
+
+      <div class="export-card">
+        <div class="card-title" style="color:var(--bleu);margin-bottom:6px;">📄 Exporter la rédaction</div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-bleu" style="flex:1" onclick="exportPDF('couleur')">🎨 PDF couleur</button>
+          <button class="btn btn-gris" style="flex:1" onclick="exportPDF('nb')">⬜ PDF noir/blanc</button>
+        </div>
+      </div>
+    </div>
+  </div><!-- fin content -->
+</div><!-- fin screen-guide -->
+
+<!-- ══ MODAL NOUVEAU LIVRE ══ -->
+<div id="modal-livre-overlay">
+  <div id="modal-livre">
+    <h2>📖 Nouveau livre</h2>
+    <input id="nl-titre" class="field field-mb" type="text" placeholder="Titre du livre…">
+    <div class="field-row">
+      <input id="nl-auteur" class="field" type="text" placeholder="Auteur(e)…">
+      <input id="nl-genre"  class="field" type="text" placeholder="Genre…">
+    </div>
+    <div id="modal-livre-actions" style="display:flex;gap:8px;margin-top:14px;">
+      <button class="btn btn-bleu" style="flex:1" onclick="creerLivre()">✅ Créer</button>
+      <button class="btn btn-gris" onclick="fermerModalLivre()">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL ÉDITION NOM ══ -->
+<div id="modal-overlay" onclick="closeModal(event)">
+  <div id="modal">
+    <h3 id="modal-title">Modifier le nom</h3>
+    <input id="modal-input" class="field" type="text" style="margin-bottom:0">
+    <div id="modal-actions">
+      <button class="btn btn-bleu" style="flex:1" onclick="confirmModal()">✅ Valider</button>
+      <button class="btn btn-gris" onclick="closeModal()">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ════════════════════════════════════════════════════════
+// STRUCTURE DES DONNÉES
+// ════════════════════════════════════════════════════════
+// localStorage['axel_biblio'] = {
+//   livres: [
+//     {
+//       id: "liv_xxxxx",          // identifiant permanent
+//       titre: "20000 lieues",
+//       auteur: "Jules Verne",
+//       genre: "Aventure",
+//       pages: "422",
+//       annee: "XIXe siècle",
+//       dateCreation: "25/03/2026",  // date lisible
+//       tsCreation: 1743000000000,   // timestamp pour tri
+//       personnages: [{id, nom, notes, couleur}],
+//       lieux:       [{id, nom, notes, couleur}],
+//       temps:        "",
+//       mots:         "",
+//       comprehension: ""
+//     }
+//   ]
+// }
+
+const COULEURS = ['#2E5FA3','#2E7D32','#E65100','#6A1B9A','#c0392b','#00838F','#558B2F','#AD1457'];
+let BIBLIO = { livres: [] };
+let LIVRE_ACTIF = null;  // objet livre en cours
+let couleurIdx  = 0;
+
+// ════════════════════════════════════════════════════════
+// PERSISTENCE
+// ════════════════════════════════════════════════════════
+function sauvegarderBiblio() {
+  try { localStorage.setItem('axel_biblio', JSON.stringify(BIBLIO)); } catch(e){}
+}
+
+// ════════════════════════════════════════════════════════
+// LIVRES DE DÉMONSTRATION (pré-chargés au 1er lancement)
+// ════════════════════════════════════════════════════════
+const LIVRES_DEMO = [
+  {
+    id: 'liv_petit_prince_001',
+    titre: 'Le Petit Prince',
+    auteur: 'Antoine de Saint-Exupéry',
+    genre: 'Conte philosophique',
+    pages: '96',
+    annee: 'Années 1940',
+    dateCreation: '10/01/2026',
+    tsCreation: 1736467200000,
+
+    contexte: "Le Petit Prince est publié en 1943, en pleine Seconde Guerre mondiale. Saint-Exupéry l'écrit en exil à New York, loin de la France occupée par l'Allemagne nazie. En Europe, des millions de personnes souffrent, fuient ou meurent. C'est dans ce contexte de destruction et de violence que l'auteur écrit un conte sur ce qui compte vraiment dans la vie : l'amitié, l'amour, la beauté des choses simples.\n\nCulturellement, 1943 est une période de doute profond sur les valeurs humaines. La montée du fascisme et de la barbarie pousse de nombreux intellectuels à se demander ce que l'humanité a perdu. Saint-Exupéry répond à sa façon : en défendant l'enfance, l'imagination et la tendresse contre l'utilitarisme des adultes.",
+
+    auteurVie: "Antoine de Saint-Exupéry naît en 1900 à Lyon dans une famille de la petite noblesse. Quand il écrit Le Petit Prince en 1942-1943, il a 42 ans. Sa vie est alors pleine de tensions et de douleurs.\n\nAviateur passionné depuis toujours, il a vécu de nombreux accidents d'avion, dont un dans le désert libyen en 1935 — expérience qui inspire directement le décor du livre. Sa santé est fragile : ses blessures l'ont usé physiquement.\n\nSur le plan personnel, son mariage avec Consuelo Suncín est tumultueux, fait de séparations et de réconciliations. La Rose du Petit Prince est largement inspirée de Consuelo : belle, capricieuse, aimée malgré tout. À New York en exil, Saint-Exupéry se sent inutile, éloigné de la France en guerre, déprimé. Il écrit ce livre comme un cadeau et un testament spirituel. Il mourra en mission en 1944, disparu en mer Méditerranée, à 44 ans.",
+
+    trajectoire: "Le Petit Prince est à la fois l'œuvre la plus personnelle et la plus célèbre de Saint-Exupéry. Ce n'est pas son premier livre — il avait déjà publié Courrier Sud (1929), Vol de Nuit (1931, Prix Femina), Terre des Hommes (1939, Grand Prix du roman de l'Académie française) — mais c'est le seul qui s'adresse directement aux enfants, tout en parlant aux adultes.\n\nDans sa trajectoire, ce livre marque une rupture : Saint-Exupéry abandonne temporairement le récit réaliste d'aviation pour le conte philosophique et symbolique. C'est aussi son œuvre testamentaire — il la publie quelques mois avant sa mort. Aujourd'hui, Le Petit Prince est le livre français le plus traduit au monde (plus de 300 langues) et l'un des plus vendus de l'histoire de la littérature.",
+
+    personnages: [
+      { id:'ent_pp_01', nom:'Le Petit Prince', couleur:'#2E5FA3',
+        notes:"Personnage principal. Petit garçon venu de l'astéroïde B-612. Curieux, sensible, il pose des questions très profondes. Il aime sa rose malgré ses caprices. Il apprend la valeur de l'amitié avec le renard." },
+      { id:'ent_pp_02', nom:'Le narrateur (l\'aviateur)', couleur:'#2E7D32',
+        notes:"Pilote tombé en panne dans le Sahara. Il rencontre le Petit Prince et retrouve son âme d'enfant. C'est lui qui raconte l'histoire." },
+      { id:'ent_pp_03', nom:'La Rose', couleur:'#c0392b',
+        notes:"Fleur unique sur la planète du Petit Prince. Belle mais vaniteuse et capricieuse. Il l'aime profondément malgré ses défauts. Elle représente l'amour et la fragilité." },
+      { id:'ent_pp_04', nom:'Le Renard', couleur:'#E65100',
+        notes:"Personnage sage rencontré sur Terre. Il apprend au Petit Prince le secret de l'amitié : apprivoiser. Sa phrase célèbre : On ne voit bien qu'avec le coeur." },
+      { id:'ent_pp_05', nom:'Le Serpent', couleur:'#6A1B9A',
+        notes:"Mystérieux serpent rencontré à l'arrivée sur Terre. Il parle par énigmes. C'est lui qui permettra au Petit Prince de rentrer chez lui à la fin." }
+    ],
+    matrice: {
+      'ent_pp_01__ent_pp_02': 'Ami(e)',
+      'ent_pp_02__ent_pp_01': 'Ami(e)',
+      'ent_pp_01__ent_pp_03': 'Amoureux/se',
+      'ent_pp_03__ent_pp_01': 'Protégé(e)',
+      'ent_pp_01__ent_pp_04': 'Élève',
+      'ent_pp_04__ent_pp_01': 'Mentor',
+      'ent_pp_01__ent_pp_05': 'Allié(e)',
+      'ent_pp_02__ent_pp_03': '—',
+      'ent_pp_02__ent_pp_04': '—',
+      'ent_pp_02__ent_pp_05': '—',
+      'ent_pp_03__ent_pp_04': '—',
+      'ent_pp_03__ent_pp_05': '—',
+      'ent_pp_04__ent_pp_05': '—'
+    },
+    lieux: [
+      { id:'ent_pp_l1', nom:'L\'astéroïde B-612', couleur:'#2E5FA3',
+        notes:"Minuscule planète du Petit Prince. Si petite qu'on peut voir le coucher de soleil plusieurs fois par jour. Il y a trois volcans et une rose unique. Espace symbolique : c'est le monde de l'enfance, de la simplicité et de l'amour." },
+      { id:'ent_pp_l2', nom:'Le désert du Sahara', couleur:'#2E7D32',
+        notes:"Lieu sur Terre où l'aviateur tombe en panne. C'est là qu'il rencontre le Petit Prince. Le désert représente la solitude mais aussi la beauté des choses essentielles. Espace ouvert, infini, hostile mais magnifique." },
+      { id:'ent_pp_l3', nom:'Les autres planètes', couleur:'#E65100',
+        notes:"Le Petit Prince visite 6 planètes avant la Terre : le roi, le vaniteux, le buveur, le businessman, l'allumeur de réverbères, le géographe. Chaque planète représente un défaut des adultes. Espaces fermés = prisonniers de leur obsession." }
+    ],
+    temps: "L'histoire se passe dans les années 1940. La narration commence par le souvenir d'enfance de l'aviateur, puis sa panne dans le Sahara.\n\nORDRE : La structure est en flash-back — l'aviateur raconte depuis le présent une aventure passée. Le Petit Prince lui-même raconte ses voyages à rebours.\n\nDURÉE : L'histoire dans le désert dure 8 jours. Certains moments sont très dilatés (la conversation avec le renard, très longue et importante) ; d'autres sont résumés en quelques mots (les 6 planètes visitées).\n\nFRÉQUENCE : Le coucher de soleil sur l'astéroïde B-612 est raconté de manière itérative : « un jour il vit 43 couchers de soleil ».",
+    mots: "── Mot inconnu ──\nApprivoiser : créer des liens, rendre quelqu'un familier.\n\n── Mot inconnu ──\nBaobab : très grand arbre d'Afrique. Dangereux sur la planète du Petit Prince car ses racines peuvent tout envahir.\n\n« On ne voit bien qu'avec le cœur. L'essentiel est invisible pour les yeux. »\n(Le Renard, chapitre 21)\n\n« C'est le temps que tu as perdu pour ta rose qui fait ta rose si importante. »\n(Le Renard, chapitre 21)",
+    redacType: 'recit',
+    redac: {
+      redac_r1: "Au début de l'histoire, un aviateur tombe en panne dans le désert du Sahara. Il est seul, loin de tout, et ne sait pas comment réparer son avion. C'est dans cette situation désespérée qu'il fait une rencontre inattendue.",
+      redac_r2: "Un petit garçon mystérieux apparaît soudainement et lui demande de dessiner un mouton. Ce petit garçon vient d'une toute petite planète, l'astéroïde B-612, et il a voyagé de planète en planète avant d'arriver sur Terre.",
+      redac_r3: "Au fil des jours, le Petit Prince raconte ses aventures à l'aviateur. Il lui parle de sa rose, qu'il aime mais qui est trop capricieuse. Il lui raconte les planètes bizarres qu'il a visitées, habitées chacune par un adulte ridicule. Il rencontre aussi un renard qui lui apprend le secret de l'amitié.",
+      redac_r4: "Le Petit Prince comprend grâce au renard que sa rose est unique et précieuse parce qu'il a pris soin d'elle. Il décide de rentrer sur sa planète pour retrouver sa rose. Le serpent l'aide à rentrer chez lui d'une façon mystérieuse.",
+      redac_r5: "L'aviateur réussit à réparer son avion. Il repart dans le monde des hommes, mais il ne voit plus les choses de la même façon. Il regarde les étoiles différemment, en pensant que l'une d'elles cache la petite planète du Petit Prince. Cette histoire lui a rappelé ce qui est vraiment important dans la vie."
+    },
+    comprehension: "Livre très court mais très profond. Il parle aux enfants et aux adultes en même temps. Le message principal : les adultes oublient ce qui est vraiment important — l'amitié, l'amour, la beauté des choses simples. La fin est triste car on ne sait pas vraiment si le Petit Prince est mort ou rentré chez lui. Passage préféré : quand le renard explique ce que veut dire apprivoiser.",
+    dissertation: {
+      sujet: "En quoi Le Petit Prince nous apprend-il ce qui est vraiment important dans la vie ?",
+      intro: "Le Petit Prince, écrit par Antoine de Saint-Exupéry en 1943, est un court roman philosophique qui raconte l'histoire d'un petit garçon venu de l'astéroïde B-612. En voyageant de planète en planète, il observe les adultes et s'interroge sur ce qui compte vraiment. Ce livre nous pose une question essentielle : qu'est-ce qui est vraiment important dans la vie ?",
+      arg1: "Tout d'abord, le livre nous montre que l'amitié et l'amour sont les choses les plus précieuses. Par exemple, quand le Petit Prince rencontre le Renard, celui-ci lui explique ce que signifie apprivoiser : créer des liens uniques avec quelqu'un. Il lui dit aussi que l'on est responsable de ce que l'on a apprivoisé. Cette idée montre que les vraies relations sont irremplaçables.",
+      arg2: "Ensuite, Saint-Exupéry critique les adultes qui passent leur vie à des choses sans importance. En effet, le Petit Prince visite six planètes où les adultes sont ridicules : le roi qui veut commander sans sujet, le vaniteux qui veut être admiré, le businessman qui compte des étoiles qu'il croit posséder. Ces personnages montrent que les adultes ont oublié ce qui compte vraiment.",
+      arg3: "De plus, la rose du Petit Prince nous enseigne que la valeur des choses vient du temps qu'on leur consacre. Ainsi, quand le Renard lui dit que sa rose est unique parce qu'il a perdu du temps pour elle, on comprend que ce sont nos liens et nos efforts qui donnent de la valeur aux êtres que l'on aime.",
+      conclu: "Pour conclure, Le Petit Prince nous rappelle que l'essentiel est invisible pour les yeux : l'amitié, l'amour et la simplicité comptent plus que la richesse ou le pouvoir. Ce livre, écrit pour les enfants mais aussi pour les adultes, nous invite à garder notre regard d'enfant afin de voir ce qui compte vraiment dans la vie."
+    },
+    schemaType: 'moderne',
+    narration: {
+      nar_a1: "Un aviateur tombe en panne dans le désert du Sahara et rencontre un mystérieux petit garçon venu de l'astéroïde B-612. Le Petit Prince lui raconte ses voyages : planètes absurdes, renard sage, rose capricieuse.",
+      nar_a2: "Le Petit Prince comprend qu'il aime sa rose et doit rentrer. Il se laisse mordre par le serpent pour retourner sur sa planète. L'aviateur, désespéré, ne peut l'en empêcher.",
+      nar_a3: "Le corps du Petit Prince disparaît — il est reparti parmi les étoiles. L'aviateur rentre transformé : il ne regarde plus les étoiles de la même façon.",
+      nar_f1: "Un aviateur tombe en panne dans le désert du Sahara. Seul et démuni. Sur son astéroïde, le Petit Prince vit seul avec sa rose capricieuse qu'il aime mais qui l'épuise.",
+      nar_f2: "Le Petit Prince apparaît. Il raconte ses voyages : les planètes absurdes, son arrivée sur Terre. Le renard lui révèle que sa rose est unique parce qu'il a pris soin d'elle — et qu'il l'a abandonnée.",
+      nar_f3: "Le Petit Prince décide de rentrer sur B-612. Mais cela exige qu'il meure sur Terre. L'aviateur tente de l'en dissuader. C'est le point de non-retour.",
+      nar_f4: "Dernière nuit ensemble. Le Petit Prince se laisse mordre par le serpent au lever du soleil. Son corps s'effondre, puis disparaît.",
+      nar_f5: "L'aviateur répare son avion et repart. Il ne sait pas si le Petit Prince est vivant sur B-612 mais il regarde les étoiles avec tendresse et espoir.",
+      nar_m1: "L'aviateur est tombé en panne dans le désert du Sahara. Il est seul, loin de tout secours, et doit réparer son moteur. Le Petit Prince, lui, vit seul sur son astéroïde B-612 avec sa rose capricieuse et ses trois volcans.",
+      nar_m2: "Au lever du jour, une petite voix réveille l'aviateur : un étrange petit garçon lui demande de dessiner un mouton. Cette rencontre improbable au milieu du désert va tout changer.",
+      nar_m3: "Le Petit Prince raconte ses voyages : les six planètes absurdes peuplées d'adultes ridicules, sa rencontre avec le serpent, son arrivée sur Terre. L'aviateur découvre peu à peu qui est ce mystérieux enfant. Le renard révèle le secret de l'amitié : apprivoiser.",
+      nar_m4: "Le Petit Prince décide de rentrer chez lui pour retrouver sa rose. Mais rentrer signifie mourir sur Terre — le serpent doit le mordre. L'aviateur essaie de le retenir, mais comprend qu'il ne peut pas s'y opposer.",
+      nar_m5: "La nuit, loin de l'aviateur, le Petit Prince se laisse mordre par le serpent et s'effondre doucement dans le sable.",
+      nar_m6: "L'aviateur réussit à réparer son avion et peut repartir. Mais le corps du Petit Prince a disparu — il est retourné sur sa planète, parmi les étoiles.",
+      nar_m7: "L'aviateur quitte le désert. Le conflit central — peut-on sauver ce que l'on aime ? — reste ouvert : il ne sait pas si le Petit Prince est vivant sur B-612.",
+      nar_m8: "L'aviateur ne regarde plus les étoiles de la même façon. L'une d'elles renferme peut-être le rire du Petit Prince. La perte et l'amour transforment le monde ordinaire."
+    }
+  },
+  {
+    id: 'liv_tom_sawyer_002',
+    titre: 'Les Aventures de Tom Sawyer',
+    auteur: 'Mark Twain',
+    genre: 'Roman d\'aventure',
+    pages: '274',
+    annee: 'Vers 1840, Missouri, États-Unis',
+    dateCreation: '25/02/2026',
+    tsCreation: 1740441600000,
+
+    contexte: "Le livre est publié en 1876, mais l'histoire se passe vers 1840 dans le Missouri, au bord du Mississippi. C'est l'Amérique d'avant la guerre de Sécession (1861-1865) — une société encore rurale, fondée sur l'esclavage dans le Sud, traversée par des tensions sociales profondes.\n\nMark Twain écrit en 1876, quelques années après la guerre civile et l'abolition de l'esclavage. Les États-Unis sont en pleine reconstruction (Reconstruction Era). C'est aussi l'époque de la conquête de l'Ouest, du chemin de fer, de l'industrialisation rapide. En plongeant dans son enfance au bord du Mississippi, Twain célèbre et critique à la fois l'Amérique de sa jeunesse : sa liberté, mais aussi ses hypocrisies (religion, respectabilité, justice expéditive).\n\nCulturellement, 1876 est l'année du centenaire américain. Le pays cherche ses mythes fondateurs — Tom Sawyer en devient l'un d'eux : l'enfant libre et malin, héros typiquement américain.",
+
+    auteurVie: "Samuel Langhorne Clemens, dit Mark Twain, naît en 1835 dans le Missouri. Quand il écrit Les Aventures de Tom Sawyer (1874-1876), il a environ 40 ans. Sa vie est alors à un tournant heureux.\n\nFinancièrement, il est à l'aise : son précédent livre, Les Innocents à l'étranger (1869), est un énorme succès. Il vit dans une belle maison à Hartford, Connecticut, avec sa femme Olivia Langdon (épousée en 1870) et leurs enfants. Cette sécurité familiale lui permet de se replonger avec nostalgie dans l'enfance au bord du Mississippi.\n\nTom Sawyer est largement autobiographique : le personnage est inspiré de Twain lui-même enfant, Becky Thatcher de sa première fiancée, et la ville de Saint Petersburg de Hannibal, Missouri, où il a grandi. Cette période est l'une des plus créatives de sa vie — il écrira ensuite Huckleberry Finn (1884), son chef-d'œuvre.",
+
+    trajectoire: "Tom Sawyer est le quatrième livre de Mark Twain, mais le premier grand roman américain pour la jeunesse. C'est une rupture dans sa carrière : il abandonne le récit de voyage satirique (Les Innocents à l'étranger, Voyages en Europe) pour la fiction romanesque ancrée dans son enfance.\n\nCe livre est le premier d'une série : Huckleberry Finn (1884) en est la suite directe, considérée comme le chef-d'œuvre de Twain et l'un des plus grands romans américains. Tom Sawyer permet à Twain d'inventer son univers fictif du Mississippi, qu'il explorera toute sa vie. Twain lui-même disait que Tom Sawyer était « surtout un livre pour les enfants » mais Huckleberry Finn « pour les adultes ».",
+
+    personnages: [
+      { id:'ent_ts_01', nom:'Tom Sawyer', couleur:'#2E5FA3',
+        notes:"Personnage principal. Garçon espiègle et imaginatif d'environ 12 ans. Vit chez sa tante Polly. Souvent en retenue mais très courageux quand c'est nécessaire. Amoureux de Becky Thatcher." },
+      { id:'ent_ts_02', nom:'Huckleberry Finn', couleur:'#2E7D32',
+        notes:"Meilleur ami de Tom. Fils d'un ivrogne, il vit en liberté sans aller à l'école. Les autres enfants l'envient. Loyal et courageux malgré son apparence négligée." },
+      { id:'ent_ts_03', nom:'Tante Polly', couleur:'#c0392b',
+        notes:"Tante de Tom qui l'élève avec amour mais fermeté. Souvent exaspérée par ses bêtises mais l'aime profondément. Elle représente la figure maternelle." },
+      { id:'ent_ts_04', nom:'Becky Thatcher', couleur:'#E65100',
+        notes:"Fille du juge Thatcher dont Tom est amoureux. Jolie et douce. Tom et Becky se perdent ensemble dans la grotte de McDougal, moment le plus dramatique du livre." },
+      { id:'ent_ts_05', nom:'Joe l\'Indien', couleur:'#6A1B9A',
+        notes:"Grand méchant du roman. Meurtrier cruel et vengeur. Tom l'a vu commettre un crime dans le cimetière. Il représente le danger tout au long du roman." }
+    ],
+    matrice: {
+      'ent_ts_01__ent_ts_02': 'Meilleur(e) ami(e)',
+      'ent_ts_02__ent_ts_01': 'Meilleur(e) ami(e)',
+      'ent_ts_01__ent_ts_03': 'Enfant',
+      'ent_ts_03__ent_ts_01': 'Protecteur/trice',
+      'ent_ts_01__ent_ts_04': 'Amoureux/se',
+      'ent_ts_04__ent_ts_01': 'Ami(e)',
+      'ent_ts_01__ent_ts_05': 'Victime',
+      'ent_ts_05__ent_ts_01': 'Antagoniste',
+      'ent_ts_02__ent_ts_03': '—',
+      'ent_ts_02__ent_ts_04': '—',
+      'ent_ts_02__ent_ts_05': 'Victime',
+      'ent_ts_03__ent_ts_04': '—',
+      'ent_ts_03__ent_ts_05': '—',
+      'ent_ts_04__ent_ts_05': '—'
+    },
+    lieux: [
+      { id:'ent_ts_l1', nom:'Saint Petersburg', couleur:'#2E5FA3',
+        notes:"Village fictif au bord du Mississippi où se déroule l'essentiel de l'histoire. Inspiré de Hannibal, la ville natale de Mark Twain. Espace social : représente la société américaine avec ses règles et hypocrisies." },
+      { id:'ent_ts_l2', nom:"L'île de Jackson", couleur:'#2E7D32',
+        notes:"Île sur le Mississippi où Tom, Huck et Joe Harper s'enfuient pour jouer aux pirates. Tout le village les croit noyés. Espace ouvert, symbole de liberté absolue hors des règles des adultes." },
+      { id:'ent_ts_l3', nom:'La grotte de McDougal', couleur:'#c0392b',
+        notes:"Grotte immense et labyrinthique près du village. Tom et Becky s'y perdent pendant plusieurs jours. Joe l'Indien y est caché. Espace fermé, oppressant, dangereux. Le moment le plus angoissant du roman." }
+    ],
+    temps: "L'histoire se passe vers 1840 dans le Missouri, au bord du Mississippi.\n\nORDRE : Narration chronologique, sans flash-back. Les événements s'enchaînent dans l'ordre : la clôture, le cimetière, l'île des pirates, le procès, la grotte, le trésor.\n\nDURÉE : Plusieurs semaines, peut-être quelques mois. La scène dans la grotte est la plus dilatée (plusieurs jours racontés heure par heure). La fugue sur l'île dure environ une semaine. La découverte du trésor à la fin est racontée rapidement.\n\nFRÉQUENCE : Les bêtises de Tom sont racontées de façon itérative au début (« il faisait souvent… »). Les moments dramatiques (le meurtre au cimetière, la grotte) sont des scènes uniques racontées au présent.",
+    mots: "── Mot inconnu ──\nEspiègle : qui aime faire des farces, malicieux mais sans méchanceté.\n\n── Mot inconnu ──\nLabyrinthique : comme un labyrinthe, avec des couloirs dans tous les sens où on se perd facilement.\n\n« Tom dit à lui-même que la vie n'était décidément pas si mauvaise. »\n(après avoir convaincu ses amis de badigeonner la clôture à sa place)",
+    redacType: 'argument',
+    redac: {
+      redac_a1: "Dans le roman Les Aventures de Tom Sawyer de Mark Twain, le personnage principal est un garçon espiègle qui vit au bord du Mississippi au XIXe siècle. On peut se demander si Tom Sawyer est vraiment un héros malgré ses nombreuses bêtises. Je vais montrer qu'il est bien un héros, mais un héros de son âge.",
+      redac_a2: "Tout d'abord, Tom Sawyer fait preuve d'un courage exceptionnel dans les moments importants. Quand il est perdu dans la grotte de McDougal avec Becky Thatcher, il ne panique pas et continue de chercher une sortie pour eux deux. Il affronte sa peur du méchant Joe l'Indien pour sauver son amie. Ce courage face au danger prouve qu'il n'est pas seulement un farceur.",
+      redac_a3: "De plus, Tom a un sens de la justice très fort pour son âge. Quand il voit Joe l'Indien commettre un meurtre dans le cimetière, il prend le risque de témoigner au procès malgré sa peur. Il aurait pu se taire pour se protéger, mais il choisit de dire la vérité. Cela montre qu'il a de vraies valeurs morales.",
+      redac_a4: "En conclusion, Tom Sawyer est bien un héros, différent des héros adultes des grands romans. Ses bêtises font partie de sa personnalité d'enfant libre et imaginatif, mais quand la situation l'exige, il montre un vrai courage et un sens du bien et du mal. Ce roman nous rappelle que l'enfance est une période précieuse qu'il faut savoir préserver."
+    },
+    comprehension: "Roman très amusant et plein d'aventures. Tom est attachant car il fait des bêtises mais est courageux quand c'est vraiment important. La scène dans la grotte est la plus impressionnante. Message : l'enfance est une période de liberté et d'imagination précieuse. Mark Twain se moque gentiment des adultes et de leurs règles. Scène préférée : la clôture où Tom convainc ses amis de faire son travail à sa place.",
+    dissertation: {
+      sujet: "Comment Tom Sawyer montre-t-il que l'enfance est un temps de liberté et de courage ?",
+      intro: "Les Aventures de Tom Sawyer, écrit par Mark Twain vers 1876, raconte la vie d'un garçon espiègle de 12 ans dans un village du bord du Mississippi. Tom est souvent en retenue et fait des bêtises, mais il se révèle capable d'un grand courage. Ce roman nous pose la question suivante : en quoi Tom Sawyer est-il un héros de l'enfance ?",
+      arg1: "Tout d'abord, Tom est un enfant plein d'imagination et de liberté. Par exemple, quand sa tante lui demande de badigeonner une clôture, il réussit à convaincre ses amis que c'est un privilège et les fait travailler à sa place. Cet épisode célèbre montre que Tom transforme chaque contrainte en aventure grâce à son imagination.",
+      arg2: "Ensuite, Tom fait preuve d'un vrai courage quand les situations deviennent sérieuses. En effet, lorsqu'il est perdu avec Becky dans la grotte de McDougal, pendant plusieurs jours dans le noir, il garde son calme et explore les couloirs pour trouver une sortie. Il protège Becky et finit par sauver leur vie.",
+      arg3: "De plus, Tom n'hésite pas à dire la vérité quand c'est nécessaire, même si c'est difficile. Par exemple, lors du procès du docteur Robinson, Tom témoigne contre Joe l'Indien pour sauver un innocent accusé à tort, malgré la peur que lui inspire ce meurtrier dangereux.",
+      conclu: "Pour conclure, Tom Sawyer est un héros de l'enfance parce qu'il allie l'imagination, la liberté et le courage. Mark Twain nous montre que l'enfance est une période précieuse où tout est possible, et que même un petit garçon turbulent peut devenir un véritable héros lorsque les circonstances l'exigent."
+    },
+    schemaType: 'freytag',
+    narration: {
+      nar_a1: "Tom Sawyer vit à Saint Petersburg avec sa tante Polly. Garçon espiègle et imaginatif, il fait des bêtises, évite l'école et rêve d'aventures. Une nuit, il assiste avec Huck au meurtre du docteur Robinson par Joe l'Indien — un secret qui va l'hanter.",
+      nar_a2: "Un innocent est accusé du meurtre. Tom, rongé par la culpabilité, finit par témoigner contre Joe l'Indien malgré sa peur. Joe s'enfuit. Plus tard, Tom et Becky se perdent dans la grotte de McDougal où se cache Joe — ils survivent mais à grand-peine.",
+      nar_a3: "Tom et Becky sont sauvés. Joe l'Indien meurt seul dans la grotte. Tom et Huck découvrent son trésor caché. Tom devient le héros du village. Huck est adopté. L'enfance libre et dangereuse laisse place à une vie plus rangée — mais Tom a prouvé ce qu'il valait vraiment.",
+      nar_f1: "Tom Sawyer vit à Saint Petersburg avec sa tante Polly. C'est un garçon espiègle qui cherche à échapper aux corvées et à l'école. Il est amoureux de Becky Thatcher, la fille du juge. Son meilleur ami est Huckleberry Finn, l'enfant libre du village.",
+      nar_f2: "Une nuit, Tom et Huck vont au cimetière et assistent sans le vouloir au meurtre du docteur Robinson par Joe l'Indien. Ils jurent de se taire par peur. La tension monte : un innocent (Muff Potter) est accusé. Tom et Huck fuient sur l'île de Jackson, crus morts par le village. Tout le monde les pleure.",
+      nar_f3: "Lors du procès de Muff Potter, Tom prend la parole et témoigne contre Joe l'Indien. Joe s'enfuit par la fenêtre. Tom a sauvé un innocent mais se sait désormais en danger. Plus tard, perdu dans la grotte avec Becky pendant des jours, il aperçoit Joe l'Indien dans les profondeurs.",
+      nar_f4: "Tom trouve une sortie de la grotte et sauve Becky. Le village les accueille en héros. Joe l'Indien, lui, est retrouvé mort dans la grotte, murée par les habitants. Le danger est écarté.",
+      nar_f5: "Tom et Huck retournent dans la grotte et découvrent le trésor caché de Joe l'Indien — une fortune en pièces d'or. Les deux garçons deviennent riches. Huck est adopté par la veuve Douglas. Tom est le héros du village.",
+      nar_m1: "Tom Sawyer vit à Saint Petersburg, au bord du Mississippi. C'est un garçon espiègle et imaginatif, toujours puni par sa tante Polly mais plein d'énergie. La vie s'écoule tranquillement, rythmée par l'école et les bêtises.",
+      nar_m2: "Une nuit, Tom et Huck vont au cimetière avec un chat mort (remède de bonne femme). Ils assistent sans le vouloir au meurtre du docteur Robinson par Joe l'Indien. Tout bascule.",
+      nar_m3: "Un innocent (Muff Potter) est accusé du meurtre. Tom est rongé par la culpabilité. Il fait des bêtises pour fuir (la clôture, l'île des pirates). Le secret le ronge de l'intérieur. La tension monte à chaque apparition de Joe l'Indien.",
+      nar_m4: "Le procès de Muff Potter commence. Tom doit choisir : se taire pour se protéger, ou témoigner et risquer la vengeance de Joe l'Indien. C'est le choix le plus difficile de sa vie.",
+      nar_m5: "Tom témoigne au procès et accuse Joe l'Indien devant tout le village. Joe s'enfuit. Tom a sauvé un innocent — mais il est maintenant une cible.",
+      nar_m6: "Tom et Becky se perdent dans la grotte de McDougal pendant plusieurs jours. Joe l'Indien s'y cache aussi. Tom erre dans le noir, protège Becky, affronte sa peur.",
+      nar_m7: "Tom trouve une sortie et sauve Becky. Joe l'Indien est retrouvé mort dans la grotte murée. Le danger est définitivement écarté.",
+      nar_m8: "Tom et Huck découvrent le trésor de Joe l'Indien. Ils deviennent riches. Huck est adopté. Tom est le héros de Saint Petersburg. L'enfance sauvage se termine, mais Tom a grandi en courage et en justice."
+    }
+  },
+  {
+    id: 'liv_alice_merveilles_003',
+    titre: 'Alice au Pays des Merveilles',
+    auteur: 'Lewis Carroll',
+    genre: 'Fantastique / Conte',
+    pages: '182',
+    annee: 'Angleterre victorienne, 1865',
+    dateCreation: '15/03/2026',
+    tsCreation: 1742000000000,
+
+    contexte: "Alice au Pays des Merveilles est publié en 1865, en pleine époque victorienne (règne de la reine Victoria, 1837-1901). L'Angleterre est alors la première puissance mondiale : son empire colonial couvre un quart de la planète, sa révolution industrielle transforme la société, et Londres est la ville la plus riche et la plus peuplée du monde.\n\nMais cette société victorienne est aussi très rigide : codes stricts de bienséance, hiérarchies sociales inflexibles, éducation très sévère pour les enfants — surtout les filles, qui doivent être dociles et silencieuses. Alice est précisément une réponse à ces codes : une petite fille qui pose des questions, qui conteste l'autorité absurde, qui ose dire que la Reine se trompe.\n\nCulturellement, 1865 voit aussi la fin de la guerre civile américaine. En Grande-Bretagne, c'est l'âge d'or de la littérature pour enfants. Carroll invente un nouveau genre : le nonsense, la littérature de l'absurde volontaire, où la logique habituelle est renversée pour mieux la questionner.",
+
+    auteurVie: "Lewis Carroll est le pseudonyme de Charles Lutwidge Dodgson, né en 1832. Quand il publie Alice en 1865, il a 33 ans. C'est un mathématicien et logicien reconnu à l'Université d'Oxford, où il enseigne depuis 1855. Il est également diacre de l'Église anglicane.\n\nSur le plan personnel, Carroll est un homme timide et solitaire, qui bégaie en présence des adultes mais se sent parfaitement à l'aise avec les enfants. Il est très ami avec la famille Liddell — le doyen de son collège — et surtout avec leurs trois filles. Alice Liddell, 10 ans, est son amie et son inspiration directe pour le personnage.\n\nLe livre naît d'une histoire racontée lors d'une promenade en barque le 4 juillet 1862. Alice Liddell lui demande de l'écrire. Carroll met trois ans à le rédiger et illustrer. Sa santé est bonne à cette période ; c'est une époque créative et heureuse de sa vie.",
+
+    trajectoire: "Alice au Pays des Merveilles est le premier roman de Lewis Carroll — avant lui, il n'avait publié que des articles mathématiques et quelques poèmes comiques. Ce livre le transforme immédiatement en célébrité.\n\nLa suite, De l'autre côté du miroir (1871), est son second grand roman avec Alice et est considérée par certains comme encore plus accomplie. Carroll écrira d'autres œuvres (La Chasse au Snark, Sylvie et Bruno) mais aucune n'atteindra la renommée d'Alice.\n\nAujourd'hui, Alice au Pays des Merveilles est l'un des textes les plus cités, adaptés et analysés de la littérature mondiale. Il a influencé le surréalisme, la psychanalyse, l'informatique (l'univers de Lewis Carroll a inspiré des logiciens comme Alan Turing) et la culture populaire du XXe siècle.",
+
+    personnages: [
+      { id:'ent_al_01', nom:'Alice', couleur:'#2E5FA3',
+        notes:"Personnage principal. Petite fille curieuse et courageuse d'environ 7 ans. Elle tombe dans un terrier de lapin et découvre un monde impossible. Elle garde son bon sens face à l'absurdité du Pays des Merveilles." },
+      { id:'ent_al_02', nom:'Le Lapin Blanc', couleur:'#2E7D32',
+        notes:"Lapin en habit qui regarde sa montre en criant Je suis en retard ! C'est lui qu'Alice suit. Il représente le temps qui passe et l'urgence. Il ouvre la porte sur le monde de l'absurde." },
+      { id:'ent_al_03', nom:'La Reine de Coeur', couleur:'#c0392b',
+        notes:"Reine tyrannique qui crie Qu'on lui coupe la tête ! Elle représente le pouvoir absurde et injuste. Alice finit par ne plus en avoir peur et lui tient tête." },
+      { id:'ent_al_04', nom:'Le Chapelier Fou', couleur:'#E65100',
+        notes:"Personnage excentrique bloqué dans une fête du thé interminable. Dit des choses sans sens qui cachent parfois une vérité. Un des personnages les plus célèbres." },
+      { id:'ent_al_05', nom:'Le Chat du Cheshire', couleur:'#6A1B9A',
+        notes:"Chat qui peut disparaître en ne laissant que son sourire. Donne des conseils énigmatiques. Sa phrase : Nous sommes tous fous ici. Guide ambigu entre sagesse et folie." }
+    ],
+    matrice: {
+      'ent_al_01__ent_al_02': 'Allié(e)',
+      'ent_al_02__ent_al_01': 'Indifférent',
+      'ent_al_01__ent_al_03': 'Victime',
+      'ent_al_03__ent_al_01': 'Antagoniste',
+      'ent_al_01__ent_al_04': 'Témoin',
+      'ent_al_04__ent_al_01': 'Repoussoir',
+      'ent_al_01__ent_al_05': 'Élève',
+      'ent_al_05__ent_al_01': 'Mentor',
+      'ent_al_02__ent_al_03': 'Protégé(e)',
+      'ent_al_03__ent_al_02': 'Protecteur/trice',
+      'ent_al_02__ent_al_04': '—',
+      'ent_al_02__ent_al_05': '—',
+      'ent_al_03__ent_al_04': '—',
+      'ent_al_03__ent_al_05': '—',
+      'ent_al_04__ent_al_05': '—'
+    },
+    lieux: [
+      { id:'ent_al_l1', nom:'Le terrier du lapin', couleur:'#2E5FA3',
+        notes:"Entrée dans le Pays des Merveilles. Alice tombe très longtemps avant d'arriver dans un couloir avec des portes. Elle doit rapetisser ou grandir pour passer. Espace symbolique : le passage de l'enfance consciente vers l'inconscient, le rêve. Espace fermé, oppressant." },
+      { id:'ent_al_l2', nom:"La maison du Chapelier", couleur:'#2E7D32',
+        notes:"Lieu de la fête du thé interminable. Le Chapelier, le Lièvre de Mars et le Loir sont bloqués là pour toujours à cause d'une dispute avec le Temps. Espace fermé, répétitif, symbole d'une vie sans progrès ni sens." },
+      { id:'ent_al_l3', nom:'Le palais de la Reine', couleur:'#c0392b',
+        notes:"Château où la Reine joue au croquet avec des flamants roses comme maillets et des hérissons comme boules. Tout est absurde. C'est là que se passe le procès final. Espace du pouvoir injuste et ridicule." }
+    ],
+    temps: "L'histoire se passe en Angleterre victorienne vers 1865. La structure temporelle est celle d'un rêve.\n\nORDRE : La structure est délibérément non-chronologique et illogique — comme un rêve. Les aventures s'enchaînent sans cause logique. Carroll subvertit volontairement l'ordre narratif pour montrer l'absurdité du monde.\n\nDURÉE : On ne sait pas combien de temps dure le rêve d'Alice. Certaines scènes semblent très longues (la fête du thé, le procès) tandis que d'autres passent en un instant (les transformations de taille). C'est l'effet du rêve : le temps y est élastique.\n\nFRÉQUENCE : Plusieurs événements sont répétitifs — Alice grandit et rapetisse à plusieurs reprises (effet itératif symbolisant son incapacité à s'adapter). La Reine crie «Qu'on lui coupe la tête !» de manière répétitive (obsession, absurdité du pouvoir).",
+    mots: "── Mot inconnu ──\nAbsurde : qui n'a aucun sens logique, complètement illogique.\n\n── Mot inconnu ──\nExcentrique : quelqu'un qui se comporte de façon bizarre et originale.\n\n── Mot inconnu ──\nNonsense : genre littéraire anglais — texte volontairement illogique pour faire rire et réfléchir.\n\n« Nous sommes tous fous ici. Je suis fou. Tu es folle. »\n(Le Chat du Cheshire)\n\n« Il est impossible de croire à des choses impossibles. »\n(La Reine de Coeur)",
+    redacType: 'recit',
+    redac: {
+      redac_r1: "Par un après-midi d'été en Angleterre, Alice est assise sur la berge avec sa soeur qui lit un livre sans images. Alice s'ennuie et commence à somnoler quand elle aperçoit quelque chose d'extraordinaire : un lapin blanc en habit qui court en regardant sa montre et en criant qu'il est en retard.",
+      redac_r2: "Prise de curiosité, Alice se lève d'un bond et suit le lapin jusqu'à son terrier. Sans réfléchir, elle saute dans le trou et tombe, tombe, tombe très longtemps dans un puits étrange rempli d'étagères et d'objets bizarres. Elle atterrit finalement dans un couloir rempli de petites portes fermées.",
+      redac_r3: "Alice vit alors une série d'aventures impossibles. Elle grandit et rapetisse en mangeant des gâteaux magiques. Elle rencontre des personnages tous plus fous les uns que les autres : le Chapelier Fou bloqué dans une fête du thé éternelle, la Chenille bleue qui fume un narghilé et lui pose des questions philosophiques, le Chat du Cheshire qui disparaît en ne laissant que son sourire, et la terrifiante Reine de Coeur qui veut couper la tête de tout le monde.",
+      redac_r4: "Lors d'un procès absurde organisé par la Reine, Alice perd patience. Elle se met à grandir très vite jusqu'à devenir immense et n'a plus peur de personne. Elle crie à la Reine et à tous ses sujets que ce ne sont que des cartes à jouer et qu'ils n'ont aucun pouvoir sur elle.",
+      redac_r5: "Soudain, Alice se réveille sur la berge. Sa soeur l'a secouée doucement. Elle réalise qu'elle a rêvé tout cela. Elle rentre chez elle pour le thé en pensant à ses aventures extraordinaires. Mais quelque chose a changé : Alice a appris à ne pas se laisser intimider par les gens qui font semblant d'avoir de l'autorité."
+    },
+    comprehension: "Livre très bizarre mais fascinant. On ne comprend pas tout mais c'est fait exprès. Le Pays des Merveilles représente un monde où les règles des adultes n'existent plus. Alice doit se débrouiller seule dans un monde sans sens. Message caché : le monde des adultes est aussi absurde, on y est juste habitué. Personnage préféré : le Chat du Cheshire, mystérieux et ses conseils sont étranges mais vrais.",
+    dissertation: {
+      sujet: "Comment Alice reste-t-elle courageuse face à l'absurdité du Pays des Merveilles ?",
+      intro: "Alice au Pays des Merveilles, écrit par Lewis Carroll en 1865, raconte l'aventure d'une petite fille de 7 ans qui tombe dans un terrier de lapin et découvre un monde complètement illogique. Dans ce monde absurde où rien ne fonctionne normalement, Alice fait face à des situations impossibles. On peut se demander comment une si petite fille réussit à rester courageuse face à tant d'absurdité.",
+      arg1: "Tout d'abord, Alice garde son bon sens et ose dire ce qu'elle pense, même quand tout le monde autour d'elle est fou. Par exemple, face à la Reine de Coeur qui crie constamment des ordres ridicules, Alice finit par lui dire qu'elle n'a pas peur d'elle. Elle montre ainsi un courage rare pour une enfant de 7 ans.",
+      arg2: "Ensuite, Alice n'abandonne pas malgré les situations impossibles qu'elle rencontre. En effet, quand elle rapetisse ou grandit sans le vouloir, quand les portes sont trop petites ou trop grandes, elle cherche toujours une solution. Cette persévérance montre qu'elle est déterminée à rentrer chez elle quoi qu'il arrive.",
+      arg3: "",
+      conclu: "Pour conclure, Alice est un personnage courageux parce qu'elle garde sa raison et sa volonté dans un monde qui n'a aucun sens. Lewis Carroll nous montre qu'un enfant peut faire face à l'inconnu et à l'absurde en restant lui-même. Ce livre nous rappelle que le courage, ce n'est pas l'absence de peur, mais la capacité à continuer malgré elle."
+    },
+    schemaType: 'aristote',
+    narration: {
+      nar_a1: "Alice s'ennuie sur la berge avec sa sœur qui lit. Elle est en Angleterre, par un après-midi d'été calme. Tout est ordinaire — jusqu'à ce qu'elle aperçoive un lapin blanc en habit qui court en regardant sa montre.",
+      nar_a2: "Alice suit le lapin dans son terrier et tombe dans un monde impossible. Elle ne comprend pas les règles, grandit et rapetisse, rencontre des personnages absurdes. Elle cherche à rentrer chez elle mais chaque aventure l'en éloigne. La Reine de Cœur la menace. Le monde entier semble vouloir l'intimider.",
+      nar_a3: "Au procès final, Alice prend conscience qu'elle n'a plus peur et que les habitants du Pays des Merveilles ne sont que des cartes à jouer. Elle se réveille sur la berge — c'était un rêve. Mais Alice a changé : elle sait maintenant qu'on peut résister à l'absurdité et à l'autorité injuste.",
+      nar_f1: "Alice s'ennuie sur une berge en Angleterre par un bel après-midi d'été. Elle est une petite fille sage et curieuse. Son monde est tranquille, ordonné, prévisible.",
+      nar_f2: "Alice tombe dans le terrier du lapin et atterrit dans un monde impossible. Elle grandit, rapetisse, se retrouve dans une mare de larmes, rencontre la Chenille philosophe, le Chapelier Fou, le Chat du Cheshire. Chaque rencontre est plus déstabilisante que la précédente. La menace de la Reine de Cœur plane sur tout.",
+      nar_f3: "Au palais de la Reine, lors d'une partie de croquet absurde puis d'un procès insensé, la Reine réclame la tête d'Alice. Alice, qui a grandi soudainement, perd patience et crie que tout le monde ici n'est que des cartes à jouer. C'est le moment de rupture totale.",
+      nar_f4: "Les cartes s'envolent et attaquent Alice de toutes parts. Le Pays des Merveilles se désintègre dans le chaos qu'elle a déclenché.",
+      nar_f5: "Alice se réveille sur la berge. Sa sœur la tient. C'était un rêve. Elle rentre chez elle pour le thé, transformée : moins intimidée par l'autorité, plus sûre d'elle-même.",
+      nar_m1: "Alice s'ennuie sur une berge en Angleterre. Sa sœur lit un livre sans images. Tout est calme, ordinaire, un peu ennuyeux.",
+      nar_m2: "Un lapin blanc en habit court en regardant sa montre et crie qu'il est en retard. Alice, incapable de résister à sa curiosité, le suit dans son terrier et tombe.",
+      nar_m3: "Alice atterrit dans le Pays des Merveilles. Elle grandit et rapetisse en mangeant des gâteaux magiques. Elle rencontre la Chenille philosophe, le Chapelier Fou bloqué dans sa fête du thé, le Chat du Cheshire qui disparaît en souriant.",
+      nar_m4: "Alice est convoquée devant la Reine de Cœur pour un procès absurde. Elle doit choisir : se soumettre aux règles folles ou résister au risque de perdre la tête.",
+      nar_m5: "Alice grandit jusqu'à devenir immense, perd patience et crie que la Reine et ses sujets ne sont que des cartes à jouer. Elle brise l'autorité absurde.",
+      nar_m6: "Les cartes s'envolent et attaquent Alice de toutes parts. Le Pays des Merveilles se désintègre dans le chaos.",
+      nar_m7: "Alice se réveille sur la berge. Sa sœur la tient. C'était un rêve. Le cauchemar est terminé.",
+      nar_m8: "Alice rentre chez elle pour le thé. Elle a changé : elle n'a plus peur de l'autorité injuste. Le Pays des Merveilles lui a appris à rester elle-même face à l'absurde."
+    }
+  }
+];
+
+function chargerBiblio() {
+  try {
+    const raw = localStorage.getItem('axel_biblio');
+    if (raw) {
+      BIBLIO = JSON.parse(raw);
+    } else {
+      // Premier lancement : charger les livres de démonstration
+      const oldData = localStorage.getItem('axel_guide_v5');
+      if (oldData) {
+        migrerAncienFormat(JSON.parse(oldData));
+      } else {
+        BIBLIO.livres = JSON.parse(JSON.stringify(LIVRES_DEMO));
+        sauvegarderBiblio();
+      }
+    }
+  } catch(e) { console.error(e); }
+}
+
+function migrerAncienFormat(old) {
+  if (!old) return;
+  const livre = creerNouveauLivreObj(
+    old.livre?.titre || 'Livre importé',
+    old.livre?.auteur || '',
+    old.livre?.genre || ''
+  );
+  livre.pages         = old.livre?.pages  || '';
+  livre.annee         = old.livre?.annee  || '';
+  livre.personnages   = old.personnages   || [];
+  livre.lieux         = old.lieux         || [];
+  livre.temps         = old.temps         || '';
+  livre.mots          = old.mots          || '';
+  livre.comprehension = old.comprehension || '';
+  BIBLIO.livres.push(livre);
+  sauvegarderBiblio();
+  showToast('Données précédentes importées !', 'ok');
+}
+
+// ════════════════════════════════════════════════════════
+// BIBLIOTHÈQUE
+// ════════════════════════════════════════════════════════
+function renderBiblio() {
+  const list = document.getElementById('biblio-list');
+  const vide = document.getElementById('biblio-vide');
+  list.innerHTML = '';
+  if (!BIBLIO.livres.length) { vide.style.display = 'block'; return; }
+  vide.style.display = 'none';
+  // Tri par date décroissante
+  const sorted = [...BIBLIO.livres].sort((a,b) => b.tsCreation - a.tsCreation);
+  sorted.forEach(livre => {
+    const div = document.createElement('div');
+    div.className = 'livre-card';
+    div.innerHTML =
+      '<div class="lc-body" style="flex:1;cursor:pointer;">' +
+        '<div class="lc-titre">' + esc(livre.titre || 'Sans titre') + '</div>' +
+        '<div class="lc-auteur">' + esc(livre.auteur || 'Auteur inconnu') + '</div>' +
+        '<div class="lc-meta">' +
+          (livre.genre ? '<span>' + esc(livre.genre) + '</span>' : '') +
+          '<span>📅 ' + esc(livre.dateCreation) + '</span>' +
+          '<span>' + countNotes(livre) + ' note' + (countNotes(livre)>1?'s':'') + '</span>' +
+        '</div>' +
+      '</div>' +
+      '<button class="lc-del" style="background:none;border:none;color:#ddd;font-size:1.1rem;cursor:pointer;padding:4px 8px;flex-shrink:0;align-self:center;">🗑️</button>';
+    div.style.display = 'flex';
+    div.style.alignItems = 'stretch';
+    // Zone cliquable pour ouvrir
+    const body = div.querySelector('.lc-body');
+    body.onclick = () => ouvrirLivre(livre.id);
+    // Bouton supprimer
+    const btnDel = div.querySelector('.lc-del');
+    btnDel.onclick = (e) => { e.stopPropagation(); supprimerLivre(livre.id); };
+    list.appendChild(div);
+  });
+}
+
+function countNotes(livre) {
+  return (livre.personnages?.length||0) + (livre.lieux?.length||0) +
+    (livre.temps?1:0) + (livre.mots?1:0) + (livre.comprehension?1:0);
+}
+
+// ════════════════════════════════════════════════════════
+// CRÉATION D'UN LIVRE
+// ════════════════════════════════════════════════════════
+function creerNouveauLivreObj(titre, auteur, genre) {
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('fr-FR', {day:'2-digit',month:'2-digit',year:'numeric'});
+  return {
+    id:            'liv_' + Date.now().toString(36) + Math.random().toString(36).slice(2,5),
+    titre:         titre  || '',
+    auteur:        auteur || '',
+    genre:         genre  || '',
+    pages:         '',
+    annee:         '',
+    dateCreation:  dateStr,
+    tsCreation:    now.getTime(),
+    personnages:   [],
+    lieux:         [],
+    temps:         '',
+    mots:          '',
+    comprehension: '',
+    contexte:      '',
+    auteurVie:     '',
+    trajectoire:   '',
+    matrice:       {},
+    narration:     {},
+    schemaType:    'aristote'
+  };
+}
+
+function ouvrirModalNouveauLivre() {
+  document.getElementById('nl-titre').value  = '';
+  document.getElementById('nl-auteur').value = '';
+  document.getElementById('nl-genre').value  = '';
+  document.getElementById('modal-livre-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('nl-titre').focus(), 100);
+}
+function fermerModalLivre() {
+  document.getElementById('modal-livre-overlay').classList.remove('open');
+}
+function creerLivre() {
+  const titre  = document.getElementById('nl-titre').value.trim();
+  const auteur = document.getElementById('nl-auteur').value.trim();
+  const genre  = document.getElementById('nl-genre').value.trim();
+  if (!titre) { showToast('Donne un titre au livre', 'warn'); return; }
+  const livre = creerNouveauLivreObj(titre, auteur, genre);
+  BIBLIO.livres.push(livre);
+  sauvegarderBiblio();
+  fermerModalLivre();
+  ouvrirLivre(livre.id);
+}
+document.getElementById('nl-titre').addEventListener('keydown', e => {
+  if (e.key === 'Enter') creerLivre();
+});
+
+// ════════════════════════════════════════════════════════
+// OUVRIR UN LIVRE
+// ════════════════════════════════════════════════════════
+function ouvrirLivre(id) {
+  const livre = BIBLIO.livres.find(l => l.id === id);
+  if (!livre) return;
+  LIVRE_ACTIF = livre;
+  couleurIdx = (livre.personnages.length + livre.lieux.length) % COULEURS.length;
+
+  // Remplir les champs
+  document.getElementById('livre-titre').value  = livre.titre  || '';
+  document.getElementById('livre-auteur').value = livre.auteur || '';
+  document.getElementById('livre-genre').value  = livre.genre  || '';
+  document.getElementById('livre-pages').value  = livre.pages  || '';
+  document.getElementById('livre-annee').value  = livre.annee  || '';
+  document.getElementById('temps-text').value   = livre.temps  || '';
+  document.getElementById('mots-zone').value    = livre.mots   || '';
+  document.getElementById('compre-text').value  = livre.comprehension || '';
+  document.getElementById('livre-contexte').value    = livre.contexte    || '';
+  document.getElementById('livre-auteur-vie').value  = livre.auteurVie   || '';
+  document.getElementById('livre-trajectoire').value = livre.trajectoire || '';
+  const diss = livre.dissertation || {};
+  document.getElementById('diss-sujet').value = diss.sujet  || '';
+  document.getElementById('diss-intro').value  = diss.intro  || '';
+  document.getElementById('diss-arg1').value   = diss.arg1   || '';
+  document.getElementById('diss-arg2').value   = diss.arg2   || '';
+  document.getElementById('diss-arg3').value   = diss.arg3   || '';
+  document.getElementById('diss-conclu').value = diss.conclu || '';
+
+  // Header
+  document.getElementById('header-titre').textContent =
+    livre.titre || 'Sans titre';
+  document.getElementById('header-date').textContent =
+    'Créé le ' + livre.dateCreation;
+
+  // Listes entités
+  document.getElementById('list-personnages').innerHTML = '';
+  document.getElementById('list-lieux').innerHTML = '';
+  livre.personnages.forEach(p => renderEntity('personnages', p));
+  livre.lieux.forEach(l => renderEntity('lieux', l));
+
+  // Matrice & graphe des relations
+  renderMatrice();
+
+  // Basculer écrans
+  document.getElementById('screen-biblio').style.display = 'none';
+  document.getElementById('screen-guide').style.display  = 'flex';
+
+  // Onglet livre par défaut
+  showTab('livre', document.querySelector('.tab'));
+  // Charger les zones de rédaction
+  setTimeout(loadRedac, 50);
+  // Charger le schéma narratif
+  setTimeout(loadIntrigue, 50);
+}
+
+function retourBiblio() {
+  document.getElementById('screen-guide').style.display  = 'none';
+  document.getElementById('screen-biblio').style.display = 'flex';
+  LIVRE_ACTIF = null;
+  renderBiblio();
+}
+
+// ════════════════════════════════════════════════════════
+// SAUVEGARDE AUTOMATIQUE
+// ════════════════════════════════════════════════════════
+function saveLivre() {
+  if (!LIVRE_ACTIF) return;
+  LIVRE_ACTIF.titre  = document.getElementById('livre-titre').value;
+  LIVRE_ACTIF.auteur = document.getElementById('livre-auteur').value;
+  LIVRE_ACTIF.genre  = document.getElementById('livre-genre').value;
+  LIVRE_ACTIF.pages  = document.getElementById('livre-pages').value;
+  LIVRE_ACTIF.annee  = document.getElementById('livre-annee').value;
+  // Mettre à jour le header
+  document.getElementById('header-titre').textContent =
+    LIVRE_ACTIF.titre || 'Sans titre';
+  sauvegarderBiblio();
+}
+function saveLivreContexte() {
+  if (!LIVRE_ACTIF) return;
+  LIVRE_ACTIF.contexte    = document.getElementById('livre-contexte').value;
+  LIVRE_ACTIF.auteurVie   = document.getElementById('livre-auteur-vie').value;
+  LIVRE_ACTIF.trajectoire = document.getElementById('livre-trajectoire').value;
+  sauvegarderBiblio();
+}
+function saveTexte(champ) {
+  if (!LIVRE_ACTIF) return;
+  const ids = { temps:'temps-text', mots:'mots-zone', comprehension:'compre-text' };
+  LIVRE_ACTIF[champ] = document.getElementById(ids[champ]).value;
+  sauvegarderBiblio();
+}
+function saveDiss() {
+  if (!LIVRE_ACTIF) return;
+  if (!LIVRE_ACTIF.dissertation) LIVRE_ACTIF.dissertation = {};
+  LIVRE_ACTIF.dissertation.sujet  = document.getElementById('diss-sujet').value;
+  LIVRE_ACTIF.dissertation.intro  = document.getElementById('diss-intro').value;
+  LIVRE_ACTIF.dissertation.arg1   = document.getElementById('diss-arg1').value;
+  LIVRE_ACTIF.dissertation.arg2   = document.getElementById('diss-arg2').value;
+  LIVRE_ACTIF.dissertation.arg3   = document.getElementById('diss-arg3').value;
+  LIVRE_ACTIF.dissertation.conclu = document.getElementById('diss-conclu').value;
+  sauvegarderBiblio();
+}
+
+// ════════════════════════════════════════════════════════
+// TABS
+// ════════════════════════════════════════════════════════
+function showTab(id, tabEl) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  if (tabEl) tabEl.classList.add('active');
+  else document.querySelector('.tab')?.classList.add('active');
+}
+
+// ════════════════════════════════════════════════════════
+// ENTITÉS (personnages & lieux)
+// ════════════════════════════════════════════════════════
+function addEntity(type) {
+  if (!LIVRE_ACTIF) return;
+  const inputId = type === 'personnages' ? 'perso-input' : 'lieu-input';
+  const inp = document.getElementById(inputId);
+  const nom = inp.value.trim();
+  if (!nom) { showToast('Écris un nom d\'abord', 'warn'); return; }
+  const entity = {
+    id:      'ent_' + Date.now().toString(36) + Math.random().toString(36).slice(2,4),
+    nom, notes:'',
+    couleur: COULEURS[couleurIdx % COULEURS.length]
+  };
+  couleurIdx++;
+  LIVRE_ACTIF[type].push(entity);
+  renderEntity(type, entity);
+  inp.value = '';
+  sauvegarderBiblio();
+  setTimeout(() => openEntity(entity.id), 80);
+  // Mettre à jour la matrice si c'est un personnage
+  if (type === 'personnages') setTimeout(renderMatrice, 100);
+}
+
+function renderEntity(type, entity) {
+  const list = document.getElementById('list-' + type);
+  const taId = 'notes-' + entity.id;
+  const div  = document.createElement('div');
+  div.className = 'entity-item';
+  div.id = 'entity-' + entity.id;
+  div.innerHTML =
+    '<div class="entity-header" onclick="toggleEntity(\'' + entity.id + '\')">' +
+      '<span class="entity-dot" style="background:' + entity.couleur + '"></span>' +
+      '<span class="entity-name">' + esc(entity.nom) + '</span>' +
+      '<div class="entity-acts" onclick="event.stopPropagation()">' +
+        '<button class="btn btn-gris btn-xs" onclick="editEntityName(\'' + type + '\',\'' + entity.id + '\')">✏️</button>' +
+        '<button class="btn btn-rouge btn-xs" onclick="deleteEntity(\'' + type + '\',\'' + entity.id + '\')">🗑️</button>' +
+      '</div>' +
+      '<span class="entity-chv">▼</span>' +
+    '</div>' +
+    '<div class="entity-body" id="body-' + entity.id + '">' +
+      '<textarea id="' + taId + '" class="field" rows="6" style="margin-top:10px;"' +
+        'placeholder="Notes sur ' + esc(entity.nom) + ' : rôle, caractère, relations…\n\nDicte avec le micro 🎤 du clavier !"' +
+        'oninput="updateNotes(\'' + type + '\',\'' + entity.id + '\',this.value)">' +
+        esc(entity.notes) +
+      '</textarea>' +
+    '</div>';
+  list.appendChild(div);
+}
+
+function toggleEntity(id) {
+  const body = document.getElementById('body-' + id);
+  if (!body) return;
+  const open = body.classList.toggle('open');
+  const chv  = document.querySelector('#entity-' + id + ' .entity-chv');
+  if (chv) chv.style.transform = open ? 'rotate(180deg)' : '';
+}
+function openEntity(id) {
+  const body = document.getElementById('body-' + id);
+  if (body && !body.classList.contains('open')) toggleEntity(id);
+}
+function updateNotes(type, id, val) {
+  if (!LIVRE_ACTIF) return;
+  const e = LIVRE_ACTIF[type].find(x => x.id === id);
+  if (e) { e.notes = val; sauvegarderBiblio(); }
+}
+function deleteEntity(type, id) {
+  if (!confirm('Supprimer cette fiche ?')) return;
+  LIVRE_ACTIF[type] = LIVRE_ACTIF[type].filter(x => x.id !== id);
+  document.getElementById('entity-' + id)?.remove();
+  sauvegarderBiblio();
+  showToast('Fiche supprimée', 'warn');
+  if (type === 'personnages') setTimeout(renderMatrice, 100);
+}
+
+// ── Modal édition nom ──
+let _mType = '', _mId = '';
+function editEntityName(type, id) {
+  const e = LIVRE_ACTIF[type].find(x => x.id === id);
+  if (!e) return;
+  _mType = type; _mId = id;
+  document.getElementById('modal-title').textContent = 'Modifier le nom';
+  document.getElementById('modal-input').value = e.nom;
+  document.getElementById('modal-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('modal-input').focus(), 100);
+}
+function confirmModal() {
+  const nouv = document.getElementById('modal-input').value.trim();
+  if (!nouv) return;
+  const e = LIVRE_ACTIF[_mType].find(x => x.id === _mId);
+  if (e) {
+    e.nom = nouv;
+    const nameEl = document.querySelector('#entity-' + _mId + ' .entity-name');
+    if (nameEl) nameEl.textContent = nouv;
+    sauvegarderBiblio();
+    showToast('Nom modifié !', 'ok');
+  }
+  closeModal();
+}
+function closeModal(ev) {
+  if (ev && ev.target !== document.getElementById('modal-overlay')) return;
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+document.getElementById('modal-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') confirmModal();
+});
+
+// ════════════════════════════════════════════════════════
+// CITATIONS
+// ════════════════════════════════════════════════════════
+function debutCitation() {
+  document.getElementById('cit-notice').classList.add('on');
+  insertText('mots-zone', '\n\n« ');
+}
+function finCitation() {
+  document.getElementById('cit-notice').classList.remove('on');
+  insertText('mots-zone', ' »\n');
+  saveTexte('mots');
+}
+function insertSep() { insertText('mots-zone', '\n\n── Mot inconnu ──\n'); }
+function insertText(id, txt) {
+  const ta = document.getElementById(id);
+  const s  = ta.selectionStart || ta.value.length;
+  ta.value = ta.value.slice(0,s) + txt + ta.value.slice(s);
+  ta.selectionStart = ta.selectionEnd = s + txt.length;
+  ta.focus(); saveTexte('mots');
+}
+
+// ════════════════════════════════════════════════════════
+// EXPORT TXT
+// ════════════════════════════════════════════════════════
+function exportTxt() {
+  if (!LIVRE_ACTIF) return;
+  const L = LIVRE_ACTIF;
+  let t = '════════════════════════════\n   MON GUIDE DE LECTURE\n════════════════════════════\n\n';
+  t += 'ID      : ' + L.id + '\n';
+  t += 'Créé le : ' + L.dateCreation + '\n\n';
+  if (L.titre)  t += 'Titre  : ' + L.titre  + '\n';
+  if (L.auteur) t += 'Auteur : ' + L.auteur + '\n';
+  if (L.genre)  t += 'Genre  : ' + L.genre  + '\n';
+  if (L.pages)  t += 'Pages  : ' + L.pages  + '\n';
+  if (L.annee)  t += 'Époque : ' + L.annee  + '\n';
+  t += '\n';
+  if (L.personnages.length) {
+    t += '── PERSONNAGES ──────────────\n';
+    L.personnages.forEach(p => { t += '\n▶ ' + p.nom + '\n' + (p.notes||'(aucune note)') + '\n'; });
+    t += '\n';
+  }
+  if (L.lieux.length) {
+    t += '── LIEUX ────────────────────\n';
+    L.lieux.forEach(l => { t += '\n▶ ' + l.nom + '\n' + (l.notes||'(aucune note)') + '\n'; });
+    t += '\n';
+  }
+  if (L.temps)         t += '── ÉPOQUE & CHRONOLOGIE ─────\n' + L.temps + '\n\n';
+  if (L.mots)          t += '── MOTS & CITATIONS ─────────\n' + L.mots  + '\n\n';
+  if (L.comprehension) t += '── COMPRÉHENSION & AVIS ─────\n' + L.comprehension + '\n\n';
+  if (L.dissertation) {
+    const d = L.dissertation;
+    if (d.sujet || d.intro || d.arg1) {
+      t += '── DISSERTATION ─────────────\n';
+      if (d.sujet)  t += 'Sujet : ' + d.sujet + '\n\n';
+      if (d.intro)  t += 'Introduction :\n' + d.intro + '\n\n';
+      if (d.arg1)   t += 'Argument 1 :\n' + d.arg1 + '\n\n';
+      if (d.arg2)   t += 'Argument 2 :\n' + d.arg2 + '\n\n';
+      if (d.arg3)   t += 'Argument 3 :\n' + d.arg3 + '\n\n';
+      if (d.conclu) t += 'Conclusion :\n' + d.conclu + '\n\n';
+    }
+  }
+
+  const nom = (L.titre||'lecture').replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([t], {type:'text/plain;charset=utf-8'}));
+  a.download = 'guide_' + nom + '_' + L.dateCreation.replace(/\//g,'-') + '.txt';
+  a.click();
+  showToast('📄 Fichier téléchargé !', 'ok');
+}
+
+// ════════════════════════════════════════════════════════
+// IMPORT TXT
+// ════════════════════════════════════════════════════════
+function importTxt(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const txt = e.target.result;
+    try {
+      const data = parseTxt(txt);
+      if (!data) { showToast('Fichier non reconnu', 'warn'); return; }
+      // Cherche si ce livre existe déjà par son ID
+      let livre = BIBLIO.livres.find(l => l.id === data.id);
+      if (livre) {
+        // Mise à jour
+        Object.assign(livre, data);
+        showToast('Notes mises à jour !', 'ok');
+      } else {
+        // Nouveau livre importé
+        BIBLIO.livres.push(data);
+        showToast('Livre importé !', 'ok');
+      }
+      sauvegarderBiblio();
+      // Ouvrir le livre importé
+      retourBiblio();
+      setTimeout(() => ouvrirLivre(data.id), 200);
+    } catch(err) {
+      showToast('Erreur à l\'importation', 'warn');
+      console.error(err);
+    }
+    input.value = '';
+  };
+  reader.readAsText(file, 'utf-8');
+}
+
+function parseTxt(txt) {
+  const lines = txt.split('\n');
+  const get = (prefix) => {
+    const line = lines.find(l => l.startsWith(prefix));
+    return line ? line.slice(prefix.length).trim() : '';
+  };
+
+  const id          = get('ID      :') || get('ID:');
+  const dateCreation= get('Créé le :') || get('Créé le:');
+  const titre       = get('Titre  :') || get('Titre:');
+  const auteur      = get('Auteur :') || get('Auteur:');
+  const genre       = get('Genre  :') || get('Genre:');
+  const pages       = get('Pages  :') || get('Pages:');
+  const annee       = get('Époque :') || get('Époque:');
+
+  // Sections
+  const section = (marker, nextMarker) => {
+    const start = lines.findIndex(l => l.includes(marker));
+    if (start === -1) return '';
+    const end   = nextMarker ? lines.findIndex((l,i) => i > start && l.includes(nextMarker)) : lines.length;
+    return lines.slice(start+1, end === -1 ? lines.length : end).join('\n').trim();
+  };
+
+  // Parser entités
+  const parseEntites = (bloc) => {
+    if (!bloc) return [];
+    const items = [];
+    const parts = bloc.split(/\n▶ /);
+    parts.forEach(part => {
+      const trimmed = part.trim();
+      if (!trimmed) return;
+      const firstLine = trimmed.split('\n')[0].trim();
+      const rest = trimmed.split('\n').slice(1).join('\n').trim();
+      if (firstLine) {
+        items.push({
+          id:      'ent_' + Date.now().toString(36) + Math.random().toString(36).slice(2,4),
+          nom:     firstLine,
+          notes:   rest === '(aucune note)' ? '' : rest,
+          couleur: COULEURS[items.length % COULEURS.length]
+        });
+      }
+    });
+    return items;
+  };
+
+  const persosBloc = section('── PERSONNAGES ──', '── LIEUX ──');
+  const lieuxBloc  = section('── LIEUX ──', '── ÉPOQUE');
+  const temps      = section('── ÉPOQUE & CHRONOLOGIE ──', '── MOTS');
+  const mots       = section('── MOTS & CITATIONS ──', '── COMPRÉHENSION');
+  const comprehension = section('── COMPRÉHENSION & AVIS ──', null);
+
+  const now = new Date();
+  return {
+    id:            id || ('liv_' + Date.now().toString(36)),
+    titre, auteur, genre, pages, annee,
+    dateCreation:  dateCreation || now.toLocaleDateString('fr-FR'),
+    tsCreation:    now.getTime(),
+    personnages:   parseEntites(persosBloc),
+    lieux:         parseEntites(lieuxBloc),
+    temps, mots, comprehension
+  };
+}
+
+// Import depuis la bibliothèque (sans livre actif)
+function importTxtBiblio(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = parseTxt(e.target.result);
+      if (!data) { showToast('Fichier non reconnu', 'warn'); return; }
+      let livre = BIBLIO.livres.find(l => l.id === data.id);
+      if (livre) {
+        Object.assign(livre, data);
+        showToast('Notes mises à jour !', 'ok');
+      } else {
+        BIBLIO.livres.push(data);
+        showToast('Livre importé !', 'ok');
+      }
+      sauvegarderBiblio();
+      renderBiblio();
+    } catch(err) { showToast('Erreur importation', 'warn'); console.error(err); }
+    input.value = '';
+  };
+  reader.readAsText(file, 'utf-8');
+}
+
+function supprimerLivre(id) {
+  const livre = BIBLIO.livres.find(l => l.id === id);
+  const titre = livre ? (livre.titre || 'ce livre') : 'ce livre';
+  if (!confirm('Supprimer ce livre et toutes ses notes ?')) return;
+  BIBLIO.livres = BIBLIO.livres.filter(l => l.id !== id);
+  sauvegarderBiblio();
+  renderBiblio();
+  showToast('Livre supprimé', 'warn');
+}
+
+// ════════════════════════════════════════════════════════
+// GÉNÉRATION PDF (via impression navigateur)
+// ════════════════════════════════════════════════════════
+function genererPDF(style) {
+  if (!LIVRE_ACTIF) { showToast('Aucun livre ouvert', 'warn'); return; }
+  const L = LIVRE_ACTIF;
+  const couleur = style === 'couleur';
+
+  const C = {
+    bleu:'#2E5FA3', bleuC:'#D6E4F7',
+    vert:'#2E7D32', vertC:'#E8F5E9',
+    orange:'#E65100', orangeC:'#FFF3E0',
+    violet:'#6A1B9A', violetC:'#F3E5F5',
+    rouge:'#c0392b',
+    jaune:'#F9A825', jauneC:'#FFFDE7'
+  };
+
+  const sec = (titre, coul, bg, contenu) => couleur
+    ? `<div style="margin-bottom:18px;"><div style="background:${coul};color:#fff;padding:8px 12px;border-radius:8px 8px 0 0;font-weight:800;font-size:13px;">${titre}</div><div style="border:1.5px solid ${coul};border-top:none;border-radius:0 0 8px 8px;padding:12px;background:${bg};">${contenu}</div></div>`
+    : `<div style="margin-bottom:18px;"><div style="border-bottom:2px solid #333;padding:4px 0;font-weight:800;font-size:13px;margin-bottom:8px;">${titre}</div>${contenu}</div>`;
+
+  const ligne = (label, val) => val
+    ? `<div style="margin-bottom:5px;"><b>${label} :</b> ${val}</div>` : '';
+
+  const entite = (e) => `<div style="margin-bottom:10px;padding:8px;background:${couleur?'#f8f9fa':'transparent'};border-left:3px solid ${couleur?C.bleu:'#333'};border-radius:${couleur?'0 6px 6px 0':'0'}"><b>${e.nom}</b>${e.notes ? `<div style="margin-top:4px;font-size:12px;color:#444;">${e.notes.replace(/\n/g,'<br>')}</div>` : ''}</div>`;
+
+  const zone = (txt) => txt ? `<div style="font-size:12px;line-height:1.7;white-space:pre-wrap;color:#333;">${txt}</div>` : '<i style="color:#aaa;">Aucune note.</i>';
+
+  const dissBloc = () => {
+    const d = L.dissertation || {};
+    if (!d.sujet && !d.intro && !d.arg1) return '<i style="color:#aaa;">Pas encore de dissertation.</i>';
+    let html = '';
+    if (d.sujet)  html += `<div style="margin-bottom:10px;padding:8px;background:${couleur?C.violetC:'#f8f8f8'};border-radius:6px;"><b>Sujet :</b> ${d.sujet}</div>`;
+    const etapes = [
+      {label:'① Introduction', val:d.intro, coul:C.bleu},
+      {label:'② Argument 1',  val:d.arg1,  coul:C.vert},
+      {label:'③ Argument 2',  val:d.arg2,  coul:C.orange},
+      {label:'④ Argument 3',  val:d.arg3,  coul:'#00838F'},
+      {label:'⑤ Conclusion',  val:d.conclu,coul:C.rouge},
+    ];
+    etapes.forEach(({label, val, coul}) => {
+      if (!val) return;
+      html += couleur
+        ? `<div style="margin-bottom:8px;"><div style="font-weight:700;color:${coul};font-size:12px;margin-bottom:3px;">${label}</div><div style="font-size:12px;line-height:1.7;color:#333;padding-left:8px;border-left:2px solid ${coul};">${val.replace(/\n/g,'<br>')}</div></div>`
+        : `<div style="margin-bottom:8px;"><div style="font-weight:700;font-size:12px;margin-bottom:3px;">${label}</div><div style="font-size:12px;line-height:1.7;color:#333;">${val.replace(/\n/g,'<br>')}</div></div>`;
+    });
+    return html;
+  };
+
+  let html = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8">
+<title>Guide - ${L.titre||'Sans titre'}</title>
+<style>
+  @media print { body{margin:0} .no-print{display:none} @page{margin:1.5cm} }
+  body{font-family:'Segoe UI',sans-serif;font-size:13px;color:#1a1a2e;max-width:800px;margin:0 auto;padding:20px;}
+  h1{font-size:20px;margin-bottom:4px;color:${couleur?C.bleu:'#000'}}
+  .meta{font-size:12px;color:#666;margin-bottom:20px;}
+  .btn-print{background:${couleur?C.bleu:'#333'};color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:14px;cursor:pointer;margin-bottom:20px;}
+</style></head><body>
+<button class="btn-print no-print" onclick="window.print()">🖨️ Imprimer / Enregistrer en PDF</button>
+<h1>📖 ${L.titre||'Guide de Lecture'}</h1>
+<div class="meta">
+  ${L.auteur?'Auteur : '+L.auteur+' · ':''} ${L.genre?L.genre+' · ':''}${L.pages?L.pages+' pages · ':''} Créé le ${L.dateCreation}
+</div>`;
+
+  // Infos livre
+  html += sec('📚 Informations', C.bleu, couleur?C.bleuC:'#fff',
+    ligne('Genre',L.genre)+ligne('Pages',L.pages)+ligne('Époque',L.annee));
+
+  // Personnages
+  if (L.personnages.length) {
+    html += sec('👤 Personnages & Relations', C.bleu, couleur?C.bleuC:'#fff',
+      L.personnages.map(entite).join(''));
+  }
+
+  // Lieux
+  if (L.lieux.length) {
+    html += sec('🗺️ Lieux', C.vert, couleur?C.vertC:'#fff',
+      L.lieux.map(entite).join(''));
+  }
+
+  // Temps
+  if (L.temps) html += sec('⏳ Époque & Chronologie', C.orange, couleur?C.orangeC:'#fff', zone(L.temps));
+
+  // Mots
+  if (L.mots) html += sec('💬 Mots & Citations', C.violet, couleur?C.violetC:'#fff', zone(L.mots));
+
+  // Compréhension
+  if (L.comprehension) html += sec('💭 Compréhension & Avis', C.violet, couleur?C.violetC:'#fff', zone(L.comprehension));
+
+  // Dissertation
+  html += sec('✍️ Dissertation', C.violet, couleur?C.violetC:'#fff', dissBloc());
+
+  html += '</body></html>';
+
+  const win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
+}
+
+// ════════════════════════════════════════════════════════
+// UTILITAIRES
+// ════════════════════════════════════════════════════════
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = type==='ok'?'var(--vert)':type==='warn'?'var(--orange)':'#1a1a2e';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+
+// ════════════════════════════════════════════════════════
+// RÉDACTION
+// ════════════════════════════════════════════════════════
+function initRedacZones() {
+  document.querySelectorAll('.redac-zone').forEach(zone => {
+    const label = zone.dataset.label;
+    const hint  = zone.dataset.hint;
+    const key   = zone.dataset.key;
+    zone.innerHTML =
+      '<div class="redac-label">' + label + '</div>' +
+      '<div class="redac-hint">' + hint + '</div>' +
+      '<textarea class="redac-ta" rows="4" placeholder="Dicte ou écris ta ' + label.toLowerCase() + '…" ' +
+        'oninput="saveRedac(\'' + key + '\',this.value)">' +
+      '</textarea>';
+  });
+}
+
+function setTypeRedac(type) {
+  document.getElementById('redac-recit').style.display    = type === 'recit'    ? 'block' : 'none';
+  document.getElementById('redac-argument').style.display = type === 'argument' ? 'block' : 'none';
+  document.getElementById('btn-recit').className    = 'btn btn-sm ' + (type === 'recit'    ? 'btn-vert'  : 'btn-gris');
+  document.getElementById('btn-argument').className = 'btn btn-sm ' + (type === 'argument' ? 'btn-orange' : 'btn-gris');
+  if (!LIVRE_ACTIF) return;
+  LIVRE_ACTIF.redacType = type;
+  sauvegarderBiblio();
+}
+
+function saveRedac(key, val) {
+  if (!LIVRE_ACTIF) return;
+  if (!LIVRE_ACTIF.redac) LIVRE_ACTIF.redac = {};
+  LIVRE_ACTIF.redac[key] = val;
+  sauvegarderBiblio();
+}
+
+function loadRedac() {
+  if (!LIVRE_ACTIF) return;
+  const type = LIVRE_ACTIF.redacType || 'recit';
+  setTypeRedac(type);
+  const redac = LIVRE_ACTIF.redac || {};
+  document.querySelectorAll('.redac-ta').forEach(ta => {
+    const zone = ta.closest('.redac-zone');
+    if (zone) {
+      const key = zone.dataset.key;
+      ta.value = redac[key] || '';
+    }
+  });
+}
+
+// ── Export PDF (via impression navigateur) ─────────────────────────────
+function exportPDF(mode) {
+  if (!LIVRE_ACTIF) return;
+  const L = LIVRE_ACTIF;
+  const redac = L.redac || {};
+  const type  = L.redacType || 'recit';
+  const isNB  = mode === 'nb';
+
+  const zones = type === 'recit'
+    ? [
+        { key:'redac_r1', label:'1. Situation initiale',  color:'#2E5FA3' },
+        { key:'redac_r2', label:'2. Élément déclencheur', color:'#E65100' },
+        { key:'redac_r3', label:'3. Péripéties',          color:'#6A1B9A' },
+        { key:'redac_r4', label:'4. Dénouement',          color:'#2E7D32' },
+        { key:'redac_r5', label:'5. Situation finale',    color:'#00838F' },
+      ]
+    : [
+        { key:'redac_a1', label:'1. Introduction',        color:'#2E5FA3' },
+        { key:'redac_a2', label:'2. Argument principal',  color:'#2E7D32' },
+        { key:'redac_a3', label:'3. Deuxième argument',   color:'#E65100' },
+        { key:'redac_a4', label:'4. Conclusion',          color:'#6A1B9A' },
+      ];
+
+  // Construire le HTML de toutes les sections du guide
+  const fichesSections = buildFichesSections(L, isNB);
+  const redacSection   = buildRedacSection(zones, redac, isNB, type);
+
+  const html = buildPrintHTML(L, fichesSections, redacSection, isNB);
+  const win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
+  win.focus();
+  setTimeout(() => { win.print(); }, 800);
+}
+
+function buildFichesSections(L, nb) {
+  const c = (col) => nb ? '#333' : col;
+  const bg = (col) => nb ? '#f5f5f5' : col + '22';
+  let html = '';
+
+  // Personnages
+  if (L.personnages && L.personnages.length) {
+    html += '<div class="pdf-section">';
+    html += '<div class="pdf-section-title" style="background:' + (nb?'#333':c('#2E5FA3')) + '">👤 Personnages &amp; Relations</div>';
+    L.personnages.forEach(p => {
+      html += '<div class="pdf-entity" style="border-left:4px solid ' + (nb?'#333':p.couleur) + '">';
+      html += '<div class="pdf-entity-name">' + esc(p.nom) + '</div>';
+      html += '<div class="pdf-entity-notes">' + (p.notes ? esc(p.notes).replace(/\n/g,'<br>') : '<em>Aucune note</em>') + '</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  // Lieux
+  if (L.lieux && L.lieux.length) {
+    html += '<div class="pdf-section">';
+    html += '<div class="pdf-section-title" style="background:' + (nb?'#333':'#2E7D32') + '">🗺️ Lieux</div>';
+    L.lieux.forEach(l => {
+      html += '<div class="pdf-entity" style="border-left:4px solid ' + (nb?'#333':l.couleur) + '">';
+      html += '<div class="pdf-entity-name">' + esc(l.nom) + '</div>';
+      html += '<div class="pdf-entity-notes">' + (l.notes ? esc(l.notes).replace(/\n/g,'<br>') : '<em>Aucune note</em>') + '</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  // Temps
+  if (L.temps) {
+    html += '<div class="pdf-section">';
+    html += '<div class="pdf-section-title" style="background:' + (nb?'#333':'#E65100') + '">⏳ Époque &amp; Chronologie</div>';
+    html += '<div class="pdf-text">' + esc(L.temps).replace(/\n/g,'<br>') + '</div>';
+    html += '</div>';
+  }
+
+  // Mots & Citations
+  if (L.mots) {
+    html += '<div class="pdf-section">';
+    html += '<div class="pdf-section-title" style="background:' + (nb?'#333':'#6A1B9A') + '">💬 Mots difficiles &amp; Citations</div>';
+    html += '<div class="pdf-text">' + esc(L.mots).replace(/\n/g,'<br>') + '</div>';
+    html += '</div>';
+  }
+
+  // Compréhension
+  if (L.comprehension) {
+    html += '<div class="pdf-section">';
+    html += '<div class="pdf-section-title" style="background:' + (nb?'#333':'#6A1B9A') + '">💭 Compréhension &amp; Avis</div>';
+    html += '<div class="pdf-text">' + esc(L.comprehension).replace(/\n/g,'<br>') + '</div>';
+    html += '</div>';
+  }
+
+  return html;
+}
+
+function buildRedacSection(zones, redac, nb, type) {
+  const typeLabel = type === 'recit' ? 'Récit' : 'Texte argumentatif';
+  let html = '<div class="pdf-section">';
+  html += '<div class="pdf-section-title" style="background:' + (nb?'#333':'#2E7D32') + '">✍️ Rédaction — ' + typeLabel + '</div>';
+  zones.forEach(z => {
+    const val = redac[z.key] || '';
+    html += '<div class="pdf-redac-zone" style="border-left:4px solid ' + (nb?'#555':z.color) + ';background:' + (nb?'#fafafa':z.color+'11') + '">';
+    html += '<div class="pdf-redac-label" style="color:' + (nb?'#333':z.color) + '">' + z.label + '</div>';
+    html += '<div class="pdf-redac-text">' + (val ? esc(val).replace(/\n/g,'<br>') : '<em style="color:#aaa">Non rempli</em>') + '</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function buildPrintHTML(L, fichesSections, redacSection, nb) {
+  return `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8">
+<title>Guide — ${esc(L.titre||'Livre')}</title>
+<style>
+  body{font-family:'Segoe UI',sans-serif;margin:0;padding:20px;color:#1a1a2e;font-size:13px;}
+  .pdf-header{background:${nb?'#333':'#2E5FA3'};color:#fff;padding:16px 20px;border-radius:10px;margin-bottom:18px;}
+  .pdf-header h1{font-size:1.3rem;margin:0 0 4px;font-weight:900;}
+  .pdf-header p{margin:0;font-size:.82rem;opacity:.85;}
+  .pdf-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px;}
+  .pdf-meta-item{background:${nb?'#f0f0f0':'#D6E4F7'};border-radius:8px;padding:8px 10px;}
+  .pdf-meta-item b{display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:.4px;color:${nb?'#555':'#2E5FA3'};margin-bottom:2px;}
+  .pdf-section{margin-bottom:16px;break-inside:avoid;}
+  .pdf-section-title{color:#fff;padding:7px 12px;border-radius:7px;font-size:.8rem;font-weight:800;margin-bottom:8px;}
+  .pdf-entity{background:${nb?'#f9f9f9':'#fafcff'};border-radius:8px;padding:8px 12px;margin-bottom:6px;}
+  .pdf-entity-name{font-weight:800;font-size:.9rem;margin-bottom:3px;}
+  .pdf-entity-notes{font-size:.82rem;line-height:1.5;color:#444;}
+  .pdf-text{background:${nb?'#f9f9f9':'#fafafa'};border-radius:8px;padding:10px 12px;font-size:.82rem;line-height:1.6;color:#333;}
+  .pdf-redac-zone{border-radius:8px;padding:10px 12px;margin-bottom:8px;}
+  .pdf-redac-label{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;}
+  .pdf-redac-text{font-size:.88rem;line-height:1.65;color:#1a1a2e;min-height:30px;}
+  .pdf-footer{margin-top:20px;padding-top:10px;border-top:1px solid #eee;font-size:.7rem;color:#aaa;text-align:center;}
+  @media print{body{padding:10px;}@page{margin:15mm;}}
+</style></head><body>
+<div class="pdf-header">
+  <h1>📖 ${esc(L.titre||'Guide de lecture')}</h1>
+  <p>${esc(L.auteur||'')}${L.genre?' · '+esc(L.genre):''} · Créé le ${esc(L.dateCreation||'')}</p>
+</div>
+<div class="pdf-meta">
+  <div class="pdf-meta-item"><b>Auteur</b>${esc(L.auteur||'—')}</div>
+  <div class="pdf-meta-item"><b>Pages</b>${esc(L.pages||'—')}</div>
+  <div class="pdf-meta-item"><b>Époque</b>${esc(L.annee||'—')}</div>
+</div>
+${fichesSections}
+${redacSection}
+<div class="pdf-footer">Guide de lecture · Axel · 6ème · ${new Date().toLocaleDateString('fr-FR')}</div>
+</body></html>`;
+}
+
+// ════════════════════════════════════════════════════════
+// AIDE ACCORDÉON (Lieux / Temps)
+// ════════════════════════════════════════════════════════
+function toggleAide(zone) {
+  const toggle = document.getElementById('aide-' + zone + '-toggle');
+  const body   = document.getElementById('aide-' + zone + '-body');
+  if (!toggle || !body) return;
+  toggle.classList.toggle('open');
+  body.classList.toggle('open');
+}
+
+// ════════════════════════════════════════════════════════
+// MATRICE DES RELATIONS
+// ════════════════════════════════════════════════════════
+const RELATIONS = [
+  '—',
+  'Ami(e)', 'Meilleur(e) ami(e)', 'Allié(e)',
+  'Amoureux/se', 'Rival(e)', 'Antagoniste', 'Ennemi(e)',
+  'Confident(e)', 'Mentor', 'Élève', 'Protecteur/trice',
+  'Protégé(e)', 'Parent', 'Enfant', 'Frère/Sœur',
+  'Témoin', 'Repoussoir', 'Complice', 'Victime'
+];
+
+function getMatrice() {
+  if (!LIVRE_ACTIF) return {};
+  if (!LIVRE_ACTIF.matrice) LIVRE_ACTIF.matrice = {};
+  return LIVRE_ACTIF.matrice;
+}
+
+function renderMatrice() {
+  const persos = LIVRE_ACTIF?.personnages || [];
+  const cardMatrice = document.getElementById('card-matrice');
+  const cardGraphe  = document.getElementById('card-graphe');
+  if (persos.length < 2) {
+    cardMatrice.style.display = 'none';
+    cardGraphe.style.display  = 'none';
+    return;
+  }
+  cardMatrice.style.display = 'block';
+  cardGraphe.style.display  = 'block';
+  const matrice = getMatrice();
+  const wrap = document.getElementById('matrice-wrap');
+
+  const opts = RELATIONS.map(r => `<option value="${r}">${r}</option>`).join('');
+  let html = '<table class="matrice-table"><thead><tr><th class="row-head">A → B</th>';
+  persos.forEach(p => { html += `<th title="${esc(p.nom)}">${esc(p.nom.length > 8 ? p.nom.slice(0,7)+'…' : p.nom)}</th>`; });
+  html += '</tr></thead><tbody>';
+
+  persos.forEach((pa, i) => {
+    html += `<tr><th class="row-head" title="${esc(pa.nom)}">${esc(pa.nom.length > 10 ? pa.nom.slice(0,9)+'…' : pa.nom)}</th>`;
+    persos.forEach((pb, j) => {
+      if (i === j) {
+        html += `<td class="diag" title="${esc(pa.nom)} ↔ lui-même">·</td>`;
+      } else {
+        const key = pa.id + '__' + pb.id;
+        const val = matrice[key] || '—';
+        html += `<td><select class="matrice-rel" data-key="${key}" onchange="saveMatriceCell(this)">${opts.replace(`value="${val}"`, `value="${val}" selected`)}</select></td>`;
+      }
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+  renderGraphe();
+}
+
+function saveMatriceCell(sel) {
+  if (!LIVRE_ACTIF) return;
+  if (!LIVRE_ACTIF.matrice) LIVRE_ACTIF.matrice = {};
+  LIVRE_ACTIF.matrice[sel.dataset.key] = sel.value;
+  sauvegarderBiblio();
+  renderGraphe();
+}
+
+// ════════════════════════════════════════════════════════
+// GRAPHE D3
+// ════════════════════════════════════════════════════════
+let d3Loaded = false;
+function loadD3(cb) {
+  if (d3Loaded) { cb(); return; }
+  const s = document.createElement('script');
+  s.src = 'https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js';
+  s.onload = () => { d3Loaded = true; cb(); };
+  document.head.appendChild(s);
+}
+
+function renderGraphe() {
+  loadD3(() => _buildGraphe());
+}
+
+function _buildGraphe() {
+  const persos  = LIVRE_ACTIF?.personnages || [];
+  const matrice = getMatrice();
+  const svg     = document.getElementById('graphe-svg');
+  const vide    = document.getElementById('graphe-vide');
+  svg.innerHTML = '';
+
+  if (persos.length < 2) {
+    svg.style.display = 'none';
+    vide.style.display = 'block';
+    return;
+  }
+
+  // Construire les liens
+  const links = [];
+  persos.forEach((pa, i) => {
+    persos.forEach((pb, j) => {
+      if (i >= j) return;
+      const kAB = pa.id + '__' + pb.id;
+      const kBA = pb.id + '__' + pa.id;
+      const rAB = matrice[kAB] || '—';
+      const rBA = matrice[kBA] || '—';
+      const hasAB = rAB !== '—';
+      const hasBA = rBA !== '—';
+      if (!hasAB && !hasBA) return;
+      const sym = hasAB && hasBA && rAB === rBA;
+      if (sym) {
+        links.push({ source: pa.id, target: pb.id, label: rAB, bidirect: false });
+      } else {
+        if (hasAB) links.push({ source: pa.id, target: pb.id, label: rAB, bidirect: hasBA });
+        if (hasBA) links.push({ source: pb.id, target: pa.id, label: rBA, bidirect: hasAB });
+      }
+    });
+  });
+
+  // Dimensions
+  const W = document.getElementById('graphe-container').clientWidth || 340;
+  const H = Math.max(220, Math.min(380, persos.length * 55));
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.style.display = 'block';
+  vide.style.display = 'none';
+
+  const d3svg = d3.select(svg);
+
+  // Defs flèches
+  const defs = d3svg.append('defs');
+  const mkArrow = (id, col) => {
+    defs.append('marker').attr('id', id)
+      .attr('viewBox','0 0 10 10').attr('refX',18).attr('refY',5)
+      .attr('markerWidth',5).attr('markerHeight',5).attr('orient','auto-start-reverse')
+      .append('path').attr('d','M0 1 L8 5 L0 9').attr('fill', col);
+  };
+  mkArrow('arr-std','#aaa');
+  mkArrow('arr-bleu', '#2E5FA3');
+  mkArrow('arr-rouge','#c0392b');
+  mkArrow('arr-rose', '#e91e8c');
+
+  const g = d3svg.append('g');
+
+  // Noeuds
+  const nodes = persos.map(p => ({
+    id: p.id, nom: p.nom, couleur: p.couleur,
+    x: W/2 + Math.cos(2*Math.PI*(persos.indexOf(p)/persos.length)) * (W*0.32),
+    y: H/2 + Math.sin(2*Math.PI*(persos.indexOf(p)/persos.length)) * (H*0.35)
+  }));
+  const nodeMap = {};
+  nodes.forEach(n => { nodeMap[n.id] = n; });
+
+  // Liens
+  const linkG = g.append('g').attr('class','links');
+  links.forEach((lk, idx) => {
+    const sn = nodeMap[lk.source];
+    const tn = nodeMap[lk.target];
+    if (!sn || !tn) return;
+
+    // Courbure si bidirectionnel avec label différent
+    const curve = lk.bidirect ? 25 : 0;
+    const mid = { x:(sn.x+tn.x)/2, y:(sn.y+tn.y)/2 };
+    const dx = tn.x - sn.x, dy = tn.y - sn.y;
+    const len = Math.sqrt(dx*dx+dy*dy) || 1;
+    const cx = mid.x - dy/len*curve;
+    const cy = mid.y + dx/len*curve;
+
+    const ltype = detectLinkType(lk.label);
+    const arrId = ltype === 'conflit' ? 'arr-rouge' : ltype === 'amour' ? 'arr-rose' : ltype === 'fort' ? 'arr-bleu' : 'arr-std';
+    const stroke = ltype === 'conflit' ? '#c0392b' : ltype === 'amour' ? '#e91e8c' : ltype === 'fort' ? '#2E5FA3' : '#bbb';
+
+    const path = linkG.append('path')
+      .attr('class', 'link-line ' + ltype)
+      .attr('d', curve ? `M${sn.x},${sn.y} Q${cx},${cy} ${tn.x},${tn.y}` : `M${sn.x},${sn.y} L${tn.x},${tn.y}`)
+      .attr('stroke', stroke)
+      .attr('marker-end', `url(#${arrId})`);
+
+    // Label sur le lien
+    if (lk.label && lk.label !== '—') {
+      linkG.append('text').attr('class','link-label')
+        .attr('x', cx || mid.x).attr('y', (cy || mid.y) - 4)
+        .attr('fill', stroke).text(lk.label)
+        .style('font-size','9px');
+    }
+  });
+
+  // Noeuds cercles + labels
+  const nodeG = g.append('g').attr('class','noeuds');
+  nodes.forEach(n => {
+    const ng = nodeG.append('g').attr('transform', `translate(${n.x},${n.y})`).attr('class','node-g').style('cursor','grab');
+    ng.append('circle').attr('r', 18).attr('fill', n.couleur).attr('class','node-circle');
+    ng.append('text').attr('class','node-label').attr('y', 30).text(n.nom.length > 9 ? n.nom.slice(0,8)+'…' : n.nom).attr('fill','#1a1a2e');
+
+    // Initiales dans le cercle
+    const ini = n.nom.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    ng.append('text').attr('text-anchor','middle').attr('dominant-baseline','central').attr('fill','#fff').attr('font-size','10px').attr('font-weight','800').text(ini);
+
+    // Drag
+    ng.call(d3.drag()
+      .on('drag', function(event) {
+        n.x = Math.max(20, Math.min(W-20, event.x));
+        n.y = Math.max(20, Math.min(H-20, event.y));
+        ng.attr('transform', `translate(${n.x},${n.y})`);
+        _buildGraphe();
+      })
+    );
+  });
+}
+
+function detectLinkType(label) {
+  if (!label) return 'std';
+  const l = label.toLowerCase();
+  if (l.includes('ennemi') || l.includes('antag') || l.includes('rival') || l.includes('conflit')) return 'conflit';
+  if (l.includes('amour') || l.includes('amoureux')) return 'amour';
+  if (l.includes('meilleur') || l.includes('allié') || l.includes('mentor')) return 'fort';
+  return 'std';
+}
+
+// ════════════════════════════════════════════════════════
+// SCHÉMA NARRATIF
+// ════════════════════════════════════════════════════════
+const SCHEMAS = {
+  aristote: {
+    couleur: '#1565C0',
+    phases: [
+      { key:'nar_a1', num:1, nom:'Début — Exposition',   def:'Présente les personnages, le cadre et la situation initiale.',
+        hint:'Qui ? Où ? Quand ? Quel est le monde au début de l\'histoire ?' },
+      { key:'nar_a2', num:2, nom:'Milieu — Conflit',     def:'Les personnages agissent, rencontrent des obstacles.',
+        hint:'Quel problème surgit ? Quelles difficultés le héros traverse-t-il ?' },
+      { key:'nar_a3', num:3, nom:'Fin — Résolution',     def:'Le conflit trouve sa résolution. La tension retombe.',
+        hint:'Comment le problème est-il résolu ? Qu\'est-ce qui a changé ?' },
+    ]
+  },
+  freytag: {
+    couleur: '#6A1B9A',
+    phases: [
+      { key:'nar_f1', num:1, nom:'Exposition',           def:'Présentation du cadre et des personnages.',
+        hint:'Qui sont les personnages principaux ? Où et quand l\'histoire se passe-t-elle ?' },
+      { key:'nar_f2', num:2, nom:'Action montante',      def:'Tensions et complications qui font monter l\'intensité.',
+        hint:'Quels obstacles et péripéties augmentent la tension ?' },
+      { key:'nar_f3', num:3, nom:'Climax',               def:'Point de non-retour — tension maximale.',
+        hint:'Quel est le moment le plus fort de l\'histoire ? Le tournant décisif ?' },
+      { key:'nar_f4', num:4, nom:'Action descendante',   def:'Les conséquences du climax se déroulent.',
+        hint:'Que se passe-t-il après le climax ? La tension commence à baisser.' },
+      { key:'nar_f5', num:5, nom:'Dénouement',           def:'Résolution finale — le nœud narratif se défait.',
+        hint:'Comment tout se termine-t-il ? Qu\'arrive-t-il aux personnages ?' },
+    ]
+  },
+  moderne: {
+    couleur: '#00695C',
+    phases: [
+      { key:'nar_m1', num:1, nom:'Exposition',           def:'Le monde ordinaire du personnage avant l\'histoire.',
+        hint:'Qui est le héros dans sa vie de tous les jours ?' },
+      { key:'nar_m2', num:2, nom:'Élément déclencheur',  def:'L\'événement qui met l\'histoire en mouvement.',
+        hint:'Qu\'est-ce qui brise l\'équilibre et oblige le héros à agir ?' },
+      { key:'nar_m3', num:3, nom:'Péripéties',           def:'Complications et obstacles croissants.',
+        hint:'Quelles aventures et difficultés rencontre le héros ?' },
+      { key:'nar_m4', num:4, nom:'Crise',                def:'Le moment de la décision la plus difficile.',
+        hint:'Face à quel choix impossible le héros est-il placé ?' },
+      { key:'nar_m5', num:5, nom:'Climax',               def:'Tension maximale — le tournant irréversible.',
+        hint:'Quel est le moment culminant, le plus intense de l\'histoire ?' },
+      { key:'nar_m6', num:6, nom:'Action descendante',   def:'Les conséquences immédiates du climax.',
+        hint:'Comment la situation évolue-t-elle après le climax ?' },
+      { key:'nar_m7', num:7, nom:'Dénouement',           def:'Le conflit principal est résolu.',
+        hint:'Comment se résout le problème central ? Qui gagne, qui perd ?' },
+      { key:'nar_m8', num:8, nom:'Situation finale',     def:'Nouvel équilibre — le monde transformé.',
+        hint:'Comment les choses sont-elles à la fin ? Qu\'a appris le héros ?' },
+    ]
+  }
+};
+
+let schemaActif = 'aristote';
+
+function setSchema(type, btnEl) {
+  schemaActif = type;
+  document.querySelectorAll('.schema-btn').forEach(b => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+  if (LIVRE_ACTIF) { LIVRE_ACTIF.schemaType = type; sauvegarderBiblio(); }
+  renderSchemaPhases();
+}
+
+function renderSchemaPhases() {
+  const schema  = SCHEMAS[schemaActif];
+  const narr    = LIVRE_ACTIF?.narration || {};
+  const phases  = document.getElementById('schema-phases');
+  phases.innerHTML = '';
+
+  schema.phases.forEach(ph => {
+    const col     = schema.couleur;
+    const colLite = col + '18';
+    const div = document.createElement('div');
+    div.className = 'phase-card';
+    div.id = 'phase-' + ph.key;
+    div.style.borderColor = col;
+    div.innerHTML =
+      `<div class="phase-header" style="background:${col}" onclick="togglePhase('${ph.key}')">` +
+        `<span class="phase-num" style="background:rgba(255,255,255,.25)">${ph.num}</span>` +
+        `<div style="flex:1">` +
+          `<div class="phase-nom">${ph.nom}</div>` +
+          `<div class="phase-def">${ph.def}</div>` +
+        `</div>` +
+        `<span class="phase-chv">▼</span>` +
+      `</div>` +
+      `<div class="phase-body" id="phasebody-${ph.key}">` +
+        `<div class="phase-hint">${ph.hint}</div>` +
+        `<textarea class="phase-ta" rows="3" placeholder="Écris ou dicte ce qui se passe dans cette phase…" ` +
+          `oninput="saveNarration('${ph.key}',this.value)">${esc(narr[ph.key] || '')}</textarea>` +
+      `</div>`;
+    phases.appendChild(div);
+  });
+}
+
+function togglePhase(key) {
+  const body = document.getElementById('phasebody-' + key);
+  const chv  = document.querySelector('#phase-' + key + ' .phase-chv');
+  if (!body) return;
+  const open = body.classList.toggle('open');
+  if (chv) chv.style.transform = open ? 'rotate(180deg)' : '';
+}
+
+function saveNarration(key, val) {
+  if (!LIVRE_ACTIF) return;
+  if (!LIVRE_ACTIF.narration) LIVRE_ACTIF.narration = {};
+  LIVRE_ACTIF.narration[key] = val;
+  sauvegarderBiblio();
+}
+
+function loadIntrigue() {
+  if (!LIVRE_ACTIF) return;
+  const type = LIVRE_ACTIF.schemaType || 'aristote';
+  schemaActif = type;
+  document.querySelectorAll('.schema-btn').forEach(b => b.classList.remove('active'));
+  const activeBtn = document.getElementById('sbtn-' + type);
+  if (activeBtn) activeBtn.classList.add('active');
+  renderSchemaPhases();
+}
+
+// ════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════
+chargerBiblio();
+renderBiblio();
+initRedacZones();
+renderSchemaPhases();
+</script>
 </body>
 </html>
