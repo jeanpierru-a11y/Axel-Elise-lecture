@@ -649,7 +649,7 @@ function sauvegarderBiblio() {
 // ════════════════════════════════════════════════════════
 // VERSION — incrémenter à chaque mise à jour des livres démo
 // ════════════════════════════════════════════════════════
-const DEMO_VERSION = 4; // v4 : narrations complètes, contexte, matrice
+const DEMO_VERSION = 5; // v5 : correction logique migration matrice/narration
 const LIVRES_DEMO = [
   {
     id: 'liv_petit_prince_001',
@@ -954,27 +954,52 @@ function chargerBiblio() {
 
 // Met à jour les livres démo existants sans toucher aux livres personnels d'Axel
 function mettreAJourLivresDemo() {
-  const idsDemo = LIVRES_DEMO.map(l => l.id);
   LIVRES_DEMO.forEach(demo => {
     const idx = BIBLIO.livres.findIndex(l => l.id === demo.id);
     if (idx !== -1) {
-      // Livre démo trouvé : mettre à jour tous les champs SAUF les notes saisies par l'utilisateur
       const existant = BIBLIO.livres[idx];
-      const champsSaisis = ['personnages','lieux','temps','mots','comprehension',
-                            'dissertation','redac','redacType','matrice','narration',
-                            'schemaType','contexte','auteurVie','trajectoire'];
-      // On commence avec les données démo fraîches
+      // On part des données démo fraîches
       const majour = JSON.parse(JSON.stringify(demo));
-      // On réinjecte les champs saisis par l'utilisateur s'ils sont non vides
-      champsSaisis.forEach(champ => {
+
+      // Champs texte libres : conserver si l'utilisateur a écrit quelque chose
+      const champsTexte = ['temps','mots','comprehension','contexte','auteurVie','trajectoire'];
+      champsTexte.forEach(champ => {
         const val = existant[champ];
-        if (val === undefined || val === null) return;
-        // Conserver si l'utilisateur a saisi quelque chose (différent du démo ou non vide)
-        const estVide = (typeof val === 'string' && val.trim() === '') ||
-                        (Array.isArray(val) && val.length === 0) ||
-                        (typeof val === 'object' && !Array.isArray(val) && Object.keys(val).length === 0);
-        if (!estVide) majour[champ] = val;
+        if (val && typeof val === 'string' && val.trim() !== '') majour[champ] = val;
       });
+
+      // Champs objet structurés : conserver seulement si l'utilisateur a vraiment saisi
+      // (au moins une valeur non vide et différente de "—")
+      const aVraiContenu = (obj) => {
+        if (!obj || typeof obj !== 'object') return false;
+        return Object.values(obj).some(v =>
+          v && typeof v === 'string' && v.trim() !== '' && v.trim() !== '—'
+        );
+      };
+
+      if (aVraiContenu(existant.matrice))   majour.matrice   = existant.matrice;
+      if (aVraiContenu(existant.narration)) majour.narration = existant.narration;
+
+      // dissertation et redac : conserver si au moins un champ rempli
+      if (aVraiContenu(existant.dissertation)) majour.dissertation = existant.dissertation;
+      if (aVraiContenu(existant.redac))        majour.redac        = existant.redac;
+      if (existant.redacType) majour.redacType = existant.redacType;
+      if (existant.schemaType) majour.schemaType = existant.schemaType;
+
+      // Personnages et lieux : conserver si l'utilisateur en a créé
+      // (on garde les siens seulement s'ils sont différents des démo — ids différents)
+      const idsDemo = demo.personnages.map(p => p.id);
+      const persosSaisis = (existant.personnages || []).filter(p => !idsDemo.includes(p.id));
+      if (persosSaisis.length > 0) {
+        // L'utilisateur a ajouté ses propres personnages : on les fusionne
+        majour.personnages = [...demo.personnages, ...persosSaisis];
+      }
+      const idsDemoLieux = demo.lieux.map(l => l.id);
+      const lieuxSaisis = (existant.lieux || []).filter(l => !idsDemoLieux.includes(l.id));
+      if (lieuxSaisis.length > 0) {
+        majour.lieux = [...demo.lieux, ...lieuxSaisis];
+      }
+
       BIBLIO.livres[idx] = majour;
     } else {
       // Livre démo absent : l'ajouter
