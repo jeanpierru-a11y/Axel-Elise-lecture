@@ -147,7 +147,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gris);color:va
 
 /* ── GRAPHE D3 ── */
 #graphe-container{background:#fff;border-radius:var(--r);box-shadow:var(--ombre);margin-bottom:10px;position:relative;overflow:hidden;}
-#graphe-svg{width:100%;display:block;}
+#graphe-svg{width:100%;display:block;touch-action:none;}
 .graphe-vide{text-align:center;padding:30px;color:#bbb;font-size:.82rem;}
 .link-line{stroke:#aaa;stroke-width:1.5px;fill:none;}
 .link-line.fort{stroke:var(--bleu);stroke-width:2px;}
@@ -647,8 +647,9 @@ function sauvegarderBiblio() {
 }
 
 // ════════════════════════════════════════════════════════
-// LIVRES DE DÉMONSTRATION (pré-chargés au 1er lancement)
+// VERSION — incrémenter à chaque mise à jour des livres démo
 // ════════════════════════════════════════════════════════
+const DEMO_VERSION = 4; // v4 : narrations complètes, contexte, matrice
 const LIVRES_DEMO = [
   {
     id: 'liv_petit_prince_001',
@@ -929,17 +930,57 @@ function chargerBiblio() {
     const raw = localStorage.getItem('axel_biblio');
     if (raw) {
       BIBLIO = JSON.parse(raw);
+      // ── Mise à jour des livres démo si version ancienne ──
+      const versionStockee = BIBLIO.demoVersion || 0;
+      if (versionStockee < DEMO_VERSION) {
+        mettreAJourLivresDemo();
+        BIBLIO.demoVersion = DEMO_VERSION;
+        sauvegarderBiblio();
+        showToast('📚 Livres démo mis à jour !', 'ok');
+      }
     } else {
-      // Premier lancement : charger les livres de démonstration
+      // Premier lancement
       const oldData = localStorage.getItem('axel_guide_v5');
       if (oldData) {
         migrerAncienFormat(JSON.parse(oldData));
       } else {
         BIBLIO.livres = JSON.parse(JSON.stringify(LIVRES_DEMO));
+        BIBLIO.demoVersion = DEMO_VERSION;
         sauvegarderBiblio();
       }
     }
   } catch(e) { console.error(e); }
+}
+
+// Met à jour les livres démo existants sans toucher aux livres personnels d'Axel
+function mettreAJourLivresDemo() {
+  const idsDemo = LIVRES_DEMO.map(l => l.id);
+  LIVRES_DEMO.forEach(demo => {
+    const idx = BIBLIO.livres.findIndex(l => l.id === demo.id);
+    if (idx !== -1) {
+      // Livre démo trouvé : mettre à jour tous les champs SAUF les notes saisies par l'utilisateur
+      const existant = BIBLIO.livres[idx];
+      const champsSaisis = ['personnages','lieux','temps','mots','comprehension',
+                            'dissertation','redac','redacType','matrice','narration',
+                            'schemaType','contexte','auteurVie','trajectoire'];
+      // On commence avec les données démo fraîches
+      const majour = JSON.parse(JSON.stringify(demo));
+      // On réinjecte les champs saisis par l'utilisateur s'ils sont non vides
+      champsSaisis.forEach(champ => {
+        const val = existant[champ];
+        if (val === undefined || val === null) return;
+        // Conserver si l'utilisateur a saisi quelque chose (différent du démo ou non vide)
+        const estVide = (typeof val === 'string' && val.trim() === '') ||
+                        (Array.isArray(val) && val.length === 0) ||
+                        (typeof val === 'object' && !Array.isArray(val) && Object.keys(val).length === 0);
+        if (!estVide) majour[champ] = val;
+      });
+      BIBLIO.livres[idx] = majour;
+    } else {
+      // Livre démo absent : l'ajouter
+      BIBLIO.livres.push(JSON.parse(JSON.stringify(demo)));
+    }
+  });
 }
 
 function migrerAncienFormat(old) {
@@ -1868,6 +1909,8 @@ function saveMatriceCell(sel) {
 // GRAPHE D3
 // ════════════════════════════════════════════════════════
 let d3Loaded = false;
+let grapheSimulation = null;
+
 function loadD3(cb) {
   if (d3Loaded) { cb(); return; }
   const s = document.createElement('script');
@@ -1883,17 +1926,32 @@ function renderGraphe() {
 function _buildGraphe() {
   const persos  = LIVRE_ACTIF?.personnages || [];
   const matrice = getMatrice();
-  const svg     = document.getElementById('graphe-svg');
+  const svgEl   = document.getElementById('graphe-svg');
   const vide    = document.getElementById('graphe-vide');
-  svg.innerHTML = '';
+
+  // Arrêter la simulation précédente
+  if (grapheSimulation) { grapheSimulation.stop(); grapheSimulation = null; }
+  svgEl.innerHTML = '';
 
   if (persos.length < 2) {
-    svg.style.display = 'none';
+    svgEl.style.display = 'none';
     vide.style.display = 'block';
     return;
   }
 
-  // Construire les liens
+  svgEl.style.display = 'block';
+  vide.style.display = 'none';
+
+  // Dimensions
+  const W = document.getElementById('graphe-container').clientWidth || 340;
+  const H = Math.max(240, Math.min(400, persos.length * 65));
+  svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+  // Construire noeuds et liens pour D3
+  const nodes = persos.map(p => ({
+    id: p.id, nom: p.nom, couleur: p.couleur
+  }));
+
   const links = [];
   persos.forEach((pa, i) => {
     persos.forEach((pb, j) => {
@@ -1907,111 +1965,154 @@ function _buildGraphe() {
       if (!hasAB && !hasBA) return;
       const sym = hasAB && hasBA && rAB === rBA;
       if (sym) {
-        links.push({ source: pa.id, target: pb.id, label: rAB, bidirect: false });
+        links.push({ source: pa.id, target: pb.id, label: rAB, curve: 0 });
       } else {
-        if (hasAB) links.push({ source: pa.id, target: pb.id, label: rAB, bidirect: hasBA });
-        if (hasBA) links.push({ source: pb.id, target: pa.id, label: rBA, bidirect: hasAB });
+        if (hasAB) links.push({ source: pa.id, target: pb.id, label: rAB, curve: hasBA ? 22 : 0 });
+        if (hasBA) links.push({ source: pb.id, target: pa.id, label: rBA, curve: hasAB ? 22 : 0 });
       }
     });
   });
 
-  // Dimensions
-  const W = document.getElementById('graphe-container').clientWidth || 340;
-  const H = Math.max(220, Math.min(380, persos.length * 55));
-  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-  svg.style.display = 'block';
-  vide.style.display = 'none';
-
-  const d3svg = d3.select(svg);
+  const d3svg = d3.select(svgEl);
 
   // Defs flèches
   const defs = d3svg.append('defs');
   const mkArrow = (id, col) => {
     defs.append('marker').attr('id', id)
-      .attr('viewBox','0 0 10 10').attr('refX',18).attr('refY',5)
+      .attr('viewBox','0 0 10 10').attr('refX',20).attr('refY',5)
       .attr('markerWidth',5).attr('markerHeight',5).attr('orient','auto-start-reverse')
-      .append('path').attr('d','M0 1 L8 5 L0 9').attr('fill', col);
+      .append('path').attr('d','M1 1 L8 5 L1 9').attr('fill','none')
+      .attr('stroke', col).attr('stroke-width','1.5')
+      .attr('stroke-linecap','round').attr('stroke-linejoin','round');
   };
-  mkArrow('arr-std','#aaa');
-  mkArrow('arr-bleu', '#2E5FA3');
-  mkArrow('arr-rouge','#c0392b');
-  mkArrow('arr-rose', '#e91e8c');
+  mkArrow('ga-std','#aaa'); mkArrow('ga-bleu','#2E5FA3');
+  mkArrow('ga-rouge','#c0392b'); mkArrow('ga-rose','#e91e8c');
 
   const g = d3svg.append('g');
 
-  // Noeuds
-  const nodes = persos.map(p => ({
-    id: p.id, nom: p.nom, couleur: p.couleur,
-    x: W/2 + Math.cos(2*Math.PI*(persos.indexOf(p)/persos.length)) * (W*0.32),
-    y: H/2 + Math.sin(2*Math.PI*(persos.indexOf(p)/persos.length)) * (H*0.35)
-  }));
-  const nodeMap = {};
-  nodes.forEach(n => { nodeMap[n.id] = n; });
+  // Groupes liens et noeuds
+  const linkG = g.append('g');
+  const labelG = g.append('g');
+  const nodeG  = g.append('g');
 
-  // Liens
-  const linkG = g.append('g').attr('class','links');
-  links.forEach((lk, idx) => {
-    const sn = nodeMap[lk.source];
-    const tn = nodeMap[lk.target];
-    if (!sn || !tn) return;
+  // Éléments liens
+  const linkEls = linkG.selectAll('path').data(links).enter().append('path')
+    .attr('fill','none').attr('stroke-width', 1.8)
+    .attr('stroke', d => linkColor(d.label))
+    .attr('marker-end', d => `url(#${linkArrow(d.label)})`);
 
-    // Courbure si bidirectionnel avec label différent
-    const curve = lk.bidirect ? 25 : 0;
-    const mid = { x:(sn.x+tn.x)/2, y:(sn.y+tn.y)/2 };
-    const dx = tn.x - sn.x, dy = tn.y - sn.y;
-    const len = Math.sqrt(dx*dx+dy*dy) || 1;
-    const cx = mid.x - dy/len*curve;
-    const cy = mid.y + dx/len*curve;
+  // Labels liens
+  const labelEls = labelG.selectAll('text').data(links).enter().append('text')
+    .attr('text-anchor','middle').attr('font-size','9').attr('font-family','inherit')
+    .attr('fill', d => linkColor(d.label))
+    .text(d => d.label && d.label !== '—' ? d.label : '');
 
-    const ltype = detectLinkType(lk.label);
-    const arrId = ltype === 'conflit' ? 'arr-rouge' : ltype === 'amour' ? 'arr-rose' : ltype === 'fort' ? 'arr-bleu' : 'arr-std';
-    const stroke = ltype === 'conflit' ? '#c0392b' : ltype === 'amour' ? '#e91e8c' : ltype === 'fort' ? '#2E5FA3' : '#bbb';
+  // Éléments noeuds
+  const nodeEls = nodeG.selectAll('g').data(nodes).enter().append('g')
+    .style('cursor','grab');
 
-    const path = linkG.append('path')
-      .attr('class', 'link-line ' + ltype)
-      .attr('d', curve ? `M${sn.x},${sn.y} Q${cx},${cy} ${tn.x},${tn.y}` : `M${sn.x},${sn.y} L${tn.x},${tn.y}`)
-      .attr('stroke', stroke)
-      .attr('marker-end', `url(#${arrId})`);
+  nodeEls.append('circle').attr('r', 20)
+    .attr('fill', d => d.couleur)
+    .attr('stroke','#fff').attr('stroke-width', 2.5);
 
-    // Label sur le lien
-    if (lk.label && lk.label !== '—') {
-      linkG.append('text').attr('class','link-label')
-        .attr('x', cx || mid.x).attr('y', (cy || mid.y) - 4)
-        .attr('fill', stroke).text(lk.label)
-        .style('font-size','9px');
-    }
-  });
+  // Initiales
+  nodeEls.append('text')
+    .attr('text-anchor','middle').attr('dominant-baseline','central')
+    .attr('fill','#fff').attr('font-size','11').attr('font-weight','800')
+    .text(d => d.nom.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2));
 
-  // Noeuds cercles + labels
-  const nodeG = g.append('g').attr('class','noeuds');
-  nodes.forEach(n => {
-    const ng = nodeG.append('g').attr('transform', `translate(${n.x},${n.y})`).attr('class','node-g').style('cursor','grab');
-    ng.append('circle').attr('r', 18).attr('fill', n.couleur).attr('class','node-circle');
-    ng.append('text').attr('class','node-label').attr('y', 30).text(n.nom.length > 9 ? n.nom.slice(0,8)+'…' : n.nom).attr('fill','#1a1a2e');
+  // Label sous le noeud
+  nodeEls.append('text')
+    .attr('text-anchor','middle').attr('y', 34)
+    .attr('fill','#1a1a2e').attr('font-size','10').attr('font-weight','700')
+    .text(d => d.nom.length > 10 ? d.nom.slice(0,9)+'…' : d.nom);
 
-    // Initiales dans le cercle
-    const ini = n.nom.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-    ng.append('text').attr('text-anchor','middle').attr('dominant-baseline','central').attr('fill','#fff').attr('font-size','10px').attr('font-weight','800').text(ini);
+  // Fonction de mise à jour des positions (appelée à chaque tick)
+  function ticked() {
+    // Contraindre dans les bords
+    nodes.forEach(n => {
+      n.x = Math.max(28, Math.min(W - 28, n.x));
+      n.y = Math.max(28, Math.min(H - 40, n.y));
+    });
 
-    // Drag
-    ng.call(d3.drag()
-      .on('drag', function(event) {
-        n.x = Math.max(20, Math.min(W-20, event.x));
-        n.y = Math.max(20, Math.min(H-20, event.y));
-        ng.attr('transform', `translate(${n.x},${n.y})`);
-        _buildGraphe();
-      })
-    );
-  });
+    nodeEls.attr('transform', d => `translate(${d.x},${d.y})`);
+
+    linkEls.attr('d', d => {
+      const sx = d.source.x, sy = d.source.y;
+      const tx = d.target.x, ty = d.target.y;
+      const curve = d.curve || 0;
+      if (curve === 0) return `M${sx},${sy} L${tx},${ty}`;
+      const mx = (sx+tx)/2, my = (sy+ty)/2;
+      const dx = tx-sx, dy2 = ty-sy;
+      const len = Math.sqrt(dx*dx+dy2*dy2) || 1;
+      const cx = mx - dy2/len*curve, cy = my + dx/len*curve;
+      return `M${sx},${sy} Q${cx},${cy} ${tx},${ty}`;
+    });
+
+    labelEls.attr('x', d => {
+      const curve = d.curve || 0;
+      const mx = (d.source.x+d.target.x)/2, my = (d.source.y+d.target.y)/2;
+      if (!curve) return mx;
+      const dx = d.target.x-d.source.x, dy2 = d.target.y-d.source.y;
+      const len = Math.sqrt(dx*dx+dy2*dy2)||1;
+      return mx - dy2/len*curve;
+    }).attr('y', d => {
+      const curve = d.curve || 0;
+      const mx = (d.source.x+d.target.x)/2, my = (d.source.y+d.target.y)/2;
+      if (!curve) return my - 5;
+      const dx = d.target.x-d.source.x, dy2 = d.target.y-d.source.y;
+      const len = Math.sqrt(dx*dx+dy2*dy2)||1;
+      return (my + dx/len*curve) - 4;
+    });
+  }
+
+  // Force simulation
+  grapheSimulation = d3.forceSimulation(nodes)
+    .force('link', d3.forceLink(links).id(d => d.id).distance(100))
+    .force('charge', d3.forceManyBody().strength(-220))
+    .force('center', d3.forceCenter(W/2, H/2))
+    .force('collision', d3.forceCollide(30))
+    .on('tick', ticked);
+
+  // DRAG — compatible souris ET tactile
+  function dragstarted(event, d) {
+    if (!event.active) grapheSimulation.alphaTarget(0.3).restart();
+    d.fx = d.x; d.fy = d.y;
+    d3.select(this).style('cursor','grabbing');
+  }
+  function dragged(event, d) {
+    d.fx = Math.max(28, Math.min(W-28, event.x));
+    d.fy = Math.max(28, Math.min(H-40, event.y));
+  }
+  function dragended(event, d) {
+    if (!event.active) grapheSimulation.alphaTarget(0);
+    d.fx = null; d.fy = null;
+    d3.select(this).style('cursor','grab');
+  }
+
+  nodeEls.call(
+    d3.drag()
+      .on('start', dragstarted)
+      .on('drag',  dragged)
+      .on('end',   dragended)
+  );
 }
 
-function detectLinkType(label) {
-  if (!label) return 'std';
+function linkColor(label) {
+  if (!label) return '#bbb';
   const l = label.toLowerCase();
-  if (l.includes('ennemi') || l.includes('antag') || l.includes('rival') || l.includes('conflit')) return 'conflit';
-  if (l.includes('amour') || l.includes('amoureux')) return 'amour';
-  if (l.includes('meilleur') || l.includes('allié') || l.includes('mentor')) return 'fort';
-  return 'std';
+  if (l.includes('ennemi') || l.includes('antag') || l.includes('rival')) return '#c0392b';
+  if (l.includes('amour')) return '#e91e8c';
+  if (l.includes('meilleur') || l.includes('allié') || l.includes('mentor')) return '#2E5FA3';
+  return '#aaa';
+}
+function linkArrow(label) {
+  if (!label) return 'ga-std';
+  const l = label.toLowerCase();
+  if (l.includes('ennemi') || l.includes('antag') || l.includes('rival')) return 'ga-rouge';
+  if (l.includes('amour')) return 'ga-rose';
+  if (l.includes('meilleur') || l.includes('allié') || l.includes('mentor')) return 'ga-bleu';
+  return 'ga-std';
 }
 
 // ════════════════════════════════════════════════════════
