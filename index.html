@@ -1930,10 +1930,9 @@ function saveMatriceCell(sel) {
 }
 
 // ════════════════════════════════════════════════════════
-// GRAPHE D3
+// GRAPHE D3 — statique, drag individuel, labels vers l'extérieur
 // ════════════════════════════════════════════════════════
 let d3Loaded = false;
-let grapheSimulation = null;
 
 function loadD3(cb) {
   if (d3Loaded) { cb(); return; }
@@ -1947,14 +1946,14 @@ function renderGraphe() {
   loadD3(() => _buildGraphe());
 }
 
+// Positions mémorisées entre les reconstructions
+const _nodePos = {};
+
 function _buildGraphe() {
   const persos  = LIVRE_ACTIF?.personnages || [];
   const matrice = getMatrice();
   const svgEl   = document.getElementById('graphe-svg');
   const vide    = document.getElementById('graphe-vide');
-
-  // Arrêter la simulation précédente
-  if (grapheSimulation) { grapheSimulation.stop(); grapheSimulation = null; }
   svgEl.innerHTML = '';
 
   if (persos.length < 2) {
@@ -1962,20 +1961,29 @@ function _buildGraphe() {
     vide.style.display = 'block';
     return;
   }
-
   svgEl.style.display = 'block';
   vide.style.display = 'none';
 
-  // Dimensions
   const W = document.getElementById('graphe-container').clientWidth || 340;
-  const H = Math.max(240, Math.min(400, persos.length * 65));
+  const H = Math.max(260, Math.min(420, persos.length * 70));
   svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
 
-  // Construire noeuds et liens pour D3
-  const nodes = persos.map(p => ({
-    id: p.id, nom: p.nom, couleur: p.couleur
-  }));
+  const R = 20; // rayon des cercles
+  const cx = W / 2, cy = H / 2;
+  const rayonCercle = Math.min(W, H) * 0.36;
 
+  // Positions initiales en cercle, mémorisées si déjà déplacés
+  const nodes = persos.map((p, i) => {
+    const angle = (2 * Math.PI * i / persos.length) - Math.PI / 2;
+    const defX = cx + Math.cos(angle) * rayonCercle;
+    const defY = cy + Math.sin(angle) * rayonCercle;
+    const pos = _nodePos[p.id] || { x: defX, y: defY };
+    return { id: p.id, nom: p.nom, couleur: p.couleur, x: pos.x, y: pos.y };
+  });
+  const nodeMap = {};
+  nodes.forEach(n => { nodeMap[n.id] = n; });
+
+  // Construire les liens
   const links = [];
   persos.forEach((pa, i) => {
     persos.forEach((pb, j) => {
@@ -1984,15 +1992,14 @@ function _buildGraphe() {
       const kBA = pb.id + '__' + pa.id;
       const rAB = matrice[kAB] || '—';
       const rBA = matrice[kBA] || '—';
-      const hasAB = rAB !== '—';
-      const hasBA = rBA !== '—';
+      const hasAB = rAB !== '—', hasBA = rBA !== '—';
       if (!hasAB && !hasBA) return;
       const sym = hasAB && hasBA && rAB === rBA;
       if (sym) {
-        links.push({ source: pa.id, target: pb.id, label: rAB, curve: 0 });
+        links.push({ sId: pa.id, tId: pb.id, label: rAB, curve: 0 });
       } else {
-        if (hasAB) links.push({ source: pa.id, target: pb.id, label: rAB, curve: hasBA ? 22 : 0 });
-        if (hasBA) links.push({ source: pb.id, target: pa.id, label: rBA, curve: hasAB ? 22 : 0 });
+        if (hasAB) links.push({ sId: pa.id, tId: pb.id, label: rAB, curve: hasBA ? 26 : 0 });
+        if (hasBA) links.push({ sId: pb.id, tId: pa.id, label: rBA, curve: hasAB ? 26 : 0 });
       }
     });
   });
@@ -2003,122 +2010,150 @@ function _buildGraphe() {
   const defs = d3svg.append('defs');
   const mkArrow = (id, col) => {
     defs.append('marker').attr('id', id)
-      .attr('viewBox','0 0 10 10').attr('refX',20).attr('refY',5)
-      .attr('markerWidth',5).attr('markerHeight',5).attr('orient','auto-start-reverse')
-      .append('path').attr('d','M1 1 L8 5 L1 9').attr('fill','none')
-      .attr('stroke', col).attr('stroke-width','1.5')
-      .attr('stroke-linecap','round').attr('stroke-linejoin','round');
+      .attr('viewBox','0 0 10 10').attr('refX', 22).attr('refY', 5)
+      .attr('markerWidth', 5).attr('markerHeight', 5).attr('orient','auto-start-reverse')
+      .append('path').attr('d','M1 1 L8 5 L1 9')
+      .attr('fill','none').attr('stroke', col)
+      .attr('stroke-width','1.5').attr('stroke-linecap','round').attr('stroke-linejoin','round');
   };
-  mkArrow('ga-std','#aaa'); mkArrow('ga-bleu','#2E5FA3');
+  mkArrow('ga-std','#bbb'); mkArrow('ga-bleu','#2E5FA3');
   mkArrow('ga-rouge','#c0392b'); mkArrow('ga-rose','#e91e8c');
 
   const g = d3svg.append('g');
-
-  // Groupes liens et noeuds
-  const linkG = g.append('g');
+  const linkG  = g.append('g');
   const labelG = g.append('g');
   const nodeG  = g.append('g');
 
-  // Éléments liens
+  // ── Fonction de calcul du chemin d'un arc ──
+  function arcPath(sn, tn, curve) {
+    const dx = tn.x - sn.x, dy = tn.y - sn.y;
+    const len = Math.sqrt(dx*dx + dy*dy) || 1;
+    // Points sur le bord des cercles
+    const sx = sn.x + dx/len * R, sy = sn.y + dy/len * R;
+    const tx = tn.x - dx/len * (R + 4), ty = tn.y - dy/len * (R + 4);
+    if (!curve) return `M${sx},${sy} L${tx},${ty}`;
+    const mx = (sx+tx)/2, my = (sy+ty)/2;
+    const pcx = mx - dy/len*curve, pcy = my + dx/len*curve;
+    return `M${sx},${sy} Q${pcx},${pcy} ${tx},${ty}`;
+  }
+
+  // ── Fonction position label d'arc ──
+  function arcLabelPos(sn, tn, curve) {
+    const dx = tn.x - sn.x, dy = tn.y - sn.y;
+    const len = Math.sqrt(dx*dx + dy*dy) || 1;
+    const mx = (sn.x+tn.x)/2, my = (sn.y+tn.y)/2;
+    if (!curve) return { x: mx, y: my - 7 };
+    const pcx = mx - dy/len*curve, pcy = my + dx/len*curve;
+    // Point à 60% de la courbe (plus proche du milieu de l'arc)
+    const t = 0.5;
+    const qx = (1-t)*(1-t)*sn.x + 2*(1-t)*t*pcx + t*t*tn.x;
+    const qy = (1-t)*(1-t)*sn.y + 2*(1-t)*t*pcy + t*t*tn.y;
+    // Offset perpendiculaire pour sortir de l'arc
+    const nx = -dy/len, ny = dx/len;
+    return { x: qx + nx*10, y: qy + ny*10 };
+  }
+
+  // ── Dessin des arcs ──
   const linkEls = linkG.selectAll('path').data(links).enter().append('path')
     .attr('fill','none').attr('stroke-width', 1.8)
     .attr('stroke', d => linkColor(d.label))
-    .attr('marker-end', d => `url(#${linkArrow(d.label)})`);
+    .attr('marker-end', d => `url(#${linkArrow(d.label)})`)
+    .attr('d', d => arcPath(nodeMap[d.sId], nodeMap[d.tId], d.curve));
 
-  // Labels liens
+  // ── Labels des arcs ──
   const labelEls = labelG.selectAll('text').data(links).enter().append('text')
-    .attr('text-anchor','middle').attr('font-size','9').attr('font-family','inherit')
+    .attr('text-anchor','middle').attr('font-size','8.5').attr('font-family','inherit')
     .attr('fill', d => linkColor(d.label))
-    .text(d => d.label && d.label !== '—' ? d.label : '');
+    .attr('pointer-events','none')
+    .text(d => d.label && d.label !== '—' ? d.label : '')
+    .each(function(d) {
+      const pos = arcLabelPos(nodeMap[d.sId], nodeMap[d.tId], d.curve);
+      d3.select(this).attr('x', pos.x).attr('y', pos.y);
+    });
 
-  // Éléments noeuds
+  // ── Fonction position label de nœud (vers l'extérieur du centre) ──
+  function nodeLabelPos(n) {
+    const dx = n.x - cx, dy = n.y - cy;
+    const len = Math.sqrt(dx*dx + dy*dy) || 1;
+    const dist = R + 13;
+    return { x: dx/len * dist, y: dy/len * dist,
+             anchor: Math.abs(dx) > Math.abs(dy)
+               ? (dx > 0 ? 'start' : 'end') : 'middle',
+             baseline: dy > 0 ? 'hanging' : 'auto' };
+  }
+
+  // ── Noeuds ──
   const nodeEls = nodeG.selectAll('g').data(nodes).enter().append('g')
+    .attr('transform', d => `translate(${d.x},${d.y})`)
     .style('cursor','grab');
 
-  nodeEls.append('circle').attr('r', 20)
+  nodeEls.append('circle').attr('r', R)
     .attr('fill', d => d.couleur)
     .attr('stroke','#fff').attr('stroke-width', 2.5);
 
-  // Initiales
+  // Initiales dans le cercle
   nodeEls.append('text')
     .attr('text-anchor','middle').attr('dominant-baseline','central')
     .attr('fill','#fff').attr('font-size','11').attr('font-weight','800')
+    .attr('pointer-events','none')
     .text(d => d.nom.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2));
 
-  // Label sous le noeud
+  // Label vers l'extérieur
   nodeEls.append('text')
-    .attr('text-anchor','middle').attr('y', 34)
     .attr('fill','#1a1a2e').attr('font-size','10').attr('font-weight','700')
-    .text(d => d.nom.length > 10 ? d.nom.slice(0,9)+'…' : d.nom);
-
-  // Fonction de mise à jour des positions (appelée à chaque tick)
-  function ticked() {
-    // Contraindre dans les bords
-    nodes.forEach(n => {
-      n.x = Math.max(28, Math.min(W - 28, n.x));
-      n.y = Math.max(28, Math.min(H - 40, n.y));
+    .attr('pointer-events','none')
+    .each(function(d) {
+      const lp = nodeLabelPos(d);
+      d3.select(this)
+        .attr('x', lp.x).attr('y', lp.y)
+        .attr('text-anchor', lp.anchor)
+        .attr('dominant-baseline', lp.baseline)
+        .text(d.nom.length > 12 ? d.nom.slice(0,11)+'…' : d.nom);
     });
 
-    nodeEls.attr('transform', d => `translate(${d.x},${d.y})`);
+  // ── DRAG individuel — sans simulation ──
+  function redraw(d) {
+    // Mettre à jour la position du nœud déplacé
+    d3.select(nodeG.selectAll('g').nodes()[nodes.indexOf(d)])
+      .attr('transform', `translate(${d.x},${d.y})`);
 
-    linkEls.attr('d', d => {
-      const sx = d.source.x, sy = d.source.y;
-      const tx = d.target.x, ty = d.target.y;
-      const curve = d.curve || 0;
-      if (curve === 0) return `M${sx},${sy} L${tx},${ty}`;
-      const mx = (sx+tx)/2, my = (sy+ty)/2;
-      const dx = tx-sx, dy2 = ty-sy;
-      const len = Math.sqrt(dx*dx+dy2*dy2) || 1;
-      const cx = mx - dy2/len*curve, cy = my + dx/len*curve;
-      return `M${sx},${sy} Q${cx},${cy} ${tx},${ty}`;
-    });
+    // Recalculer les labels du nœud déplacé
+    d3.select(nodeG.selectAll('g').nodes()[nodes.indexOf(d)])
+      .select('text:last-child')
+      .each(function() {
+        const lp = nodeLabelPos(d);
+        d3.select(this)
+          .attr('x', lp.x).attr('y', lp.y)
+          .attr('text-anchor', lp.anchor)
+          .attr('dominant-baseline', lp.baseline);
+      });
 
-    labelEls.attr('x', d => {
-      const curve = d.curve || 0;
-      const mx = (d.source.x+d.target.x)/2, my = (d.source.y+d.target.y)/2;
-      if (!curve) return mx;
-      const dx = d.target.x-d.source.x, dy2 = d.target.y-d.source.y;
-      const len = Math.sqrt(dx*dx+dy2*dy2)||1;
-      return mx - dy2/len*curve;
-    }).attr('y', d => {
-      const curve = d.curve || 0;
-      const mx = (d.source.x+d.target.x)/2, my = (d.source.y+d.target.y)/2;
-      if (!curve) return my - 5;
-      const dx = d.target.x-d.source.x, dy2 = d.target.y-d.source.y;
-      const len = Math.sqrt(dx*dx+dy2*dy2)||1;
-      return (my + dx/len*curve) - 4;
-    });
-  }
+    // Recalculer uniquement les arcs connectés à ce nœud
+    linkEls.filter(lk => lk.sId === d.id || lk.tId === d.id)
+      .attr('d', lk => arcPath(nodeMap[lk.sId], nodeMap[lk.tId], lk.curve));
 
-  // Force simulation
-  grapheSimulation = d3.forceSimulation(nodes)
-    .force('link', d3.forceLink(links).id(d => d.id).distance(100))
-    .force('charge', d3.forceManyBody().strength(-220))
-    .force('center', d3.forceCenter(W/2, H/2))
-    .force('collision', d3.forceCollide(30))
-    .on('tick', ticked);
-
-  // DRAG — compatible souris ET tactile
-  function dragstarted(event, d) {
-    if (!event.active) grapheSimulation.alphaTarget(0.3).restart();
-    d.fx = d.x; d.fy = d.y;
-    d3.select(this).style('cursor','grabbing');
-  }
-  function dragged(event, d) {
-    d.fx = Math.max(28, Math.min(W-28, event.x));
-    d.fy = Math.max(28, Math.min(H-40, event.y));
-  }
-  function dragended(event, d) {
-    if (!event.active) grapheSimulation.alphaTarget(0);
-    d.fx = null; d.fy = null;
-    d3.select(this).style('cursor','grab');
+    // Recalculer les labels d'arcs connectés
+    labelEls.filter(lk => lk.sId === d.id || lk.tId === d.id)
+      .each(function(lk) {
+        const pos = arcLabelPos(nodeMap[lk.sId], nodeMap[lk.tId], lk.curve);
+        d3.select(this).attr('x', pos.x).attr('y', pos.y);
+      });
   }
 
   nodeEls.call(
     d3.drag()
-      .on('start', dragstarted)
-      .on('drag',  dragged)
-      .on('end',   dragended)
+      .on('start', function(event, d) {
+        d3.select(this).style('cursor','grabbing').raise();
+      })
+      .on('drag', function(event, d) {
+        d.x = Math.max(R + 2, Math.min(W - R - 2, event.x));
+        d.y = Math.max(R + 2, Math.min(H - R - 2, event.y));
+        _nodePos[d.id] = { x: d.x, y: d.y }; // mémoriser
+        redraw(d);
+      })
+      .on('end', function(event, d) {
+        d3.select(this).style('cursor','grab');
+      })
   );
 }
 
