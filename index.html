@@ -2111,47 +2111,40 @@ function _buildGraphe() {
         .text(d.nom.length > 12 ? d.nom.slice(0,11)+'…' : d.nom);
     });
 
-  // ── DRAG individuel — sans simulation ──
-  function redraw(d) {
-    // Mettre à jour la position du nœud déplacé
-    d3.select(nodeG.selectAll('g').nodes()[nodes.indexOf(d)])
-      .attr('transform', `translate(${d.x},${d.y})`);
-
-    // Recalculer les labels du nœud déplacé
-    d3.select(nodeG.selectAll('g').nodes()[nodes.indexOf(d)])
-      .select('text:last-child')
-      .each(function() {
-        const lp = nodeLabelPos(d);
-        d3.select(this)
-          .attr('x', lp.x).attr('y', lp.y)
-          .attr('text-anchor', lp.anchor)
-          .attr('dominant-baseline', lp.baseline);
-      });
-
-    // Recalculer uniquement les arcs connectés à ce nœud
-    linkEls.filter(lk => lk.sId === d.id || lk.tId === d.id)
-      .attr('d', lk => arcPath(nodeMap[lk.sId], nodeMap[lk.tId], lk.curve));
-
-    // Recalculer les labels d'arcs connectés
-    labelEls.filter(lk => lk.sId === d.id || lk.tId === d.id)
-      .each(function(lk) {
-        const pos = arcLabelPos(nodeMap[lk.sId], nodeMap[lk.tId], lk.curve);
-        d3.select(this).attr('x', pos.x).attr('y', pos.y);
-      });
-  }
-
+  // ── DRAG individuel — transform direct, pas de redraw ──
   nodeEls.call(
     d3.drag()
       .on('start', function(event, d) {
         d3.select(this).style('cursor','grabbing').raise();
       })
       .on('drag', function(event, d) {
+        // Mettre à jour les coordonnées du nœud
         d.x = Math.max(R + 2, Math.min(W - R - 2, event.x));
         d.y = Math.max(R + 2, Math.min(H - R - 2, event.y));
-        _nodePos[d.id] = { x: d.x, y: d.y }; // mémoriser
-        redraw(d);
+        _nodePos[d.id] = { x: d.x, y: d.y };
+
+        // Déplacer ce nœud via son transform
+        d3.select(this).attr('transform', `translate(${d.x},${d.y})`);
+
+        // Recalculer le label de ce nœud
+        const lp = nodeLabelPos(d);
+        d3.select(this).select('text:last-child')
+          .attr('x', lp.x).attr('y', lp.y)
+          .attr('text-anchor', lp.anchor)
+          .attr('dominant-baseline', lp.baseline);
+
+        // Recalculer les arcs connectés à ce nœud
+        linkEls.filter(lk => lk.sId === d.id || lk.tId === d.id)
+          .attr('d', lk => arcPath(nodeMap[lk.sId], nodeMap[lk.tId], lk.curve));
+
+        // Recalculer les labels des arcs connectés
+        labelEls.filter(lk => lk.sId === d.id || lk.tId === d.id)
+          .each(function(lk) {
+            const pos = arcLabelPos(nodeMap[lk.sId], nodeMap[lk.tId], lk.curve);
+            d3.select(this).attr('x', pos.x).attr('y', pos.y);
+          });
       })
-      .on('end', function(event, d) {
+      .on('end', function() {
         d3.select(this).style('cursor','grab');
       })
   );
