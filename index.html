@@ -649,7 +649,7 @@ function sauvegarderBiblio() {
 // ════════════════════════════════════════════════════════
 // VERSION — incrémenter à chaque mise à jour des livres démo
 // ════════════════════════════════════════════════════════
-const DEMO_VERSION = 5; // v5 : correction logique migration matrice/narration
+const DEMO_VERSION = 6; // v6 : correction doublon personnages/lieux
 const LIVRES_DEMO = [
   {
     id: 'liv_petit_prince_001',
@@ -986,19 +986,15 @@ function mettreAJourLivresDemo() {
       if (existant.redacType) majour.redacType = existant.redacType;
       if (existant.schemaType) majour.schemaType = existant.schemaType;
 
-      // Personnages et lieux : conserver si l'utilisateur en a créé
-      // (on garde les siens seulement s'ils sont différents des démo — ids différents)
+      // Personnages : garder les démo (déjà dans majour) + ajouter ceux créés par l'utilisateur
       const idsDemo = demo.personnages.map(p => p.id);
       const persosSaisis = (existant.personnages || []).filter(p => !idsDemo.includes(p.id));
-      if (persosSaisis.length > 0) {
-        // L'utilisateur a ajouté ses propres personnages : on les fusionne
-        majour.personnages = [...demo.personnages, ...persosSaisis];
-      }
+      if (persosSaisis.length > 0) majour.personnages = [...majour.personnages, ...persosSaisis];
+
+      // Lieux : idem
       const idsDemoLieux = demo.lieux.map(l => l.id);
       const lieuxSaisis = (existant.lieux || []).filter(l => !idsDemoLieux.includes(l.id));
-      if (lieuxSaisis.length > 0) {
-        majour.lieux = [...demo.lieux, ...lieuxSaisis];
-      }
+      if (lieuxSaisis.length > 0) majour.lieux = [...majour.lieux, ...lieuxSaisis];
 
       BIBLIO.livres[idx] = majour;
     } else {
