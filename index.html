@@ -26,7 +26,35 @@
 html,body{height:100%;overflow:hidden;}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gris);color:var(--texte);display:flex;flex-direction:column;}
 
-/* ── SYNC FIREBASE ── */
+/* ── MODE AXEL / ÉLISE ── */
+#modal-mode{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9100;display:none;align-items:center;justify-content:center;padding:20px;}
+#modal-mode.open{display:flex;}
+#modal-mode-box{background:#fff;border-radius:18px;padding:28px 22px;width:100%;max-width:400px;text-align:center;}
+#modal-mode-box h2{font-size:1.1rem;font-weight:900;color:var(--bleu);margin-bottom:6px;}
+#modal-mode-box p{font-size:.82rem;color:#888;margin-bottom:20px;}
+.mode-choice-btn{width:100%;padding:16px;border:2.5px solid var(--gris2);border-radius:14px;background:#fff;font-family:inherit;cursor:pointer;margin-bottom:10px;text-align:left;display:flex;align-items:center;gap:14px;transition:border-color .15s,background .15s;}
+.mode-choice-btn:hover{border-color:var(--bleu);background:var(--bleuC);}
+.mode-choice-btn .mc-icon{font-size:2rem;flex-shrink:0;}
+.mode-choice-btn .mc-nom{font-weight:900;font-size:.95rem;color:var(--bleu);}
+.mode-choice-btn .mc-desc{font-size:.72rem;color:#888;margin-top:2px;}
+/* Badge mode dans les headers */
+#mode-badge-biblio,#mode-badge-guide{display:inline-flex;align-items:center;gap:5px;font-size:.65rem;font-weight:800;padding:3px 9px;border-radius:20px;cursor:pointer;border:none;font-family:inherit;}
+#mode-badge-biblio.axel,#mode-badge-guide.axel{background:rgba(255,255,255,.2);color:#fff;}
+#mode-badge-biblio.elise,#mode-badge-guide.elise{background:#F3E5F5;color:#6A1B9A;}
+/* Sections conditionnelles */
+.only-axel,.only-elise{display:none;}
+body.mode-axel .only-axel{display:block;}
+body.mode-elise .only-elise{display:block;}
+/* Zones structurées Élise */
+.struct-zone{background:var(--gris);border-radius:10px;padding:12px 14px;margin-bottom:10px;}
+.struct-zone-title{font-size:.75rem;font-weight:800;color:var(--bleu);margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.struct-zone-hint{font-size:.7rem;color:#999;font-style:italic;margin-bottom:6px;line-height:1.4;}
+/* AEA paragraphes */
+.aea-card{border:1.5px solid var(--gris2);border-radius:10px;margin-bottom:10px;overflow:hidden;}
+.aea-header{padding:8px 12px;font-size:.72rem;font-weight:800;display:flex;align-items:center;gap:6px;}
+.aea-body{padding:8px 10px;display:flex;flex-direction:column;gap:6px;}
+.aea-label{font-size:.68rem;font-weight:700;color:#888;margin-bottom:2px;}
+
 #sync-badge{display:inline-flex;align-items:center;gap:5px;font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:20px;cursor:pointer;border:none;font-family:inherit;transition:background .2s;}
 #sync-badge.idle{background:rgba(255,255,255,.18);color:#fff;}
 #sync-badge.ok{background:#E8F5E9;color:#2E7D32;}
@@ -99,6 +127,9 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gris);color:va
 /* ── CHAMPS ── */
 .field{width:100%;font-family:inherit;font-size:.93rem;font-weight:600;border:2px solid var(--gris2);border-radius:10px;padding:9px 12px;outline:none;color:var(--texte);background:var(--blanc);resize:vertical;}
 .field:focus{border-color:var(--bleu);}
+.field::placeholder{color:#b0b8c4;font-weight:400;font-style:italic;}
+.field::-webkit-input-placeholder{color:#b0b8c4;font-weight:400;font-style:italic;}
+.field::-moz-placeholder{color:#b0b8c4;font-weight:400;font-style:italic;}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
 .field-mb{margin-bottom:8px;}
 
@@ -236,6 +267,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gris);color:va
       <button id="sync-badge" class="idle" onclick="ouvrirModalSync()">
         <span class="sb-dot"></span><span id="sync-label">☁️ Sync</span>
       </button>
+      <button id="mode-badge-biblio" class="axel" onclick="ouvrirModalMode()">👤</button>
     </div>
   </div>
   <div id="biblio-content">
@@ -263,6 +295,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gris);color:va
       <div id="header-titre">—</div>
       <div id="header-date"></div>
     </div>
+    <button id="mode-badge-guide" class="axel" onclick="ouvrirModalMode()">👤</button>
   </div>
 
   <div id="tabs">
@@ -320,6 +353,25 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gris);color:va
         <textarea id="livre-trajectoire" class="field" rows="4"
           placeholder="Ex. : Ce roman est l'œuvre la plus célèbre de l'auteur. Écrit après… il marque un tournant dans son écriture car… Avant ce livre, il/elle avait publié… Après, il/elle écrira…"
           oninput="saveLivreContexte()"></textarea>
+      </div>
+
+      <!-- ZONES ÉLISE UNIQUEMENT -->
+      <div class="only-elise">
+        <div class="card" style="border-left:4px solid #00838F">
+          <div class="card-title" style="color:#00838F">📚 Courant littéraire</div>
+          <div style="font-size:.73rem;color:#888;margin-bottom:6px;">Classicisme / Lumières / Romantisme / Réalisme / Naturalisme / Symbolisme / Surréalisme / Existentialisme… Caractéristiques du courant dans ce livre.</div>
+          <textarea id="livre-courant" class="field" rows="4"
+            placeholder="Ex. : Thérèse Desqueyroux s'inscrit dans le courant du roman psychologique des années 1920. Mauriac est influencé par le catholicisme et par Freud. On retrouve les caractéristiques du courant : analyse minutieuse de la vie intérieure, langue épurée, refus du jugement moral simple…"
+            oninput="saveLivreElise()"></textarea>
+        </div>
+
+        <div class="card" style="border-left:4px solid #AD1457">
+          <div class="card-title" style="color:#AD1457">🖋️ Style de l'auteur·e</div>
+          <div style="font-size:.73rem;color:#888;margin-bottom:6px;">Lexique (registre, champs sémantiques) · Syntaxe (phrases longues/courtes) · Figures de style récurrentes · Point de vue narratif (narrateur interne/externe, focalisation)</div>
+          <textarea id="livre-style" class="field" rows="5"
+            placeholder="Ex. : Mauriac utilise un style sobre et dense. Les phrases sont souvent longues, sinueuses, comme le monologue intérieur de Thérèse. Le point de vue est interne : on voit tout depuis la conscience de Thérèse. Figures récurrentes : métaphores de l'étouffement et de la prison (la forêt = la cage), ironie douce-amère…"
+            oninput="saveLivreElise()"></textarea>
+        </div>
       </div>
 
       <div class="export-card">
@@ -433,9 +485,33 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gris);color:va
 
       <div class="card">
         <div class="card-title" style="color:var(--orange)">⏳ Époque &amp; Chronologie</div>
-        <textarea id="temps-text" class="field" rows="14"
+        <textarea id="temps-text" class="field only-axel" rows="14"
           placeholder="L'époque, les dates importantes, l'ordre des événements…"
           oninput="saveTexte('temps')"></textarea>
+
+        <!-- VERSION STRUCTURÉE ÉLISE -->
+        <div class="only-elise">
+          <div class="struct-zone">
+            <div class="struct-zone-title">📐 Ordre narratif</div>
+            <div class="struct-zone-hint">L'histoire est-elle racontée dans l'ordre ? Y a-t-il des flashbacks (analepse) ou anticipations (prolepse) ? → Effets : suspense, révélation, surprise.</div>
+            <textarea id="temps2-ordre" class="field" rows="3" placeholder="Ex. : Le roman commence in medias res — Thérèse sort du tribunal. Puis long flashback dans le train. La narration est donc anachronique (analepse principale)…" oninput="saveTemps2()"></textarea>
+          </div>
+          <div class="struct-zone">
+            <div class="struct-zone-title">⏱️ Durée &amp; Rythme</div>
+            <div class="struct-zone-hint">Quels moments sont dilatés (racontés lentement) ? Quels moments sont résumés ou ellipsés ? Pourquoi ?</div>
+            <textarea id="temps2-duree" class="field" rows="3" placeholder="Ex. : La scène de l'aveu intérieur est très dilatée (plusieurs pages pour quelques minutes). Les années du mariage sont résumées en quelques lignes (ellipse). Le trajet en train occupe tout le roman…" oninput="saveTemps2()"></textarea>
+          </div>
+          <div class="struct-zone">
+            <div class="struct-zone-title">🔁 Fréquence</div>
+            <div class="struct-zone-hint">Certains événements sont-ils racontés une seule fois (singulatif), résumés (itératif : « il faisait souvent »), ou répétés plusieurs fois (répétitif) ?</div>
+            <textarea id="temps2-frequence" class="field" rows="3" placeholder="Ex. : Les saisons des Landes reviennent de manière itérative — l'été étouffant est évoqué chaque année comme un leitmotiv…" oninput="saveTemps2()"></textarea>
+          </div>
+          <div class="struct-zone" style="background:var(--vertC)">
+            <div class="struct-zone-title" style="color:var(--vert)">🗺️ Organisation de l'espace</div>
+            <div class="struct-zone-hint">Espaces réels vs symboliques · Ouverts vs fermés · Mouvements des personnages · Géographie symbolique (ville/campagne, haut/bas…)</div>
+            <textarea id="temps2-espace" class="field" rows="4" placeholder="Ex. : Les Landes = espace fermé, prison symbolique. Paris = espace ouvert, liberté rêvée. Argelouse = isolement total, punition. Les déplacements de Thérèse sont toujours contraints — elle ne choisit jamais sa destination…" oninput="saveTemps2()"></textarea>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -468,70 +544,180 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gris);color:va
 
     <!-- DISSERTATION -->
     <div class="section" id="sec-dissertation">
-      <div class="card" style="border-left:5px solid var(--violet)">
-        <div class="card-title" style="color:var(--violet)">✍️ Ma Dissertation</div>
-        <div style="background:var(--violetC);border-radius:10px;padding:10px 12px;font-size:.78rem;line-height:1.6;color:#555;margin-bottom:12px;">
-          <b>Méthode 6ème :</b> Introduction → Développement (arguments + exemples) → Conclusion<br>
-          <b>Connecteurs :</b> <i>Tout d'abord • Ensuite • De plus • Par exemple • En effet • Enfin • Pour conclure</i>
+
+      <!-- ══ VERSION AXEL (6ème) ══ -->
+      <div class="only-axel">
+        <div class="card" style="border-left:5px solid var(--violet)">
+          <div class="card-title" style="color:var(--violet)">✍️ Ma Dissertation</div>
+          <div style="background:var(--violetC);border-radius:10px;padding:10px 12px;font-size:.78rem;line-height:1.6;color:#555;margin-bottom:12px;">
+            <b>Méthode 6ème :</b> Introduction → Développement (arguments + exemples) → Conclusion<br>
+            <b>Connecteurs :</b> <i>Tout d'abord • Ensuite • De plus • Par exemple • En effet • Enfin • Pour conclure</i>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title" style="color:var(--violet)">📌 Sujet</div>
+          <textarea id="diss-sujet" class="field" rows="2" placeholder="Colle ici le sujet donné par le professeur…" oninput="saveDiss()"></textarea>
+        </div>
+        <div class="card" style="border-top:4px solid #2E5FA3">
+          <div class="card-title" style="color:#2E5FA3">① Introduction</div>
+          <div style="font-size:.75rem;color:#888;margin-bottom:6px;">Présente le livre, l'auteur, et pose la question du sujet.</div>
+          <textarea id="diss-intro" class="field" rows="5" placeholder="Exemple : Le Petit Prince, écrit par Antoine de Saint-Exupéry en 1943, est un conte philosophique qui nous raconte l'histoire d'un petit garçon venu d'une autre planète. Dans ce livre, l'auteur nous pose une question importante : qu'est-ce qui compte vraiment dans la vie ?" oninput="saveDiss()"></textarea>
+        </div>
+        <div class="card" style="border-top:4px solid #2E7D32">
+          <div class="card-title" style="color:#2E7D32">② Argument 1 + exemple</div>
+          <div style="font-size:.75rem;color:#888;margin-bottom:6px;">Tout d'abord… / En premier lieu… + Par exemple…</div>
+          <textarea id="diss-arg1" class="field" rows="5" placeholder="Tout d'abord, l'auteur montre que l'amitié est la chose la plus précieuse. Par exemple, quand le Petit Prince rencontre le Renard, celui-ci lui apprend que pour avoir un ami, il faut l'apprivoiser, c'est-à-dire créer des liens." oninput="saveDiss()"></textarea>
+        </div>
+        <div class="card" style="border-top:4px solid #E65100">
+          <div class="card-title" style="color:#E65100">③ Argument 2 + exemple</div>
+          <div style="font-size:.75rem;color:#888;margin-bottom:6px;">Ensuite… / De plus… + En effet… / Ainsi…</div>
+          <textarea id="diss-arg2" class="field" rows="5" placeholder="Ensuite, Saint-Exupéry nous montre que les adultes ont oublié ce qui est essentiel. En effet, le Petit Prince visite plusieurs planètes où les adultes sont ridicules : le roi qui veut commander, le vaniteux qui veut être admiré…" oninput="saveDiss()"></textarea>
+        </div>
+        <div class="card" style="border-top:4px solid #6A1B9A">
+          <div class="card-title" style="color:#6A1B9A">④ Argument 3 (facultatif)</div>
+          <div style="font-size:.75rem;color:#888;margin-bottom:6px;">De plus… / Par ailleurs… + Par exemple…</div>
+          <textarea id="diss-arg3" class="field" rows="5" placeholder="(optionnel — laisse vide si tu n'as que 2 arguments)" oninput="saveDiss()"></textarea>
+        </div>
+        <div class="card" style="border-top:4px solid #c0392b">
+          <div class="card-title" style="color:#c0392b">⑤ Conclusion</div>
+          <div style="font-size:.75rem;color:#888;margin-bottom:6px;">Pour conclure… / En résumé… — rappelle tes idées principales.</div>
+          <textarea id="diss-conclu" class="field" rows="5" placeholder="Pour conclure, Le Petit Prince nous rappelle que l'essentiel est invisible pour les yeux : l'amitié, l'amour et la simplicité sont plus importants que la richesse ou le pouvoir. Ce livre nous invite à garder notre regard d'enfant pour voir ce qui compte vraiment." oninput="saveDiss()"></textarea>
+        </div>
+        <div class="card" style="background:var(--jauneC);border:1.5px solid var(--jaune)">
+          <div class="card-title" style="color:var(--jaune)">💡 Connecteurs utiles</div>
+          <div style="font-size:.8rem;line-height:1.8;color:#555;">
+            <b>Pour introduire :</b> Tout d'abord • En premier lieu • Pour commencer<br>
+            <b>Pour ajouter :</b> Ensuite • De plus • Par ailleurs • En outre<br>
+            <b>Pour illustrer :</b> Par exemple • En effet • Ainsi • C'est le cas de<br>
+            <b>Pour conclure :</b> Pour conclure • En résumé • Finalement • En somme
+          </div>
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-title" style="color:var(--violet)">📌 Sujet de la dissertation</div>
-        <textarea id="diss-sujet" class="field" rows="2"
-          placeholder="Colle ici le sujet donné par le professeur…"
-          oninput="saveDiss()"></textarea>
-      </div>
+      <!-- ══ VERSION ÉLISE (2nde) ══ -->
+      <div class="only-elise">
+        <div class="card" style="border-left:5px solid var(--violet)">
+          <div class="card-title" style="color:var(--violet)">✍️ Ma Dissertation — Méthode 2nde</div>
+          <div style="background:var(--violetC);border-radius:10px;padding:10px 12px;font-size:.78rem;line-height:1.7;color:#555;">
+            <b>5 étapes :</b> Analyse du sujet → Problématique → Plan → Rédaction → Relecture<br>
+            <b>Chaque paragraphe :</b> <i>A</i>rgument · <i>E</i>xemple · <i>A</i>nalyse (méthode A.E.A.)
+          </div>
+        </div>
 
-      <div class="card" style="border-top:4px solid #2E5FA3">
-        <div class="card-title" style="color:#2E5FA3">① Introduction</div>
-        <div style="font-size:.75rem;color:#888;margin-bottom:6px;">Présente le livre, l'auteur, et pose la question du sujet.</div>
-        <textarea id="diss-intro" class="field" rows="5"
-          placeholder="Exemple : Le Petit Prince, écrit par Antoine de Saint-Exupéry en 1943, est un conte philosophique qui nous raconte l'histoire d'un petit garçon venu d'une autre planète. Dans ce livre, l'auteur nous pose une question importante : qu'est-ce qui compte vraiment dans la vie ?"
-          oninput="saveDiss()"></textarea>
-      </div>
+        <!-- Étape 1 : Analyse du sujet -->
+        <div class="card" style="border-top:4px solid #1565C0">
+          <div class="card-title" style="color:#1565C0">① Analyse du sujet</div>
+          <div class="struct-zone">
+            <div class="struct-zone-title">📌 Sujet</div>
+            <textarea id="diss2-sujet" class="field" rows="2" placeholder="Colle ici le sujet donné par le professeur…" oninput="saveDiss2()"></textarea>
+          </div>
+          <div class="struct-zone">
+            <div class="struct-zone-title">🔑 Mots-clés &amp; définitions</div>
+            <div class="struct-zone-hint">Identifie les mots porteurs de sens. Donne plusieurs sens possibles à chaque terme.</div>
+            <textarea id="diss2-mots-cles" class="field" rows="3" placeholder="Ex. — « liberté » : physique / sociale / intérieure / philosophique. « incarne » : suppose que c'est le cas, à vérifier et nuancer…" oninput="saveDiss2()"></textarea>
+          </div>
+          <div class="struct-zone">
+            <div class="struct-zone-title">🔄 Reformulation &amp; tension</div>
+            <div class="struct-zone-hint">Reformule le sujet avec tes mots. Cherche l'opposition ou la nuance cachée.</div>
+            <textarea id="diss2-reformulation" class="field" rows="3" placeholder="Ex. : Il s'agit de montrer comment X cherche à s'affranchir de contraintes. Tension : liberté vs déterminisme / quête vs échec / apparent vs réel…" oninput="saveDiss2()"></textarea>
+          </div>
+        </div>
 
-      <div class="card" style="border-top:4px solid #2E7D32">
-        <div class="card-title" style="color:#2E7D32">② Argument 1 + exemple</div>
-        <div style="font-size:.75rem;color:#888;margin-bottom:6px;">Tout d'abord… / En premier lieu… + Par exemple…</div>
-        <textarea id="diss-arg1" class="field" rows="5"
-          placeholder="Tout d'abord, l'auteur montre que l'amitié est la chose la plus précieuse. Par exemple, quand le Petit Prince rencontre le Renard, celui-ci lui apprend que pour avoir un ami, il faut l'apprivoiser, c'est-à-dire créer des liens."
-          oninput="saveDiss()"></textarea>
-      </div>
+        <!-- Étape 2 : Problématique & plan -->
+        <div class="card" style="border-top:4px solid #00695C">
+          <div class="card-title" style="color:#00695C">② Problématique &amp; Plan</div>
+          <div class="struct-zone">
+            <div class="struct-zone-title">❓ Problématique</div>
+            <div class="struct-zone-hint">Question centrale — ouverte, problématique, pas de réponse par oui/non. Ex. : « Dans quelle mesure… tout en… ? » / « En quoi… bien que… ? »</div>
+            <textarea id="diss2-problematique" class="field" rows="3" placeholder="Ex. : Dans quelle mesure Thérèse Desqueyroux est-elle un personnage coupable, tout en restant profondément sympathique aux yeux du lecteur ?" oninput="saveDiss2()"></textarea>
+          </div>
+          <div class="struct-zone">
+            <div class="struct-zone-title">📋 Type de plan</div>
+            <div class="struct-zone-hint">Dialectique (thèse/antithèse/synthèse) · Analytique/thématique · Progressif</div>
+            <textarea id="diss2-type-plan" class="field" rows="2" placeholder="Ex. : Plan dialectique — I. Thérèse est bien coupable (acte intentionnel). II. Mais Mauriac nous la rend sympathique (étouffement, lucidité). III. La culpabilité dépasse le jugement moral…" oninput="saveDiss2()"></textarea>
+          </div>
+        </div>
 
-      <div class="card" style="border-top:4px solid #E65100">
-        <div class="card-title" style="color:#E65100">③ Argument 2 + exemple</div>
-        <div style="font-size:.75rem;color:#888;margin-bottom:6px;">Ensuite… / De plus… + En effet… / Ainsi…</div>
-        <textarea id="diss-arg2" class="field" rows="5"
-          placeholder="Ensuite, Saint-Exupéry nous montre que les adultes ont oublié ce qui est essentiel. En effet, le Petit Prince visite plusieurs planètes où les adultes sont ridicules : le roi qui veut commander, le vaniteux qui veut être admiré…"
-          oninput="saveDiss()"></textarea>
-      </div>
+        <!-- Étape 3 : Introduction -->
+        <div class="card" style="border-top:4px solid #2E5FA3">
+          <div class="card-title" style="color:#2E5FA3">③ Introduction</div>
+          <div class="struct-zone">
+            <div class="struct-zone-title">🎯 Accroche</div>
+            <div class="struct-zone-hint">Citation, fait littéraire ou mise en contexte (2-3 lignes).</div>
+            <textarea id="diss2-accroche" class="field" rows="2" placeholder="Ex. : Depuis l'Antiquité, la littérature s'interroge sur la frontière entre le crime et la justice. Mauriac, dans Thérèse Desqueyroux (1927), choisit de donner la parole à une empoisonneuse…" oninput="saveDiss2()"></textarea>
+          </div>
+          <div class="struct-zone">
+            <div class="struct-zone-title">📖 Présentation de l'œuvre + définition + problématique + annonce</div>
+            <textarea id="diss2-intro-suite" class="field" rows="5" placeholder="Ex. : Dans ce roman psychologique, François Mauriac suit Thérèse, une bourgeoise landaise qui a tenté d'empoisonner son mari. On peut dès lors se demander si… Nous verrons d'abord que… puis que… enfin que…" oninput="saveDiss2()"></textarea>
+          </div>
+        </div>
 
-      <div class="card" style="border-top:4px solid #6A1B9A">
-        <div class="card-title" style="color:#6A1B9A">④ Argument 3 + exemple (facultatif)</div>
-        <div style="font-size:.75rem;color:#888;margin-bottom:6px;">De plus… / Par ailleurs… + Par exemple…</div>
-        <textarea id="diss-arg3" class="field" rows="5"
-          placeholder="(optionnel — laisse vide si tu n'as que 2 arguments)"
-          oninput="saveDiss()"></textarea>
-      </div>
+        <!-- Étape 4 : Développement A.E.A. -->
+        <div class="card" style="border-top:4px solid #2E7D32">
+          <div class="card-title" style="color:#2E7D32">④ Développement — méthode A.E.A.</div>
+          <div style="font-size:.73rem;color:#888;margin-bottom:10px;">Chaque paragraphe = <b>A</b>rgument (idée) → <b>E</b>xemple (citation + page) → <b>A</b>nalyse (lien argument/exemple). C'est l'analyse qui compte le plus !</div>
 
-      <div class="card" style="border-top:4px solid #c0392b">
-        <div class="card-title" style="color:#c0392b">⑤ Conclusion</div>
-        <div style="font-size:.75rem;color:#888;margin-bottom:6px;">Pour conclure… / En résumé… — rappelle tes idées principales.</div>
-        <textarea id="diss-conclu" class="field" rows="5"
-          placeholder="Pour conclure, Le Petit Prince nous rappelle que l'essentiel est invisible pour les yeux : l'amitié, l'amour et la simplicité sont plus importants que la richesse ou le pouvoir. Ce livre nous invite à garder notre regard d'enfant pour voir ce qui compte vraiment."
-          oninput="saveDiss()"></textarea>
-      </div>
+          <div class="aea-card">
+            <div class="aea-header" style="background:#E8F5E9;color:#2E7D32">Partie I — <span id="diss2-p1-titre-aff" style="font-style:italic;font-weight:400">Paragraphe 1</span></div>
+            <div class="aea-body">
+              <div><div class="aea-label">💡 Argument</div><textarea id="diss2-p1-arg" class="field" rows="2" placeholder="Énonce l'idée en une phrase affirmative…" oninput="saveDiss2()"></textarea></div>
+              <div><div class="aea-label">📝 Exemple (citation + page ou résumé d'épisode)</div><textarea id="diss2-p1-ex" class="field" rows="2" placeholder="« Citation exacte » (p. X) — ou : Dans le chapitre X, lorsque…" oninput="saveDiss2()"></textarea></div>
+              <div><div class="aea-label">🔍 Analyse (lien entre exemple et argument)</div><textarea id="diss2-p1-ana" class="field" rows="3" placeholder="Cet exemple montre que… / Ainsi, on voit que… / Ce passage illustre parfaitement l'idée que…" oninput="saveDiss2()"></textarea></div>
+            </div>
+          </div>
 
-      <div class="card" style="background:var(--jauneC);border:1.5px solid var(--jaune)">
-        <div class="card-title" style="color:var(--jaune)">💡 Connecteurs utiles</div>
-        <div style="font-size:.8rem;line-height:1.8;color:#555;">
-          <b>Pour introduire :</b> Tout d'abord • En premier lieu • Pour commencer<br>
-          <b>Pour ajouter :</b> Ensuite • De plus • Par ailleurs • En outre<br>
-          <b>Pour illustrer :</b> Par exemple • En effet • Ainsi • C'est le cas de<br>
-          <b>Pour conclure :</b> Pour conclure • En résumé • Finalement • En somme
+          <div class="aea-card">
+            <div class="aea-header" style="background:#FFF3E0;color:#E65100">Partie II — <span id="diss2-p2-titre-aff" style="font-style:italic;font-weight:400">Paragraphe 2</span></div>
+            <div class="aea-body">
+              <div><div class="aea-label">💡 Argument</div><textarea id="diss2-p2-arg" class="field" rows="2" placeholder="Énonce l'idée en une phrase affirmative…" oninput="saveDiss2()"></textarea></div>
+              <div><div class="aea-label">📝 Exemple</div><textarea id="diss2-p2-ex" class="field" rows="2" placeholder="« Citation exacte » (p. X)…" oninput="saveDiss2()"></textarea></div>
+              <div><div class="aea-label">🔍 Analyse</div><textarea id="diss2-p2-ana" class="field" rows="3" placeholder="Cet exemple montre que…" oninput="saveDiss2()"></textarea></div>
+            </div>
+          </div>
+
+          <div class="aea-card">
+            <div class="aea-header" style="background:#F3E5F5;color:#6A1B9A">Partie III — <span id="diss2-p3-titre-aff" style="font-style:italic;font-weight:400">Paragraphe 3 (facultatif)</span></div>
+            <div class="aea-body">
+              <div><div class="aea-label">💡 Argument</div><textarea id="diss2-p3-arg" class="field" rows="2" placeholder="(optionnel)" oninput="saveDiss2()"></textarea></div>
+              <div><div class="aea-label">📝 Exemple</div><textarea id="diss2-p3-ex" class="field" rows="2" placeholder="(optionnel)" oninput="saveDiss2()"></textarea></div>
+              <div><div class="aea-label">🔍 Analyse</div><textarea id="diss2-p3-ana" class="field" rows="3" placeholder="(optionnel)" oninput="saveDiss2()"></textarea></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Étape 5 : Conclusion -->
+        <div class="card" style="border-top:4px solid #c0392b">
+          <div class="card-title" style="color:#c0392b">⑤ Conclusion</div>
+          <div class="struct-zone">
+            <div class="struct-zone-title">📊 Bilan</div>
+            <div class="struct-zone-hint">Résume les grandes étapes du raisonnement en 2-3 lignes. Ne pas répéter — synthétiser.</div>
+            <textarea id="diss2-bilan" class="field" rows="3" placeholder="Ex. : Nous avons vu que Thérèse est bien coupable d'un acte grave, mais que Mauriac nous la rend sympathique en montrant l'étouffement qui l'a conduite à agir…" oninput="saveDiss2()"></textarea>
+          </div>
+          <div class="struct-zone">
+            <div class="struct-zone-title">✅ Réponse à la problématique</div>
+            <textarea id="diss2-reponse" class="field" rows="2" placeholder="Ex. : Ainsi, Thérèse est coupable aux yeux de la loi mais innocente aux yeux de Mauriac — et le lecteur finit par partager ce regard…" oninput="saveDiss2()"></textarea>
+          </div>
+          <div class="struct-zone">
+            <div class="struct-zone-title">🔭 Ouverture</div>
+            <div class="struct-zone-hint">Perspective nouvelle : autre œuvre, enjeu actuel, question philosophique. Ne pas être artificiel.</div>
+            <textarea id="diss2-ouverture" class="field" rows="2" placeholder="Ex. : Cette question de la culpabilité féminine résonne avec d'autres œuvres — Madame Bovary de Flaubert, ou plus récemment La Femme gelée d'Annie Ernaux…" oninput="saveDiss2()"></textarea>
+          </div>
+        </div>
+
+        <!-- Connecteurs -->
+        <div class="card" style="background:var(--jauneC);border:1.5px solid var(--jaune)">
+          <div class="card-title" style="color:var(--jaune)">💡 Connecteurs logiques</div>
+          <div style="font-size:.78rem;line-height:1.8;color:#555;">
+            <b>Introduire :</b> D'abord • En premier lieu • Tout d'abord<br>
+            <b>Ajouter :</b> De plus • Par ailleurs • En outre • Également<br>
+            <b>Opposer :</b> En revanche • Cependant • Néanmoins • Pourtant<br>
+            <b>Conséquence :</b> Ainsi • Donc • Par conséquent • C'est pourquoi<br>
+            <b>Concéder :</b> Certes • Il est vrai que • On peut admettre que<br>
+            <b>Conclure :</b> En définitive • En conclusion • Pour conclure • Finalement
+          </div>
         </div>
       </div>
+
     </div>
 
     <!-- PDF -->
@@ -703,7 +889,7 @@ function sauvegarderBiblio() {
 // ════════════════════════════════════════════════════════
 // VERSION — incrémenter à chaque mise à jour des livres démo
 // ════════════════════════════════════════════════════════
-const DEMO_VERSION = 6; // v6 : correction doublon personnages/lieux
+const DEMO_VERSION = 7; // v7 : ajout Thérèse Desqueyroux
 const LIVRES_DEMO = [
   {
     id: 'liv_petit_prince_001',
@@ -976,6 +1162,61 @@ const LIVRES_DEMO = [
       nar_m7: "Alice se réveille sur la berge. Sa sœur la tient. C'était un rêve. Le cauchemar est terminé.",
       nar_m8: "Alice rentre chez elle pour le thé. Elle a changé : elle n'a plus peur de l'autorité injuste. Le Pays des Merveilles lui a appris à rester elle-même face à l'absurde."
     }
+  },
+
+  // ── THÉRÈSE DESQUEYROUX ──────────────────────────────
+  {
+    id: 'liv_demo_04',
+    titre: 'Thérèse Desqueyroux',
+    auteur: 'François Mauriac',
+    genre: 'Roman psychologique',
+    pages: '224',
+    annee: 'XXe siècle — 1927',
+    dateCreation: '27/03/2026',
+    tsCreation: 1743030000000,
+    contexte: "Thérèse Desqueyroux est publié en 1927, dans la France de l'entre-deux-guerres. La Première Guerre mondiale (1914-1918) a bouleversé la société française : des centaines de milliers de femmes se retrouvent veuves, plus indépendantes par nécessité, et une nouvelle conscience féminine émerge. Pourtant, dans les milieux bourgeois provinciaux — comme les Landes que Mauriac décrit — rien n'a vraiment changé : le mariage reste une affaire d'alliance entre familles et de transmission de propriétés, pas d'amour.\n\nLes années 1920 voient aussi l'essor du roman psychologique en France. Freud commence à être lu et traduit, et l'intérêt pour la vie intérieure, les pulsions cachées et les mensonges de la vie bourgeoise est immense. Mauriac s'inscrit dans ce courant : il sonde l'âme de Thérèse avec une minutie cruelle. Culturellement, l'affaire Canaby (1905) — une femme des Landes accusée d'avoir empoisonné son mari — a marqué les esprits et a directement inspiré Mauriac.",
+    auteurVie: "François Mauriac naît en 1885 à Bordeaux dans une famille de la bourgeoisie catholique des Landes. Quand il écrit Thérèse Desqueyroux en 1927, il a 42 ans et est déjà un romancier reconnu.\n\nSa vie personnelle est marquée par une tension permanente entre sa foi catholique très profonde et la fascination qu'il ressent pour les personnages qui pèchent et souffrent. Il dit lui-même qu'il a voulu « donner une main » à Thérèse, cette femme que la société condamne mais que lui comprend. Mauriac vit à Paris mais retourne chaque été dans les Landes, dont les paysages de pins et de landes désolées nourrissent toute son œuvre.\n\nEn 1927, sa carrière est en plein essor : il vient de publier Le Désert de l'Amour (1925, Grand Prix du roman de l'Académie française). Thérèse Desqueyroux est son œuvre la plus audacieuse — il choisit pour héroïne une femme qui a tenté d'empoisonner son mari, et il lui donne toute sa sympathie.",
+    trajectoire: "Thérèse Desqueyroux est considéré comme le chef-d'œuvre de François Mauriac. C'est son 8ème roman, mais le premier dans lequel il ose une héroïne aussi radicalement sombre et libre.\n\nDans sa trajectoire, ce roman marque un tournant décisif : Mauriac abandonne les romans d'apprentissage moral pour explorer une psychologie féminine complexe, sans jugement ni rédemption facile. Ce choix lui vaudra des critiques de l'Église catholique, mais aussi une reconnaissance littéraire immense.\n\nMauriac sera couronné du Prix Nobel de Littérature en 1952, et Thérèse est citée dans le discours du comité Nobel. Il lui consacrera plusieurs autres textes : La Fin de la Nuit (1935) retrouve Thérèse des années plus tard. Le roman a été adapté au cinéma deux fois (1962 avec Emmanuelle Riva, 2012 avec Audrey Tautou).",
+    personnages: [
+      { id:'ent_td_01', nom:'Thérèse Desqueyroux', couleur:'#6A1B9A',
+        notes:"Fille d'un notable landais, mariée à Bernard Desqueyroux. Intelligente, solitaire, incomprise. Elle a tenté d'empoisonner son mari avec de l'arsenic, sans savoir exactement pourquoi. Le roman est l'exploration de ce mystère intérieur. Elle étouffe dans la vie bourgeoise des Landes." },
+      { id:'ent_td_02', nom:'Bernard Desqueyroux', couleur:'#E65100',
+        notes:"Mari de Thérèse. Homme de la terre, attaché à ses pins et à ses propriétés. Honnête et borné. Il ne comprend pas Thérèse et ne cherche pas à la comprendre. Pour lui, l'essentiel est de sauver l'honneur de la famille. Il la punira en l'enfermant." },
+      { id:'ent_td_03', nom:'Anne de la Trave', couleur:'#2E7D32',
+        notes:"Demi-sœur de Bernard et meilleure amie de Thérèse. Amoureuse de Jean Azévédo, un jeune homme jugé peu convenable. Thérèse a contribué à rompre cet amour pour protéger les intérêts familiaux. Anne représente la vie simple et heureuse que Thérèse ne peut pas avoir." },
+      { id:'ent_td_04', nom:'Jean Azévédo', couleur:'#00838F',
+        notes:"Jeune homme cultivé et libre, amoureux d'Anne. Il représente un autre monde — celui des idées, de la liberté, de Paris — qui fascine Thérèse et lui fait mesurer l'étroitesse de sa propre vie. Leur rencontre est un réveil intellectuel pour Thérèse." }
+    ],
+    lieux: [
+      { id:'ent_td_l01', nom:'Les Landes (forêt de pins)', couleur:'#2E7D32',
+        notes:"Paysage omniprésent du roman. La forêt de pins des Landes est à la fois belle et étouffante. Pour Thérèse, elle symbolise la prison : immense, monotone, silencieuse. Les incendies de forêt sont une menace réelle et une métaphore du désir et de la destruction." },
+      { id:'ent_td_l02', nom:'Argelouse', couleur:'#E65100',
+        notes:"Village isolé des Landes où Thérèse est enfermée par Bernard après le procès. Bout du monde, sans voisins, sans distractions. C'est la punition silencieuse et cruelle que Bernard lui inflige : la solitude totale." },
+      { id:'ent_td_l03', nom:'Paris', couleur:'#6A1B9A',
+        notes:"La ville rêvée, le symbole de la liberté. Thérèse aspire à Paris comme à une délivrance. À la fin du roman, Bernard l'y abandonne — geste ambigu : est-ce une libération ou un autre abandon ?" }
+    ],
+    temps: "L'histoire se passe dans les années 1920 dans les Landes (sud-ouest de la France).\n\nORDRE : Le roman commence in medias res — Thérèse sort du tribunal après son acquittement. L'essentiel du récit est un long flash-back : dans le train qui la ramène chez son mari, elle reconstitue mentalement le fil des événements qui l'ont conduite à l'empoisonnement.\n\nDURÉE : La durée réelle couvre plusieurs années (le mariage, la grossesse, l'empoisonnement, le procès). Mais le temps du flash-back correspond à un trajet en train — quelques heures. Certains moments sont très dilatés (la scène de l'aveu intérieur de Thérèse), d'autres résumés rapidement.\n\nFRÉQUENCE : Les saisons des Landes reviennent comme un leitmotiv : l'été étouffant, les incendies, la monotonie de l'automne dans les pins.",
+    mots: "── Mot inconnu ──\nIn medias res : expression latine — commencer un récit au cœur de l'action, sans introduction.\n\n── Mot inconnu ──\nLeitmotiv : thème ou image qui revient régulièrement dans une œuvre, comme un motif musical.\n\n── Mot inconnu ──\nMétaphore : image qui compare deux choses sans utiliser « comme ». Ex. : « La forêt est une prison verte ».\n\n« Elle haïssait cette chambre où elle avait souffert tant d'automnes. »\n(Mauriac — chapitre VI)\n\n« Thérèse, nous nous en remettrons à toi du soin de nous débarrasser. »\n(Bernard à Thérèse — l'abandon final à Paris)",
+    comprehension: "Thérèse Desqueyroux pose une question troublante : peut-on comprendre quelqu'un qui a voulu tuer sans vraiment savoir pourquoi ?\n\nMauriac ne condamne pas Thérèse — il l'écoute. Le roman entier est une tentative de Thérèse pour s'expliquer à elle-même son propre geste. Ce n'est pas un roman policier : le crime est connu dès le début. C'est un roman psychologique sur l'étouffement, la solitude et la liberté impossible.\n\nLa fin est ouverte et mélancolique : Bernard abandonne Thérèse à Paris. Est-elle libre enfin, ou simplement seule différemment ?",
+    dissertation: {
+      sujet:  "En quoi Thérèse Desqueyroux est-elle un personnage à la fois coupable et sympathique ?",
+      intro:  "Thérèse Desqueyroux, roman de François Mauriac publié en 1927, raconte l'histoire d'une femme qui a tenté d'empoisonner son mari et qui tente de comprendre elle-même son geste. À première vue, Thérèse est une criminelle. Pourtant, au fil du roman, le lecteur éprouve pour elle une étrange sympathie. Comment Mauriac réussit-il à nous faire comprendre, voire plaindre, une femme coupable ?",
+      arg1:   "Tout d'abord, Thérèse est coupable d'un acte grave et prémédité : elle a augmenté peu à peu les doses d'arsenic prescrites à son mari. Mauriac ne cherche pas à minimiser ce fait. Le roman s'ouvre d'ailleurs sur sa sortie du tribunal après un acquittement obtenu grâce aux mensonges de la famille, pas à son innocence.",
+      arg2:   "Cependant, Mauriac nous montre que Thérèse étouffe dans sa vie. Mariée par convenance à un homme qu'elle n'aime pas, enfermée dans les Landes loin de tout, incapable d'exprimer sa pensée ou ses désirs, elle a agi comme un animal qui se débat dans un piège. Son crime n'est pas de la haine mais du désespoir.",
+      arg3:   "Enfin, Mauriac donne à Thérèse une intelligence et une lucidité rares. Elle ne se justifie pas, ne ment pas à elle-même. Cette honnêteté intérieure, cette capacité à se regarder sans illusion, lui confère une dignité que les autres personnages n'ont pas.",
+      conclu: "Pour conclure, Thérèse est coupable aux yeux de la loi et de la société, mais Mauriac nous invite à un jugement plus nuancé. En lui donnant la parole intérieure, il nous montre que derrière le crime il y a une femme qui suffoquait. Ce roman nous rappelle que comprendre n'est pas excuser, mais que la littérature a le pouvoir de nous faire entrer dans des vies que nous aurions condamnées trop vite."
+    },
+    schemaType: 'moderne',
+    narration: {
+      nar_m1: "Thérèse vit dans les Landes, mariée à Bernard depuis quelques années. Elle a une fille, Marie. Tout semble en ordre du dehors : les propriétés, la famille, la réputation. Mais Thérèse s'ennuie, étouffe, ne ressent rien.",
+      nar_m2: "Dans le train qui la ramène chez Bernard après son acquittement au tribunal, Thérèse entreprend de reconstituer mentalement pourquoi elle a empoisonné son mari. C'est le déclencheur du récit : elle cherche à se comprendre elle-même.",
+      nar_m3: "En flash-back, Thérèse revit son mariage de convenance, sa grossesse, sa rencontre avec Jean Azévédo qui lui ouvre les yeux sur l'étroitesse de sa vie, et le début de l'empoisonnement — presque automatique, sans plan conscient, jour après jour.",
+      nar_m4: "Bernard découvre l'empoisonnement. Thérèse doit choisir : avouer et risquer le déshonneur familial, ou se taire et subir la punition silencieuse de sa famille. Elle se tait.",
+      nar_m5: "Thérèse est enfermée à Argelouse par Bernard, seule, coupée du monde. C'est la punition la plus cruelle : non la prison légale, mais la solitude absolue dans les Landes. Elle maigrit, dépérit.",
+      nar_m6: "Bernard, par intérêt pour le mariage d'Anne, décide de libérer Thérèse. Il lui propose un marché : elle jouera la comédie de la réconciliation lors du mariage, puis il l'amènera à Paris.",
+      nar_m7: "Face à face avec Bernard, Thérèse tente de lui expliquer pourquoi elle a agi. Il ne comprend pas, ne peut pas comprendre. Le fossé entre eux est définitif.",
+      nar_m8: "Bernard abandonne Thérèse sur un trottoir parisien avec de l'argent et une liberté vide. Elle est libre — mais d'une liberté sans sens, sans direction. Le roman se ferme sur cette solitude ouverte."
+    }
   }
 ];
 
@@ -1227,8 +1468,8 @@ function ouvrirLivre(id) {
   setTimeout(loadRedac, 50);
   // Charger le schéma narratif
   setTimeout(loadIntrigue, 50);
-  // Redessiner le graphe une fois le DOM visible ET D3 chargé
-  // (clientWidth est 0 tant que le conteneur est caché)
+  // Charger les zones spécifiques Élise
+  setTimeout(() => loadZonesElise(livre), 50);
   _grapheH = null; // forcer recalcul hauteur au prochain affichage de l'onglet Persos
 }
 
@@ -2605,12 +2846,141 @@ function deconnecterFB() {
   if (ok) { setSyncBadge('busy', '☁️ Connexion…'); fbPull(false); }
 })();
 
+// ════════════════════════════════════════════════════════
+// MODE AXEL / ÉLISE
+// ════════════════════════════════════════════════════════
+let _modeDefini = false;
+
+function chargerMode() {
+  const m = localStorage.getItem('axel_mode') || null;
+  if (m === 'axel' || m === 'elise') {
+    appliquerMode(m, false);
+    _modeDefini = true;
+  } else {
+    document.getElementById('modal-mode').classList.add('open');
+  }
+}
+
+function setMode(mode) {
+  localStorage.setItem('axel_mode', mode);
+  _modeDefini = true;
+  appliquerMode(mode, true);
+  fermerModalMode();
+}
+
+function appliquerMode(mode, withToast) {
+  document.body.classList.remove('mode-axel', 'mode-elise');
+  document.body.classList.add('mode-' + mode);
+  const label = mode === 'elise' ? '📘 Élise · 2nde' : '🎒 Axel · 6ème';
+  ['mode-badge-biblio','mode-badge-guide'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = label;
+    el.className = mode;
+  });
+  if (withToast) showToast('Mode ' + (mode === 'elise' ? 'Élise (2nde)' : 'Axel (6ème)') + ' activé ✓', 'ok');
+}
+
+function ouvrirModalMode() {
+  document.getElementById('modal-mode').classList.add('open');
+}
+function fermerModalMode() {
+  if (!_modeDefini) return; // on ne peut pas fermer sans choisir
+  document.getElementById('modal-mode').classList.remove('open');
+}
+
+function saveLivreElise() {
+  if (!LIVRE_ACTIF) return;
+  LIVRE_ACTIF.courant = document.getElementById('livre-courant')?.value || '';
+  LIVRE_ACTIF.style   = document.getElementById('livre-style')?.value   || '';
+  sauvegarderBiblio();
+}
+
+function saveTemps2() {
+  if (!LIVRE_ACTIF) return;
+  if (!LIVRE_ACTIF.temps2) LIVRE_ACTIF.temps2 = {};
+  LIVRE_ACTIF.temps2.ordre     = document.getElementById('temps2-ordre')?.value     || '';
+  LIVRE_ACTIF.temps2.duree     = document.getElementById('temps2-duree')?.value     || '';
+  LIVRE_ACTIF.temps2.frequence = document.getElementById('temps2-frequence')?.value || '';
+  LIVRE_ACTIF.temps2.espace    = document.getElementById('temps2-espace')?.value    || '';
+  sauvegarderBiblio();
+}
+
+function saveDiss2() {
+  if (!LIVRE_ACTIF) return;
+  if (!LIVRE_ACTIF.dissertation2) LIVRE_ACTIF.dissertation2 = {};
+  const d = LIVRE_ACTIF.dissertation2;
+  const g = id => document.getElementById(id)?.value || '';
+  d.sujet         = g('diss2-sujet');
+  d.motsCles      = g('diss2-mots-cles');
+  d.reformulation = g('diss2-reformulation');
+  d.problematique = g('diss2-problematique');
+  d.typePlan      = g('diss2-type-plan');
+  d.accroche      = g('diss2-accroche');
+  d.introSuite    = g('diss2-intro-suite');
+  d.p1arg = g('diss2-p1-arg'); d.p1ex = g('diss2-p1-ex'); d.p1ana = g('diss2-p1-ana');
+  d.p2arg = g('diss2-p2-arg'); d.p2ex = g('diss2-p2-ex'); d.p2ana = g('diss2-p2-ana');
+  d.p3arg = g('diss2-p3-arg'); d.p3ex = g('diss2-p3-ex'); d.p3ana = g('diss2-p3-ana');
+  d.bilan     = g('diss2-bilan');
+  d.reponse   = g('diss2-reponse');
+  d.ouverture = g('diss2-ouverture');
+  sauvegarderBiblio();
+}
+
+function loadZonesElise(livre) {
+  const s = id => document.getElementById(id);
+  const sv = (id, val) => { const el = s(id); if (el) el.value = val || ''; };
+  sv('livre-courant', livre.courant);
+  sv('livre-style',   livre.style);
+  const t2 = livre.temps2 || {};
+  sv('temps2-ordre',     t2.ordre);
+  sv('temps2-duree',     t2.duree);
+  sv('temps2-frequence', t2.frequence);
+  sv('temps2-espace',    t2.espace);
+  const d2 = livre.dissertation2 || {};
+  [['diss2-sujet',d2.sujet],['diss2-mots-cles',d2.motsCles],
+   ['diss2-reformulation',d2.reformulation],['diss2-problematique',d2.problematique],
+   ['diss2-type-plan',d2.typePlan],['diss2-accroche',d2.accroche],
+   ['diss2-intro-suite',d2.introSuite],
+   ['diss2-p1-arg',d2.p1arg],['diss2-p1-ex',d2.p1ex],['diss2-p1-ana',d2.p1ana],
+   ['diss2-p2-arg',d2.p2arg],['diss2-p2-ex',d2.p2ex],['diss2-p2-ana',d2.p2ana],
+   ['diss2-p3-arg',d2.p3arg],['diss2-p3-ex',d2.p3ex],['diss2-p3-ana',d2.p3ana],
+   ['diss2-bilan',d2.bilan],['diss2-reponse',d2.reponse],['diss2-ouverture',d2.ouverture]
+  ].forEach(([id,val]) => sv(id, val));
+}
+
 
 chargerBiblio();
 renderBiblio();
 initRedacZones();
 renderSchemaPhases();
+// chargerMode doit attendre que les modals (après </script>) soient dans le DOM
+window.addEventListener('DOMContentLoaded', chargerMode);
 </script>
+<!-- ══════════════════════════════════════════
+     MODAL CHOIX MODE AXEL / ÉLISE
+══════════════════════════════════════════ -->
+<div id="modal-mode" onclick="if(event.target===this&&_modeDefini)fermerModalMode()">
+  <div id="modal-mode-box">
+    <h2>👤 Pour qui est ce guide ?</h2>
+    <p>Le guide s'adapte au niveau scolaire — tu pourras changer à tout moment.</p>
+    <button class="mode-choice-btn" onclick="setMode('axel')">
+      <span class="mc-icon">🎒</span>
+      <div>
+        <div class="mc-nom">Axel — 6ème</div>
+        <div class="mc-desc">Dissertation simple · Zones guidées · Méthode collège</div>
+      </div>
+    </button>
+    <button class="mode-choice-btn" onclick="setMode('elise')">
+      <span class="mc-icon">📘</span>
+      <div>
+        <div class="mc-nom">Élise — 2nde</div>
+        <div class="mc-desc">Méthode A.E.A. · Problématique · Courant littéraire · Style</div>
+      </div>
+    </button>
+  </div>
+</div>
+
 <!-- ══════════════════════════════════════════
      MODAL SYNC FIREBASE
 ══════════════════════════════════════════ -->
