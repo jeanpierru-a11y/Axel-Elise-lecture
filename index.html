@@ -2997,6 +2997,20 @@ function fbInit(code, cfg) {
 
     _fbApp  = firebase.initializeApp(cfg, 'axel-sync-' + Date.now());
     _fbDb   = firebase.firestore(_fbApp);
+
+    // Persistence offline : Firestore fonctionne sans réseau et sync automatiquement à la reconnexion
+    _fbDb.enablePersistence({ synchronizeTabs: true })
+      .then(() => console.log('Firestore offline persistence activée'))
+      .catch(err => {
+        if (err.code === 'failed-precondition') {
+          // Plusieurs onglets ouverts — persistence active sur un seul onglet à la fois (normal)
+          console.log('Persistence : plusieurs onglets ouverts, mode dégradé');
+        } else if (err.code === 'unimplemented') {
+          // Navigateur trop ancien (rare)
+          console.log('Persistence non supportée par ce navigateur');
+        }
+      });
+
     _fbCode = code;
 
     // Listener temps réel — se déclenche dès qu'un autre appareil modifie le doc
