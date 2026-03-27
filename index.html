@@ -19,14 +19,27 @@
   --violet:#6A1B9A; --violetC:#F3E5F5;
   --rouge:#c0392b; --rougeC:#FFEBEE;
   --jaune:#F9A825; --jauneC:#FFFDE7;
-  --gris:#F0F2F5; --gris2:#e0e0e0; --texte:#1a1a2e;
-  --blanc:#ffffff; --ombre:0 2px 12px rgba(0,0,0,0.08); --r:14px;
+  --gris:#CDD5DF; --gris2:#b8c2ce; --texte:#1a1a2e;
+  --blanc:#ffffff; --ombre:0 3px 16px rgba(0,0,0,0.14); --r:14px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;overflow:hidden;}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gris);color:var(--texte);display:flex;flex-direction:column;}
 
-/* ── MODE AXEL / ÉLISE ── */
+/* ── ONGLET MOTS — 3 SOUS-ZONES ── */
+.mots-subtab-bar{display:flex;gap:0;border-bottom:2px solid var(--gris2);margin-bottom:12px;}
+.mots-subtab{flex:1;padding:8px 6px;font-size:.72rem;font-weight:800;color:#444;background:none;border:none;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;font-family:inherit;white-space:nowrap;}
+.mots-subtab.active{color:var(--violet);border-bottom-color:var(--violet);}
+.mots-panel{display:none;}
+.mots-panel.active{display:block;}
+/* Tableau thématique */
+.theme-table{width:100%;border-collapse:collapse;font-size:.78rem;}
+.theme-table th{padding:7px 10px;text-align:left;font-weight:800;font-size:.70rem;border-bottom:2px solid var(--gris2);}
+.theme-table td{padding:4px 6px;vertical-align:top;border-bottom:1px solid var(--gris2);}
+.theme-label{display:flex;align-items:center;gap:6px;font-weight:800;font-size:.72rem;white-space:nowrap;padding:6px 8px;}
+.theme-ta{width:100%;border:1.5px solid var(--gris2);border-radius:8px;padding:6px 8px;font-family:inherit;font-size:.75rem;color:var(--texte);resize:vertical;min-height:52px;}
+.theme-ta:focus{border-color:var(--violet);outline:none;}
+
 #modal-mode{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9100;display:none;align-items:center;justify-content:center;padding:20px;}
 #modal-mode.open{display:flex;}
 #modal-mode-box{background:#fff;border-radius:18px;padding:28px 22px;width:100%;max-width:400px;text-align:center;}
@@ -68,6 +81,31 @@ body.mode-elise .only-elise{display:block;}
 @keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.3}}
 
 /* Modal sync */
+/* ── CARTES CITATIONS ── */
+.cit-card{background:var(--blanc);border-radius:12px;box-shadow:var(--ombre);margin-bottom:10px;overflow:hidden;border:1.5px solid var(--gris2);}
+.cit-card-header{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--orangeC);border-bottom:1px solid #f0d0b0;}
+.cit-card-num{font-size:.68rem;font-weight:800;color:var(--orange);}
+.cit-card-stars{display:flex;gap:4px;}
+.cit-star{font-size:.95rem;cursor:pointer;opacity:.28;transition:opacity .15s;}
+.cit-star.on{opacity:1;}
+.cit-card-body{padding:10px 12px;display:flex;flex-direction:column;gap:8px;}
+.cit-label{font-size:.63rem;font-weight:800;color:#888;margin-bottom:3px;text-transform:uppercase;letter-spacing:.3px;}
+.cit-select{width:100%;border:1.5px solid var(--gris2);border-radius:8px;padding:6px 6px;font-family:inherit;font-size:.73rem;color:var(--texte);background:var(--blanc);cursor:pointer;}
+.cit-select:focus{border-color:var(--orange);outline:none;}
+.cit-proc-row{display:flex;align-items:center;gap:6px;}
+.cit-proc-row .cit-select{flex:1;}
+.cit-help-btn{background:var(--orangeC);border:1.5px solid var(--orange);color:var(--orange);border-radius:50%;width:24px;height:24px;font-size:.72rem;font-weight:900;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:inherit;padding:0;}
+/* Radar thématique */
+#theme-radar-wrap{background:var(--blanc);border-radius:var(--r);box-shadow:var(--ombre);padding:14px;margin-bottom:10px;text-align:center;}
+#theme-radar-svg{max-width:300px;width:100%;}
+/* Modal procédé */
+#modal-procede{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9200;display:none;align-items:flex-end;justify-content:center;}
+#modal-procede.open{display:flex;}
+#modal-procede-box{background:#fff;border-radius:18px 18px 0 0;padding:20px 18px 30px;width:100%;max-width:520px;max-height:82vh;overflow-y:auto;box-shadow:0 -4px 30px rgba(0,0,0,.18);}
+#modal-procede-nom{font-size:1.1rem;font-weight:900;color:var(--orange);margin-bottom:6px;}
+#modal-procede-def{font-size:.82rem;color:#333;line-height:1.7;margin-bottom:12px;}
+#modal-procede-ex{background:var(--orangeC);border-radius:10px;padding:12px 14px;font-size:.78rem;color:#555;line-height:1.8;}
+#modal-procede-ex b{color:var(--orange);}
 #modal-sync{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9000;display:none;align-items:flex-end;justify-content:center;padding:0;}
 #modal-sync.open{display:flex;}
 #modal-sync-box{background:#fff;border-radius:18px 18px 0 0;padding:20px 18px 30px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 -4px 30px rgba(0,0,0,.18);}
@@ -150,7 +188,7 @@ body.mode-elise .only-elise{display:block;}
 .add-bar input{flex:1;font-family:inherit;font-size:.93rem;font-weight:700;border:2px solid var(--gris2);border-radius:10px;padding:9px 12px;outline:none;color:var(--texte);}
 .add-bar input:focus{border-color:var(--bleu);}
 .entity-list{display:flex;flex-direction:column;gap:8px;}
-.entity-item{background:var(--blanc);border-radius:12px;box-shadow:var(--ombre);overflow:hidden;border:1.5px solid var(--gris2);}
+.entity-item{background:var(--blanc);border-radius:12px;box-shadow:0 4px 18px rgba(0,0,0,0.16);overflow:hidden;border:1.5px solid var(--gris2);}
 .entity-header{display:flex;align-items:center;gap:9px;padding:11px 12px;cursor:pointer;user-select:none;}
 .entity-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
 .entity-name{font-weight:800;font-size:.92rem;flex:1;}
@@ -300,14 +338,12 @@ body.mode-elise .only-elise{display:block;}
 
   <div id="tabs">
     <button class="tab active" onclick="showTab('livre',this)">📚 Livre</button>
-    <button class="tab" onclick="showTab('personnages',this)">👤 Persos</button>
+    <button class="tab" onclick="showTab('personnages',this)">👤 Perso</button>
     <button class="tab" onclick="showTab('lieux',this)">🗺️ Lieux</button>
     <button class="tab" onclick="showTab('temps',this)">⏳ Temps</button>
     <button class="tab" onclick="showTab('mots',this)">💬 Mots</button>
-    <button class="tab" onclick="showTab('comprehension',this)">💭 Avis</button>
     <button class="tab" onclick="showTab('intrigue',this)">🎭 Intrigue</button>
-    <button class="tab" onclick="showTab('redaction',this)">✍️ Rédac</button>
-    <button class="tab" onclick="showTab('dissertation',this)">✍️ Dissert</button>
+    <button class="tab" id="tab-ecrire" onclick="showTab('ecrire',this)">✍️ Écrire</button>
     <button class="tab" onclick="showTab('pdf',this)">🖨️ PDF</button>
   </div>
 
@@ -518,32 +554,112 @@ body.mode-elise .only-elise{display:block;}
     <!-- MOTS & CITATIONS -->
     <div class="section" id="sec-mots">
       <div class="card">
-        <div class="card-title" style="color:var(--violet)">💬 Mots difficiles &amp; Citations</div>
-        <div class="cit-bar">
-          <button class="btn btn-orange btn-sm" onclick="debutCitation()">« Début citation</button>
-          <button class="btn btn-gris btn-sm" onclick="finCitation()">Fin citation »</button>
-          <button class="btn btn-gris btn-sm" onclick="insertSep()">── Mot ──</button>
-        </div>
-        <div class="cit-notice" id="cit-notice">✏️ Mode citation — dicte le texte puis <b>Fin citation »</b></div>
-        <textarea id="mots-zone" class="field" rows="15"
-          placeholder="── Mot inconnu ──&#10;Nautilus : sous-marin du Capitaine Nemo&#10;&#10;« Il plongea dans les abysses. »&#10;(page 47)"
-          oninput="saveTexte('mots')"></textarea>
-      </div>
-    </div>
+        <div class="card-title" style="color:var(--violet)">💬 Mots · Citations · Thèmes</div>
 
-    <!-- COMPRÉHENSION -->
-    <div class="section" id="sec-comprehension">
-      <div class="card">
-        <div class="card-title" style="color:var(--violet)">💭 Compréhension &amp; Avis</div>
-        <textarea id="compre-text" class="field" rows="16"
-          placeholder="Ce que tu as compris, ce que tu penses, les moments importants…"
-          oninput="saveTexte('comprehension')"></textarea>
+        <!-- Sous-onglets -->
+        <div class="mots-subtab-bar">
+          <button class="mots-subtab active" id="mst-mots"      onclick="showMotsPanel('mots',this)">📖 Mots</button>
+          <button class="mots-subtab"        id="mst-citations" onclick="showMotsPanel('citations',this)">« Citations</button>
+          <button class="mots-subtab"        id="mst-themes"    onclick="showMotsPanel('themes',this)">🎯 Thèmes</button>
+          <button class="mots-subtab"        id="mst-avis"      onclick="showMotsPanel('avis',this)">💭 Avis</button>
+        </div>
+
+        <!-- PANNEAU 1 : Mots difficiles -->
+        <div class="mots-panel active" id="mpanel-mots">
+          <div class="cit-bar">
+            <button class="btn btn-gris btn-sm" onclick="insertSep()">── Mot ──</button>
+          </div>
+          <textarea id="mots-zone" class="field" rows="12"
+            placeholder="── Mot inconnu ──&#10;In medias res : commencer un récit au cœur de l'action.&#10;&#10;── Mot inconnu ──&#10;Analepse : retour en arrière (flashback)."
+            oninput="saveTexte('mots')"></textarea>
+        </div>
+
+        <!-- PANNEAU 2 : Citations -->
+        <div class="mots-panel" id="mpanel-citations">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <span style="font-size:.72rem;color:#888;">Ajoute une fiche par citation importante.</span>
+            <button class="btn btn-orange btn-sm" onclick="addCitation()">＋ Citation</button>
+          </div>
+          <div id="cit-cards-list"></div>
+          <div id="cit-cards-vide" style="text-align:center;padding:24px 10px;color:#bbb;font-size:.82rem;">
+            Appuie sur <b>＋ Citation</b> pour commencer
+          </div>
+        </div>
+
+        <!-- PANNEAU 3 : Toile thématique -->
+        <div class="mots-panel" id="mpanel-themes">
+          <p style="font-size:.73rem;color:#888;margin-bottom:10px;line-height:1.5;">Pour chaque axe thématique, note les mots, images ou situations qui reviennent dans le livre, avec la page et/ou le chapitre entre parenthèses.</p>
+          <table class="theme-table">
+            <thead>
+              <tr>
+                <th style="width:24%">Axe thématique</th>
+                <th>Mots, images, situations — (page / ch.)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="theme-label" style="color:#AD1457">❤️ Amour / Sentiments</div></td>
+                <td><textarea id="theme-amour"    class="theme-ta" placeholder="Ex. : rose (p. 12, ch. 2) · apprivoiser (p. 67, ch. 21) · larmes (p. 89)…" oninput="saveTheme('amour',this.value)"></textarea></td>
+              </tr>
+              <tr>
+                <td><div class="theme-label" style="color:#c0392b">⚡ Pouvoir / Domination</div></td>
+                <td><textarea id="theme-pouvoir"  class="theme-ta" placeholder="Ex. : roi (p. 30, ch. 10) · ordre · obéir · contrainte (p. 44)…" oninput="saveTheme('pouvoir',this.value)"></textarea></td>
+              </tr>
+              <tr>
+                <td><div class="theme-label" style="color:#2E5FA3">🕊️ Liberté / Déterminisme</div></td>
+                <td><textarea id="theme-liberte"  class="theme-ta" placeholder="Ex. : fuir (p. 55) · prison · enchaîné · s'évader (p. 103, ch. 9)…" oninput="saveTheme('liberte',this.value)"></textarea></td>
+              </tr>
+              <tr>
+                <td><div class="theme-label" style="color:#6A1B9A">🔍 Identité / Quête</div></td>
+                <td><textarea id="theme-identite" class="theme-ta" placeholder="Ex. : qui suis-je (p. 7) · miroir · nom · masque (p. 61, ch. 5)…" oninput="saveTheme('identite',this.value)"></textarea></td>
+              </tr>
+              <tr>
+                <td><div class="theme-label" style="color:#E65100">🏛️ Société / Critique</div></td>
+                <td><textarea id="theme-societe"  class="theme-ta" placeholder="Ex. : bourgeoisie (p. 18) · honneur · apparences · conventions (p. 92)…" oninput="saveTheme('societe',this.value)"></textarea></td>
+              </tr>
+              <tr>
+                <td><div class="theme-label" style="color:#2E7D32">🌿 Nature / Civilisation</div></td>
+                <td><textarea id="theme-nature"   class="theme-ta" placeholder="Ex. : forêt (p. 5, ch. 1) · lande · pins · silence · lumière (p. 78)…" oninput="saveTheme('nature',this.value)"></textarea></td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="margin-top:10px;background:var(--jauneC);border-radius:8px;padding:8px 12px;font-size:.72rem;color:#7a5200;line-height:1.6;">
+            💡 <b>Méthode :</b> note les mots au fil de la lecture. À la fin, compte les occurrences par thème — l'axe avec le plus de mots est probablement le thème central de l'œuvre.
+          </div>
+        
+          <!-- RADAR THÉMATIQUE -->
+          <div id="theme-radar-wrap">
+            <div style="font-size:.7rem;font-weight:800;color:var(--violet);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;">🕸️ Radar thématique</div>
+            <svg id="theme-radar-svg" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg"></svg>
+            <div style="font-size:.65rem;color:#aaa;margin-top:6px;">Se met à jour automatiquement à chaque saisie</div>
+          </div>
+        </div>
+
+        <!-- PANNEAU 4 : Avis -->
+        <div class="mots-panel" id="mpanel-avis">
+          <textarea id="compre-text" class="field" rows="14"
+            placeholder="Ce que tu as compris, ce que tu penses, les moments importants…"
+            oninput="saveTexte('comprehension')"></textarea>
+        </div>
+</div>
+
+        <!-- PANNEAU 4 : Avis -->
+        <div class="mots-panel" id="mpanel-avis">
+          <textarea id="compre-text" class="field" rows="14"
+            placeholder="Ce que tu as compris, ce que tu penses, les moments importants…"
+            oninput="saveTexte('comprehension')"></textarea>
+        </div>
+
       </div>
     </div>
 
 
     <!-- DISSERTATION -->
     <div class="section" id="sec-dissertation">
+      <div class="mots-subtab-bar" id="ecrire-tabs" style="margin-bottom:14px;">
+        <button class="mots-subtab" id="etab-diss" onclick="showEcrirePanel('diss',this)" style="color:var(--violet);">✍️ Dissertation</button>
+        <button class="mots-subtab" id="etab-redac" onclick="showEcrirePanel('redac',this)">📖 Rédaction</button>
+      </div>
 
       <!-- ══ VERSION AXEL (6ème) ══ -->
       <div class="only-axel">
@@ -773,6 +889,10 @@ body.mode-elise .only-elise{display:block;}
 
     <!-- RÉDACTION -->
     <div class="section" id="sec-redaction">
+      <div class="mots-subtab-bar" id="ecrire-tabs-redac" style="margin-bottom:14px;">
+        <button class="mots-subtab" id="etab-diss2" onclick="showEcrirePanel('diss',this)" style="">✍️ Dissertation</button>
+        <button class="mots-subtab active" id="etab-redac2" onclick="showEcrirePanel('redac',this)" style="color:#2E7D32;">📖 Rédaction</button>
+      </div>
       <div class="card" style="border-left:4px solid var(--vert);">
         <div class="card-title" style="color:var(--vert)">✍️ Rédaction guidée</div>
         <p style="font-size:.78rem;color:#888;margin-bottom:10px;">Deux types de rédaction : <b>Récit</b> (raconter une histoire) ou <b>Texte argumentatif</b> (donner son avis). Sélectionne le type puis dicte dans chaque zone.</p>
@@ -889,7 +1009,7 @@ function sauvegarderBiblio() {
 // ════════════════════════════════════════════════════════
 // VERSION — incrémenter à chaque mise à jour des livres démo
 // ════════════════════════════════════════════════════════
-const DEMO_VERSION = 8; // v8 : enrichissement Thérèse + ajout L'Adversaire (zones Élise)
+const DEMO_VERSION = 10; // v10 : correction citations démo (contenu réel requis)
 const LIVRES_DEMO = [
   {
     id: 'liv_petit_prince_001',
@@ -961,6 +1081,8 @@ const LIVRES_DEMO = [
       arg3: "De plus, la rose du Petit Prince nous enseigne que la valeur des choses vient du temps qu'on leur consacre. Ainsi, quand le Renard lui dit que sa rose est unique parce qu'il a perdu du temps pour elle, on comprend que ce sont nos liens et nos efforts qui donnent de la valeur aux êtres que l'on aime.",
       conclu: "Pour conclure, Le Petit Prince nous rappelle que l'essentiel est invisible pour les yeux : l'amitié, l'amour et la simplicité comptent plus que la richesse ou le pouvoir. Ce livre, écrit pour les enfants mais aussi pour les adultes, nous invite à garder notre regard d'enfant afin de voir ce qui compte vraiment dans la vie."
     },
+    themes: {amour: "rose (p.12 ch.8) · apprivoiser (p.68 ch.21) · unique au monde (p.70) · perdre du temps pour quelqu'un (p.69) · larmes (p.18) · tendresse (p.24) · séparation (p.86)", pouvoir: "roi (p.30 ch.10) · vaniteux (p.33 ch.11) · businessman (p.37 ch.13) · commander (p.31) · posséder les étoiles (p.38) · obéir (p.31) · orgueil (p.34)", liberte: "voyage (p.27 ch.9) · quitter la planète (p.27) · partir (p.86) · le serpent (p.60 ch.17) · retour parmi les étoiles (p.89) · fuir l'ennui (p.22)", identite: "qui es-tu (p.55 ch.15) · astéroïde B-612 (p.15 ch.4) · l'essentiel invisible (p.70 ch.21) · se souvenir (p.74) · être responsable (p.70)", societe: "adultes sérieux (p.8 ch.1) · chiffres (p.8) · chapeau/boa (p.7) · buveur (p.35 ch.12) · géographe (p.42 ch.15) · allumeur de réverbères (p.39 ch.14)", nature: "désert (p.14 ch.3) · coucher de soleil (p.22 ch.6) · baobabs (p.19 ch.5) · fleur (p.24 ch.7) · étoiles (p.74 ch.24) · renard (p.63 ch.21) · serpent (p.60)"},
+    citations: [{"id":"cit_pp_01","texte":"On ne voit bien qu'avec le cœur. L'essentiel est invisible pour les yeux.","ref":"p.68 ch.21","theme":"Amour / Sentiments","procede":"Antithèse","interpretation":"Opposition cœur/yeux : la vérité n'est pas matérielle. Message central du livre. Usage : conclusion, argument sur l'amour vs la possession.","importance":3},{"id":"cit_pp_02","texte":"C'est le temps que tu as perdu pour ta rose qui fait ta rose si importante.","ref":"p.69 ch.21","theme":"Amour / Sentiments","procede":"Métaphore","interpretation":"La valeur vient de l'investissement affectif. Métaphore de tout lien humain. Usage : argument sur la valeur des liens vs les choses matérielles.","importance":3},{"id":"cit_pp_03","texte":"Tu deviens responsable pour toujours de ce que tu as apprivoisé.","ref":"p.70 ch.21","theme":"Amour / Sentiments","procede":"Gradation","interpretation":"Apprivoiser = lien unique et permanent. La responsabilité est la contrepartie de l'amour. Usage : argument sur l'amitié ou l'amour.","importance":3},{"id":"cit_pp_04","texte":"Les grandes personnes ne comprennent jamais rien par elles-mêmes.","ref":"p.8 ch.1","theme":"Société / Critique","procede":"Ironie","interpretation":"Ironie : l'enfant explique aux adultes. Saint-Exupéry retourne le rapport normal. Usage : argument sur la critique des adultes.","importance":2},{"id":"cit_pp_05","texte":"Dessine-moi un mouton.","ref":"p.9 ch.2","theme":"Identité / Quête","procede":"Ellipse","interpretation":"Première parole du Petit Prince : directe, sans justification. Ellipse de toute introduction. L'enfant va à l'essentiel.","importance":2},{"id":"cit_pp_06","texte":"Si tu viens à quatre heures de l'après-midi, dès trois heures je commencerai d'être heureux.","ref":"p.67 ch.21","theme":"Amour / Sentiments","procede":"Hyperbole","interpretation":"Le Renard explique le rituel comme condition du bonheur. Hyperbole légère qui exprime l'intensité de l'attente. Usage : argument sur l'amour et l'anticipation.","importance":2}],
     schemaType: 'moderne',
     narration: {
       nar_a1: "Un aviateur tombe en panne dans le désert du Sahara et rencontre un mystérieux petit garçon venu de l'astéroïde B-612. Le Petit Prince lui raconte ses voyages : planètes absurdes, renard sage, rose capricieuse.",
@@ -1051,6 +1173,8 @@ const LIVRES_DEMO = [
       arg3: "De plus, Tom n'hésite pas à dire la vérité quand c'est nécessaire, même si c'est difficile. Par exemple, lors du procès du docteur Robinson, Tom témoigne contre Joe l'Indien pour sauver un innocent accusé à tort, malgré la peur que lui inspire ce meurtrier dangereux.",
       conclu: "Pour conclure, Tom Sawyer est un héros de l'enfance parce qu'il allie l'imagination, la liberté et le courage. Mark Twain nous montre que l'enfance est une période précieuse où tout est possible, et que même un petit garçon turbulent peut devenir un véritable héros lorsque les circonstances l'exigent."
     },
+    themes: {amour: "amitié Tom-Huck (p.15 ch.6) · amour Tom-Becky (p.18 ch.7) · jalousie (p.19) · réconciliation (p.21) · protéger Becky dans la grotte (p.175) · fidélité entre amis", pouvoir: "Joe l'Indien (p.75 ch.9) · meurtre (p.76) · tribunal (p.158 ch.23) · domination du plus fort · l'argent de Joe (p.201) · terreur (p.77)", liberte: "île Jackson (p.100 ch.13) · fugue (p.99) · pirates (p.101) · refus de l'école (p.56 ch.6) · s'évader des règles adultes · liberté de l'enfance", identite: "héros imaginaire (p.12 ch.1) · Robin des Bois (p.102) · vrai courage (p.163 ch.24) · devenir quelqu'un · Huck fils de l'ivrogne (p.16) · Tom menteur mais courageux", societe: "tante Polly (p.9 ch.1) · école (p.56 ch.6) · Eglise (p.40 ch.5) · conventions villageoises (p.16) · badigeonnage (p.20 ch.2) · veuve Douglas (p.210)", nature: "rivière Mississippi (p.14) · grotte McDougal (p.175 ch.29) · île Jackson (p.100) · nuit dans le cimetière (p.73 ch.9) · forêt · orage (p.108)"},
+    citations: [{"id":"cit_ts_01","texte":"Tom en vint à la conclusion que le travail consiste en tout ce qu'on est obligé de faire, et que le jeu consiste en tout ce qu'on n'est pas obligé de faire.","ref":"p.20 ch.2","theme":"Liberté / Déterminisme","procede":"Antithèse","interpretation":"Définition enfantine mais percutante du travail vs le jeu. Antithèse : obligé / pas obligé. Twain critique la société du labeur en souriant. Usage : argument sur la liberté.","importance":3},{"id":"cit_ts_02","texte":"La lune et le silence régnaient sur le village endormi.","ref":"p.73 ch.9","theme":"Nature / Civilisation","procede":"Personnification","interpretation":"La nature est personnifiée : témoin silencieux de l'aventure nocturne. Atmosphère mystérieuse avant la scène du cimetière. Usage : analyse du cadre naturel.","importance":2},{"id":"cit_ts_03","texte":"Je suis Tom Sawyer le Pirate — le Terreur des Mers du Sud !","ref":"p.101 ch.13","theme":"Identité / Quête","procede":"Hyperbole","interpretation":"Tom se construit une identité héroïque par le jeu. Hyperbole enfantine : le garçon du Missouri se rêve en pirate. Usage : argument sur l'imaginaire de l'enfance.","importance":2},{"id":"cit_ts_04","texte":"Tom le savait. Et il parla.","ref":"p.163 ch.23","theme":"Identité / Quête","procede":"Gradation","interpretation":"Gradation courte et haletante : conscience → décision → action. Tom surmonte sa peur pour témoigner. Moment de sa transformation. Usage : argument sur le vrai courage.","importance":3},{"id":"cit_ts_05","texte":"Si tu peins la clôture à ma place, je te donne mon trésor.","ref":"p.20 ch.2","theme":"Société / Critique","procede":"Ironie","interpretation":"Tom transforme une punition en désir par manipulation sociale. Ironie sur la nature humaine : on veut ce qui est interdit aux autres. Usage : argument sur les mécanismes sociaux.","importance":2}],
     schemaType: 'freytag',
     narration: {
       nar_a1: "Tom Sawyer vit à Saint Petersburg avec sa tante Polly. Garçon espiègle et imaginatif, il fait des bêtises, évite l'école et rêve d'aventures. Une nuit, il assiste avec Huck au meurtre du docteur Robinson par Joe l'Indien — un secret qui va l'hanter.",
@@ -1143,6 +1267,8 @@ const LIVRES_DEMO = [
       arg3: "",
       conclu: "Pour conclure, Alice est un personnage courageux parce qu'elle garde sa raison et sa volonté dans un monde qui n'a aucun sens. Lewis Carroll nous montre qu'un enfant peut faire face à l'inconnu et à l'absurde en restant lui-même. Ce livre nous rappelle que le courage, ce n'est pas l'absence de peur, mais la capacité à continuer malgré elle."
     },
+    themes: {amour: "chaton Dinah (p.7 ch.1) · larmes d'Alice (p.18 ch.2) · sœur (p.97 fin) · tendresse du souvenir · enfance aimée · Alice protège ses amis au procès (p.91)", pouvoir: "Reine de Cœur (p.67 ch.8) · Qu'on lui coupe la tête ! (p.68) · procès absurde (p.88 ch.12) · Roi (p.70) · règles arbitraires · le valet de cœur (p.88)", liberte: "sortie du Pays des Merveilles (p.93) · rêve = liberté totale (p.96 fin) · résistance d'Alice (p.91) · grandir/rapetisser (p.10 ch.1) · échapper aux règles adultes", identite: "Qui es-tu (p.35 ch.5) · Chenille (p.35) · je ne sais plus qui je suis (p.14) · grandir = changer (p.11) · rester soi-même · Alice au bout du rêve (p.96)", societe: "règles absurdes (p.55 ch.7) · thé fou chapelier (p.55) · croquet de la Reine (p.67) · règles qui changent (p.46) · tribunal illogique (p.88) · cartes à jouer (p.93)", nature: "terrier (p.8 ch.1) · jardin fleuri (p.12 ch.1) · champignon (p.36 ch.5) · chat du Cheshire (p.58 ch.6) · bois mystérieux · fleur parlante (p.62)"},
+    citations: [{"id":"cit_al_01","texte":"Qui es-tu ?","ref":"p.35 ch.5","theme":"Identité / Quête","procede":"Ellipse","interpretation":"Question philosophique centrale posée par la Chenille. Ellipse absolue : deux mots pour une question immense. Alice n'a pas de réponse. Usage : intro ou argument sur l'identité.","importance":3},{"id":"cit_al_02","texte":"Qu'on lui coupe la tête !","ref":"p.68 ch.8","theme":"Pouvoir / Domination","procede":"Anaphore","interpretation":"La Reine répète cet ordre à chaque obstacle du livre. Anaphore : le refrain du pouvoir absurde. Usage : argument sur le pouvoir arbitraire.","importance":3},{"id":"cit_al_03","texte":"Nous sommes tous fous ici. Je suis fou. Tu es folle.","ref":"p.56 ch.6","theme":"Société / Critique","procede":"Anaphore","interpretation":"Le Chat du Cheshire normalise la folie comme signe d'appartenance. Anaphore : je / tu / on. La folie = la norme dans ce monde inversé. Usage : argument sur l'absurdité sociale.","importance":2},{"id":"cit_al_04","texte":"Ce n'étaient que des cartes à jouer, après tout.","ref":"p.93 ch.12","theme":"Liberté / Déterminisme","procede":"Litote","interpretation":"Alice démystifie le pouvoir de la Reine. Litote finale : ce n'était QUE = ils n'avaient aucun vrai pouvoir. Usage : argument sur le courage face à l'autorité absurde.","importance":3},{"id":"cit_al_05","texte":"Curiouser and curiouser ! (De plus en plus curieux !)","ref":"p.10 ch.2","theme":"Identité / Quête","procede":"Gradation","interpretation":"Alice invente un comparatif impossible. Gradation comique : elle perd ses mots en même temps qu'elle perd son identité. Usage : argument sur le changement d'identité.","importance":2}],
     schemaType: 'aristote',
     narration: {
       nar_a1: "Alice s'ennuie sur la berge avec sa sœur qui lit. Elle est en Angleterre, par un après-midi d'été calme. Tout est ordinaire — jusqu'à ce qu'elle aperçoive un lapin blanc en habit qui court en regardant sa montre.",
@@ -1216,7 +1342,9 @@ const LIVRES_DEMO = [
       frequence: "Singulatif pour les moments décisifs (le procès, la scène finale à Paris). Itératif pour les habitudes conjugales : les journées à Argelouse, les repas en famille, les messes à Saint-Clair sont décrites comme un rituel étouffant. La répétition signifie l'enfermement : chaque jour est le même. Insistance, routine, obsession.",
       espace: "Espaces réels et symboliques entremêlés. Argelouse = prison naturelle (espace fermé, étouffant). Le train = espace de la conscience libre (seul moment de liberté intérieure). Saint-Clair = espace du regard social (apparences, messe, voisins). Paris = espace ouvert, libération ambiguë.\n\nMouvement des personnages : Thérèse ne choisit jamais sa destination — elle est conduite au tribunal, ramenée chez Bernard, enfermée à Argelouse, déposée à Paris. Son trajet est toujours subi. Géographie symbolique : les Landes (campagne) = déterminisme, Paris (ville) = possible liberté."
     },
-    mots: "── Mot inconnu ──\nIn medias res : expression latine — commencer un récit au cœur de l'action, sans introduction chronologique.\n\n── Mot inconnu ──\nAnalepse (flashback) : retour en arrière dans la narration. Contraire : prolepse (anticipation).\n\n── Mot inconnu ──\nStyle indirect libre : procédé où la voix du personnage se mêle à celle du narrateur sans marqueur clair (ni « il pensa que », ni guillemets).\n\n── Mot inconnu ──\nFocalisation interne : le narrateur adopte le point de vue d'un personnage — on ne sait que ce que ce personnage sait et ressent.\n\n« Je voudrais que tu ne sois pas seule, Thérèse. »\n(Mauriac — dédicace du roman à son propre personnage)\n\n« Elle haïssait cette chambre où elle avait souffert tant d'automnes. »\n(Mauriac — chapitre VI — paysage-état d'âme)",
+    mots: "── Mot inconnu ──\nIn medias res : commencer un récit au cœur de l'action.\n\n── Mot inconnu ──\nAnalepse (flashback) : retour en arrière dans la narration.\n\n── Mot inconnu ──\nStyle indirect libre : voix du personnage mêlée au narrateur sans marqueur.\n\n── Mot inconnu ──\nFocalisation interne : le narrateur adopte le point de vue d'un personnage.",
+    citations: [{"id":"cit_td_01","texte":"Je voudrais que tu ne sois pas seule, Thérèse.","ref":"Dédicace","theme":"Identité / Quête","procede":"Personnification","interpretation":"Mauriac s'adresse directement à son personnage fictif. Geste métatextuel : l'auteur défend la coupable avant que le roman commence. Usage : introduction, question de la sympathie.","importance":3},{"id":"cit_td_02","texte":"Elle haïssait cette chambre où elle avait souffert tant d'automnes.","ref":"ch.VI","theme":"Liberté / Déterminisme","procede":"Champ lexical","interpretation":"Paysage-état d'âme : la chambre incarne la répétition étouffante du mariage. Champ lexical de l'enfermement et du temps qui passe. Usage : analyse des espaces fermés.","importance":2},{"id":"cit_td_03","texte":"Elle n'avait pas voulu cela. Pourtant ses mains avaient agi.","ref":"ch.V","theme":"Identité / Quête","procede":"Antithèse","interpretation":"Antithèse volonté/acte : l'acte sans mobile conscient. C'est le grand sujet du roman. Usage : argument sur la culpabilité sans intention.","importance":3},{"id":"cit_td_04","texte":"Bernard ne pouvait pas comprendre. Il n'avait rien à comprendre.","ref":"ch.XI","theme":"Pouvoir / Domination","procede":"Gradation","interpretation":"Gradation descendante : impossibilité → absence de besoin. Bernard représente l'enfermement par la normalité bornée, non par la méchanceté. Usage : argument sur le mariage comme prison.","importance":2},{"id":"cit_td_05","texte":"La lande était à la fois belle et étouffante, comme Thérèse elle-même.","ref":"ch.VIII","theme":"Nature / Civilisation","procede":"Comparaison","interpretation":"La lande est le double symbolique de Thérèse : belle et prisonnière. Comparaison explicite paysage-personnage. Usage : analyse du rôle symbolique de la nature.","importance":3},{"id":"cit_td_06","texte":"À Paris, elle alluma une cigarette et regarda passer les gens.","ref":"ch.XII — dénouement","theme":"Liberté / Déterminisme","procede":"Ellipse","interpretation":"Dénouement ouvert. La cigarette (geste d'autonomie en 1927) et le regard sur les passants suggèrent une liberté possible. Ellipse : Mauriac ne conclut pas. Usage : analyse du dénouement ambigu.","importance":3}],
+    themes: {amour: "mariage de convenance (p.8) · Anne et Azévédo (p.48 ch.7) · amour absent entre Bernard et Thérèse · indifférence conjugale (p.15) · Thérèse peut-être amoureuse d'Anne", pouvoir: "autorité maritale (p.18) · honneur familial (p.21 ch.3) · tribunal (p.2) · acquittement arrangé · séquestration (p.98 ch.9) · père Larroque (p.5) · domination bourgeoise", liberte: "fuir (p.55) · Paris = liberté rêvée (p.132 ch.12) · prison conjugale · train = espace libre (p.15 ch.2) · cigarette finale (p.134) · impossibilité de divorcer en 1927", identite: "Thérèse ne se comprend pas (p.33) · acte sans mobile · conscience labyrinthe (p.40 ch.5) · qui suis-je (p.60) · lucidité sans illusion", societe: "bourgeoisie landaise (p.7) · apparences (p.19 ch.3) · Eglise (p.12) · honneur familial (p.21) · messe à Saint-Clair · rang social · les pins comme richesse", nature: "lande de pins (p.5 ch.1) · résine (p.6) · incendies (p.68) · Argelouse = isolement total (p.95 ch.8) · odeur suffocante · nuit dans la forêt (p.70)"},
     comprehension: "Thérèse Desqueyroux pose une question troublante : peut-on comprendre quelqu'un qui a voulu tuer sans vraiment savoir pourquoi ?\n\nMauriac ne condamne pas Thérèse — il l'écoute. Le roman entier est une tentative de Thérèse pour s'expliquer à elle-même son propre geste. Ce n'est pas un roman policier : le crime est connu dès le début. C'est un roman psychologique sur l'étouffement, la solitude et la liberté impossible.\n\nLa vraie accusation du roman n'est pas Thérèse. C'est la société bourgeoise catholique qui acquitte pour éviter le scandale et séquestre plutôt que de divorcer. Les véritables criminelles sont les convenances.\n\nLa fin est ouverte et mélancolique : Bernard abandonne Thérèse à Paris. Est-elle libre enfin, ou simplement seule différemment ? Mauriac n'a pas voulu répondre.",
     dissertation: {
       sujet:  "En quoi Thérèse Desqueyroux est-elle un personnage à la fois coupable et sympathique ?",
@@ -1312,7 +1440,9 @@ const LIVRES_DEMO = [
       frequence: "Singulatif pour les moments décisifs (les meurtres, le procès, la rencontre Carrère/Romand en prison). Itératif pour les journées de Romand sur les aires d'autoroute — décrites comme un rituel répétitif. La répétition signifie l'absurde : dix-huit ans du même vide, chaque journée identique à la précédente. Insistance sur le néant comme mode d'existence.",
       espace: "Espaces réels chargés de symbolique. Aires d'autoroute = non-lieu absolu, néant identitaire (score symbolique 95%). Maison de Prévessin = l'intime transformé en crime (foyer détruit). Genève / OMS = adresse du mensonge, prestige fictif. Prison / tribunal = vérité imposée (paradoxe : la prison libère Romand de l'obligation de mentir).\n\nMouvement des personnages : Romand n'a pas de destination — il erre. Ses déplacements (voiture, autoroutes) ne sont pas des voyages mais des fuites du vide. Géographie symbolique : la Suisse (prestige) vs la France (réalité) — Romand vit dans l'entre-deux, nulle part."
     },
-    mots: "── Mot inconnu ──\nAutofiction : forme littéraire où l'auteur écrit à la première personne en mêlant faits réels et écriture fictionnelle. Différent de l'autobiographie (qui se veut strictement vraie).\n\n── Mot inconnu ──\nModalisation : procédé stylistique qui exprime le degré de certitude du narrateur. Ex. : « peut-être », « sans doute », « il me semble ». Ici, moyen éthique de dire ce qu'on ne sait pas.\n\n── Mot inconnu ──\nParataxe : juxtaposition de phrases courtes sans connecteur logique. Effet : sécheresse, brutalité des faits.\n\n── Mot inconnu ──\nHomodiégétique : narrateur qui participe à l'histoire qu'il raconte (il dit « je »). Contraire : hétérodiégétique (narrateur extérieur).\n\n« Le 9 janvier 1993, Jean-Claude Romand tua sa femme, ses deux enfants, et tenta de tuer ses parents. »\n(Incipit — Carrère, sobriété clinique dès la première phrase)\n\n« Peut-être ne savait-il pas lui-même où il était. »\n(Carrère décrivant Romand sur les aires d'autoroute — modalisation éthique)",
+    mots: "── Mot inconnu ──\nAutofiction : forme littéraire où l'auteur écrit à la première personne en mêlant réel et fiction.\n\n── Mot inconnu ──\nModalisation : procédé qui exprime le degré de certitude du narrateur (peut-être, sans doute).\n\n── Mot inconnu ──\nParataxe : juxtaposition de phrases courtes sans connecteur logique.\n\n── Mot inconnu ──\nHomodiégétique : narrateur qui participe à l'histoire qu'il raconte (dit « je »).",
+    citations: [{"id":"cit_ad_01","texte":"Le 9 janvier 1993, Jean-Claude Romand tua sa femme, ses deux enfants, et tenta de tuer ses parents.","ref":"Incipit ch.1","theme":"Société / Critique","procede":"In medias res","interpretation":"Incipit d'une brutalité clinique. Parataxe : trois propositions sèches, aucun commentaire. Suspense déplacé : non 'quoi' mais 'pourquoi'. Usage : accroche de toute dissertation sur ce livre.","importance":3},{"id":"cit_ad_02","texte":"Peut-être ne savait-il pas lui-même où il était.","ref":"ch.3","theme":"Identité / Quête","procede":"Style indirect libre","interpretation":"'Peut-être' = aveu d'ignorance de Carrère. Style indirect libre : on glisse dans la conscience de Romand sans savoir si c'est vraiment sa pensée. Éthique de l'écrivain. Usage : argument sur le vide identitaire.","importance":3},{"id":"cit_ad_03","texte":"Romand déclara qu'il aimait sa famille. Dans la salle, des gens rirent. Carrère ne rit pas.","ref":"Procès 1996","theme":"Amour / Sentiments","procede":"Antithèse","interpretation":"Contraste rire/silence : jugement moral immédiat vs questionnement littéraire. L'écrivain refuse le verdict facile. Usage : argument sur la complexité morale.","importance":3},{"id":"cit_ad_04","texte":"Il avait passé dix-huit ans à ne rien faire. Chaque jour pareil au précédent.","ref":"ch.4","theme":"Identité / Quête","procede":"Ellipse","interpretation":"Dix-huit ans réduits à 'rien faire'. La répétition mime le vide existentiel de Romand. Ellipse des détails pour un effet d'abîme. Usage : argument sur le néant comme mode de vie.","importance":2},{"id":"cit_ad_05","texte":"Il avait construit une existence entière sur un mensonge. Et ce mensonge était lui.","ref":"ch.6","theme":"Identité / Quête","procede":"Chiasme","interpretation":"Chiasme : le mensonge est la personne, la personne est le mensonge. Romand n'a pas menti pour cacher quelque chose : il a menti pour exister. Usage : argument central sur l'identité fictive.","importance":3},{"id":"cit_ad_06","texte":"La maison était une maison comme les autres. Jardin, balançoire, jouets d'enfants.","ref":"ch.2","theme":"Société / Critique","procede":"Ellipse","interpretation":"Description neutre et fragmentée. Ellipse des verbes = style journalistique. La normalité du décor amplifie l'horreur. Technique du récit factuel : laisser le réel parler. Usage : argument sur la banalité du mal.","importance":2}],
+    themes: {amour: "amour fictif de Romand (p.22) · confiance aveugle de Florence (p.22) · famille comme décor (p.18) · enfants (p.9) · Carrère ne rit pas au procès · amour impossible", pouvoir: "mensonge comme pouvoir symbolique (p.30) · statut médecin (p.5) · OMS = prestige (p.7) · identité fictive · argent détourné (p.45) · ascendant sur la famille", liberte: "glissade vers le mensonge (p.35) · choix ou fatalité ? · impossibilité de revenir en arrière · prison libère Romand du mensonge (p.88) · conversion = nouveau masque ?", identite: "vide intérieur (p.40) · identité fictive totale · aire d'autoroute (p.42) · qui est Romand ? · double de l'écrivain (p.15) · Carrère reconnaît quelque chose en lui", societe: "société du paraître (p.8) · diplôme comme identité (p.5) · réussite filiale obligatoire (p.12) · banalité du mal · procès 1996 (p.88) · médecin = statut suprême", nature: "(quasi absent) · maison ordinaire de Prévessin (p.17) · jardin avec jouets d'enfants (p.17) · autoroute comme non-lieu absolu (p.42)"},
     comprehension: "L'Adversaire est un livre profondément déstabilisant — pas à cause des meurtres (qu'on connaît dès la première page) mais à cause du vide de Romand. On attendait un monstre ; on trouve un homme creux.\n\nCarrère refuse l'explication psychologique simple. Le mensonge n'est pas un choix mais une glissade — ce qui le rend plus terrifiant. Romand n'a pas de projet maléfique : il a l'incapacité absolue d'exister hors du regard des autres.\n\nLa présence de Carrère dans le récit est d'abord déroutante, puis indispensable : il empêche toute distance confortable entre le lecteur et le sujet. En reconnaissant quelque chose de lui-même dans Romand, Carrère oblige le lecteur à faire de même.\n\nLa sobriété du style crée plus d'effroi que n'importe quelle dramatisation. Carrère ne cherche pas à faire frissonner — et c'est précisément pour cela qu'on frissonne.",
     dissertation: {
       sujet:  "Dans quelle mesure L'Adversaire est-il un récit impossible ?",
@@ -1411,6 +1541,15 @@ function mettreAJourLivresDemo() {
 
       if (aVraiContenu(existant.matrice))   majour.matrice   = existant.matrice;
       if (aVraiContenu(existant.narration)) majour.narration = existant.narration;
+
+      // Citations : conserver si l'utilisateur en a créé avec du contenu réel
+      const aVraiCitation = (arr) =>
+        Array.isArray(arr) && arr.some(c => c.texte && c.texte.trim().length > 3);
+      if (aVraiCitation(existant.citations))
+        majour.citations = existant.citations;
+
+      // Thèmes : conserver si l'utilisateur a saisi
+      if (aVraiContenu(existant.themes)) majour.themes = existant.themes;
 
       // dissertation et redac : conserver si au moins un champ rempli
       if (aVraiContenu(existant.dissertation))  majour.dissertation  = existant.dissertation;
@@ -1569,7 +1708,6 @@ function ouvrirLivre(id) {
   document.getElementById('livre-pages').value  = livre.pages  || '';
   document.getElementById('livre-annee').value  = livre.annee  || '';
   document.getElementById('temps-text').value   = livre.temps  || '';
-  document.getElementById('mots-zone').value    = livre.mots   || '';
   document.getElementById('compre-text').value  = livre.comprehension || '';
   document.getElementById('livre-contexte').value    = livre.contexte    || '';
   document.getElementById('livre-auteur-vie').value  = livre.auteurVie   || '';
@@ -1607,6 +1745,8 @@ function ouvrirLivre(id) {
   setTimeout(loadRedac, 50);
   // Charger le schéma narratif
   setTimeout(loadIntrigue, 50);
+  // Charger les zones Mots (3 sous-zones)
+  setTimeout(() => loadMots(livre), 50);
   // Charger les zones spécifiques Élise
   setTimeout(() => loadZonesElise(livre), 50);
   _grapheH = null; // forcer recalcul hauteur au prochain affichage de l'onglet Persos
@@ -1647,6 +1787,33 @@ function saveTexte(champ) {
   LIVRE_ACTIF[champ] = document.getElementById(ids[champ]).value;
   sauvegarderBiblio();
 }
+
+// saveCitations est géré par le système de cartes (updateCitation)
+function saveCitations() { /* legacy no-op */ }
+
+// saveTheme remplacé ci-dessous
+
+function showMotsPanel(id, btnEl) {
+  document.querySelectorAll('.mots-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('#sec-mots .mots-subtab').forEach(b => b.classList.remove('active'));
+  document.getElementById('mpanel-' + id)?.classList.add('active');
+  if (btnEl) btnEl.classList.add('active');
+  if (id === 'themes') setTimeout(drawThemeRadar, 30);
+}
+
+function loadMots(livre) {
+  const sv = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+  sv('mots-zone',   livre.mots);
+  sv('compre-text', livre.comprehension);
+  const th = livre.themes || {};
+  ['amour','pouvoir','liberte','identite','societe','nature'].forEach(axe => sv('theme-' + axe, th[axe]));
+  document.querySelectorAll('.mots-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('#sec-mots .mots-subtab').forEach(b => b.classList.remove('active'));
+  document.getElementById('mpanel-mots')?.classList.add('active');
+  document.getElementById('mst-mots')?.classList.add('active');
+  setTimeout(drawThemeRadar, 50);
+  setTimeout(renderCitations, 50);
+}
 function saveDiss() {
   if (!LIVRE_ACTIF) return;
   if (!LIVRE_ACTIF.dissertation) LIVRE_ACTIF.dissertation = {};
@@ -1665,13 +1832,34 @@ function saveDiss() {
 function showTab(id, tabEl) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('sec-' + id).classList.add('active');
+
+  if (id === 'ecrire') {
+    const last = window._lastEcritPanel || 'diss';
+    const secId = last === 'diss' ? 'sec-dissertation' : 'sec-redaction';
+    document.getElementById(secId)?.classList.add('active');
+    document.querySelectorAll('#ecrire-tabs .mots-subtab, #ecrire-tabs-redac .mots-subtab')
+      .forEach(b => b.classList.remove('active'));
+    document.getElementById('etab-' + last)?.classList.add('active');
+    document.getElementById('etab-' + last + '2')?.classList.add('active');
+  } else {
+    document.getElementById('sec-' + id)?.classList.add('active');
+  }
+
   if (tabEl) tabEl.classList.add('active');
   else document.querySelector('.tab')?.classList.add('active');
-  // Dessiner le graphe quand l'onglet Persos devient visible (clientWidth correct)
-  if (id === 'personnages') {
-    requestAnimationFrame(() => renderGraphe());
-  }
+  if (id === 'personnages') requestAnimationFrame(() => renderGraphe());
+}
+
+function showEcrirePanel(panel, btnEl) {
+  window._lastEcritPanel = panel;
+  document.getElementById('sec-dissertation')?.classList.remove('active');
+  document.getElementById('sec-redaction')?.classList.remove('active');
+  const secId = panel === 'diss' ? 'sec-dissertation' : 'sec-redaction';
+  document.getElementById(secId)?.classList.add('active');
+  document.querySelectorAll('#ecrire-tabs .mots-subtab, #ecrire-tabs-redac .mots-subtab')
+    .forEach(b => b.classList.remove('active'));
+  document.getElementById('etab-' + panel)?.classList.add('active');
+  document.getElementById('etab-' + panel + '2')?.classList.add('active');
 }
 
 // ════════════════════════════════════════════════════════
@@ -1786,14 +1974,15 @@ document.getElementById('modal-input').addEventListener('keydown', e => {
 // ════════════════════════════════════════════════════════
 function debutCitation() {
   document.getElementById('cit-notice').classList.add('on');
-  insertText('mots-zone', '\n\n« ');
+  insertText('cit-zone', '\n\n« ');
+  document.getElementById('cit-zone').focus();
 }
 function finCitation() {
   document.getElementById('cit-notice').classList.remove('on');
-  insertText('mots-zone', ' »\n');
-  saveTexte('mots');
+  insertText('cit-zone', ' »\n');
+  saveCitations();
 }
-function insertSep() { insertText('mots-zone', '\n\n── Mot inconnu ──\n'); }
+function insertSep() { insertText('mots-zone', '\n\n── Mot inconnu ──\n'); saveTexte('mots'); }
 function insertText(id, txt) {
   const ta = document.getElementById(id);
   const s  = ta.selectionStart || ta.value.length;
@@ -1808,6 +1997,9 @@ function insertText(id, txt) {
 function exportTxt() {
   if (!LIVRE_ACTIF) return;
   const L = LIVRE_ACTIF;
+  const sep = (label) => '\n' + label + '\n';
+  const obj2txt = (obj) => JSON.stringify(obj || {});
+
   let t = '════════════════════════════\n   MON GUIDE DE LECTURE\n════════════════════════════\n\n';
   t += 'ID      : ' + L.id + '\n';
   t += 'Créé le : ' + L.dateCreation + '\n\n';
@@ -1815,33 +2007,54 @@ function exportTxt() {
   if (L.auteur) t += 'Auteur : ' + L.auteur + '\n';
   if (L.genre)  t += 'Genre  : ' + L.genre  + '\n';
   if (L.pages)  t += 'Pages  : ' + L.pages  + '\n';
-  if (L.annee)  t += 'Époque : ' + L.annee  + '\n';
+  if (L.annee)  t += 'Époque     : ' + L.annee  + '\n';
+  if (L.schemaType) t += 'SchémaType : ' + L.schemaType + '\n';
+  if (L.redacType)  t += 'RedacType  : ' + L.redacType  + '\n';
   t += '\n';
-  if (L.personnages.length) {
-    t += '── PERSONNAGES ──────────────\n';
+
+  if (L.contexte)    t += sep('── CONTEXTE HISTORIQUE ──────') + L.contexte    + '\n\n';
+  if (L.auteurVie)   t += sep('── AUTEUR AU MOMENT DE L\'ÉCRITURE ──') + L.auteurVie + '\n\n';
+  if (L.trajectoire) t += sep('── TRAJECTOIRE DE L\'AUTEUR ──') + L.trajectoire + '\n\n';
+  if (L.courant)     t += sep('── COURANT LITTÉRAIRE ───────') + L.courant + '\n\n';
+  if (L.style)       t += sep('── STYLE DE L\'AUTEUR ────────') + L.style + '\n\n';
+
+  if (L.personnages && L.personnages.length) {
+    t += sep('── PERSONNAGES ──────────────');
     L.personnages.forEach(p => { t += '\n▶ ' + p.nom + '\n' + (p.notes||'(aucune note)') + '\n'; });
     t += '\n';
   }
-  if (L.lieux.length) {
-    t += '── LIEUX ────────────────────\n';
+  if (L.lieux && L.lieux.length) {
+    t += sep('── LIEUX ────────────────────');
     L.lieux.forEach(l => { t += '\n▶ ' + l.nom + '\n' + (l.notes||'(aucune note)') + '\n'; });
     t += '\n';
   }
-  if (L.temps)         t += '── ÉPOQUE & CHRONOLOGIE ─────\n' + L.temps + '\n\n';
-  if (L.mots)          t += '── MOTS & CITATIONS ─────────\n' + L.mots  + '\n\n';
-  if (L.comprehension) t += '── COMPRÉHENSION & AVIS ─────\n' + L.comprehension + '\n\n';
-  if (L.dissertation) {
+  if (L.matrice && Object.keys(L.matrice).length)
+    t += sep('── MATRICE RELATIONS ────────') + obj2txt(L.matrice) + '\n\n';
+  if (L.temps)  t += sep('── ÉPOQUE & CHRONOLOGIE ─────') + L.temps + '\n\n';
+  if (L.temps2 && Object.keys(L.temps2||{}).some(k => L.temps2[k]))
+    t += sep('── TEMPS STRUCTURÉ (ÉLISE) ──') + obj2txt(L.temps2) + '\n\n';
+  if (L.mots)          t += sep('── MOTS DIFFICILES ──────────') + L.mots + '\n\n';
+  if (Array.isArray(L.citations) && L.citations.length)
+    t += sep('── CITATIONS ANNOTÉES ───────') + obj2txt(L.citations) + '\n\n';
+  if (L.themes && Object.keys(L.themes||{}).some(k => L.themes[k]))
+    t += sep('── TOILE THÉMATIQUE ─────────') + obj2txt(L.themes) + '\n\n';
+  if (L.comprehension) t += sep('── AVIS & COMPRÉHENSION ─────') + L.comprehension + '\n\n';
+  if (L.narration && Object.keys(L.narration||{}).some(k => L.narration[k]))
+    t += sep('── SCHÉMA NARRATIF ──────────') + obj2txt(L.narration) + '\n\n';
+  if (L.redac && Object.keys(L.redac||{}).some(k => L.redac[k]))
+    t += sep('── RÉDACTION GUIDÉE ─────────') + obj2txt(L.redac) + '\n\n';
+  if (L.dissertation && (L.dissertation.sujet || L.dissertation.intro || L.dissertation.arg1)) {
     const d = L.dissertation;
-    if (d.sujet || d.intro || d.arg1) {
-      t += '── DISSERTATION ─────────────\n';
-      if (d.sujet)  t += 'Sujet : ' + d.sujet + '\n\n';
-      if (d.intro)  t += 'Introduction :\n' + d.intro + '\n\n';
-      if (d.arg1)   t += 'Argument 1 :\n' + d.arg1 + '\n\n';
-      if (d.arg2)   t += 'Argument 2 :\n' + d.arg2 + '\n\n';
-      if (d.arg3)   t += 'Argument 3 :\n' + d.arg3 + '\n\n';
-      if (d.conclu) t += 'Conclusion :\n' + d.conclu + '\n\n';
-    }
+    t += sep('── DISSERTATION ─────────────');
+    if (d.sujet)  t += 'Sujet :\n' + d.sujet + '\n\n';
+    if (d.intro)  t += 'Introduction :\n' + d.intro + '\n\n';
+    if (d.arg1)   t += 'Argument 1 :\n' + d.arg1 + '\n\n';
+    if (d.arg2)   t += 'Argument 2 :\n' + d.arg2 + '\n\n';
+    if (d.arg3)   t += 'Argument 3 :\n' + d.arg3 + '\n\n';
+    if (d.conclu) t += 'Conclusion :\n' + d.conclu + '\n\n';
   }
+  if (L.dissertation2 && Object.keys(L.dissertation2||{}).some(k => L.dissertation2[k]))
+    t += sep('── DISSERTATION 2NDE (ÉLISE) ─') + obj2txt(L.dissertation2) + '\n\n';
 
   const nom = (L.titre||'lecture').replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'');
   const a = document.createElement('a');
@@ -3089,6 +3302,226 @@ function loadZonesElise(livre) {
 }
 
 
+
+// ════════════════════════════════════════════════════════
+// CITATIONS STRUCTURÉES — listes et données
+// ════════════════════════════════════════════════════════
+const THEMES_LIST = ['—','Amour / Sentiments','Pouvoir / Domination','Liberté / Déterminisme','Identité / Quête','Société / Critique','Nature / Civilisation'];
+
+const PROCEDES = [
+  {nom:'—',def:'',ex:''},
+  {nom:'Métaphore',def:'Comparaison implicite entre deux réalités sans « comme » ni « tel que ». L\'une remplace l\'autre.',ex:'<b>Ex. :</b> « La vie est un naufrage. »<br><b>Effet :</b> image forte, révèle une ressemblance cachée.'},
+  {nom:'Comparaison',def:'Rapprochement explicite de deux réalités à l\'aide d\'un mot outil (comme, tel, ainsi que…).',ex:'<b>Ex. :</b> « Il est fort comme un lion. »<br><b>Effet :</b> illustre une qualité, crée une image claire.'},
+  {nom:'Personnification',def:'Attribution de caractéristiques humaines à un être inanimé, un animal ou une abstraction.',ex:'<b>Ex. :</b> « La lune nous regardait tristement. »<br><b>Effet :</b> anime le décor, crée une connivence entre nature et personnage.'},
+  {nom:'Hyperbole',def:'Exagération volontaire pour frapper l\'imagination ou renforcer une idée.',ex:'<b>Ex. :</b> « Je l\'ai dit mille fois. »<br><b>Effet :</b> insistance, effet comique ou dramatique.'},
+  {nom:'Litote',def:'Dire moins pour faire entendre plus. On atténue l\'expression pour suggérer quelque chose de fort.',ex:'<b>Ex. :</b> « Va, je ne te hais point. » (Corneille) = je t\'aime.<br><b>Effet :</b> suggestion, pudeur, ironie douce.'},
+  {nom:'Antithèse',def:'Opposition de deux idées, mots ou images dans un même énoncé pour créer un contraste.',ex:'<b>Ex. :</b> « Je vis, je meurs ; je me brûle et me noie. » (Louise Labé)<br><b>Effet :</b> met en valeur un conflit, une tension.'},
+  {nom:'Oxymore',def:'Alliance de deux termes contradictoires appliqués au même objet.',ex:'<b>Ex. :</b> « Cette obscure clarté qui tombe des étoiles. » (Corneille)<br><b>Effet :</b> paradoxe saisissant, traduit une réalité complexe.'},
+  {nom:'Anaphore',def:'Répétition d\'un mot ou groupe de mots au début de plusieurs propositions successives.',ex:'<b>Ex. :</b> « Paris ! Paris outragé ! Paris brisé ! Paris martyrisé ! »<br><b>Effet :</b> insistance, rythme, émotion croissante.'},
+  {nom:'Chiasme',def:'Structure symétrique inversée ABBA.',ex:'<b>Ex. :</b> « Il faut manger pour vivre et non vivre pour manger. »<br><b>Effet :</b> balance, mise en relief d\'une vérité.'},
+  {nom:'Gradation',def:'Suite de termes ou d\'idées de force croissante (ascendante) ou décroissante (descendante).',ex:'<b>Ex. :</b> « Il frémit, pâlit, tremble, s\'évanouit. »<br><b>Effet :</b> intensité progressive, dramatisation.'},
+  {nom:'Allitération',def:'Répétition de la même consonne dans des mots proches.',ex:'<b>Ex. :</b> « Pour qui sont ces serpents qui sifflent sur vos têtes ? » (Racine)<br><b>Effet :</b> musicalité, renforcement d\'une atmosphère.'},
+  {nom:'Assonance',def:'Répétition du même son vocalique dans des mots proches.',ex:'<b>Ex. :</b> « Les sanglots longs des violons de l\'automne. » (Verlaine)<br><b>Effet :</b> mélodie, langueur, émotion.'},
+  {nom:'Euphémisme',def:'Atténuation d\'une réalité dure par une formulation plus douce.',ex:'<b>Ex. :</b> « Il nous a quittés. » (= il est mort)<br><b>Effet :</b> adoucit, contourne une réalité difficile.'},
+  {nom:'Ironie',def:'On dit le contraire de ce qu\'on pense pour se moquer ou critiquer.',ex:'<b>Ex. :</b> « Quelle brillante idée ! » (dit sarcastiquement)<br><b>Effet :</b> critique voilée, distance, humour.'},
+  {nom:'Périphrase',def:'Expression développée qui remplace un mot simple.',ex:'<b>Ex. :</b> « Le roi des animaux » (= le lion)<br><b>Effet :</b> mise en valeur, élégance stylistique.'},
+  {nom:'Ellipse',def:'Omission d\'éléments grammaticaux pour un effet de brièveté.',ex:'<b>Ex. :</b> « Parti sans un mot. »<br><b>Effet :</b> rapidité, tension, style nerveux.'},
+  {nom:'Style indirect libre',def:'Discours intérieur d\'un personnage fondu dans la narration, sans marqueur ni guillemets.',ex:'<b>Ex. :</b> « Elle rentra. Pourquoi lui avait-il dit cela ? C\'était injuste. »<br><b>Effet :</b> proximité avec le personnage, ambiguïté.'},
+  {nom:'Focalisation interne',def:'Le narrateur adopte le point de vue d\'un personnage : on ne sait que ce que ce personnage sait.',ex:'<b>Ex. :</b> Thérèse Desqueyroux — tout est filtré par la conscience de Thérèse.<br><b>Effet :</b> intimité, empathie, subjectivité.'},
+  {nom:'In medias res',def:'Technique narrative qui commence au cœur de l\'action, sans introduction chronologique.',ex:'<b>Ex. :</b> L\'Adversaire commence le jour des meurtres.<br><b>Effet :</b> tension immédiate, déplacement du suspense.'},
+  {nom:'Analepse (flashback)',def:'Retour en arrière dans la narration.',ex:'<b>Ex. :</b> Dans Thérèse Desqueyroux, le trajet en train est une longue analepse.<br><b>Effet :</b> révélation progressive, compréhension des motivations.'},
+  {nom:'Prolepse (anticipation)',def:'Anticipation narrative — on raconte un événement futur.',ex:'<b>Ex. :</b> « Plus tard, il comprendrait que ce jour avait tout changé. »<br><b>Effet :</b> suspense, sentiment de destin inéluctable.'},
+  {nom:'Champ lexical',def:'Ensemble de mots qui appartiennent au même domaine de sens.',ex:'<b>Ex. :</b> Champ lexical de la mer : flot, vague, nager, sel, tempête.<br><b>Effet :</b> insistance sur un thème, révèle les obsessions de l\'auteur.'},
+  {nom:'Registre lyrique',def:'Registre qui exprime les sentiments personnels avec intensité.',ex:'<b>Ex. :</b> Les poèmes de Lamartine sur le deuil.<br><b>Effet :</b> émotion, subjectivité.'},
+  {nom:'Registre tragique',def:'Registre qui met en scène un destin inéluctable et douloureux.',ex:'<b>Ex. :</b> La fin de Thérèse Desqueyroux. Phèdre de Racine.<br><b>Effet :</b> pitié, terreur, grandeur dans la souffrance.'},
+  {nom:'Registre ironique / satirique',def:'Registre qui critique en utilisant l\'humour ou l\'exagération.',ex:'<b>Ex. :</b> Candide de Voltaire. Les planètes des adultes dans Le Petit Prince.<br><b>Effet :</b> dénonciation voilée, complicité avec le lecteur.'},
+];
+
+function getCitationsArray() {
+  if (!LIVRE_ACTIF) return [];
+  const raw = LIVRE_ACTIF.citations;
+  if (Array.isArray(raw)) return raw;
+  return [];
+}
+
+function addCitation() {
+  if (!LIVRE_ACTIF) return;
+  if (!Array.isArray(LIVRE_ACTIF.citations)) LIVRE_ACTIF.citations = [];
+  const id = 'cit_' + Date.now().toString(36);
+  LIVRE_ACTIF.citations.push({id, texte:'', ref:'', theme:'—', procede:'—', interpretation:'', importance:0});
+  sauvegarderBiblio();
+  renderCitations();
+  setTimeout(() => { const el = document.getElementById('cit-texte-' + id); if (el) el.focus(); }, 60);
+}
+
+function deleteCitation(id) {
+  if (!LIVRE_ACTIF || !Array.isArray(LIVRE_ACTIF.citations)) return;
+  LIVRE_ACTIF.citations = LIVRE_ACTIF.citations.filter(c => c.id !== id);
+  sauvegarderBiblio();
+  renderCitations();
+}
+
+function updateCitation(id, field, val) {
+  if (!LIVRE_ACTIF || !Array.isArray(LIVRE_ACTIF.citations)) return;
+  const cit = LIVRE_ACTIF.citations.find(c => c.id === id);
+  if (cit) { cit[field] = val; sauvegarderBiblio(); }
+}
+
+function setCitImportance(id, val) {
+  updateCitation(id, 'importance', val);
+  renderCitations();
+}
+
+function renderCitations() {
+  const list = document.getElementById('cit-cards-list');
+  const vide = document.getElementById('cit-cards-vide');
+  if (!list) return;
+  const cits = getCitationsArray();
+  list.innerHTML = '';
+  if (!cits.length) { if (vide) vide.style.display = ''; return; }
+  if (vide) vide.style.display = 'none';
+
+  const themeOpts = THEMES_LIST.map(t => `<option value="${t}">${t}</option>`).join('');
+  const procedeOpts = PROCEDES.map(p => `<option value="${p.nom}">${p.nom}</option>`).join('');
+
+  cits.forEach((cit, idx) => {
+    const div = document.createElement('div');
+    div.className = 'cit-card';
+    div.id = 'citcard-' + cit.id;
+    const stars = [1,2,3].map(s =>
+      `<span class="cit-star${cit.importance >= s ? ' on' : ''}" onclick="setCitImportance('${cit.id}',${cit.importance===s?0:s})">★</span>`
+    ).join('');
+    const thSel  = themeOpts.replace(`value="${cit.theme}"`, `value="${cit.theme}" selected`);
+    const prSel  = procedeOpts.replace(`value="${cit.procede}"`, `value="${cit.procede}" selected`);
+
+    div.innerHTML = `
+      <div class="cit-card-header">
+        <span class="cit-card-num">Citation ${idx+1}</span>
+        <div class="cit-card-stars">${stars}</div>
+        <button class="btn btn-rouge btn-xs" onclick="deleteCitation('${cit.id}')">🗑️</button>
+      </div>
+      <div class="cit-card-body">
+        <div>
+          <div class="cit-label">📝 Citation</div>
+          <textarea id="cit-texte-${cit.id}" class="field" rows="2"
+            placeholder="« Colle ou dicte la citation exacte… »"
+            oninput="updateCitation('${cit.id}','texte',this.value)">${esc(cit.texte||'')}</textarea>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 2fr;gap:8px;align-items:stretch;">
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div>
+              <div class="cit-label">📖 Page / Ch.</div>
+              <input type="text" class="field" style="padding:6px 7px;font-size:.73rem;width:100%;"
+                placeholder="p. 47 ch. 3"
+                value="${esc(cit.ref||'')}"
+                oninput="updateCitation('${cit.id}','ref',this.value)">
+            </div>
+            <div>
+              <div class="cit-label">🎯 Thème</div>
+              <select class="cit-select" onchange="updateCitation('${cit.id}','theme',this.value)">${thSel}</select>
+            </div>
+            <div>
+              <div class="cit-label">🔍 Procédé</div>
+              <div class="cit-proc-row">
+                <select class="cit-select" onchange="updateCitation('${cit.id}','procede',this.value)">${prSel}</select>
+                <button class="cit-help-btn" onclick="showProcedeHelp('${cit.id}')" title="Aide sur ce procédé">?</button>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;">
+            <div class="cit-label">💡 Interprétation &amp; usage</div>
+            <textarea class="field" style="flex:1;min-height:100px;resize:none;"
+              placeholder="Ce que cette citation signifie / pour quel argument l'utiliser…"
+              oninput="updateCitation('${cit.id}','interpretation',this.value)">${esc(cit.interpretation||'')}</textarea>
+          </div>
+        </div>
+      </div>`;
+    list.appendChild(div);
+  });
+}
+
+function showProcedeHelp(citId) {
+  const cit = getCitationsArray().find(c => c.id === citId);
+  const proc = PROCEDES.find(p => p.nom === (cit ? cit.procede : '—')) || PROCEDES[0];
+  const modal = document.getElementById('modal-procede');
+  if (!modal) return;
+  document.getElementById('modal-procede-nom').textContent  = proc.nom || '—';
+  document.getElementById('modal-procede-def').textContent  = proc.def || 'Sélectionne un procédé pour voir son explication.';
+  document.getElementById('modal-procede-ex').innerHTML     = proc.ex  || '';
+  modal.classList.add('open');
+}
+
+function fermerModalProcede() {
+  document.getElementById('modal-procede')?.classList.remove('open');
+}
+
+// ════════════════════════════════════════════════════════
+// RADAR THÉMATIQUE
+// ════════════════════════════════════════════════════════
+const THEME_AXES = [
+  {key:'amour',    label:'Amour',    color:'#AD1457'},
+  {key:'pouvoir',  label:'Pouvoir',  color:'#c0392b'},
+  {key:'liberte',  label:'Liberté',  color:'#2E5FA3'},
+  {key:'identite', label:'Identité', color:'#6A1B9A'},
+  {key:'societe',  label:'Société',  color:'#E65100'},
+  {key:'nature',   label:'Nature',   color:'#2E7D32'},
+];
+
+function countThemeWords(text) {
+  if (!text || !text.trim()) return 0;
+  return Math.min(text.split(/[·,;]+/).map(s=>s.trim()).filter(s=>s.length>2).length, 10);
+}
+
+function drawThemeRadar() {
+  const svg = document.getElementById('theme-radar-svg');
+  if (!svg) return;
+  const cx=150, cy=150, R=90, n=6;
+  const scores = THEME_AXES.map(a => {
+    const el = document.getElementById('theme-'+a.key);
+    const val = el ? el.value : (LIVRE_ACTIF?.themes?.[a.key]||'');
+    return Math.min(countThemeWords(val)/8, 1);
+  });
+  const hasData = scores.some(s=>s>0);
+  const pt = (i,r) => {
+    const angle = (2*Math.PI*i/n) - Math.PI/2;
+    return {x: cx+r*Math.cos(angle), y: cy+r*Math.sin(angle)};
+  };
+  let html='';
+  [0.33,0.66,1].forEach(lv => {
+    const pts = THEME_AXES.map((_,i)=>pt(i,R*lv));
+    const d = pts.map((p,i)=>(i===0?'M':'L')+p.x.toFixed(1)+','+p.y.toFixed(1)).join(' ')+' Z';
+    html+=`<path d="${d}" fill="none" stroke="${lv===1?'#bbb':'#ddd'}" stroke-width="${lv===1?1.5:0.8}"/>`;
+  });
+  THEME_AXES.forEach((_,i) => {
+    const o=pt(i,R);
+    html+=`<line x1="${cx}" y1="${cy}" x2="${o.x.toFixed(1)}" y2="${o.y.toFixed(1)}" stroke="#ccc" stroke-width="0.8"/>`;
+  });
+  if (hasData) {
+    const dp = THEME_AXES.map((_,i)=>pt(i,R*(scores[i]||0.04)));
+    const dd = dp.map((p,i)=>(i===0?'M':'L')+p.x.toFixed(1)+','+p.y.toFixed(1)).join(' ')+' Z';
+    html+=`<path d="${dd}" fill="rgba(106,27,154,0.15)" stroke="#6A1B9A" stroke-width="2" stroke-linejoin="round"/>`;
+    dp.forEach((p,i) => {
+      if (scores[i]>0) html+=`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4" fill="${THEME_AXES[i].color}" stroke="#fff" stroke-width="1.5"/>`;
+    });
+  }
+  THEME_AXES.forEach((a,i) => {
+    const lp=pt(i,R+22);
+    const anchor=lp.x<cx-5?'end':lp.x>cx+5?'start':'middle';
+    const bold=scores[i]>0.6;
+    html+=`<text x="${lp.x.toFixed(1)}" y="${(lp.y+4).toFixed(1)}" text-anchor="${anchor}" font-family="Arial,sans-serif" font-size="10" font-weight="${bold?800:600}" fill="${bold?a.color:'#666'}">${a.label}</text>`;
+  });
+  if (!hasData) html+=`<text x="${cx}" y="${cy}" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#bbb">Remplis les cases ci-dessous</text>`;
+  svg.innerHTML = html;
+}
+
+function saveTheme(axe, val) {
+  if (!LIVRE_ACTIF) return;
+  if (!LIVRE_ACTIF.themes) LIVRE_ACTIF.themes = {};
+  LIVRE_ACTIF.themes[axe] = val;
+  sauvegarderBiblio();
+  drawThemeRadar();
+}
+
 chargerBiblio();
 renderBiblio();
 initRedacZones();
@@ -3096,6 +3529,18 @@ renderSchemaPhases();
 // chargerMode doit attendre que les modals soient dans le DOM
 window.addEventListener('DOMContentLoaded', chargerMode);
 </script>
+<!-- ══════════════════════════════════════════
+     MODAL PROCÉDÉ LITTÉRAIRE
+══════════════════════════════════════════ -->
+<div id="modal-procede" onclick="if(event.target===this)fermerModalProcede()">
+  <div id="modal-procede-box">
+    <div id="modal-procede-nom">—</div>
+    <div id="modal-procede-def"></div>
+    <div id="modal-procede-ex"></div>
+    <button class="btn btn-sm" style="width:100%;margin-top:14px;background:#f5f5f5;color:#888;" onclick="fermerModalProcede()">Fermer</button>
+  </div>
+</div>
+
 <!-- ══════════════════════════════════════════
      MODAL CHOIX MODE AXEL / ÉLISE
 ══════════════════════════════════════════ -->
