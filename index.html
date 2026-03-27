@@ -7,7 +7,10 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta http-equiv="Permissions-Policy" content="microphone=*">
-<title>Guide de Lecture — Axel</title>
+<title>Guide de Lecture — Axel & Élise</title>
+<!-- Firebase SDK (compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
 :root {
   --bleu:#2E5FA3; --bleuC:#D6E4F7;
@@ -23,7 +26,42 @@
 html,body{height:100%;overflow:hidden;}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gris);color:var(--texte);display:flex;flex-direction:column;}
 
-/* ── ÉCRAN BIBLIOTHÈQUE ── */
+/* ── SYNC FIREBASE ── */
+#sync-badge{display:inline-flex;align-items:center;gap:5px;font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:20px;cursor:pointer;border:none;font-family:inherit;transition:background .2s;}
+#sync-badge.idle{background:rgba(255,255,255,.18);color:#fff;}
+#sync-badge.ok{background:#E8F5E9;color:#2E7D32;}
+#sync-badge.err{background:#FFEBEE;color:#c0392b;}
+#sync-badge.busy{background:#FFF8E1;color:#F57F17;}
+#sync-badge .sb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+#sync-badge.idle .sb-dot{background:rgba(255,255,255,.5);}
+#sync-badge.ok .sb-dot{background:#4CAF50;}
+#sync-badge.err .sb-dot{background:#c0392b;}
+#sync-badge.busy .sb-dot{background:#FFB300;animation:pulse-dot .8s infinite;}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* Modal sync */
+#modal-sync{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9000;display:none;align-items:flex-end;justify-content:center;padding:0;}
+#modal-sync.open{display:flex;}
+#modal-sync-box{background:#fff;border-radius:18px 18px 0 0;padding:20px 18px 30px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 -4px 30px rgba(0,0,0,.18);}
+#modal-sync-box h2{font-size:1rem;font-weight:900;color:var(--bleu);margin-bottom:4px;}
+#modal-sync-box p.sub{font-size:.75rem;color:#888;margin-bottom:14px;}
+.sync-step{background:var(--gris);border-radius:10px;padding:12px 14px;margin-bottom:10px;font-size:.78rem;line-height:1.5;}
+.sync-step b{color:var(--bleu);}
+.sync-step code{background:#e8eaf6;border-radius:4px;padding:1px 5px;font-size:.72rem;font-family:monospace;}
+.sync-step a{color:var(--bleu);font-weight:700;}
+.sync-input-row{display:flex;flex-direction:column;gap:6px;margin-bottom:10px;}
+.sync-input-row label{font-size:.73rem;font-weight:700;color:#555;}
+.sync-input-row input,.sync-input-row textarea{border:1.5px solid var(--gris2);border-radius:8px;padding:8px 10px;font-family:inherit;font-size:.78rem;color:var(--texte);resize:vertical;}
+.sync-input-row input:focus,.sync-input-row textarea:focus{border-color:var(--bleu);outline:none;}
+#sync-tabs{display:flex;gap:6px;margin-bottom:14px;}
+.sync-tab-btn{flex:1;padding:7px;font-size:.73rem;font-weight:800;border:2px solid var(--gris2);background:#fff;border-radius:8px;cursor:pointer;color:#999;font-family:inherit;}
+.sync-tab-btn.active{border-color:var(--bleu);color:var(--bleu);background:var(--bleuC);}
+.sync-panel{display:none;}
+.sync-panel.active{display:block;}
+#sync-status-msg{font-size:.75rem;padding:8px 10px;border-radius:8px;margin-top:8px;display:none;}
+#sync-status-msg.ok{background:#E8F5E9;color:#2E7D32;display:block;}
+#sync-status-msg.err{background:#FFEBEE;color:#c0392b;display:block;}
+
 #screen-biblio{display:flex;flex-direction:column;height:100%;}
 #biblio-header{background:var(--bleu);color:#fff;padding:14px 16px;flex-shrink:0;}
 #biblio-header h1{font-size:1.1rem;font-weight:900;}
@@ -181,6 +219,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gris);color:va
 .phase-ta:focus{border-color:var(--bleu);}
 .phase-hint{font-size:.7rem;color:#999;font-style:italic;margin-bottom:6px;line-height:1.4;}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 </head>
 <body>
 
@@ -188,9 +227,16 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gris);color:va
      ÉCRAN 1 : BIBLIOTHÈQUE
 ══════════════════════════════════════════ -->
 <div id="screen-biblio">
-  <div id="biblio-header">
-    <h1>📚 Ma Bibliothèque</h1>
-    <p>Guide de lecture — Axel · 6ème</p>
+<div id="biblio-header">
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      <div style="flex:1">
+        <h1>📚 Ma Bibliothèque</h1>
+        <p>Guide de lecture — Axel & Élise · 6ème</p>
+      </div>
+      <button id="sync-badge" class="idle" onclick="ouvrirModalSync()">
+        <span class="sb-dot"></span><span id="sync-label">☁️ Sync</span>
+      </button>
+    </div>
   </div>
   <div id="biblio-content">
     <div style="display:flex;gap:10px;margin-bottom:12px;">
@@ -651,6 +697,7 @@ let couleurIdx  = 0;
 // ════════════════════════════════════════════════════════
 function sauvegarderBiblio() {
   try { localStorage.setItem('axel_biblio', JSON.stringify(BIBLIO)); } catch(e){}
+  fbPush(); // sync Firebase si configuré
 }
 
 // ════════════════════════════════════════════════════════
@@ -1180,6 +1227,9 @@ function ouvrirLivre(id) {
   setTimeout(loadRedac, 50);
   // Charger le schéma narratif
   setTimeout(loadIntrigue, 50);
+  // Redessiner le graphe une fois le DOM visible ET D3 chargé
+  // (clientWidth est 0 tant que le conteneur est caché)
+  _grapheH = null; // forcer recalcul hauteur au prochain affichage de l'onglet Persos
 }
 
 function retourBiblio() {
@@ -1238,6 +1288,10 @@ function showTab(id, tabEl) {
   document.getElementById('sec-' + id).classList.add('active');
   if (tabEl) tabEl.classList.add('active');
   else document.querySelector('.tab')?.classList.add('active');
+  // Dessiner le graphe quand l'onglet Persos devient visible (clientWidth correct)
+  if (id === 'personnages') {
+    requestAnimationFrame(() => renderGraphe());
+  }
 }
 
 // ════════════════════════════════════════════════════════
@@ -1659,7 +1713,7 @@ function esc(s) {
 function showToast(msg, type) {
   const t = document.getElementById('toast');
   t.textContent = msg;
-  t.style.background = type==='ok'?'var(--vert)':type==='warn'?'var(--orange)':'#1a1a2e';
+  t.style.background = type==='ok'?'var(--vert)':type==='warn'?'var(--orange)':type==='info'?'var(--bleu)':'#1a1a2e';
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2800);
 }
@@ -1936,15 +1990,9 @@ function saveMatriceCell(sel) {
 // ════════════════════════════════════════════════════════
 // GRAPHE D3 — statique, drag individuel, labels vers l'extérieur
 // ════════════════════════════════════════════════════════
-let d3Loaded = false;
+let d3Loaded = true; // D3 chargé dans le head
 
-function loadD3(cb) {
-  if (d3Loaded) { cb(); return; }
-  const s = document.createElement('script');
-  s.src = 'https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js';
-  s.onload = () => { d3Loaded = true; cb(); };
-  document.head.appendChild(s);
-}
+function loadD3(cb) { cb(); } // D3 intégré inline
 
 function renderGraphe() {
   loadD3(() => _buildGraphe());
@@ -1957,11 +2005,9 @@ let _grapheH = null; // null = calcul auto
 function ajusterGraphe(delta) {
   const svgEl = document.getElementById('graphe-svg');
   if (svgEl.style.display === 'none') return;
-  const vb = svgEl.getAttribute('viewBox').split(' ');
-  const W = parseFloat(vb[2]), H = parseFloat(vb[3]);
-  const newH = Math.max(160, Math.min(600, H + delta));
-  _grapheH = newH;
-  _buildGraphe(); // reconstruit avec la nouvelle hauteur
+  const H = parseFloat(svgEl.getAttribute('height') || 240);
+  _grapheH = Math.max(160, Math.min(600, H + delta));
+  _buildGraphe();
 }
 
 function _buildGraphe() {
@@ -1980,17 +2026,19 @@ function _buildGraphe() {
   vide.style.display = 'none';
 
   const W = document.getElementById('graphe-container').clientWidth || 340;
-  // Hauteur : forcée par les boutons, sinon adaptée à l'écran (max 40% de la hauteur visible)
-  const hAuto = Math.max(160, Math.min(
-    Math.round(window.innerHeight * 0.22),
-    persos.length * 40
-  ));
-  const H = _grapheH !== null ? _grapheH : hAuto;
+  // Hauteur : assez grande pour que le rayon soit correct
+  const H = _grapheH !== null ? _grapheH : Math.max(280, persos.length * 56);
   svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svgEl.setAttribute('width', W);
+  svgEl.setAttribute('height', H);
+  svgEl.style.width = '100%';
+  svgEl.style.height = 'auto';
 
   const R = 20; // rayon des cercles
+  const marge = 55; // marge pour les labels extérieurs
   const cx = W / 2, cy = H / 2;
-  const rayonCercle = Math.min(W, H) * 0.36;
+  // Rayon basé sur la dimension contraignante (H sur PC large, W sur mobile)
+  const rayonCercle = Math.min(H / 2 - marge, W / 2 - marge);
 
   // Positions initiales en cercle, mémorisées si déjà déplacés
   const nodes = persos.map((p, i) => {
@@ -2307,12 +2355,327 @@ function loadIntrigue() {
 }
 
 // ════════════════════════════════════════════════════════
-// INIT
+// FIREBASE — SYNCHRONISATION MULTI-APPAREILS
 // ════════════════════════════════════════════════════════
+
+let _fbApp   = null;  // instance Firebase
+let _fbDb    = null;  // instance Firestore
+let _fbCode  = null;  // code famille (ex. "famille-axel")
+let _fbListener = null; // unsubscribe du listener temps réel
+let _fbPushTimer = null; // debounce timer
+let _fbIgnoreNext = false; // évite boucle push→listen→push
+
+function fbLoadConfig() {
+  try {
+    const raw = localStorage.getItem('axel_firebase');
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch(e) { return null; }
+}
+
+function fbSaveConfig(code, cfg) {
+  localStorage.setItem('axel_firebase', JSON.stringify({ code, cfg }));
+}
+
+function fbClearConfig() {
+  localStorage.removeItem('axel_firebase');
+}
+
+// Initialise Firebase et démarre le listener
+function fbInit(code, cfg) {
+  try {
+    // Détruire l'ancienne instance si elle existe
+    if (_fbListener) { _fbListener(); _fbListener = null; }
+    if (_fbApp) {
+      try { _fbApp.delete(); } catch(e){}
+      _fbApp = null; _fbDb = null;
+    }
+
+    _fbApp  = firebase.initializeApp(cfg, 'axel-sync-' + Date.now());
+    _fbDb   = firebase.firestore(_fbApp);
+    _fbCode = code;
+
+    // Listener temps réel — se déclenche dès qu'un autre appareil modifie le doc
+    const docRef = _fbDb.collection('familles').doc(_fbCode);
+    _fbListener = docRef.onSnapshot(snap => {
+      if (!snap.exists) return;
+      if (_fbIgnoreNext) { _fbIgnoreNext = false; return; }
+      const remote = snap.data();
+      if (!remote || !remote.livres) return;
+
+      // Fusionner : prendre le plus récent
+      const tsRemote = remote.tsMaj || 0;
+      const tsLocal  = BIBLIO.tsMaj  || 0;
+      if (tsRemote > tsLocal) {
+        BIBLIO = { livres: remote.livres, demoVersion: remote.demoVersion || BIBLIO.demoVersion, tsMaj: tsRemote };
+        try { localStorage.setItem('axel_biblio', JSON.stringify(BIBLIO)); } catch(e){}
+        renderBiblio();
+        // Si un livre est ouvert, le rafraîchir si besoin
+        if (LIVRE_ACTIF) {
+          const maj = BIBLIO.livres.find(l => l.id === LIVRE_ACTIF.id);
+          if (maj) { LIVRE_ACTIF = maj; }
+        }
+        showToast('☁️ Données mises à jour depuis le cloud', 'info');
+      }
+    }, err => {
+      setSyncBadge('err', '⚠️ Sync');
+      console.warn('Firebase listener error:', err);
+    });
+
+    setSyncBadge('ok', '☁️ Connecté');
+    return true;
+  } catch(err) {
+    console.error('fbInit error:', err);
+    setSyncBadge('err', '⚠️ Erreur');
+    return false;
+  }
+}
+
+// Envoie BIBLIO vers Firestore (debounce 1,5s pour ne pas sur-écrire)
+function fbPush(force) {
+  if (!_fbDb || !_fbCode) return;
+  if (_fbPushTimer) clearTimeout(_fbPushTimer);
+  _fbPushTimer = setTimeout(async () => {
+    try {
+      setSyncBadge('busy', '☁️ Envoi…');
+      BIBLIO.tsMaj = Date.now();
+      localStorage.setItem('axel_biblio', JSON.stringify(BIBLIO));
+      _fbIgnoreNext = true;
+      await _fbDb.collection('familles').doc(_fbCode).set({
+        livres:      BIBLIO.livres,
+        demoVersion: BIBLIO.demoVersion || 0,
+        tsMaj:       BIBLIO.tsMaj
+      });
+      setSyncBadge('ok', '☁️ Synchro ✓');
+      if (force) showToast('☁️ Envoyé vers le cloud !', 'ok');
+    } catch(err) {
+      setSyncBadge('err', '⚠️ Sync');
+      if (force) showToast('❌ Erreur d\'envoi : ' + err.message, 'err');
+      console.error('fbPush error:', err);
+    }
+  }, force ? 0 : 1500);
+}
+
+// Récupère les données depuis Firestore (one-shot)
+async function fbPull(force) {
+  if (!_fbDb || !_fbCode) {
+    showToast('Configure la sync d\'abord ☁️', 'warn');
+    return;
+  }
+  try {
+    setSyncBadge('busy', '☁️ Télécharg…');
+    const snap = await _fbDb.collection('familles').doc(_fbCode).get();
+    if (!snap.exists) {
+      setSyncBadge('ok', '☁️ Connecté');
+      if (force) showToast('Aucune donnée dans le cloud pour ce code famille.', 'warn');
+      return;
+    }
+    const remote = snap.data();
+    const tsRemote = remote.tsMaj || 0;
+    const tsLocal  = BIBLIO.tsMaj  || 0;
+    if (force || tsRemote > tsLocal) {
+      BIBLIO = { livres: remote.livres, demoVersion: remote.demoVersion || BIBLIO.demoVersion, tsMaj: tsRemote };
+      try { localStorage.setItem('axel_biblio', JSON.stringify(BIBLIO)); } catch(e){}
+      renderBiblio();
+      setSyncBadge('ok', '☁️ Synchro ✓');
+      if (force) showToast('☁️ Données reçues du cloud !', 'ok');
+    } else {
+      setSyncBadge('ok', '☁️ Synchro ✓');
+      if (force) showToast('Tes données locales sont déjà à jour.', 'info');
+    }
+  } catch(err) {
+    setSyncBadge('err', '⚠️ Sync');
+    if (force) showToast('❌ Erreur : ' + err.message, 'err');
+    console.error('fbPull error:', err);
+  }
+}
+
+// ── Badge de statut ──
+function setSyncBadge(state, label) {
+  const badge = document.getElementById('sync-badge');
+  const lbl   = document.getElementById('sync-label');
+  if (!badge) return;
+  badge.className = '';
+  badge.classList.add(state); // idle | ok | err | busy
+  lbl.textContent = label;
+}
+
+// ── Modal Sync ──
+function ouvrirModalSync() {
+  const modal = document.getElementById('modal-sync');
+  modal.classList.add('open');
+  // Pré-remplir si déjà configuré
+  const saved = fbLoadConfig();
+  if (saved) {
+    document.getElementById('fb-code').value = saved.code || '';
+    try {
+      document.getElementById('fb-config-raw').value = JSON.stringify(saved.cfg, null, 2);
+    } catch(e){}
+    document.getElementById('sync-connecte-msg').style.display = _fbDb ? 'block' : 'none';
+    document.getElementById('sync-code-affiche').textContent = saved.code || '';
+  }
+  document.getElementById('sync-status-msg').style.display = 'none';
+}
+
+function fermerModalSync() {
+  document.getElementById('modal-sync').classList.remove('open');
+}
+
+function showSyncTab(id) {
+  document.querySelectorAll('.sync-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sync-tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('spanel-' + id).classList.add('active');
+  document.getElementById('stab-' + id).classList.add('active');
+}
+
+function sauvegarderConfigFB() {
+  const code = (document.getElementById('fb-code').value || '').trim().toLowerCase().replace(/\s+/g,'-');
+  const raw  = (document.getElementById('fb-config-raw').value || '').trim();
+  const msg  = document.getElementById('sync-status-msg');
+
+  if (!code) {
+    msg.className = 'err'; msg.textContent = '⚠️ Entre un code famille (ex. famille-axel-2026).'; return;
+  }
+  if (!raw) {
+    msg.className = 'err'; msg.textContent = '⚠️ Colle la config Firebase dans la zone de texte.'; return;
+  }
+
+  let cfg;
+  try {
+    // Firebase config peut être copiée avec ou sans quotes sur les clés — on normalise
+    const normalized = raw
+      .replace(/^\s*const\s+firebaseConfig\s*=\s*/,'') // strip "const firebaseConfig ="
+      .replace(/;\s*$/,'')                              // strip trailing ;
+      .replace(/([{,]\s*)([a-zA-Z]+)\s*:/g, '$1"$2":'); // unquoted keys → quoted
+    cfg = JSON.parse(normalized);
+  } catch(e) {
+    msg.className = 'err'; msg.textContent = '❌ JSON invalide. Vérifie que tu as bien copié toute la config.'; return;
+  }
+
+  if (!cfg.apiKey || !cfg.projectId) {
+    msg.className = 'err'; msg.textContent = '❌ Config incomplète — il manque apiKey ou projectId.'; return;
+  }
+
+  // Sauvegarder et initialiser
+  fbSaveConfig(code, cfg);
+  const ok = fbInit(code, cfg);
+
+  if (ok) {
+    msg.className = 'ok'; msg.textContent = '✅ Connecté ! La synchronisation est active.';
+    document.getElementById('sync-connecte-msg').style.display = 'block';
+    document.getElementById('sync-code-affiche').textContent = code;
+    // Essayer de récupérer les données du cloud au premier démarrage
+    fbPull(false);
+  } else {
+    msg.className = 'err'; msg.textContent = '❌ Connexion échouée. Vérifie la config Firebase.';
+  }
+}
+
+function deconnecterFB() {
+  if (_fbListener) { _fbListener(); _fbListener = null; }
+  if (_fbApp) { try { _fbApp.delete(); } catch(e){} _fbApp = null; _fbDb = null; }
+  _fbCode = null;
+  fbClearConfig();
+  setSyncBadge('idle', '☁️ Sync');
+  document.getElementById('sync-connecte-msg').style.display = 'none';
+  const msg = document.getElementById('sync-status-msg');
+  msg.className = 'ok'; msg.style.display = 'block'; // force display
+  msg.textContent = '🔌 Déconnecté. Tes données restent en local.';
+}
+
+// ── Auto-init au démarrage si déjà configuré ──
+(function autoInitFB() {
+  const saved = fbLoadConfig();
+  if (!saved || !saved.code || !saved.cfg) return;
+  // Délai court pour laisser Firebase SDK se charger
+  setTimeout(() => {
+    const ok = fbInit(saved.code, saved.cfg);
+    if (ok) { setSyncBadge('busy', '☁️ Connexion…'); fbPull(false); }
+  }, 800);
+})();
+
+
 chargerBiblio();
 renderBiblio();
 initRedacZones();
 renderSchemaPhases();
 </script>
+<!-- ══════════════════════════════════════════
+     MODAL SYNC FIREBASE
+══════════════════════════════════════════ -->
+<div id="modal-sync" onclick="if(event.target===this)fermerModalSync()">
+  <div id="modal-sync-box">
+    <h2>☁️ Synchronisation multi-appareils</h2>
+    <p class="sub">Partage tes guides entre PC, tablette et téléphone — en temps réel.</p>
+
+    <div id="sync-tabs">
+      <button class="sync-tab-btn active" id="stab-config" onclick="showSyncTab('config')">⚙️ Configuration</button>
+      <button class="sync-tab-btn" id="stab-aide" onclick="showSyncTab('aide')">📖 Guide de démarrage</button>
+    </div>
+
+    <!-- Panneau Configuration -->
+    <div class="sync-panel active" id="spanel-config">
+
+      <div id="sync-connecte-msg" style="display:none;background:#E8F5E9;border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:.8rem;color:#2E7D32;font-weight:700;">
+        ✅ Synchronisation active — Code famille : <span id="sync-code-affiche" style="font-family:monospace;font-size:.85rem;"></span>
+      </div>
+
+      <div id="sync-form-config">
+        <div class="sync-input-row">
+          <label>🔑 Code famille <span style="font-weight:400;color:#aaa">(choisi librement, partagé entre vos appareils)</span></label>
+          <input type="text" id="fb-code" placeholder="ex : famille-axel-2026" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="sync-input-row">
+          <label>📋 Config Firebase <span style="font-weight:400;color:#aaa">(colle ici le bloc JSON de ton projet)</span></label>
+          <textarea id="fb-config-raw" rows="7" placeholder='{&#10;  "apiKey": "AIzaSy...",&#10;  "authDomain": "mon-projet.firebaseapp.com",&#10;  "projectId": "mon-projet",&#10;  "storageBucket": "mon-projet.appspot.com",&#10;  "messagingSenderId": "123456789",&#10;  "appId": "1:123456789:web:abc123"&#10;}'></textarea>
+        </div>
+        <div id="sync-status-msg"></div>
+        <div style="display:flex;gap:8px;margin-top:10px;">
+          <button class="btn btn-bleu" style="flex:2" onclick="sauvegarderConfigFB()">✅ Connecter</button>
+          <button class="btn" style="flex:1;background:#fff;border:1.5px solid var(--gris2);color:#c0392b;" onclick="deconnecterFB()">🔌 Déconnecter</button>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;border-top:1px solid var(--gris2);padding-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-vert btn-sm" onclick="fbPull(true)">⬇️ Télécharger depuis le cloud</button>
+        <button class="btn btn-sm" style="background:var(--bleuC);color:var(--bleu)" onclick="fbPush(true)">⬆️ Envoyer vers le cloud</button>
+      </div>
+    </div>
+
+    <!-- Panneau Aide -->
+    <div class="sync-panel" id="spanel-aide">
+      <div class="sync-step">
+        <b>Étape 1 — Créer un projet Firebase gratuit</b><br>
+        1. Va sur <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a><br>
+        2. Clique <b>Ajouter un projet</b>, donne-lui un nom (ex. <code>axel-lecture</code>)<br>
+        3. Désactive Google Analytics (pas utile) → <b>Créer le projet</b>
+      </div>
+      <div class="sync-step">
+        <b>Étape 2 — Activer Firestore</b><br>
+        1. Dans le menu à gauche → <b>Firestore Database</b><br>
+        2. Clique <b>Créer une base de données</b><br>
+        3. Choisis <b>Démarrer en mode test</b> → <b>Suivant</b> → <b>Activer</b>
+      </div>
+      <div class="sync-step">
+        <b>Étape 3 — Récupérer la config</b><br>
+        1. Dans le menu à gauche → <b>Paramètres du projet</b> (⚙️)<br>
+        2. Descends jusqu'à <b>Tes applications</b> → clique <b>&lt;/&gt; Web</b><br>
+        3. Donne un nom (ex. <code>axel-app</code>) → <b>Enregistrer l'application</b><br>
+        4. Copie le bloc JSON entre accolades <code>{ apiKey: …, appId: … }</code>
+      </div>
+      <div class="sync-step">
+        <b>Étape 4 — Connecter l'appli</b><br>
+        1. Reviens sur l'onglet <b>⚙️ Configuration</b><br>
+        2. Choisis un <b>code famille</b> simple (même code sur tous tes appareils !)<br>
+        3. Colle la config Firebase dans la zone de texte<br>
+        4. Clique <b>Connecter</b> ✅<br><br>
+        💡 <b>Sur les autres appareils</b> : refais juste l'étape 4 avec le même code famille.
+      </div>
+    </div>
+
+    <button class="btn btn-sm" style="width:100%;margin-top:12px;background:#f5f5f5;color:#888;" onclick="fermerModalSync()">Fermer</button>
+  </div>
+</div>
+
 </body>
 </html>
