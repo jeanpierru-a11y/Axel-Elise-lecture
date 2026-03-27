@@ -1981,9 +1981,9 @@ function _buildGraphe() {
 
   const W = document.getElementById('graphe-container').clientWidth || 340;
   // Hauteur : forcée par les boutons, sinon adaptée à l'écran (max 40% de la hauteur visible)
-  const hAuto = Math.max(200, Math.min(
-    Math.round(window.innerHeight * 0.38),
-    persos.length * 60
+  const hAuto = Math.max(160, Math.min(
+    Math.round(window.innerHeight * 0.22),
+    persos.length * 40
   ));
   const H = _grapheH !== null ? _grapheH : hAuto;
   svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
