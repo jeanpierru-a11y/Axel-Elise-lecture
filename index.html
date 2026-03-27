@@ -2358,6 +2358,17 @@ function loadIntrigue() {
 // FIREBASE — SYNCHRONISATION MULTI-APPAREILS
 // ════════════════════════════════════════════════════════
 
+// Config Firebase du projet axel-elise-lecture (intégrée — pas besoin de saisie)
+const FB_CONFIG_DEFAUT = {
+  apiKey:            "AIzaSyAEUZJsYxE7FrGXN3SuXyByxxm-JjxrcEI",
+  authDomain:        "axel-elise-lecture.firebaseapp.com",
+  projectId:         "axel-elise-lecture",
+  storageBucket:     "axel-elise-lecture.firebasestorage.app",
+  messagingSenderId: "983681104563",
+  appId:             "1:983681104563:web:26c9ac579b21e0f9810ec6"
+};
+const FB_CODE_DEFAUT = "axel-elise";
+
 let _fbApp   = null;  // instance Firebase
 let _fbDb    = null;  // instance Firestore
 let _fbCode  = null;  // code famille (ex. "famille-axel")
@@ -2504,16 +2515,13 @@ function setSyncBadge(state, label) {
 function ouvrirModalSync() {
   const modal = document.getElementById('modal-sync');
   modal.classList.add('open');
-  // Pré-remplir si déjà configuré
   const saved = fbLoadConfig();
-  if (saved) {
-    document.getElementById('fb-code').value = saved.code || '';
-    try {
-      document.getElementById('fb-config-raw').value = JSON.stringify(saved.cfg, null, 2);
-    } catch(e){}
-    document.getElementById('sync-connecte-msg').style.display = _fbDb ? 'block' : 'none';
-    document.getElementById('sync-code-affiche').textContent = saved.code || '';
-  }
+  const code  = (saved && saved.code) ? saved.code : FB_CODE_DEFAUT;
+  const cfg   = (saved && saved.cfg)  ? saved.cfg  : FB_CONFIG_DEFAUT;
+  document.getElementById('fb-code').value = code;
+  try { document.getElementById('fb-config-raw').value = JSON.stringify(cfg, null, 2); } catch(e){}
+  document.getElementById('sync-connecte-msg').style.display = _fbDb ? 'block' : 'none';
+  document.getElementById('sync-code-affiche').textContent = code;
   document.getElementById('sync-status-msg').style.display = 'none';
 }
 
@@ -2583,15 +2591,18 @@ function deconnecterFB() {
   msg.textContent = '🔌 Déconnecté. Tes données restent en local.';
 }
 
-// ── Auto-init au démarrage si déjà configuré ──
+// ── Auto-init au démarrage — attend que le SDK Firebase soit chargé ──
 (function autoInitFB() {
+  if (typeof firebase === 'undefined') {
+    setTimeout(autoInitFB, 300); // SDK pas encore prêt, on réessaie
+    return;
+  }
   const saved = fbLoadConfig();
-  if (!saved || !saved.code || !saved.cfg) return;
-  // Délai court pour laisser Firebase SDK se charger
-  setTimeout(() => {
-    const ok = fbInit(saved.code, saved.cfg);
-    if (ok) { setSyncBadge('busy', '☁️ Connexion…'); fbPull(false); }
-  }, 800);
+  const code  = (saved && saved.code) ? saved.code : FB_CODE_DEFAUT;
+  const cfg   = (saved && saved.cfg)  ? saved.cfg  : FB_CONFIG_DEFAUT;
+  if (!saved) fbSaveConfig(code, cfg);
+  const ok = fbInit(code, cfg);
+  if (ok) { setSyncBadge('busy', '☁️ Connexion…'); fbPull(false); }
 })();
 
 
