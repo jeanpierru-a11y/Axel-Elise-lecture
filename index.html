@@ -322,7 +322,11 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gris);color:va
 
       <!-- GRAPHE D3 -->
       <div class="card" id="card-graphe" style="display:none">
-        <div class="card-title" style="color:var(--bleu)">🕸️ Graphe des relations</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <div class="card-title" style="color:var(--bleu);margin-bottom:0;flex:1">🕸️ Graphe des relations</div>
+          <button class="btn btn-gris btn-xs" onclick="ajusterGraphe(-50)" title="Réduire">−</button>
+          <button class="btn btn-gris btn-xs" onclick="ajusterGraphe(+50)" title="Agrandir">＋</button>
+        </div>
         <div id="graphe-container">
           <div class="graphe-vide" id="graphe-vide">Ajoute des personnages et remplis la matrice pour voir le graphe</div>
           <svg id="graphe-svg" style="display:none"></svg>
@@ -1948,6 +1952,17 @@ function renderGraphe() {
 
 // Positions mémorisées entre les reconstructions
 const _nodePos = {};
+let _grapheH = null; // null = calcul auto
+
+function ajusterGraphe(delta) {
+  const svgEl = document.getElementById('graphe-svg');
+  if (svgEl.style.display === 'none') return;
+  const vb = svgEl.getAttribute('viewBox').split(' ');
+  const W = parseFloat(vb[2]), H = parseFloat(vb[3]);
+  const newH = Math.max(160, Math.min(600, H + delta));
+  _grapheH = newH;
+  _buildGraphe(); // reconstruit avec la nouvelle hauteur
+}
 
 function _buildGraphe() {
   const persos  = LIVRE_ACTIF?.personnages || [];
@@ -1965,7 +1980,12 @@ function _buildGraphe() {
   vide.style.display = 'none';
 
   const W = document.getElementById('graphe-container').clientWidth || 340;
-  const H = Math.max(260, Math.min(420, persos.length * 70));
+  // Hauteur : forcée par les boutons, sinon adaptée à l'écran (max 40% de la hauteur visible)
+  const hAuto = Math.max(200, Math.min(
+    Math.round(window.innerHeight * 0.38),
+    persos.length * 60
+  ));
+  const H = _grapheH !== null ? _grapheH : hAuto;
   svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
 
   const R = 20; // rayon des cercles
