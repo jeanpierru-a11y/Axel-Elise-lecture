@@ -3753,37 +3753,20 @@ async function ouvrirTriIA() {
   const persosList = (LIVRE_ACTIF.personnages||[]).map(p=>p.nom).join(', ') || 'aucun encore';
   const lieuxList  = (LIVRE_ACTIF.lieux||[]).map(l=>l.nom).join(', ')       || 'aucun encore';
 
-  const prompt = `Tu analyses les notes de lecture d'un élève sur le livre "${LIVRE_ACTIF.titre||''}" de ${LIVRE_ACTIF.auteur||''}.
+  const prompt = `Analyse ces notes de lecture sur "${LIVRE_ACTIF.titre||''}" de ${LIVRE_ACTIF.auteur||''}.
+Personnages existants : ${persosList}
+Lieux existants : ${lieuxList}
 
-Personnages déjà créés : ${persosList}
-Lieux déjà créés : ${lieuxList}
+Classe chaque note. Destinations : perso, lieu, relation, mot, citation, theme, avis, temps, intrigue, ignorer.
+Pour "relation" : champs perso_a, perso_b, relation_type (valeur exacte parmi : ${RELATIONS.filter(r=>r!=='—').join(', ')}).
+Pour "intrigue" : ajoute phase (exposition/action_montante/climax/action_descendante/dénouement).
+Confiance : haute/moyenne/basse.
 
-Pour chaque note ci-dessous, propose où la classer. Destinations possibles :
-- "perso" : personnage (nom + description)
-- "lieu" : lieu
-- "relation" : relation entre deux personnages déjà créés ou à créer
-- "mot" : mot difficile ou procédé littéraire
-- "citation" : citation textuelle (avec page si disponible)
-- "theme" : thème littéraire (amour, liberté, etc.)
-- "avis" : réaction personnelle ou hypothèse d'interprétation
-- "temps" : chronologie ou ordre narratif
-- "intrigue" : résumé d'un événement (précise la phase : exposition/action_montante/climax/action_descendante/dénouement)
-- "ignorer" : pas d'intérêt analytique
-
-Pour les relations, utilise EXACTEMENT une de ces valeurs pour le champ "relation_type" :
-${RELATIONS.filter(r=>r!=='—').join(', ')}
-
-Notes à analyser :
+Notes :
 ${notes.map((n,i) => `[${i}] ${n.texte}`).join('\n')}
 
-Réponds UNIQUEMENT en JSON valide, sans texte autour. Format exact :
-[
-  {"index":0, "dest":"perso", "nom_ou_titre":"Père Loup", "contenu":"Animal vigoureux, inspire le respect", "confiance":"haute"},
-  {"index":1, "dest":"relation", "perso_a":"Père Loup", "perso_b":"Le Clan", "relation_type":"Protecteur/trice", "contenu":"Le Père Loup protège le clan", "confiance":"haute"},
-  {"index":2, "dest":"citation", "nom_ou_titre":"Messire Loup", "page":"3", "contenu":"Messire Loup", "confiance":"haute"}
-]
-Pour les intrigue : ajoute "phase": "exposition"|"action_montante"|"climax"|"action_descendante"|"dénouement".
-Confiance : "haute" / "moyenne" / "basse".`;
+JSON uniquement, tableau concis. Exemple :
+[{"index":0,"dest":"perso","nom_ou_titre":"Nom","contenu":"description courte","confiance":"haute"}]`;
 
   const cleIA = getCleIA();
   if (!cleIA) {
@@ -3802,7 +3785,7 @@ Confiance : "haute" / "moyenne" / "basse".`;
           contents:[{parts:[{text:
             'Tu es un assistant pédagogique. Réponds UNIQUEMENT en JSON valide, sans markdown, sans texte avant ou après.\n\n' + prompt
           }]}],
-          generationConfig:{ temperature:0.1, maxOutputTokens:2000 }
+          generationConfig:{ temperature:0.1, maxOutputTokens:4000 }
         })
       }
     );
