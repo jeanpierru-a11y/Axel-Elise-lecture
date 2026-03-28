@@ -3792,14 +3792,21 @@ JSON uniquement, tableau concis. Exemple :
     const data = await resp.json();
     if (data.error) throw new Error(data.error.message);
     const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
-    // Nettoyer et extraire le JSON même si Gemini ajoute du texte autour
+    // Log pour debug
+    console.log('Gemini raw response:', raw.slice(0, 500));
+    // Nettoyer et extraire le JSON
     let clean = raw.replace(/```json|```/g,'').trim();
-    // Extraire uniquement le tableau JSON s'il y a du texte avant/après
-    const match = clean.match(/\[[\s\S]*\]/);
-    if (!match) throw new Error('Pas de tableau JSON dans la réponse');
-    clean = match[0];
-    const suggestions = JSON.parse(clean);
-
+    // Tenter d'abord un parse direct
+    let suggestions;
+    try {
+      const parsed = JSON.parse(clean);
+      suggestions = Array.isArray(parsed) ? parsed : (parsed.notes || parsed.results || parsed.items || Object.values(parsed));
+    } catch(e) {
+      // Extraire le tableau JSON s'il y a du texte autour
+      const match = clean.match(/\[[\s\S]*?\]/s);
+      if (!match) throw new Error('Réponse brute : ' + clean.slice(0, 200));
+      suggestions = JSON.parse(match[0]);
+    }
     _triSuggestions = suggestions.map((s,i) => ({
       ...s,
       note: notes[s.index],
