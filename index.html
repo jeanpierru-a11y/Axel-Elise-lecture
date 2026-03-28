@@ -867,9 +867,10 @@ body.mode-elise .only-elise{display:block;}
         <p style="font-size:.73rem;color:#888;margin-bottom:10px;line-height:1.5;">Note tout au fil de la lecture sans te soucier des onglets. Commence par la page si tu veux : <b>p.47 — Nemo apparaît, inquiétant…</b></p>
         <textarea id="carnet-input" class="field" rows="3" style="margin-bottom:8px;" placeholder="p.47 — Nemo apparaît, inquiétant et mystérieux&#10;p.52 — mot inconnu : nautilus&#10;p.60 — citation intéressante…"></textarea>
         <button class="btn btn-violet btn-full" style="margin-bottom:12px;" onclick="ajouterNoteCarnet()">＋ Ajouter cette note</button>
-        <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+        <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;">
           <button class="btn btn-sm" style="background:var(--violetC);color:var(--violet);font-weight:800;" onclick="ouvrirTriIA()">🤖 Trier avec l'IA</button>
           <button class="btn btn-gris btn-sm" onclick="viderCarnetTrie()">🗑️ Effacer les notes triées</button>
+          <span id="ia-key-badge" style="font-size:.68rem;color:#aaa;margin-left:4px;cursor:pointer;" onclick="ouvrirModalSync();setTimeout(()=>showSyncTab('ia'),100)"></span>
         </div>
         <div id="carnet-list"></div>
         <div id="carnet-vide" style="text-align:center;padding:24px;color:#ccc;font-size:.82rem;">Aucune note pour l'instant — commence à lire !</div>
@@ -3651,6 +3652,13 @@ function viderCarnetTrie() {
 function renderCarnet() {
   const list = document.getElementById('carnet-list');
   const vide = document.getElementById('carnet-vide');
+  // Mettre à jour le badge clé IA
+  const badge = document.getElementById('ia-key-badge');
+  if (badge) {
+    const k = localStorage.getItem('anthropic_api_key');
+    badge.textContent = k ? '✅ IA configurée' : '⚠️ Clé IA manquante — cliquer pour configurer';
+    badge.style.color = k ? '#2E7D32' : '#E65100';
+  }
   if (!list) return;
   const notes = getCarnet();
   list.innerHTML = '';
