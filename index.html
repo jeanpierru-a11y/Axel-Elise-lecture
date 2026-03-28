@@ -3204,8 +3204,8 @@ function sauvegarderCleIA() {
     document.getElementById('ia-key-status').style.color = '#E65100';
     return;
   }
-  if (!val.startsWith('sk-ant-')) {
-    document.getElementById('ia-key-status').textContent = '⚠️ La clé doit commencer par sk-ant-';
+  if (!val.startsWith('AIza')) {
+    document.getElementById('ia-key-status').textContent = '⚠️ La clé doit commencer par AIza';
     document.getElementById('ia-key-status').style.color = '#E65100';
     return;
   }
@@ -3793,23 +3793,22 @@ Confiance : "haute" / "moyenne" / "basse".`;
   }
 
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'x-api-key': cleIA,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1500,
-        system:'Tu es un assistant pédagogique. Réponds UNIQUEMENT en JSON valide, sans markdown, sans texte avant ou après.',
-        messages:[{role:'user',content:prompt}]
-      })
-    });
+    const resp = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${cleIA}`,
+      {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          contents:[{parts:[{text:
+            'Tu es un assistant pédagogique. Réponds UNIQUEMENT en JSON valide, sans markdown, sans texte avant ou après.\n\n' + prompt
+          }]}],
+          generationConfig:{ temperature:0.1, maxOutputTokens:2000 }
+        })
+      }
+    );
     const data = await resp.json();
-    const raw = (data.content||[]).find(b=>b.type==='text')?.text || '[]';
+    if (data.error) throw new Error(data.error.message);
+    const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
     const clean = raw.replace(/```json|```/g,'').trim();
     const suggestions = JSON.parse(clean);
 
@@ -4114,25 +4113,24 @@ window.addEventListener('DOMContentLoaded', chargerMode);
     <!-- Panneau Tri IA -->
     <div class="sync-panel" id="spanel-ia">
       <p style="font-size:.78rem;color:#555;line-height:1.6;margin-bottom:12px;">
-        Le <b>Tri avec l'IA</b> envoie tes notes de carnet à Claude (Anthropic) pour les classer automatiquement dans les bons onglets.<br>
-        Pour que ça fonctionne, tu as besoin d'une <b>clé API Anthropic</b>.
+        Le <b>Tri avec l'IA</b> envoie tes notes de carnet à Gemini (Google) pour les classer automatiquement dans les bons onglets.<br>
+        Pour que ça fonctionne, tu as besoin d'une <b>clé API Google AI Studio</b>.
       </p>
       <div style="background:var(--bleuC);border-radius:10px;padding:10px 14px;font-size:.75rem;color:#333;margin-bottom:14px;line-height:1.6;">
         <b>Comment obtenir une clé API :</b><br>
-        1. Va sur <a href="https://console.anthropic.com" target="_blank" style="color:var(--bleu)">console.anthropic.com</a><br>
-        2. Crée un compte (gratuit pour commencer)<br>
-        3. Dans <i>API Keys</i>, crée une nouvelle clé<br>
-        4. Copie-la ici — elle commence par <code>sk-ant-</code>
+        1. Va sur <a href="https://aistudio.google.com" target="_blank" style="color:var(--bleu)">aistudio.google.com</a><br>
+        2. Clique <i>Get API key</i> → <i>Create API key</i><br>
+        3. Copie-la ici — elle commence par <code>AIza</code>
       </div>
       <div class="sync-input-row">
         <label>🔑 Clé API Anthropic</label>
-        <input type="password" id="anthropic-key-input" placeholder="sk-ant-api03-..." autocomplete="off" spellcheck="false"
+        <input type="password" id="anthropic-key-input" placeholder="AIzaSy..." autocomplete="off" spellcheck="false"
           style="font-family:monospace;font-size:.75rem;">
       </div>
       <div id="ia-key-status" style="font-size:.73rem;margin:6px 0 12px;color:#888;"></div>
       <button class="btn btn-bleu btn-full" onclick="sauvegarderCleIA()">💾 Enregistrer la clé</button>
       <p style="font-size:.68rem;color:#aaa;margin-top:8px;line-height:1.5;">
-        La clé est stockée uniquement dans ton navigateur (localStorage). Elle n'est jamais envoyée ailleurs que vers l'API Anthropic.
+        La clé est stockée uniquement dans ton navigateur (localStorage). Elle n'est jamais envoyée ailleurs que vers l'API Google AI Studio.
       </p>
     </div>
 
