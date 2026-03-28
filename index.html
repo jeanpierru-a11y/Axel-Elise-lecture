@@ -3757,16 +3757,26 @@ async function ouvrirTriIA() {
 Personnages existants : ${persosList}
 Lieux existants : ${lieuxList}
 
-Classe chaque note. Destinations : perso, lieu, relation, mot, citation, theme, avis, temps, intrigue, ignorer.
-Pour "relation" : champs perso_a, perso_b, relation_type (valeur exacte parmi : ${RELATIONS.filter(r=>r!=='—').join(', ')}).
-Pour "intrigue" : ajoute phase (exposition/action_montante/climax/action_descendante/dénouement).
-Confiance : haute/moyenne/basse.
+Classe chaque note. Destinations :
+- perso : personnage (nom + description)
+- lieu : lieu
+- relation : relation entre personnages (champs perso_a, perso_b, relation_type parmi : ${RELATIONS.filter(r=>r!=='—').join(', ')})
+- mot : définition d'un mot difficile (PAS un procédé littéraire)
+- citation : citation textuelle OU note mentionnant un procédé littéraire appliqué à un passage (dans ce cas, mets le nom du procédé dans "procede" et le passage/contexte dans "contenu")
+- theme : thème littéraire (amour, liberté, pouvoir, identité, société, nature)
+- avis : réaction personnelle ou question d'interprétation
+- temps : chronologie, ordre narratif, analepse, ellipse temporelle
+- intrigue : événement du récit (ajoute "phase": exposition/action_montante/climax/action_descendante/dénouement)
+- ignorer : pas d'intérêt analytique
+
+Procédés littéraires à reconnaître → destination "citation" : métaphore, comparaison, personnification, hyperbole, anaphore, chiasme, antithèse, ironie, ellipse narrative, style indirect libre, focalisation, in medias res, analepse, gradation, oxymore, litote, champ lexical.
 
 Notes :
 ${notes.map((n,i) => `[${i}] ${n.texte}`).join('\n')}
 
-JSON uniquement, tableau concis. Exemple :
-[{"index":0,"dest":"perso","nom_ou_titre":"Nom","contenu":"description courte","confiance":"haute"}]`;
+JSON uniquement. Format :
+[{"index":0,"dest":"perso","nom_ou_titre":"Nom","contenu":"description","confiance":"haute"},
+ {"index":1,"dest":"citation","nom_ou_titre":"passage ou titre","procede":"Personnification","contenu":"explication","confiance":"haute"}]`;
 
   const cleIA = getCleIA();
   if (!cleIA) {
@@ -3935,11 +3945,15 @@ function appliquerTriSelectionne() {
       }
       case 'citation': {
         if (!Array.isArray(LIVRE_ACTIF.citations)) LIVRE_ACTIF.citations = [];
+        // Vérifier si le procédé est dans la liste connue
+        const proc = PROCEDES.find(p => p.nom.toLowerCase() === (s.procede||'').toLowerCase());
         LIVRE_ACTIF.citations.push({
           id:'cit_'+Date.now().toString(36),
-          texte: nom || contenu,
-          ref: s.page||'', theme:'—', procede:'—',
-          interpretation:'', importance:0
+          texte: s.nom_ou_titre || contenu,
+          ref: s.page||'', theme:'—',
+          procede: proc ? proc.nom : '—',
+          interpretation: proc ? contenu : '',
+          importance:0
         });
         break;
       }
