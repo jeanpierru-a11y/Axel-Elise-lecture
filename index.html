@@ -3204,8 +3204,8 @@ function sauvegarderCleIA() {
     document.getElementById('ia-key-status').style.color = '#E65100';
     return;
   }
-  if (!val.startsWith('AIza')) {
-    document.getElementById('ia-key-status').textContent = '⚠️ La clé doit commencer par AIza';
+  if (!val.startsWith('sk-ant-')) {
+    document.getElementById('ia-key-status').textContent = '⚠️ La clé doit commencer par sk-ant-';
     document.getElementById('ia-key-status').style.color = '#E65100';
     return;
   }
@@ -3213,7 +3213,7 @@ function sauvegarderCleIA() {
   document.getElementById('ia-key-status').textContent = '✅ Clé enregistrée !';
   document.getElementById('ia-key-status').style.color = '#2E7D32';
   if (inp) inp.value = val.slice(0,12) + '…' + val.slice(-4);
-  showToast('🤖 Clé Gemini enregistrée — Tri IA activé !', 'ok');
+  showToast('🤖 Clé Claude enregistrée — Tri IA activé !', 'ok');
 }
 
 function getCleIA() {
@@ -3786,31 +3786,29 @@ JSON uniquement. Contenus très courts (max 10 mots). Format :
   }
 
   try {
-    const resp = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${cleIA}`,
-      {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({
-          contents:[{parts:[{text:
-            'Tu es un assistant pédagogique. Réponds UNIQUEMENT en JSON valide, sans markdown, sans texte avant ou après.\n\n' + prompt
-          }]}],
-          generationConfig:{ temperature:0.1, maxOutputTokens:8000, responseMimeType:'application/json' }
-        })
-      }
-    );
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key': cleIA,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:2000,
+        system:'Tu es un assistant pédagogique. Réponds UNIQUEMENT en JSON valide, tableau uniquement, sans texte avant ou après.',
+        messages:[{role:'user',content:prompt}]
+      })
+    });
     const data = await resp.json();
-    if (data.error) throw new Error(data.error.message);
-    const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    console.log('Gemini raw:', raw.slice(0, 300));
-
-    // Extraire le JSON — chercher le premier [ jusqu'au dernier ]
+    if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
+    const raw = (data.content||[]).find(b=>b.type==='text')?.text || '[]';
+    console.log('Claude raw:', raw.slice(0,300));
     const start = raw.indexOf('[');
     const end   = raw.lastIndexOf(']');
-    if (start === -1 || end === -1 || end <= start)
-      throw new Error('Réponse brute : ' + raw.slice(0, 200));
-    const jsonStr = raw.slice(start, end + 1);
-    const suggestions = JSON.parse(jsonStr);
+    if (start === -1 || end === -1) throw new Error('Pas de JSON dans la réponse');
+    const suggestions = JSON.parse(raw.slice(start, end+1));
     _triSuggestions = suggestions.map((s,i) => ({
       ...s,
       note: notes[s.index],
@@ -4116,24 +4114,25 @@ window.addEventListener('DOMContentLoaded', chargerMode);
     <!-- Panneau Tri IA -->
     <div class="sync-panel" id="spanel-ia">
       <p style="font-size:.78rem;color:#555;line-height:1.6;margin-bottom:12px;">
-        Le <b>Tri avec l'IA</b> envoie tes notes de carnet à Gemini (Google) pour les classer automatiquement dans les bons onglets.<br>
-        Pour que ça fonctionne, tu as besoin d'une <b>clé API Google AI Studio</b>.
+        Le <b>Tri avec l'IA</b> envoie tes notes de carnet à Claude (Anthropic) pour les classer automatiquement dans les bons onglets.<br>
+        Pour que ça fonctionne, tu as besoin d'une <b>clé API Anthropic</b>.
       </p>
       <div style="background:var(--bleuC);border-radius:10px;padding:10px 14px;font-size:.75rem;color:#333;margin-bottom:14px;line-height:1.6;">
         <b>Comment obtenir une clé API :</b><br>
-        1. Va sur <a href="https://aistudio.google.com" target="_blank" style="color:var(--bleu)">aistudio.google.com</a><br>
-        2. Clique <i>Get API key</i> → <i>Create API key</i><br>
-        3. Copie-la ici — elle commence par <code>AIza</code>
+        1. Va sur <a href="https://console.anthropic.com" target="_blank" style="color:var(--bleu)">console.anthropic.com</a><br>
+        2. Crée un compte → <i>API Keys</i> → <i>Create key</i><br>
+        3. Recharge 5$ de crédits (usage familial = plusieurs années)<br>
+        4. Copie la clé — elle commence par <code>sk-ant-</code>
       </div>
       <div class="sync-input-row">
-        <label>🔑 Clé API Google AI Studio</label>
-        <input type="password" id="anthropic-key-input" placeholder="AIzaSy..." autocomplete="off" spellcheck="false"
+        <label>🔑 Clé API Anthropic</label>
+        <input type="password" id="anthropic-key-input" placeholder="sk-ant-api03-..." autocomplete="off" spellcheck="false"
           style="font-family:monospace;font-size:.75rem;">
       </div>
       <div id="ia-key-status" style="font-size:.73rem;margin:6px 0 12px;color:#888;"></div>
       <button class="btn btn-bleu btn-full" onclick="sauvegarderCleIA()">💾 Enregistrer la clé</button>
       <p style="font-size:.68rem;color:#aaa;margin-top:8px;line-height:1.5;">
-        La clé est stockée uniquement dans ton navigateur (localStorage). Elle n'est jamais envoyée ailleurs que vers l'API Google AI Studio.
+        La clé est stockée uniquement dans ton navigateur (localStorage). Elle n'est jamais envoyée ailleurs que vers l'API Anthropic.
       </p>
     </div>
 
