@@ -3795,7 +3795,7 @@ JSON uniquement. Contenus très courts (max 10 mots). Format :
           contents:[{parts:[{text:
             'Tu es un assistant pédagogique. Réponds UNIQUEMENT en JSON valide, sans markdown, sans texte avant ou après.\n\n' + prompt
           }]}],
-          generationConfig:{ temperature:0.1, maxOutputTokens:8000 }
+          generationConfig:{ temperature:0.1, maxOutputTokens:8000, responseMimeType:'application/json' }
         })
       }
     );
