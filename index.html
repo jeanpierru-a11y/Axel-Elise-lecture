@@ -3213,7 +3213,7 @@ function sauvegarderCleIA() {
   document.getElementById('ia-key-status').textContent = '✅ Clé enregistrée !';
   document.getElementById('ia-key-status').style.color = '#2E7D32';
   if (inp) inp.value = val.slice(0,12) + '…' + val.slice(-4);
-  showToast('🤖 Clé IA enregistrée — Tri IA activé !', 'ok');
+  showToast('🤖 Clé Gemini enregistrée — Tri IA activé !', 'ok');
 }
 
 function getCleIA() {
@@ -4123,7 +4123,7 @@ window.addEventListener('DOMContentLoaded', chargerMode);
         3. Copie-la ici — elle commence par <code>AIza</code>
       </div>
       <div class="sync-input-row">
-        <label>🔑 Clé API Anthropic</label>
+        <label>🔑 Clé API Google AI Studio</label>
         <input type="password" id="anthropic-key-input" placeholder="AIzaSy..." autocomplete="off" spellcheck="false"
           style="font-family:monospace;font-size:.75rem;">
       </div>
