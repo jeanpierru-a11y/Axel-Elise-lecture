@@ -3809,7 +3809,12 @@ Confiance : "haute" / "moyenne" / "basse".`;
     const data = await resp.json();
     if (data.error) throw new Error(data.error.message);
     const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
-    const clean = raw.replace(/```json|```/g,'').trim();
+    // Nettoyer et extraire le JSON même si Gemini ajoute du texte autour
+    let clean = raw.replace(/```json|```/g,'').trim();
+    // Extraire uniquement le tableau JSON s'il y a du texte avant/après
+    const match = clean.match(/\[[\s\S]*\]/);
+    if (!match) throw new Error('Pas de tableau JSON dans la réponse');
+    clean = match[0];
     const suggestions = JSON.parse(clean);
 
     _triSuggestions = suggestions.map((s,i) => ({
