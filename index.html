@@ -2759,11 +2759,25 @@ let _grapheH = null; // null = calcul auto
 function ajusterGraphe(delta) {
   const svgEl = document.getElementById('graphe-svg');
   if (svgEl.style.display === 'none') return;
-  const H = parseFloat(svgEl.getAttribute('height') || 280);
-  // Pas de plafond fixe — max = 90% de la hauteur de la fenêtre
-  _grapheH = Math.max(160, Math.min(window.innerHeight * 0.9, H + delta));
-  // Vider les positions mémorisées pour redistribuer sur le nouveau rayon
-  Object.keys(_nodePos).forEach(k => delete _nodePos[k]);
+  const oldH = parseFloat(svgEl.getAttribute('height') || 280);
+  const newH = Math.max(160, Math.min(window.innerHeight * 0.9, oldH + delta));
+  if (newH === oldH) return;
+
+  // Rescaler les positions mémorisées proportionnellement au changement de taille
+  // → les nœuds gardent leur disposition relative, juste agrandis/réduits
+  const W    = document.getElementById('graphe-container').clientWidth || 340;
+  const ratio = newH / oldH;
+  const cx = W / 2, cy = oldH / 2;
+  Object.keys(_nodePos).forEach(id => {
+    const p = _nodePos[id];
+    // Translater par rapport au centre, scaler, re-translater
+    _nodePos[id] = {
+      x: cx + (p.x - cx) * ratio,
+      y: (cy * ratio) + (p.y - cy) * ratio   // cy change aussi avec H
+    };
+  });
+
+  _grapheH = newH;
   _buildGraphe();
 }
 
