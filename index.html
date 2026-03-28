@@ -3803,9 +3803,14 @@ JSON uniquement, tableau concis. Exemple :
       suggestions = Array.isArray(parsed) ? parsed : (parsed.notes || parsed.results || parsed.items || Object.values(parsed));
     } catch(e) {
       // Extraire le tableau JSON s'il y a du texte autour
-      const match = clean.match(/\[[\s\S]*?\]/s);
+      const match = clean.match(/\[[\s\S]*/);
       if (!match) throw new Error('Réponse brute : ' + clean.slice(0, 200));
-      suggestions = JSON.parse(match[0]);
+      // Trouver la fin du tableau
+      try {
+        suggestions = JSON.parse(match[0]);
+      } catch(e2) {
+        throw new Error('Réponse brute : ' + clean.slice(0, 200));
+      }
     }
     _triSuggestions = suggestions.map((s,i) => ({
       ...s,
