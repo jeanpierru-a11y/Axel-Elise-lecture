@@ -857,17 +857,29 @@ body.mode-elise .only-elise{display:block;}
     <div class="section" id="sec-carnet">
       <div class="card">
         <div class="card-title" style="color:var(--violet)">📓 Carnet de lecture</div>
-        <p style="font-size:.73rem;color:#888;margin-bottom:10px;line-height:1.5;">Note tout au fil de la lecture sans te soucier des onglets. Commence par la page si tu veux : <b>p.47 — Nemo apparaît, inquiétant…</b></p>
-        <textarea id="carnet-input" class="field" rows="3" style="margin-bottom:8px;" placeholder="p.47 — Nemo apparaît, inquiétant et mystérieux&#10;p.52 — mot inconnu : nautilus&#10;p.60 — citation intéressante…"></textarea>
-        <button class="btn btn-violet btn-full" style="margin-bottom:12px;" onclick="ajouterNoteCarnet()">＋ Ajouter cette note</button>
-        <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;">
-          <button class="btn btn-sm" style="background:var(--violetC);color:var(--violet);font-weight:800;" onclick="ouvrirTriIA()">🤖 Trier avec l'IA</button>
-          <button class="btn btn-gris btn-sm" onclick="viderCarnetTrie()">🗑️ Effacer les notes triées</button>
-          <span id="ia-key-badge" style="font-size:.68rem;color:#aaa;margin-left:4px;cursor:pointer;" onclick="ouvrirModalSync();setTimeout(()=>showSyncTab('ia'),100)"></span>
+        <p style="font-size:.73rem;color:#888;margin-bottom:8px;line-height:1.5;">Dicte ou écris librement, puis laisse l'IA distribuer tes notes dans les bonnes zones.</p>
+        <textarea id="carnet-input" class="field" rows="4" style="margin-bottom:10px;resize:vertical;min-height:80px;" placeholder="p.47 — Nemo apparaît, inquiétant et mystérieux&#10;p.52 — mot inconnu : nautilus&#10;p.60 — citation intéressante…"></textarea>
+        <div style="display:flex;gap:8px;margin-bottom:6px;flex-wrap:wrap;align-items:center;">
+          <button class="btn btn-violet" style="flex:1;font-weight:900;" onclick="saisirEtTrier()">🤖 Enregistrer et trier avec l'IA</button>
+          <button class="btn btn-gris btn-sm" onclick="ajouterNoteCarnet()" title="Enregistrer sans trier">＋</button>
         </div>
-        <div id="carnet-list"></div>
-        <div id="carnet-vide" style="text-align:center;padding:24px;color:#ccc;font-size:.82rem;">Aucune note pour l'instant — commence à lire !</div>
+        <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;">
+          <span id="ia-key-badge" style="font-size:.68rem;color:#aaa;cursor:pointer;" onclick="ouvrirModalSync();setTimeout(()=>showSyncTab('ia'),100)"></span>
+          <button class="btn btn-gris btn-sm" style="margin-left:auto;" onclick="viderCarnetTrie()">🗑️ Effacer triées</button>
+        </div>
       </div>
+
+      <!-- Historique des tris -->
+      <div id="carnet-historique-section" style="display:none;">
+        <div style="font-size:.75rem;font-weight:800;color:var(--violet);margin:10px 0 6px;display:flex;align-items:center;gap:8px;">
+          📋 Historique des tris
+          <button class="btn btn-gris btn-xs" onclick="toggleHistorique()">▼</button>
+        </div>
+        <div id="carnet-historique-list"></div>
+      </div>
+
+      <div id="carnet-list"></div>
+      <div id="carnet-vide" style="text-align:center;padding:24px;color:#ccc;font-size:.82rem;">Aucune note pour l'instant — commence à lire !</div>
     </div>
 
     <!-- PDF -->
@@ -1807,8 +1819,8 @@ function ouvrirLivre(id) {
   setTimeout(loadIntrigue, 50);
   // Charger les zones Mots (3 sous-zones)
   setTimeout(() => loadMots(livre), 50);
-  // Charger le carnet
-  setTimeout(renderCarnet, 50);
+  // Charger le carnet et l'historique
+  setTimeout(() => { renderCarnet(); renderHistorique(); }, 50);
   // Charger les zones spécifiques Élise
   setTimeout(() => loadZonesElise(livre), 50);
   _grapheH = null; // forcer recalcul hauteur au prochain affichage de l'onglet Persos
@@ -3824,6 +3836,99 @@ function renderCarnet() {
   });
 }
 
+// ── Saisir et trier directement ────────────────────────────
+function saisirEtTrier() {
+  if (!LIVRE_ACTIF) { showToast('Ouvre un livre d\'abord', 'warn'); return; }
+  const inp = document.getElementById('carnet-input');
+  const t = inp ? inp.value.trim() : '';
+  if (!t) { showToast('Écris quelque chose d\'abord', 'warn'); return; }
+  ajouterNoteCarnet(t);
+  ouvrirTriIA();
+}
+
+// ── Historique des tris ─────────────────────────────────────
+function getHistorique() {
+  if (!LIVRE_ACTIF) return [];
+  if (!Array.isArray(LIVRE_ACTIF.historiquesTri)) LIVRE_ACTIF.historiquesTri = [];
+  return LIVRE_ACTIF.historiquesTri;
+}
+
+function sauvegarderHistorique(noteOriginale, suggestions, appliquees) {
+  if (!LIVRE_ACTIF) return;
+  if (!Array.isArray(LIVRE_ACTIF.historiquesTri)) LIVRE_ACTIF.historiquesTri = [];
+  LIVRE_ACTIF.historiquesTri.unshift({
+    id: 'h_' + Date.now().toString(36),
+    ts: Date.now(),
+    noteOriginale,
+    suggestions: suggestions.map(s => ({
+      dest: s.dest, titre: s.titre||'', contenu: s.contenu||'',
+      nom: s.nom_ou_titre||'', procede: s.procede||'', phase: s.phase||'',
+      perso_a: s.perso_a||'', perso_b: s.perso_b||'', checked: s.checked
+    })),
+    appliquees
+  });
+  // Garder max 30 entrées
+  if (LIVRE_ACTIF.historiquesTri.length > 30) LIVRE_ACTIF.historiquesTri.length = 30;
+  sauvegarderBiblio();
+  renderHistorique();
+}
+
+function toggleHistorique() {
+  const list = document.getElementById('carnet-historique-list');
+  const btn  = document.querySelector('#carnet-historique-section .btn-xs');
+  if (!list) return;
+  const open = list.style.display !== 'none';
+  list.style.display = open ? 'none' : '';
+  if (btn) btn.textContent = open ? '▼' : '▲';
+}
+
+function renderHistorique() {
+  const hist = getHistorique();
+  const section = document.getElementById('carnet-historique-section');
+  const list    = document.getElementById('carnet-historique-list');
+  if (!section || !list) return;
+  section.style.display = hist.length ? '' : 'none';
+  list.innerHTML = '';
+  hist.forEach(h => {
+    const d   = new Date(h.ts);
+    const ts  = d.toLocaleDateString('fr-FR') + ' ' + d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+    const TRI_COLORS = { perso:'#2E5FA3', lieu:'#2E7D32', relation:'#558B2F',
+      citation:'#E65100', intrigue:'#00838F', avis:'#6A1B9A', theme:'#6A1B9A',
+      mot:'#6A1B9A', temps:'#E65100', ignorer:'#aaa' };
+
+    const sugHtml = h.suggestions.map(s => {
+      const col   = TRI_COLORS[s.dest] || '#888';
+      const check = s.checked ? '✅' : '⬜';
+      const label = s.dest === 'perso' || s.dest === 'lieu'
+        ? (s.nom ? `<b>${esc(s.nom)}</b>` : '') + (s.titre ? ` <i style="opacity:.7">${esc(s.titre)}</i>` : '')
+        : s.dest === 'intrigue'
+          ? `<b>${s.phase||''}</b>` + (s.titre ? ` — ${esc(s.titre)}` : '')
+          : s.titre ? esc(s.titre) : esc(s.contenu||'').slice(0,50);
+      return `<div style="display:flex;align-items:baseline;gap:5px;font-size:.72rem;margin-bottom:2px;">
+        <span>${check}</span>
+        <span style="background:${col}20;color:${col};font-weight:700;padding:1px 6px;border-radius:4px;white-space:nowrap;">${esc(s.dest)}</span>
+        <span>${label}</span>
+      </div>`;
+    }).join('');
+
+    const div = document.createElement('div');
+    div.style.cssText = 'background:var(--blanc);border:1.5px solid var(--gris2);border-radius:10px;margin-bottom:10px;overflow:hidden;';
+    div.innerHTML = `
+      <div style="background:var(--violetC);padding:7px 12px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;"
+           onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'':'none';this.querySelector('.hchv').textContent=this.nextElementSibling.style.display===''?'▲':'▼'">
+        <span style="font-size:.72rem;font-weight:800;color:var(--violet);">🕐 ${ts} — ${h.suggestions.filter(s=>s.checked).length}/${h.suggestions.length} appliquées</span>
+        <span class="hchv" style="font-size:.7rem;color:var(--violet);">▼</span>
+      </div>
+      <div style="display:none;padding:10px 12px;">
+        <div style="font-size:.72rem;font-weight:800;color:#888;margin-bottom:4px;">NOTE ORIGINALE</div>
+        <div style="font-size:.78rem;line-height:1.5;color:#444;background:#fafafa;border-radius:6px;padding:7px 10px;margin-bottom:10px;white-space:pre-wrap;">${esc(h.noteOriginale||'')}</div>
+        <div style="font-size:.72rem;font-weight:800;color:#888;margin-bottom:6px;">RÉSULTATS DU TRI</div>
+        ${sugHtml}
+      </div>`;
+    list.appendChild(div);
+  });
+}
+
 // ── Modal saisie rapide ───────────────────────────────────
 function ouvrirCarnetQuick() {
   if (!LIVRE_ACTIF) { showToast('Ouvre un livre d\'abord', 'warn'); return; }
@@ -4321,6 +4426,11 @@ function appliquerTriSelectionne() {
     renderSchemaPhases();
   }
   renderCarnet();
+
+  // Sauvegarder dans l'historique des tris
+  const notesOriginales = [...new Set(_triSuggestions.map(s => s.noteTexte||'').filter(Boolean))].join('\n---\n');
+  sauvegarderHistorique(notesOriginales, _triSuggestions, appliquees);
+
   fermerTriIA();
   showToast(`✅ ${appliquees} note(s) appliquée(s) !`, 'ok');
 }
