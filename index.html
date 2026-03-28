@@ -3774,9 +3774,9 @@ Procédés littéraires à reconnaître → destination "citation" : métaphore,
 Notes :
 ${notes.map((n,i) => `[${i}] ${n.texte}`).join('\n')}
 
-JSON uniquement. Format :
-[{"index":0,"dest":"perso","nom_ou_titre":"Nom","contenu":"description","confiance":"haute"},
- {"index":1,"dest":"citation","nom_ou_titre":"passage ou titre","procede":"Personnification","contenu":"explication","confiance":"haute"}]`;
+JSON uniquement. Contenus très courts (max 10 mots). Format :
+[{"index":0,"dest":"perso","nom_ou_titre":"Nom","contenu":"description courte","confiance":"haute"},
+ {"index":1,"dest":"citation","nom_ou_titre":"passage","procede":"Personnification","contenu":"explication courte","confiance":"haute"}]`;
 
   const cleIA = getCleIA();
   if (!cleIA) {
@@ -3795,7 +3795,7 @@ JSON uniquement. Format :
           contents:[{parts:[{text:
             'Tu es un assistant pédagogique. Réponds UNIQUEMENT en JSON valide, sans markdown, sans texte avant ou après.\n\n' + prompt
           }]}],
-          generationConfig:{ temperature:0.1, maxOutputTokens:4000, responseMimeType:'application/json' }
+          generationConfig:{ temperature:0.1, maxOutputTokens:8000, responseMimeType:'application/json' }
         })
       }
     );
