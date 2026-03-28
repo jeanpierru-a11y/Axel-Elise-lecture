@@ -106,6 +106,29 @@ body.mode-elise .only-elise{display:block;}
 #modal-procede-def{font-size:.82rem;color:#333;line-height:1.7;margin-bottom:12px;}
 #modal-procede-ex{background:var(--orangeC);border-radius:10px;padding:12px 14px;font-size:.78rem;color:#555;line-height:1.8;}
 #modal-procede-ex b{color:var(--orange);}
+
+/* ── CARNET DE LECTURE ── */
+.carnet-entry{background:var(--blanc);border-radius:10px;border:1.5px solid var(--gris2);padding:10px 12px;margin-bottom:8px;box-shadow:var(--ombre);}
+.carnet-entry-meta{font-size:.65rem;color:#aaa;margin-bottom:4px;}
+.carnet-entry-text{font-size:.82rem;color:var(--texte);line-height:1.6;white-space:pre-wrap;}
+.carnet-entry.sorted{opacity:.5;border-style:dashed;}
+/* Bouton flottant */
+#btn-carnet-float{position:fixed;bottom:22px;right:18px;z-index:8000;background:var(--violet);color:#fff;border:none;border-radius:50%;width:52px;height:52px;font-size:1.4rem;cursor:pointer;box-shadow:0 4px 16px rgba(106,27,154,.4);display:flex;align-items:center;justify-content:center;transition:transform .15s;}
+#btn-carnet-float:hover{transform:scale(1.08);}
+/* Modal saisie rapide */
+#modal-carnet-quick{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:8100;display:none;align-items:flex-end;justify-content:center;}
+#modal-carnet-quick.open{display:flex;}
+#modal-carnet-box{background:#fff;border-radius:18px 18px 0 0;padding:18px 16px 28px;width:100%;max-width:540px;box-shadow:0 -4px 24px rgba(0,0,0,.18);}
+/* Modal tri IA */
+#modal-tri{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:8200;display:none;overflow-y:auto;padding:20px 10px;}
+#modal-tri.open{display:flex;align-items:flex-start;justify-content:center;}
+#modal-tri-box{background:#fff;border-radius:16px;padding:18px;width:100%;max-width:560px;}
+.tri-card{border:1.5px solid var(--gris2);border-radius:10px;margin-bottom:12px;overflow:hidden;}
+.tri-card-head{background:var(--violetC);padding:8px 12px;font-size:.72rem;font-weight:800;color:var(--violet);}
+.tri-card-note{padding:8px 12px;font-size:.8rem;color:#555;border-bottom:1px solid var(--gris2);white-space:pre-wrap;line-height:1.5;}
+.tri-card-dest{padding:8px 12px;background:var(--gris);font-size:.75rem;}
+.tri-card-content{padding:8px 12px;border-bottom:1px solid var(--gris2);}
+.tri-card-actions{display:flex;gap:8px;padding:8px 12px;}
 #modal-sync{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9000;display:none;align-items:flex-end;justify-content:center;padding:0;}
 #modal-sync.open{display:flex;}
 #modal-sync-box{background:#fff;border-radius:18px 18px 0 0;padding:20px 18px 30px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 -4px 30px rgba(0,0,0,.18);}
@@ -344,6 +367,7 @@ body.mode-elise .only-elise{display:block;}
     <button class="tab" onclick="showTab('mots',this)">💬 Mots</button>
     <button class="tab" onclick="showTab('intrigue',this)">🎭 Intrigue</button>
     <button class="tab" id="tab-ecrire" onclick="showTab('ecrire',this)">✍️ Écrire</button>
+    <button class="tab" onclick="showTab('carnet',this)">📓 Carnet</button>
     <button class="tab" onclick="showTab('pdf',this)">🖨️ PDF</button>
   </div>
 
@@ -834,6 +858,22 @@ body.mode-elise .only-elise{display:block;}
         </div>
       </div>
 
+    </div>
+
+    <!-- CARNET DE LECTURE -->
+    <div class="section" id="sec-carnet">
+      <div class="card">
+        <div class="card-title" style="color:var(--violet)">📓 Carnet de lecture</div>
+        <p style="font-size:.73rem;color:#888;margin-bottom:10px;line-height:1.5;">Note tout au fil de la lecture sans te soucier des onglets. Commence par la page si tu veux : <b>p.47 — Nemo apparaît, inquiétant…</b></p>
+        <textarea id="carnet-input" class="field" rows="3" style="margin-bottom:8px;" placeholder="p.47 — Nemo apparaît, inquiétant et mystérieux&#10;p.52 — mot inconnu : nautilus&#10;p.60 — citation intéressante…"></textarea>
+        <button class="btn btn-violet btn-full" style="margin-bottom:12px;" onclick="ajouterNoteCarnet()">＋ Ajouter cette note</button>
+        <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+          <button class="btn btn-sm" style="background:var(--violetC);color:var(--violet);font-weight:800;" onclick="ouvrirTriIA()">🤖 Trier avec l'IA</button>
+          <button class="btn btn-gris btn-sm" onclick="viderCarnetTrie()">🗑️ Effacer les notes triées</button>
+        </div>
+        <div id="carnet-list"></div>
+        <div id="carnet-vide" style="text-align:center;padding:24px;color:#ccc;font-size:.82rem;">Aucune note pour l'instant — commence à lire !</div>
+      </div>
     </div>
 
     <!-- PDF -->
@@ -1658,6 +1698,7 @@ function creerNouveauLivreObj(titre, auteur, genre) {
     temps:         '',
     mots:          '',
     comprehension: '',
+    carnet:        [],
     contexte:      '',
     auteurVie:     '',
     trajectoire:   '',
@@ -1747,6 +1788,8 @@ function ouvrirLivre(id) {
   setTimeout(loadIntrigue, 50);
   // Charger les zones Mots (3 sous-zones)
   setTimeout(() => loadMots(livre), 50);
+  // Charger le carnet
+  setTimeout(renderCarnet, 50);
   // Charger les zones spécifiques Élise
   setTimeout(() => loadZonesElise(livre), 50);
   _grapheH = null; // forcer recalcul hauteur au prochain affichage de l'onglet Persos
@@ -3141,6 +3184,39 @@ function showSyncTab(id) {
   document.querySelectorAll('.sync-tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('spanel-' + id).classList.add('active');
   document.getElementById('stab-' + id).classList.add('active');
+  // Pré-remplir le champ clé IA si déjà enregistrée
+  if (id === 'ia') {
+    const k = localStorage.getItem('anthropic_api_key') || '';
+    const inp = document.getElementById('anthropic-key-input');
+    if (inp) inp.value = k ? k.slice(0,12) + '…' + k.slice(-4) : '';
+    const st = document.getElementById('ia-key-status');
+    if (st) st.textContent = k ? '✅ Clé enregistrée — le Tri IA est actif.' : '⚠️ Aucune clé — le Tri IA ne fonctionnera pas.';
+    if (st) st.style.color = k ? '#2E7D32' : '#E65100';
+  }
+}
+
+function sauvegarderCleIA() {
+  const inp = document.getElementById('anthropic-key-input');
+  const val = (inp?.value || '').trim();
+  if (!val || val.includes('…')) {
+    document.getElementById('ia-key-status').textContent = '⚠️ Colle ta clé complète (sk-ant-…)';
+    document.getElementById('ia-key-status').style.color = '#E65100';
+    return;
+  }
+  if (!val.startsWith('sk-ant-')) {
+    document.getElementById('ia-key-status').textContent = '⚠️ La clé doit commencer par sk-ant-';
+    document.getElementById('ia-key-status').style.color = '#E65100';
+    return;
+  }
+  localStorage.setItem('anthropic_api_key', val);
+  document.getElementById('ia-key-status').textContent = '✅ Clé enregistrée !';
+  document.getElementById('ia-key-status').style.color = '#2E7D32';
+  if (inp) inp.value = val.slice(0,12) + '…' + val.slice(-4);
+  showToast('🤖 Clé IA enregistrée — Tri IA activé !', 'ok');
+}
+
+function getCleIA() {
+  return localStorage.getItem('anthropic_api_key') || '';
 }
 
 function sauvegarderConfigFB() {
@@ -3536,6 +3612,369 @@ function saveTheme(axe, val) {
   drawThemeRadar();
 }
 
+// ════════════════════════════════════════════════════════
+// CARNET DE LECTURE
+// ════════════════════════════════════════════════════════
+
+function getCarnet() {
+  if (!LIVRE_ACTIF) return [];
+  if (!Array.isArray(LIVRE_ACTIF.carnet)) LIVRE_ACTIF.carnet = [];
+  return LIVRE_ACTIF.carnet;
+}
+
+function ajouterNoteCarnet(texte) {
+  if (!LIVRE_ACTIF) { showToast('Ouvre un livre d\'abord', 'warn'); return; }
+  const inp = document.getElementById('carnet-input');
+  const t = texte || (inp ? inp.value.trim() : '');
+  if (!t) return;
+  const note = { id:'note_'+Date.now().toString(36), texte:t, ts:Date.now(), sorted:false };
+  getCarnet().push(note);
+  sauvegarderBiblio();
+  renderCarnet();
+  if (inp) inp.value = '';
+}
+
+function supprimerNote(id) {
+  if (!LIVRE_ACTIF) return;
+  LIVRE_ACTIF.carnet = getCarnet().filter(n => n.id !== id);
+  sauvegarderBiblio();
+  renderCarnet();
+}
+
+function viderCarnetTrie() {
+  if (!LIVRE_ACTIF || !confirm('Supprimer toutes les notes déjà triées ?')) return;
+  LIVRE_ACTIF.carnet = getCarnet().filter(n => !n.sorted);
+  sauvegarderBiblio();
+  renderCarnet();
+}
+
+function renderCarnet() {
+  const list = document.getElementById('carnet-list');
+  const vide = document.getElementById('carnet-vide');
+  if (!list) return;
+  const notes = getCarnet();
+  list.innerHTML = '';
+  if (!notes.length) { if(vide) vide.style.display=''; return; }
+  if(vide) vide.style.display='none';
+  [...notes].reverse().forEach(note => {
+    const d = new Date(note.ts);
+    const meta = d.toLocaleDateString('fr-FR') + ' ' + d.toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'});
+    const div = document.createElement('div');
+    div.className = 'carnet-entry' + (note.sorted ? ' sorted' : '');
+    div.innerHTML = `
+      <div class="carnet-entry-meta">${meta}${note.sorted ? ' ✓ triée' : ''}</div>
+      <div class="carnet-entry-text">${esc(note.texte)}</div>
+      <div style="text-align:right;margin-top:6px;">
+        <button class="btn btn-rouge btn-xs" onclick="supprimerNote('${note.id}')">🗑️</button>
+      </div>`;
+    list.appendChild(div);
+  });
+}
+
+// ── Modal saisie rapide ───────────────────────────────────
+function ouvrirCarnetQuick() {
+  if (!LIVRE_ACTIF) { showToast('Ouvre un livre d\'abord', 'warn'); return; }
+  document.getElementById('modal-carnet-quick')?.classList.add('open');
+  setTimeout(() => document.getElementById('carnet-quick-input')?.focus(), 80);
+}
+function validerCarnetQuick() {
+  const inp = document.getElementById('carnet-quick-input');
+  const t = inp ? inp.value.trim() : '';
+  if (!t) { showToast('Écris quelque chose d\'abord', 'warn'); return; }
+  ajouterNoteCarnet(t);
+  if (inp) inp.value = '';
+  // Afficher l'écran de confirmation
+  document.getElementById('carnet-quick-saisie').style.display = 'none';
+  document.getElementById('carnet-quick-confirm').style.display = '';
+}
+function nouvelleNoteRapide() {
+  document.getElementById('carnet-quick-saisie').style.display = '';
+  document.getElementById('carnet-quick-confirm').style.display = 'none';
+  setTimeout(() => document.getElementById('carnet-quick-input')?.focus(), 50);
+}
+function fermerEtTrierIA() {
+  fermerCarnetQuick();
+  // Naviguer vers l'onglet carnet et ouvrir le tri IA
+  const tabCarnet = document.querySelector('.tab[onclick*="carnet"]');
+  showTab('carnet', tabCarnet);
+  setTimeout(ouvrirTriIA, 200);
+}
+function fermerCarnetQuick() {
+  document.getElementById('modal-carnet-quick')?.classList.remove('open');
+  // Réinitialiser l'état pour la prochaine ouverture
+  document.getElementById('carnet-quick-saisie').style.display = '';
+  document.getElementById('carnet-quick-confirm').style.display = 'none';
+}
+
+// Entrée = valider dans la zone principale
+document.addEventListener('keydown', (e) => {
+  const inp = document.getElementById('carnet-input');
+  if (document.activeElement === inp && e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    ajouterNoteCarnet();
+  }
+});
+
+// ── Tri IA ────────────────────────────────────────────────
+const TRI_DESTS = {
+  perso:     { label:'👤 Personnage', color:'#2E5FA3' },
+  lieu:      { label:'🗺️ Lieu',       color:'#2E7D32' },
+  relation:  { label:'🔗 Relation entre persos', color:'#558B2F' },
+  mot:       { label:'📖 Mot difficile', color:'#6A1B9A' },
+  citation:  { label:'« Citation',   color:'#E65100' },
+  theme:     { label:'🎯 Thème',      color:'#6A1B9A' },
+  avis:      { label:'💭 Avis',       color:'#6A1B9A' },
+  temps:     { label:'⏳ Temps',      color:'#E65100' },
+  intrigue:  { label:'🎭 Intrigue',   color:'#00838F' },
+  ignorer:   { label:'⏭️ Ignorer',    color:'#aaa' },
+};
+
+let _triSuggestions = [];
+
+async function ouvrirTriIA() {
+  const notes = getCarnet().filter(n => !n.sorted);
+  if (!notes.length) { showToast('Aucune note non triée', 'warn'); return; }
+  if (!LIVRE_ACTIF) return;
+
+  document.getElementById('modal-tri')?.classList.add('open');
+  document.getElementById('modal-tri-cards').innerHTML = '';
+  document.getElementById('modal-tri-actions').style.display = 'none';
+  document.getElementById('modal-tri-status').textContent = '⏳ Claude analyse tes notes…';
+
+  // Construire le contexte du livre
+  const persosList = (LIVRE_ACTIF.personnages||[]).map(p=>p.nom).join(', ') || 'aucun encore';
+  const lieuxList  = (LIVRE_ACTIF.lieux||[]).map(l=>l.nom).join(', ')       || 'aucun encore';
+
+  const prompt = `Tu analyses les notes de lecture d'un élève sur le livre "${LIVRE_ACTIF.titre||''}" de ${LIVRE_ACTIF.auteur||''}.
+
+Personnages déjà créés : ${persosList}
+Lieux déjà créés : ${lieuxList}
+
+Pour chaque note ci-dessous, propose où la classer. Destinations possibles :
+- "perso" : personnage (nom + description)
+- "lieu" : lieu
+- "relation" : relation entre deux personnages déjà créés ou à créer
+- "mot" : mot difficile ou procédé littéraire
+- "citation" : citation textuelle (avec page si disponible)
+- "theme" : thème littéraire (amour, liberté, etc.)
+- "avis" : réaction personnelle ou hypothèse d'interprétation
+- "temps" : chronologie ou ordre narratif
+- "intrigue" : résumé d'un événement (précise la phase : exposition/action_montante/climax/action_descendante/dénouement)
+- "ignorer" : pas d'intérêt analytique
+
+Pour les relations, utilise EXACTEMENT une de ces valeurs pour le champ "relation_type" :
+${RELATIONS.filter(r=>r!=='—').join(', ')}
+
+Notes à analyser :
+${notes.map((n,i) => `[${i}] ${n.texte}`).join('\n')}
+
+Réponds UNIQUEMENT en JSON valide, sans texte autour. Format exact :
+[
+  {"index":0, "dest":"perso", "nom_ou_titre":"Père Loup", "contenu":"Animal vigoureux, inspire le respect", "confiance":"haute"},
+  {"index":1, "dest":"relation", "perso_a":"Père Loup", "perso_b":"Le Clan", "relation_type":"Protecteur/trice", "contenu":"Le Père Loup protège le clan", "confiance":"haute"},
+  {"index":2, "dest":"citation", "nom_ou_titre":"Messire Loup", "page":"3", "contenu":"Messire Loup", "confiance":"haute"}
+]
+Pour les intrigue : ajoute "phase": "exposition"|"action_montante"|"climax"|"action_descendante"|"dénouement".
+Confiance : "haute" / "moyenne" / "basse".`;
+
+  const cleIA = getCleIA();
+  if (!cleIA) {
+    document.getElementById('modal-tri-status').innerHTML =
+      '❌ Aucune clé API Anthropic. <button class="btn btn-sm btn-bleu" style="margin-left:8px;" onclick="fermerTriIA();ouvrirModalSync();setTimeout(()=>showSyncTab(\'ia\'),100)">Configurer →</button>';
+    return;
+  }
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key': cleIA,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1500,
+        system:'Tu es un assistant pédagogique. Réponds UNIQUEMENT en JSON valide, sans markdown, sans texte avant ou après.',
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data = await resp.json();
+    const raw = (data.content||[]).find(b=>b.type==='text')?.text || '[]';
+    const clean = raw.replace(/```json|```/g,'').trim();
+    const suggestions = JSON.parse(clean);
+
+    _triSuggestions = suggestions.map((s,i) => ({
+      ...s,
+      note: notes[s.index],
+      checked: s.confiance === 'haute'
+    }));
+
+    document.getElementById('modal-tri-status').textContent =
+      `${_triSuggestions.length} note(s) analysée(s) — coche celles à appliquer.`;
+    renderTriCards();
+    document.getElementById('modal-tri-actions').style.display = '';
+
+  } catch(err) {
+    document.getElementById('modal-tri-status').textContent = '❌ Erreur : ' + err.message;
+    console.error(err);
+  }
+}
+
+function renderTriCards() {
+  const container = document.getElementById('modal-tri-cards');
+  container.innerHTML = '';
+  _triSuggestions.forEach((s, i) => {
+    const dest = TRI_DESTS[s.dest] || TRI_DESTS.ignorer;
+    const card = document.createElement('div');
+    card.className = 'tri-card';
+    card.innerHTML = `
+      <div class="tri-card-head" style="background:${dest.color}20;color:${dest.color};">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+          <input type="checkbox" ${s.checked?'checked':''} onchange="_triSuggestions[${i}].checked=this.checked">
+          ${dest.label}
+          <span style="font-size:.6rem;opacity:.7;margin-left:4px;">${s.confiance==='haute'?'confiance haute':s.confiance==='moyenne'?'à vérifier':'incertain'}</span>
+        </label>
+      </div>
+      <div class="tri-card-note" style="color:#888;font-size:.72rem;">📓 Note originale : ${esc(s.note?.texte||'')}</div>
+      <div class="tri-card-content">
+        ${s.dest === 'relation'
+          ? `<div style="font-size:.8rem;margin-bottom:4px;">
+               <b>${esc(s.perso_a||'?')}</b>
+               <span style="margin:0 6px;color:${dest.color};font-weight:800;">→</span>
+               <b>${esc(s.perso_b||'?')}</b>
+             </div>
+             <select class="cit-select" style="font-size:.72rem;margin-bottom:4px;" onchange="_triSuggestions[${i}].relation_type=this.value">
+               ${RELATIONS.map(r=>`<option value="${r}"${s.relation_type===r?' selected':''}>${r}</option>`).join('')}
+             </select>`
+          : `${s.nom_ou_titre ? `<div style="font-weight:800;font-size:.8rem;margin-bottom:4px;">${esc(s.nom_ou_titre)}</div>` : ''}`
+        }
+        <textarea class="field" rows="2" style="font-size:.75rem;" oninput="_triSuggestions[${i}].contenu=this.value">${esc(s.contenu||'')}</textarea>
+        ${s.dest !== 'ignorer' && s.dest !== 'relation' ? `
+        <div style="margin-top:6px;">
+          <select class="cit-select" style="font-size:.72rem;" onchange="_triSuggestions[${i}].dest=this.value;renderTriCards()">
+            ${Object.entries(TRI_DESTS).map(([k,v])=>`<option value="${k}"${s.dest===k?' selected':''}>${v.label}</option>`).join('')}
+          </select>
+        </div>` : ''}
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+function appliquerTriSelectionne() {
+  if (!LIVRE_ACTIF) return;
+  let appliquees = 0;
+
+  _triSuggestions.forEach(s => {
+    if (!s.checked || !s.note) return;
+    const note = s.note;
+    const contenu = (s.contenu||'').trim();
+    const nom     = (s.nom_ou_titre||'').trim();
+
+    switch(s.dest) {
+      case 'perso': {
+        // Chercher si le perso existe déjà
+        let p = LIVRE_ACTIF.personnages.find(x => x.nom.toLowerCase() === nom.toLowerCase());
+        if (!p) {
+          p = { id:'ent_'+Date.now().toString(36)+Math.random().toString(36).slice(2,4),
+                nom: nom || contenu.split('\n')[0],
+                notes: '', couleur: COULEURS[couleurIdx % COULEURS.length] };
+          couleurIdx++;
+          LIVRE_ACTIF.personnages.push(p);
+        }
+        p.notes = p.notes ? p.notes + '\n' + contenu : contenu;
+        break;
+      }
+      case 'lieu': {
+        let l = LIVRE_ACTIF.lieux.find(x => x.nom.toLowerCase() === nom.toLowerCase());
+        if (!l) {
+          l = { id:'ent_'+Date.now().toString(36)+Math.random().toString(36).slice(2,4),
+                nom: nom || contenu.split('\n')[0],
+                notes: '', couleur: COULEURS[couleurIdx % COULEURS.length] };
+          couleurIdx++;
+          LIVRE_ACTIF.lieux.push(l);
+        }
+        l.notes = l.notes ? l.notes + '\n' + contenu : contenu;
+        break;
+      }
+      case 'relation': {
+        // Trouver ou créer les deux personnages
+        const trouverOuCreerPerso = (nom) => {
+          if (!nom) return null;
+          let p = LIVRE_ACTIF.personnages.find(x => x.nom.toLowerCase() === nom.toLowerCase());
+          if (!p) {
+            p = { id:'ent_'+Date.now().toString(36)+Math.random().toString(36).slice(2,4),
+                  nom, notes:'', couleur: COULEURS[couleurIdx % COULEURS.length] };
+            couleurIdx++;
+            LIVRE_ACTIF.personnages.push(p);
+          }
+          return p;
+        };
+        const pA = trouverOuCreerPerso(s.perso_a);
+        const pB = trouverOuCreerPerso(s.perso_b);
+        if (pA && pB && pA.id !== pB.id) {
+          const relType = RELATIONS.includes(s.relation_type) ? s.relation_type : '—';
+          if (!LIVRE_ACTIF.matrice) LIVRE_ACTIF.matrice = {};
+          LIVRE_ACTIF.matrice[pA.id + '__' + pB.id] = relType;
+          // Si une relation inverse est précisée dans contenu, on pourrait aussi la setter
+        }
+        break;
+      }
+      case 'mot': {
+        const sep = nom ? `\n\n── Mot inconnu ──\n${nom} : ${contenu}` : `\n\n── Mot inconnu ──\n${contenu}`;
+        LIVRE_ACTIF.mots = (LIVRE_ACTIF.mots || '') + sep;
+        break;
+      }
+      case 'citation': {
+        if (!Array.isArray(LIVRE_ACTIF.citations)) LIVRE_ACTIF.citations = [];
+        LIVRE_ACTIF.citations.push({
+          id:'cit_'+Date.now().toString(36),
+          texte: nom || contenu,
+          ref: s.page||'', theme:'—', procede:'—',
+          interpretation:'', importance:0
+        });
+        break;
+      }
+      case 'avis': {
+        LIVRE_ACTIF.comprehension = (LIVRE_ACTIF.comprehension||'') + '\n\n' + contenu;
+        break;
+      }
+      case 'temps': {
+        LIVRE_ACTIF.temps = (LIVRE_ACTIF.temps||'') + '\n\n' + contenu;
+        break;
+      }
+      case 'intrigue':
+      case 'theme': {
+        LIVRE_ACTIF.comprehension = (LIVRE_ACTIF.comprehension||'') + '\n\n[' + (s.dest==='intrigue'?'Intrigue':'Thème') + '] ' + contenu;
+        break;
+      }
+    }
+
+    // Marquer la note comme triée
+    const noteInCarnet = LIVRE_ACTIF.carnet?.find(n => n.id === note.id);
+    if (noteInCarnet) noteInCarnet.sorted = true;
+    appliquees++;
+  });
+
+  sauvegarderBiblio();
+  // Recharger les vues affectées
+  if (LIVRE_ACTIF) {
+    document.getElementById('list-personnages').innerHTML='';
+    document.getElementById('list-lieux').innerHTML='';
+    LIVRE_ACTIF.personnages.forEach(p => renderEntity('personnages',p));
+    LIVRE_ACTIF.lieux.forEach(l => renderEntity('lieux',l));
+    loadMots(LIVRE_ACTIF);
+  }
+  renderCarnet();
+  fermerTriIA();
+  showToast(`✅ ${appliquees} note(s) appliquée(s) !`, 'ok');
+}
+
+function fermerTriIA() {
+  document.getElementById('modal-tri')?.classList.remove('open');
+}
+
 chargerBiblio();
 renderBiblio();
 initRedacZones();
@@ -3543,6 +3982,47 @@ renderSchemaPhases();
 // chargerMode doit attendre que les modals soient dans le DOM
 window.addEventListener('DOMContentLoaded', chargerMode);
 </script>
+
+<!-- ── BOUTON FLOTTANT CARNET ── -->
+<button id="btn-carnet-float" onclick="ouvrirCarnetQuick()" title="Ajouter une note rapide">📓</button>
+
+<!-- ── MODAL SAISIE RAPIDE ── -->
+<div id="modal-carnet-quick" onclick="if(event.target===this)fermerCarnetQuick()">
+  <div id="modal-carnet-box">
+    <div id="carnet-quick-saisie">
+      <div style="font-weight:800;color:var(--violet);margin-bottom:6px;">📓 Note rapide</div>
+      <p style="font-size:.72rem;color:#888;margin-bottom:8px;line-height:1.5;">Dicte ou écris librement. Exemple : <b>p.47 — Nemo apparaît, inquiétant et mystérieux</b><br>Tu pourras trier ces notes avec l'IA plus tard.</p>
+      <textarea id="carnet-quick-input" class="field" rows="4" placeholder="p.47 — ce que tu veux noter…" style="margin-bottom:10px;"></textarea>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-violet" style="flex:1;" onclick="validerCarnetQuick()">＋ Ajouter</button>
+        <button class="btn btn-gris" style="flex:1;" onclick="fermerCarnetQuick()">Fermer</button>
+      </div>
+    </div>
+    <div id="carnet-quick-confirm" style="display:none;text-align:center;padding:10px 0;">
+      <div style="font-size:1.5rem;margin-bottom:8px;">✅</div>
+      <div style="font-weight:800;color:var(--vert);margin-bottom:4px;">Note ajoutée !</div>
+      <p style="font-size:.75rem;color:#666;margin-bottom:14px;">Quand tu as fini de lire, utilise <b>🤖 Trier avec l'IA</b><br>dans l'onglet <b>📓 Carnet</b> pour distribuer tes notes.</p>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-violet" style="flex:1;" onclick="nouvelleNoteRapide()">＋ Autre note</button>
+        <button class="btn btn-sm" style="flex:1;background:var(--violetC);color:var(--violet);font-weight:800;" onclick="fermerEtTrierIA()">🤖 Trier maintenant</button>
+      </div>
+      <button class="btn btn-gris btn-full" style="margin-top:8px;" onclick="fermerCarnetQuick()">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL TRI IA ── -->
+<div id="modal-tri" onclick="if(event.target===this)fermerTriIA()">
+  <div id="modal-tri-box">
+    <div style="font-weight:800;font-size:1rem;color:var(--violet);margin-bottom:4px;">🤖 Tri de tes notes</div>
+    <div id="modal-tri-status" style="font-size:.75rem;color:#888;margin-bottom:12px;"></div>
+    <div id="modal-tri-cards"></div>
+    <div id="modal-tri-actions" style="display:none;margin-top:10px;">
+      <button class="btn btn-violet btn-full" onclick="appliquerTriSelectionne()">✅ Appliquer les notes cochées</button>
+      <button class="btn btn-gris btn-full" style="margin-top:6px;" onclick="fermerTriIA()">Fermer</button>
+    </div>
+  </div>
+</div>
 <!-- ══════════════════════════════════════════
      MODAL PROCÉDÉ LITTÉRAIRE
 ══════════════════════════════════════════ -->
@@ -3588,8 +4068,9 @@ window.addEventListener('DOMContentLoaded', chargerMode);
     <p class="sub">Partage tes guides entre PC, tablette et téléphone — en temps réel.</p>
 
     <div id="sync-tabs">
-      <button class="sync-tab-btn active" id="stab-config" onclick="showSyncTab('config')">⚙️ Configuration</button>
-      <button class="sync-tab-btn" id="stab-aide" onclick="showSyncTab('aide')">📖 Guide de démarrage</button>
+      <button class="sync-tab-btn active" id="stab-config" onclick="showSyncTab('config')">⚙️ Sync Firebase</button>
+      <button class="sync-tab-btn" id="stab-ia" onclick="showSyncTab('ia')">🤖 Tri IA</button>
+      <button class="sync-tab-btn" id="stab-aide" onclick="showSyncTab('aide')">📖 Guide</button>
     </div>
 
     <!-- Panneau Configuration -->
@@ -3622,6 +4103,31 @@ window.addEventListener('DOMContentLoaded', chargerMode);
     </div>
 
     <!-- Panneau Aide -->
+    <!-- Panneau Tri IA -->
+    <div class="sync-panel" id="spanel-ia">
+      <p style="font-size:.78rem;color:#555;line-height:1.6;margin-bottom:12px;">
+        Le <b>Tri avec l'IA</b> envoie tes notes de carnet à Claude (Anthropic) pour les classer automatiquement dans les bons onglets.<br>
+        Pour que ça fonctionne, tu as besoin d'une <b>clé API Anthropic</b>.
+      </p>
+      <div style="background:var(--bleuC);border-radius:10px;padding:10px 14px;font-size:.75rem;color:#333;margin-bottom:14px;line-height:1.6;">
+        <b>Comment obtenir une clé API :</b><br>
+        1. Va sur <a href="https://console.anthropic.com" target="_blank" style="color:var(--bleu)">console.anthropic.com</a><br>
+        2. Crée un compte (gratuit pour commencer)<br>
+        3. Dans <i>API Keys</i>, crée une nouvelle clé<br>
+        4. Copie-la ici — elle commence par <code>sk-ant-</code>
+      </div>
+      <div class="sync-input-row">
+        <label>🔑 Clé API Anthropic</label>
+        <input type="password" id="anthropic-key-input" placeholder="sk-ant-api03-..." autocomplete="off" spellcheck="false"
+          style="font-family:monospace;font-size:.75rem;">
+      </div>
+      <div id="ia-key-status" style="font-size:.73rem;margin:6px 0 12px;color:#888;"></div>
+      <button class="btn btn-bleu btn-full" onclick="sauvegarderCleIA()">💾 Enregistrer la clé</button>
+      <p style="font-size:.68rem;color:#aaa;margin-top:8px;line-height:1.5;">
+        La clé est stockée uniquement dans ton navigateur (localStorage). Elle n'est jamais envoyée ailleurs que vers l'API Anthropic.
+      </p>
+    </div>
+
     <div class="sync-panel" id="spanel-aide">
       <div class="sync-step">
         <b>Étape 1 — Créer un projet Firebase gratuit</b><br>
