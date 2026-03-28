@@ -1910,6 +1910,14 @@ function showTab(id, tabEl) {
   if (tabEl) tabEl.classList.add('active');
   else document.querySelector('.tab')?.classList.add('active');
   if (id === 'personnages') requestAnimationFrame(() => renderGraphe());
+  if (id === 'intrigue' && LIVRE_ACTIF) {
+    // Synchroniser le schéma actif avec celui du livre (choisi lors du tri IA ou manuellement)
+    const schema = LIVRE_ACTIF.schemaType || 'aristote';
+    schemaActif = schema;
+    document.querySelectorAll('.schema-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('sbtn-' + schema)?.classList.add('active');
+    renderSchemaPhases();
+  }
 }
 
 function showEcrirePanel(panel, btnEl) {
@@ -2413,6 +2421,44 @@ function genererPDF(style) {
        </div>`).join('');
   };
 
+  const matriceSection = () => {
+    const persos = L.personnages;
+    const mat    = L.matrice || {};
+    if (persos.length < 2) return '';
+    // Ne garder que les paires qui ont une relation non-vide
+    const lignes = [];
+    persos.forEach((pa, i) => {
+      persos.forEach((pb, j) => {
+        if (j <= i) return;
+        const kAB = pa.id + '__' + pb.id;
+        const kBA = pb.id + '__' + pa.id;
+        const rAB = mat[kAB]; const rBA = mat[kBA];
+        if (rAB && rAB !== '—') lignes.push({ a:pa.nom, b:pb.nom, r:rAB, dir:'→' });
+        else if (rBA && rBA !== '—') lignes.push({ a:pb.nom, b:pa.nom, r:rBA, dir:'→' });
+      });
+    });
+    if (!lignes.length) return '';
+    const rows = lignes.map(l =>
+      `<tr>
+         <td style="padding:5px 10px;font-weight:700;font-size:12px;">${h(l.a)}</td>
+         <td style="padding:5px 8px;text-align:center;color:${c(P.bleu)};font-weight:900;">→</td>
+         <td style="padding:5px 10px;font-weight:700;font-size:12px;">${h(l.b)}</td>
+         <td style="padding:5px 10px;font-size:12px;color:${c(P.violet)};">${h(l.r)}</td>
+       </tr>`
+    ).join('');
+    return `<table style="width:100%;border-collapse:collapse;font-size:12px;">
+      <thead>
+        <tr style="background:${nb?'#eee':P.bleu+'18'};">
+          <th style="padding:5px 10px;text-align:left;font-size:11px;color:${c(P.bleu)};">Personnage A</th>
+          <th style="padding:5px 8px;"></th>
+          <th style="padding:5px 10px;text-align:left;font-size:11px;color:${c(P.bleu)};">Personnage B</th>
+          <th style="padding:5px 10px;text-align:left;font-size:11px;color:${c(P.bleu)};">Relation</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  };
+
   const schNom = {aristote:'Aristote — 3 actes', freytag:'Freytag — 5 actes', moderne:'Arc moderne — 8 étapes'};
 
   // ── Assemblage HTML ───────────────────────────────────────
@@ -2427,6 +2473,39 @@ function genererPDF(style) {
 
     // Personnages
     L.personnages.length ? sec('👤 Personnages & Relations', P.bleu, L.personnages.map(entite).join('')) : '',
+
+    // Graphe des relations — capture SVG live depuis le DOM
+    (() => {
+      // S'assurer que le graphe est rendu (il peut ne pas l'être si l'onglet Persos n'a pas été ouvert)
+      if (L.personnages.length >= 2) {
+        // Forcer le rendu du graphe si le SVG est vide
+        const svgEl = document.getElementById('graphe-svg');
+        if (svgEl && !svgEl.querySelector('circle')) {
+          _buildGraphe();
+        }
+      }
+      const svgEl = document.getElementById('graphe-svg');
+      const m = matriceSection();
+      if (!svgEl || svgEl.style.display === 'none' || !svgEl.innerHTML) {
+        return m ? sec('🔗 Relations entre personnages', P.bleu, m) : '';
+      }
+      // Cloner et nettoyer le SVG pour le PDF (supprimer cursor, event attrs)
+      const clone = svgEl.cloneNode(true);
+      clone.removeAttribute('style');
+      clone.style.width = '100%';
+      clone.style.height = 'auto';
+      clone.style.maxWidth = '600px';
+      clone.style.display = 'block';
+      clone.style.margin = '0 auto 12px';
+      // Rendre tous les textes visibles (police héritée)
+      clone.querySelectorAll('text').forEach(t => {
+        t.style.fontFamily = "'Segoe UI', sans-serif";
+      });
+      const svgStr = clone.outerHTML;
+      const legende = m ? `<div style="margin-top:10px;">${m}</div>` : '';
+      return sec('🔗 Graphe des relations inter-personnages', P.bleu,
+        `<div style="text-align:center;">${svgStr}</div>${legende}`);
+    })(),
 
     // Lieux
     L.lieux.length ? sec('🗺️ Lieux', P.vert, L.lieux.map(entite).join('')) : '',
@@ -2680,8 +2759,11 @@ let _grapheH = null; // null = calcul auto
 function ajusterGraphe(delta) {
   const svgEl = document.getElementById('graphe-svg');
   if (svgEl.style.display === 'none') return;
-  const H = parseFloat(svgEl.getAttribute('height') || 240);
-  _grapheH = Math.max(160, Math.min(600, H + delta));
+  const H = parseFloat(svgEl.getAttribute('height') || 280);
+  // Pas de plafond fixe — max = 90% de la hauteur de la fenêtre
+  _grapheH = Math.max(160, Math.min(window.innerHeight * 0.9, H + delta));
+  // Vider les positions mémorisées pour redistribuer sur le nouveau rayon
+  Object.keys(_nodePos).forEach(k => delete _nodePos[k]);
   _buildGraphe();
 }
 
@@ -2701,18 +2783,22 @@ function _buildGraphe() {
   vide.style.display = 'none';
 
   const W = document.getElementById('graphe-container').clientWidth || 340;
-  // Hauteur : assez grande pour que le rayon soit correct
-  const H = _grapheH !== null ? _grapheH : Math.max(280, persos.length * 56);
-  svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
-  svgEl.setAttribute('width', W);
-  svgEl.setAttribute('height', H);
-  svgEl.style.width = '100%';
-  svgEl.style.height = 'auto';
+  // H auto ou forcé par l'utilisateur
+  const baseH  = Math.max(280, persos.length * 56);
+  const H      = _grapheH !== null ? _grapheH : baseH;
+  // Zone de dessin carrée — le graphe utilise le côté du plus petit carré inscrit
+  const cote   = Math.min(W, H);        // taille carrée de référence
+  const scale  = cote / 280;            // facteur d'échelle par rapport à la taille de base
 
-  const R = 20; // rayon des cercles
-  const marge = 55; // marge pour les labels extérieurs
+  svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svgEl.setAttribute('width', '100%');
+  svgEl.setAttribute('height', H);
+  svgEl.style.width  = '100%';
+  svgEl.style.height = H + 'px';
+
+  const R     = Math.max(14, Math.round(20 * scale));  // rayon des disques — scale avec le zoom
+  const marge = Math.max(40, Math.round(60 * scale));  // marge labels — scale aussi
   const cx = W / 2, cy = H / 2;
-  // Rayon basé sur la dimension contraignante (H sur PC large, W sur mobile)
   const rayonCercle = Math.min(H / 2 - marge, W / 2 - marge);
 
   // Positions initiales en cercle, mémorisées si déjà déplacés
@@ -2798,14 +2884,15 @@ function _buildGraphe() {
 
   // ── Dessin des arcs ──
   const linkEls = linkG.selectAll('path').data(links).enter().append('path')
-    .attr('fill','none').attr('stroke-width', 1.8)
+    .attr('fill','none').attr('stroke-width', Math.max(1, 1.8 * scale))
     .attr('stroke', d => linkColor(d.label))
     .attr('marker-end', d => `url(#${linkArrow(d.label)})`)
     .attr('d', d => arcPath(nodeMap[d.sId], nodeMap[d.tId], d.curve));
 
   // ── Labels des arcs ──
+  const arcFontSize = Math.max(7, Math.round(8.5 * scale));
   const labelEls = labelG.selectAll('text').data(links).enter().append('text')
-    .attr('text-anchor','middle').attr('font-size','8.5').attr('font-family','inherit')
+    .attr('text-anchor','middle').attr('font-size', arcFontSize).attr('font-family','inherit')
     .attr('fill', d => linkColor(d.label))
     .attr('pointer-events','none')
     .text(d => d.label && d.label !== '—' ? d.label : '')
@@ -2818,7 +2905,7 @@ function _buildGraphe() {
   function nodeLabelPos(n) {
     const dx = n.x - cx, dy = n.y - cy;
     const len = Math.sqrt(dx*dx + dy*dy) || 1;
-    const dist = R + 13;
+    const dist = R + Math.round(13 * scale);
     return { x: dx/len * dist, y: dy/len * dist,
              anchor: Math.abs(dx) > Math.abs(dy)
                ? (dx > 0 ? 'start' : 'end') : 'middle',
@@ -2832,18 +2919,21 @@ function _buildGraphe() {
 
   nodeEls.append('circle').attr('r', R)
     .attr('fill', d => d.couleur)
-    .attr('stroke','#fff').attr('stroke-width', 2.5);
+    .attr('stroke','#fff').attr('stroke-width', Math.max(1.5, 2.5 * scale));
 
   // Initiales dans le cercle
+  const initFontSize = Math.max(9, Math.round(11 * scale));
   nodeEls.append('text')
     .attr('text-anchor','middle').attr('dominant-baseline','central')
-    .attr('fill','#fff').attr('font-size','11').attr('font-weight','800')
+    .attr('fill','#fff').attr('font-size', initFontSize).attr('font-weight','800')
     .attr('pointer-events','none')
     .text(d => d.nom.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2));
 
   // Label vers l'extérieur
+  const labelFontSize = Math.max(8, Math.round(10 * scale));
+  const maxNomLen = scale > 1.5 ? 18 : 12;
   nodeEls.append('text')
-    .attr('fill','#1a1a2e').attr('font-size','10').attr('font-weight','700')
+    .attr('fill','#1a1a2e').attr('font-size', labelFontSize).attr('font-weight','700')
     .attr('pointer-events','none')
     .each(function(d) {
       const lp = nodeLabelPos(d);
@@ -2851,7 +2941,7 @@ function _buildGraphe() {
         .attr('x', lp.x).attr('y', lp.y)
         .attr('text-anchor', lp.anchor)
         .attr('dominant-baseline', lp.baseline)
-        .text(d.nom.length > 12 ? d.nom.slice(0,11)+'…' : d.nom);
+        .text(d.nom.length > maxNomLen ? d.nom.slice(0, maxNomLen-1)+'…' : d.nom);
     });
 
   // ── DRAG individuel — transform direct, pas de redraw ──
@@ -3330,7 +3420,7 @@ function deconnecterFB() {
 // ════════════════════════════════════════════════════════
 // MODE AXEL / ÉLISE
 // ════════════════════════════════════════════════════════
-let _modeDefini = false;
+var _modeDefini = false;
 
 function chargerMode() {
   const m = localStorage.getItem('axel_mode') || null;
@@ -3785,8 +3875,8 @@ const TRI_DESTS = {
   ignorer:   { label:'⏭️ Ignorer',    color:'#aaa' },
 };
 
-let _triSuggestions = [];
-let _triNotes = [];  // copie stable des notes pour le tri IA
+var _triSuggestions = [];  // var = accessible depuis les handlers inline
+var _triNotes = [];  // copie stable des notes pour le tri IA
 
 async function ouvrirTriIA() {
   const notes = getCarnet().filter(n => !n.sorted);
@@ -3830,7 +3920,8 @@ ${notes.map((n,i) => `[${i}] ${n.texte}`).join('\n')}
 
 JSON uniquement. Format :
 [{"index":0,"dest":"perso","nom_ou_titre":"Père Loup","titre":"Chef respecté du clan","contenu":"Le Père Loup inspire le respect à tout le clan.","confiance":"haute"},
- {"index":1,"dest":"intrigue","phase":"dénouement","titre":"Source maudite puis enchantée","contenu":"Les loups ne sont plus jamais revenus. La source fut considérée comme enchantée.","confiance":"haute"},
+ {"index":0,"dest":"relation","perso_a":"Père Loup","perso_b":"le clan","relation_type":"Protecteur/trice","titre":"","contenu":"Relation Père loup clan: respect","confiance":"haute"},
+ {"index":1,"dest":"intrigue","phase":"dénouement","titre":"Source maudite puis enchantée","contenu":"Les loups ne sont plus jamais revenus.","confiance":"haute"},
  {"index":2,"dest":"citation","procede":"Personnification","titre":"Loups humanisés en couple","contenu":"Personnification en première page : il parle du loup et de son épouse.","confiance":"haute"}]`;
 
   _triNotes = notes.slice(); // référence stable — Claude peut renvoyer plusieurs suggestions pour 1 note
@@ -3875,7 +3966,7 @@ JSON uniquement. Format :
         ...s,
         note,
         noteTexte: note?.texte || '',
-        checked: s.confiance === 'haute'
+        checked: s.dest !== 'ignorer'  // tout coché par défaut sauf 'ignorer'
       };
     });
 
@@ -3883,6 +3974,9 @@ JSON uniquement. Format :
       `${_triSuggestions.length} note(s) analysée(s) — coche celles à appliquer.`;
     renderTriCards();
     document.getElementById('modal-tri-actions').style.display = '';
+    // Le tri IA utilise les libellés Freytag → défaut Freytag
+    const schSel = document.getElementById('tri-schema-select');
+    if (schSel) schSel.value = 'freytag';
 
   } catch(err) {
     document.getElementById('modal-tri-status').textContent = '❌ Erreur : ' + err.message;
@@ -3974,14 +4068,14 @@ function renderTriCards() {
     const stripPrefix = (txt) => {
       if (!txt) return '';
       const prefixes = [
-        'avis\\s*[:,.-]?\\s*', 'lieu\\s*[:,.-]?\\s*', 'le lieu\\s*[:,.-]?\\s*',
-        'personnage\\s*[:,.-]?\\s*', 'le personnage\\s*[:,.-]?\\s*',
-        'citation\\s*[:,.-]?\\s*', 'relation\\s*[:,.-]?\\s*',
+        'avis\\s*[:,.-]?\\s*', 'lieux?\\s*[:,.-]?\\s*', 'le lieu\\s*[:,.-]?\\s*', 'les lieux\\s*[:,.-]?\\s*',
+        'personnages?\\s*[:,.-]?\\s*', 'le personnage\\s*[:,.-]?\\s*', 'les personnages\\s*[:,.-]?\\s*',
+        'citations?\\s*[:,.-]?\\s*', 'relations?\\s*[:,.-]?\\s*',
         'climax\\s*[:,.-]?\\s*', 'exposition\\s*[:,.-]?\\s*',
         'action montante\\s*[:,.-]?\\s*', 'action descendante\\s*[:,.-]?\\s*',
         'dénouement\\s*[:,.-]?\\s*', 'denouement\\s*[:,.-]?\\s*',
-        'intrigue\\s*[:,.-]?\\s*', 'thème\\s*[:,.-]?\\s*', 'theme\\s*[:,.-]?\\s*',
-        'temps\\s*[:,.-]?\\s*', 'mot\\s*[:,.-]?\\s*',
+        'intrigue\\s*[:,.-]?\\s*', 'thèmes?\\s*[:,.-]?\\s*', 'themes?\\s*[:,.-]?\\s*',
+        'temps\\s*[:,.-]?\\s*', 'mots?\\s*[:,.-]?\\s*',
       ];
       const re = new RegExp('^(' + prefixes.join('|') + ')', 'i');
       return txt.replace(re, '').trimStart();
@@ -4023,16 +4117,63 @@ function renderTriCards() {
 
 function appliquerTriSelectionne() {
   if (!LIVRE_ACTIF) return;
+  // Synchroniser schemaType du livre avec le sélecteur du modal (Freytag par défaut)
+  const selSchema = document.getElementById('tri-schema-select');
+  if (selSchema && selSchema.value) {
+    LIVRE_ACTIF.schemaType = selSchema.value;
+  }
   let appliquees = 0;
 
+  // Retire les préfixes de catégorie du texte sauvegardé (même logique qu'à l'affichage)
+  const stripSave = (txt) => {
+    if (!txt) return '';
+    const prefixes = [
+      'avis\\s*[:,.-]?\\s*', 'lieux?\\s*[:,.-]?\\s*', 'le lieu\\s*[:,.-]?\\s*', 'les lieux\\s*[:,.-]?\\s*',
+      'personnages?\\s*[:,.-]?\\s*', 'le personnage\\s*[:,.-]?\\s*',
+      'citations?\\s*[:,.-]?\\s*', 'relations?\\s*[:,.-]?\\s*',
+      'climax\\s*[:,.-]?\\s*', 'exposition\\s*[:,.-]?\\s*',
+      'action montante\\s*[:,.-]?\\s*', 'action descendante\\s*[:,.-]?\\s*',
+      'dénouement\\s*[:,.-]?\\s*', 'denouement\\s*[:,.-]?\\s*',
+      'intrigue\\s*[:,.-]?\\s*', 'thèmes?\\s*[:,.-]?\\s*', 'themes?\\s*[:,.-]?\\s*',
+      'temps\\s*[:,.-]?\\s*', 'mots?\\s*[:,.-]?\\s*',
+    ];
+    const re = new RegExp('^(' + prefixes.join('|') + ')', 'i');
+    return txt.replace(re, '').trimStart();
+  };
+
+  // Normalise pour la comparaison : minuscules, espaces multiples → un seul
+  const norm = (s) => (s||'').toLowerCase().replace(/\s+/g,' ').trim();
+
+  // Ajoute storeText seulement si compareKey n'est pas déjà présent (sous-chaîne normalisée)
+  // compareKey : ce qu'on compare (= original sans titre) ; storeText : ce qu'on stocke (avec titre)
+  const appendUnique = (existing, storeText, compareKey) => {
+    const clean = (storeText||'').trim();
+    if (!clean) return existing;
+    const key = norm(compareKey || clean);
+    if (existing && key) {
+      // Compare contre chaque "bloc" séparé par ligne vide ou contre chaque ligne
+      const lines = existing.split('\n');
+      if (lines.some(l => {
+        const nl = norm(l);
+        return nl && (nl === key || nl.includes(key) || key.includes(nl));
+      })) return existing;
+    }
+    return existing ? existing + '\n' + clean : clean;
+  };
+
   _triSuggestions.forEach(s => {
-    if (!s.checked || !s.note) return;
+    if (!s.checked) return;
+    // s.note peut être null si _triNotes était vide — on utilise noteTexte en fallback
     const note     = s.note;
-    const original = s.noteTexte || note?.texte || '';
-    const titre    = (s.titre||'').trim();
-    // Pour avis et citation, le titre est la phrase choc IA — on ne le répète pas dans le texte sauvegardé
-    const contenuFinal = (titre && s.dest !== 'avis' && s.dest !== 'citation') ? `${titre}\n${original}` : original;
+    const extrait  = stripSave((s.contenu || '').trim());
+    const original = extrait || stripSave(s.noteTexte || note?.texte || '');
+    if (!original) return;
     const nom     = (s.nom_ou_titre||'').trim();
+    const titre   = (s.titre||'').trim();
+    // Phrase choc sauvegardée EN TÊTE pour perso/lieu/intrigue (pas pour avis/citation)
+    // La dédup se fait sur original uniquement, pas sur titre (titres différents ≠ doublon)
+    const TYPES_AVEC_TITRE = ['perso','lieu','intrigue','temps','theme','mot'];
+    const contenuFinal = (titre && TYPES_AVEC_TITRE.includes(s.dest)) ? titre + '\n' + original : original;
 
     switch(s.dest) {
       case 'perso': {
@@ -4044,7 +4185,7 @@ function appliquerTriSelectionne() {
           couleurIdx++;
           LIVRE_ACTIF.personnages.push(p);
         }
-        p.notes = p.notes ? p.notes + '\n' + contenuFinal : contenuFinal;
+        p.notes = appendUnique(p.notes, contenuFinal, original);
         break;
       }
       case 'lieu': {
@@ -4056,29 +4197,34 @@ function appliquerTriSelectionne() {
           couleurIdx++;
           LIVRE_ACTIF.lieux.push(l);
         }
-        l.notes = l.notes ? l.notes + '\n' + contenuFinal : contenuFinal;
+        l.notes = appendUnique(l.notes, contenuFinal, original);
         break;
       }
       case 'relation': {
-        // Trouver ou créer les deux personnages
-        const trouverOuCreerPerso = (nom) => {
-          if (!nom) return null;
-          let p = LIVRE_ACTIF.personnages.find(x => x.nom.toLowerCase() === nom.toLowerCase());
+        const normalise = (s) => (s||'').toLowerCase().replace(/['']/g,"'").trim();
+        // Cherche d'abord par nom exact (casse insensible), puis par "contient" (ex: "le clan" dans "Le clan")
+        const trouverOuCreerPerso = (nomBrut) => {
+          const n = stripSave(nomBrut || '').trim();
+          if (!n) return null;
+          let p = LIVRE_ACTIF.personnages.find(x => normalise(x.nom) === normalise(n));
+          if (!p) p = LIVRE_ACTIF.personnages.find(x => normalise(x.nom).includes(normalise(n)) || normalise(n).includes(normalise(x.nom)));
           if (!p) {
-            p = { id:'ent_'+Date.now().toString(36)+Math.random().toString(36).slice(2,4),
-                  nom, notes:'', couleur: COULEURS[couleurIdx % COULEURS.length] };
+            p = { id:'ent_'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),
+                  nom:n, notes:'', couleur: COULEURS[couleurIdx % COULEURS.length] };
             couleurIdx++;
             LIVRE_ACTIF.personnages.push(p);
           }
           return p;
         };
-        const pA = trouverOuCreerPerso(s.perso_a);
-        const pB = trouverOuCreerPerso(s.perso_b);
+        // Fallback si Claude utilise des noms de champs alternatifs
+        const nomA = s.perso_a || s.personnage_a || s.de || s.source || '';
+        const nomB = s.perso_b || s.personnage_b || s.vers || s.cible || '';
+        const pA = trouverOuCreerPerso(nomA);
+        const pB = trouverOuCreerPerso(nomB);
         if (pA && pB && pA.id !== pB.id) {
           const relType = RELATIONS.includes(s.relation_type) ? s.relation_type : '—';
           if (!LIVRE_ACTIF.matrice) LIVRE_ACTIF.matrice = {};
           LIVRE_ACTIF.matrice[pA.id + '__' + pB.id] = relType;
-          // Si une relation inverse est précisée dans contenu, on pourrait aussi la setter
         }
         break;
       }
@@ -4089,28 +4235,36 @@ function appliquerTriSelectionne() {
       }
       case 'citation': {
         if (!Array.isArray(LIVRE_ACTIF.citations)) LIVRE_ACTIF.citations = [];
-        const proc  = PROCEDES.find(p => p.nom.toLowerCase() === (s.procede||'').toLowerCase());
-        const theme = THEMES_LIST.find(t => t.toLowerCase() === (s.theme||'').toLowerCase()) || '—';
-        LIVRE_ACTIF.citations.push({
-          id:'cit_'+Date.now().toString(36),
-          texte: nom || original,
-          ref: s.page||'', theme,
-          procede: proc ? proc.nom : '—',
-          interpretation: titre || '',
-          importance:0
-        });
+        const texCit = (nom || original).trim();
+        // Dédupliquer : ne pas ajouter si texte identique ou très proche existe déjà
+        const dejaCit = LIVRE_ACTIF.citations.some(c =>
+          norm(c.texte||'') === norm(texCit) ||
+          norm(c.texte||'').includes(norm(texCit)) ||
+          norm(texCit).includes(norm(c.texte||''))
+        );
+        if (!dejaCit) {
+          const proc  = PROCEDES.find(p => p.nom.toLowerCase() === (s.procede||'').toLowerCase());
+          const theme = THEMES_LIST.find(t => t.toLowerCase() === (s.theme||'').toLowerCase()) || '—';
+          LIVRE_ACTIF.citations.push({
+            id:'cit_'+Date.now().toString(36),
+            texte: texCit,
+            ref: s.page||'', theme,
+            procede: proc ? proc.nom : '—',
+            interpretation: (s.titre||'').trim(),
+            importance:0
+          });
+        }
         break;
       }
       case 'avis': {
-        LIVRE_ACTIF.comprehension = (LIVRE_ACTIF.comprehension||'') + '\n\n' + contenuFinal;
+        LIVRE_ACTIF.comprehension = appendUnique(LIVRE_ACTIF.comprehension||'', contenuFinal);
         break;
       }
       case 'temps': {
-        LIVRE_ACTIF.temps = (LIVRE_ACTIF.temps||'') + '\n\n' + contenuFinal;
+        LIVRE_ACTIF.temps = appendUnique(LIVRE_ACTIF.temps||'', contenuFinal);
         break;
       }
       case 'intrigue': {
-        // Positionner dans la bonne phase du schéma actif
         if (!LIVRE_ACTIF.narration) LIVRE_ACTIF.narration = {};
         const phaseMap = {
           'exposition':       { aristote:'nar_a1', freytag:'nar_f1', moderne:'nar_m1' },
@@ -4119,22 +4273,24 @@ function appliquerTriSelectionne() {
           'action_descendante':{ aristote:'nar_a3',freytag:'nar_f4', moderne:'nar_m6' },
           'dénouement':       { aristote:'nar_a3', freytag:'nar_f5', moderne:'nar_m8' },
         };
-        const schema = LIVRE_ACTIF.schemaType || 'aristote';
+        const selSchema = document.getElementById('tri-schema-select');
+        const schema = (selSchema && selSchema.value) || LIVRE_ACTIF.schemaType || 'freytag';
         const phase  = s.phase || 'exposition';
         const key    = phaseMap[phase]?.[schema] || 'nar_a1';
-        const existing = LIVRE_ACTIF.narration[key] || '';
-        LIVRE_ACTIF.narration[key] = existing ? existing + '\n' + contenuFinal : contenuFinal;
+        LIVRE_ACTIF.narration[key] = appendUnique(LIVRE_ACTIF.narration[key]||'', contenuFinal, original);
         break;
       }
       case 'theme': {
-        LIVRE_ACTIF.comprehension = (LIVRE_ACTIF.comprehension||'') + '\n\n[Thème] ' + contenuFinal;
+        LIVRE_ACTIF.comprehension = appendUnique(LIVRE_ACTIF.comprehension||'', '[Thème] ' + contenuFinal);
         break;
       }
     }
 
     // Marquer la note comme triée
-    const noteInCarnet = LIVRE_ACTIF.carnet?.find(n => n.id === note.id);
-    if (noteInCarnet) noteInCarnet.sorted = true;
+    if (note?.id) {
+      const noteInCarnet = LIVRE_ACTIF.carnet?.find(n => n.id === note.id);
+      if (noteInCarnet) noteInCarnet.sorted = true;
+    }
     appliquees++;
   });
 
@@ -4252,6 +4408,14 @@ window.addEventListener('DOMContentLoaded', chargerMode);
     <div id="modal-tri-status" style="font-size:.75rem;color:#888;margin-bottom:12px;"></div>
     <div id="modal-tri-cards"></div>
     <div id="modal-tri-actions" style="display:none;margin-top:10px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:8px 10px;background:var(--tealC,#E0F2F1);border-radius:8px;font-size:.75rem;">
+        <span style="font-weight:800;color:#00838F;white-space:nowrap;">🎭 Schéma narratif cible :</span>
+        <select id="tri-schema-select" class="cit-select" style="flex:1;font-size:.73rem;" onchange="LIVRE_ACTIF&&(LIVRE_ACTIF.schemaType=this.value)&&sauvegarderBiblio()">
+          <option value="aristote">🏛️ Aristote (3 actes)</option>
+          <option value="freytag" selected>🔺 Freytag (5 actes)</option>
+          <option value="moderne">🌊 Arc moderne (8 étapes)</option>
+        </select>
+      </div>
       <button class="btn btn-violet btn-full" onclick="appliquerTriSelectionne()">✅ Appliquer les notes cochées</button>
       <button class="btn btn-gris btn-full" style="margin-top:6px;" onclick="fermerTriIA()">Fermer</button>
     </div>
