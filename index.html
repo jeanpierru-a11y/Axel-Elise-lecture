@@ -3785,7 +3785,7 @@ JSON uniquement, tableau concis. Exemple :
           contents:[{parts:[{text:
             'Tu es un assistant pédagogique. Réponds UNIQUEMENT en JSON valide, sans markdown, sans texte avant ou après.\n\n' + prompt
           }]}],
-          generationConfig:{ temperature:0.1, maxOutputTokens:4000 }
+          generationConfig:{ temperature:0.1, maxOutputTokens:4000, responseMimeType:'application/json' }
         })
       }
     );
