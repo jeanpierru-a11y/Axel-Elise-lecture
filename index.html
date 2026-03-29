@@ -918,6 +918,14 @@ body.mode-elise .only-elise{display:block;}
         </div>
       </div>
 
+      <div class="export-card">
+        <div class="card-title" style="color:var(--bleu);margin-bottom:6px;">📄 Exporter en PDF</div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-bleu" style="flex:1" onclick="genererPDF('couleur')">🎨 PDF couleur</button>
+          <button class="btn btn-gris" style="flex:1" onclick="genererPDF('sobre')">🖤 PDF sobre</button>
+        </div>
+      </div>
+
     </div>
 
     <!-- CARNET DE LECTURE -->
@@ -1317,7 +1325,7 @@ function sauvegarderBiblio() {
 // ════════════════════════════════════════════════════════
 // VERSION — incrémenter à chaque mise à jour des livres démo
 // ════════════════════════════════════════════════════════
-const DEMO_VERSION = 10; // v10 : correction citations démo (contenu réel requis)
+const DEMO_VERSION = 12; // v12 : redac Récit + Argumentatif Thérèse Desqueyroux et L'Adversaire
 const LIVRES_DEMO = [
   {
     id: 'liv_petit_prince_001',
@@ -1693,6 +1701,63 @@ const LIVRES_DEMO = [
       nar_m6: "Bernard, par intérêt pour le mariage d'Anne, décide de libérer Thérèse. Il lui propose un marché : elle jouera la comédie de la réconciliation lors du mariage, puis il l'amènera à Paris.",
       nar_m7: "Face à face avec Bernard, Thérèse tente de lui expliquer pourquoi elle a agi. Il ne comprend pas, ne peut pas comprendre. Le fossé entre eux est définitif.",
       nar_m8: "Bernard abandonne Thérèse sur un trottoir parisien avec de l'argent et une liberté vide. Elle allume une cigarette. Elle est libre — mais d'une liberté sans sens, sans direction. Le roman se ferme sur cette solitude ouverte."
+    },
+    redacType: 'argument',
+    redac: {
+      redac_r1: "Thérèse Desqueyroux sort du tribunal de Bordeaux après son acquittement. Son père l'attend dehors. Tout semble normal aux yeux de la famille : le scandale est évité. Mais Thérèse, dans le train qui la ramène chez Bernard, commence à réfléchir à ce qui l'a conduite jusqu'ici.",
+      redac_r2: "Dans le train, Thérèse reconstitue mentalement le passé : son mariage de convenance avec Bernard Desqueyroux, la naissance de leur fille Marie, ses promenades avec Jean Azévédo qui lui a ouvert les yeux sur l'étroitesse de sa vie. Elle se souvient aussi du moment où elle a commencé à ajouter des gouttes dans le verre de Bernard — presque sans le vouloir.",
+      redac_r3: "Bernard découvre l'empoisonnement. La famille choisit le silence et l'acquittement pour éviter le scandale. En échange, Thérèse est enfermée à Argelouse, séquestrée dans la maison familiale, coupée du monde. Elle maigrit, dépérit. Personne ne lui parle. C'est la punition la plus cruelle : non la prison légale, mais la solitude absolue.",
+      redac_r4: "Bernard, pour le mariage d'Anne, accepte de libérer Thérèse si elle joue le jeu de la réconciliation devant les familles. Face à face avec lui, Thérèse tente de lui expliquer pourquoi elle a agi. Il ne comprend pas. Il ne peut pas comprendre. Le fossé est définitif.",
+      redac_r5: "Bernard conduit Thérèse à Paris et l'abandonne sur un trottoir avec de l'argent. Elle allume une cigarette. Elle est libre — mais d'une liberté sans sens, sans destination. Mauriac ne conclut pas : Paris est-il une libération ou un exil différent ? Le roman se ferme sur cette question ouverte.",
+      redac_a1: "François Mauriac publie Thérèse Desqueyroux en 1927 et place le lecteur face à un paradoxe : son héroïne a tenté d'empoisonner son mari, et pourtant Mauriac lui dédie son livre. Ce roman nous invite à nous demander si Thérèse est vraiment coupable, ou si elle est avant tout une victime de la société qui l'a fabriquée.",
+      redac_a2: "Thérèse est coupable au sens pénal : elle a ajouté les gouttes dans le verre de Bernard. Elle ne le nie pas. Mais Mauriac montre que cet acte n'a pas de mobile compréhensible, même pour Thérèse elle-même. En 1927, une femme de la bourgeoisie landaise n'a aucune échappatoire légale : pas de divorce possible dans ce milieu, nulle liberté de parole, aucune vie propre. Son crime est la seule réponse disponible à une prison sans porte.",
+      redac_a3: "Ce qui rend Thérèse sympathique, c'est son intelligence et son honnêteté intérieure. Elle ne se justifie pas, ne ment pas à elle-même, ne cherche pas d'excuses. Cette lucidité sans illusion lui donne une dignité que les autres personnages n'ont pas — en particulier Bernard, borné et content de lui. Le lecteur finit par comprendre sans approuver.",
+      redac_a4: "Thérèse Desqueyroux est un roman moderne parce qu'il refuse de trancher. Mauriac ne condamne pas Thérèse, mais ne l'absout pas non plus. Il nous oblige à regarder la société bourgeoise catholique qui l'a produite et étouffée. La cigarette finale à Paris n'est pas un triomphe : c'est une liberté ambiguë, qui ressemble à une nouvelle solitude. Ce roman nous apprend que comprendre n'est pas excuser."
+    },
+    lineaire: {
+      intro1: "Thérèse Desqueyroux est un roman de François Mauriac, publié en 1927, qui s'inscrit dans le courant du roman psychologique catholique. Mauriac hérite à la fois du réalisme (analyse sociale) et du classicisme (analyse des passions) — il est souvent rapproché de Racine pour sa manière de disséquer les âmes.",
+      intro2: "L'extrait étudié est l'incipit du roman (chapitre I) : Thérèse sort du palais de justice après son acquittement, retrouve son père dans la nuit landaise, puis monte dans un train. Cet incipit est remarquable car il présente le personnage dans une situation paradoxale — libre légalement, prisonnière moralement et socialement.",
+      intro3: "Par quels procédés Mauriac installe-t-il dès l'incipit une atmosphère d'enfermement paradoxal, faisant de Thérèse une femme à la fois acquittée par la loi et condamnée par sa société ?",
+      intro4: "Ton sobre, légèrement oppressant — la nuit, la forêt, l'attente. Lire les phrases longues lentement, en laissant respirer les images de la nature. Marquer les pauses sur les mots du paysage (pins, résine, ténèbres). Accélérer sur les dialogues secs et froids du père.",
+      intro5: "Mvt 1 — L'acquittement paradoxal : liberté légale, prison sociale / Mvt 2 — La forêt comme espace symbolique d'enfermement / Mvt 3 — L'irruption de la conscience : le questionnement intérieur commence",
+      mvts: [
+        {
+          titre: "Mvt 1 — L'acquittement paradoxal (l.1-8)",
+          texte: "'Thérèse Desqueyroux' → Le nom complet comme incipit : présentation quasi judiciaire du personnage.\n→ In medias res : le récit commence après le procès. L'acte est connu ; son mobile reste à découvrir. Le suspense est psychologique, non criminel.\n→ Le père ne demande pas 'comment vas-tu ?' — il parle de 'cette histoire'. Euphémisme froid qui dit tout sur la loi du silence familiale.\n→ Procédé : parataxe et dialogues brefs. Effet de réel et froideur émotionnelle.\n→ Effet produit : dès la première page, la tension entre liberté légale (acquittement) et enfermement social (la famille, le regard) est installée. Thérèse est libre aux yeux de la loi, prisonnière aux yeux des siens."
+        },
+        {
+          titre: "Mvt 2 — La forêt comme prison naturelle (l.9-17)",
+          texte: "La forêt de pins landaise — nuit, odeur de résine, obscurité. Champ lexical de l'enfermement et du sombre.\n→ Paysage-état d'âme : la nature n'est pas un décor réaliste. Elle reflète la psychologie de Thérèse — oppressante, sans issue, belle et étouffante à la fois.\n→ Métaphore filée de la prison : les pins comme barreaux, la nuit comme l'avenir sans lumière. Ce motif traversera tout le roman.\n→ Procédé : personnification de la nature, accumulation d'images sensorielles (visuel, olfactif).\n→ Effet produit : le lecteur ressent physiquement l'atmosphère suffocante avant même que le destin de Thérèse soit explicité. Mauriac crée l'ambiance psychologique par la géographie."
+        },
+        {
+          titre: "Mvt 3 — L'irruption de la conscience intérieure (l.18-fin)",
+          texte: "Thérèse commence à se poser la question centrale du roman : pourquoi a-t-elle agi ?\n→ Style indirect libre : la frontière entre la voix du narrateur et la pensée de Thérèse s'efface délibérément. 'Elle n'avait pas voulu cela. Pourtant ses mains avaient agi.' — est-ce Mauriac qui constate ou Thérèse qui pense ?\n→ Focalisation interne : on ne voit que ce que Thérèse perçoit et ressent. Proximité émotionnelle intense.\n→ La conscience comme labyrinthe : Thérèse ne se comprend pas elle-même. Ce non-savoir est le moteur de tout le récit.\n→ Effet produit : la question narrative se déplace. Ce n'est plus 'est-elle coupable ?' mais 'pourquoi ?' — suspense psychologique plutôt que criminel."
+        }
+      ],
+      conclu1: "Mauriac construit un incipit qui installe paradoxalement une double prison : légale (Thérèse est acquittée) mais sociale et psychologique (elle est renvoyée chez Bernard, sous le regard de sa famille). La forêt, le style indirect libre et l'irruption de la conscience intérieure créent dès les premières pages une atmosphère d'enfermement insoluble. La réponse à notre problématique est claire : Mauriac ne pose pas la question de la culpabilité — il pose celle de la liberté impossible.",
+      conclu2: "On peut mettre cet incipit en relation avec celui de L'Étranger de Camus (1942) — 'Aujourd'hui, maman est morte' — autre incipit brutal qui refuse l'explication et place immédiatement le lecteur face à l'incompréhensible. Les deux textes font de l'acte sans mobile leur sujet central. On peut aussi relier cet incipit à Madame Bovary de Flaubert (1857) : même figure féminine enfermée dans sa condition sociale, même mouvement de la géographie vers l'intériorité — mais là où Flaubert condamne Emma, Mauriac défend Thérèse."
+    },
+    commentaire: {
+      amorce: "Dans la tradition littéraire française, l'incipit et la dédicace ont une valeur programmatique : ils établissent le pacte de lecture et engagent une posture éthique de l'auteur. Quand François Mauriac ouvre Thérèse Desqueyroux par une dédicace directe à son personnage fictif, il renverse la convention romanesque : l'auteur ne cache pas ses intentions — il les expose et prend parti pour la coupable avant même la première ligne.",
+      presentation: "François Mauriac (1885-1952), romancier catholique bordelais, publie Thérèse Desqueyroux en 1927. Ce roman psychologique court (novella) est ancré dans la lande girondine. Il raconte l'histoire d'une femme bourgeoise, Thérèse, qui a tenté d'empoisonner son mari sans pouvoir expliquer pourquoi. L'extrait étudié — la dédicace et l'incipit — installe immédiatement les tensions fondamentales de l'oeuvre.",
+      problematique: "Comment Mauriac, dès les premières pages de Thérèse Desqueyroux, construit-il un pacte de lecture fondé sur la compassion plutôt que sur le jugement moral, et par quels procédés invite-t-il le lecteur à prendre le parti de la coupable ?",
+      plan: "Dans un premier temps, nous étudierons comment la dédicace constitue un geste métatextuel inédit qui oriente toute la réception du roman (I). Dans un second temps, nous analyserons comment le style de Mauriac — paysage-état d'âme et style indirect libre — crée une proximité émotionnelle avec Thérèse (II). Dans un troisième temps, nous verrons comment ce dispositif fait du roman une critique sociale déguisée en psychologie individuelle (III).",
+      axes: [
+        {
+          titre: "I — La dédicace comme geste métatextuel et éthique",
+          texte: "Idée directrice : en dédiant le roman directement à son personnage fictif, Mauriac place le lecteur du côté de la coupable avant même la première page.\n→ Apostrophe directe : 'Je voudrais que tu ne sois pas seule, Thérèse.' — le personnage est traité comme une personne réelle qui a besoin d'une présence.\n→ Conditionnel 'je voudrais' : modestie, hésitation, respect. Mauriac accompagne sans s'imposer.\n→ Rupture conventionnelle : la dédicace dépasse la simple dédicace privée. Elle est un programme littéraire : ce roman ne condamne pas — il défend.\n→ Effet produit : le lecteur est prévenu avant de lire. Mauriac court-circuite le jugement moral spontané.\nTransition : Ce geste préfigure le dispositif stylistique de tout le roman — la focalisation interne qui place le lecteur à l'intérieur de la conscience de Thérèse."
+        },
+        {
+          titre: "II — Style indirect libre et paysage-état d'âme",
+          texte: "Idée directrice : Mauriac utilise deux procédés majeurs — le style indirect libre et le paysage-état d'âme — pour placer le lecteur à l'intérieur de la conscience de Thérèse.\n→ Style indirect libre : la frontière entre la voix du narrateur et la pensée de Thérèse est délibérément floue. 'Elle n'avait pas voulu cela. Pourtant ses mains avaient agi.' — ambiguïté calculée : identification précède jugement.\n→ Paysage-état d'âme : la lande de pins — sombre, odorante, étouffante — projette la psychologie de Thérèse. La nature mime le sentiment intérieur. Procédé romantique au service d'un roman psychologique.\n→ Phrases longues et sinueuses : la syntaxe épouse les méandres de la conscience. On suit la pensée de Thérèse sans qu'elle soit jamais transparente à elle-même.\n→ Effet produit : le lecteur éprouve de l'intérieur, non de l'extérieur.\nTransition : Cette technique de la proximité intérieure a une conséquence idéologique que Mauriac a parfaitement calculée."
+        },
+        {
+          titre: "III — Un roman psychologique comme critique sociale",
+          texte: "Idée directrice : sous l'apparence d'un roman d'intériorité, Thérèse Desqueyroux est une radiographie de la société bourgeoise catholique des années 1920.\n→ Le mariage de convenance : Thérèse n'a pas choisi Bernard. Elle a épousé 'les pins de Bernard' — l'union dynastique prime sur le sentiment.\n→ L'acquittement comme scandale moral inversé : la famille choisit l'acquittement non pour protéger Thérèse mais pour protéger son honneur. Justice familiale contre justice légale.\n→ La séquestration à Argelouse : punition privée. L'apparence prime sur la vérité — fonctionnement de la bourgeoisie catholique.\n→ Effet produit : Thérèse n'a aucune issue — ni légale, ni sociale, ni affective. Son crime est la réponse d'un être sans langage à une société qui refuse de l'entendre. La vraie accusée, c'est la société."
+        }
+      ],
+      bilan: "Dès les premières pages, Mauriac construit un dispositif littéraire fondé sur la compassion : dédicace directe, style indirect libre, paysage-état d'âme. Ces procédés placent le lecteur à l'intérieur de la conscience de Thérèse et l'empêchent de juger depuis l'extérieur. Ce faisant, Mauriac ne réhabilite pas le crime — il déplace la question : ce n'est plus 'Thérèse est-elle coupable ?' mais 'quelle société produit une Thérèse ?'",
+      ouverture: "On pourrait prolonger ce commentaire en lisant Le Deuxième Sexe de Simone de Beauvoir (1949) — pour mesurer à quel point Mauriac avait intuitivement compris, vingt-deux ans plus tôt, l'enfermement systémique de la femme dans la société bourgeoise. On peut aussi relier Thérèse à Madame Bovary (Flaubert, 1857) : deux femmes intelligentes, deux enfermements, deux destructions — mais Flaubert condamne là où Mauriac défend."
     }
   },
 
@@ -1791,6 +1856,63 @@ const LIVRES_DEMO = [
       nar_m6: "L'enquête révèle la vérité : dix-huit ans de mensonge absolu. La France découvre l'affaire. Carrère lit les journaux et commence à s'intéresser au cas Romand. Il commence à écrire des lettres à Romand en prison.",
       nar_m7: "Le procès a lieu en 1996. Romand est condamné à la réclusion criminelle à perpétuité. Carrère assiste au procès, rencontre Romand, continue à écrire. Romand se convertit à la religion catholique en prison.",
       nar_m8: "Carrère publie L'Adversaire en 2000. Le livre se termine sur une question ouverte : Romand est-il un monstre ou le produit extrême d'une société du paraître ? Carrère ne tranche pas — c'est au lecteur de décider."
+    },
+    redacType: 'argument',
+    redac: {
+      redac_r1: "Jean-Claude Romand vit en apparence une vie parfaite : médecin respecté à l'OMS à Genève, mari aimant, père de deux enfants, fils dévoué. Ses proches le croient. Il passe ses journées à travailler, à voyager. Personne ne vérifie rien.",
+      redac_r2: "En réalité, Romand a raté un examen de médecine en deuxième année, en 1975, et n'en a jamais parlé à personne. Depuis ce jour, il ment en permanence : il prétend être médecin, puis chercheur, puis expert à l'OMS. Il passe ses journées seul dans sa voiture, sur des aires d'autoroute, entre la France et la Suisse.",
+      redac_r3: "Pendant dix-huit ans, le mensonge s'accumule. Romand détourne l'argent de sa famille et de ses amis sous prétexte de placements. Les dettes grossissent. Sa maîtresse en Suisse commence à se méfier. Le 9 janvier 1993, incapable d'affronter la réalité, Romand tue sa femme, ses deux enfants et ses parents, puis tente de se suicider.",
+      redac_r4: "Romand survit. L'enquête révèle dix-huit ans de mensonge absolu. La France est sidérée. Emmanuel Carrère, écrivain, lit l'affaire dans les journaux en 1993 et commence à lui écrire des lettres en prison. Il assiste au procès en 1996. Romand est condamné à la réclusion criminelle à perpétuité.",
+      redac_r5: "Carrère publie L'Adversaire en 2000. Il ne conclut pas. Romand, en prison, s'est converti à la religion catholique. Est-ce sincère ou un dernier masque ? Romand est-il un monstre ou le symptôme extrême d'une société obsédée par le paraître ? Carrère pose la question — et laisse le lecteur décider.",
+      redac_a1: "En 2000, Emmanuel Carrère publie L'Adversaire, récit de l'affaire Jean-Claude Romand : un homme qui a vécu dix-huit ans dans un mensonge total avant de tuer toute sa famille le 9 janvier 1993. Ce livre soulève une question profondément dérangeante : peut-on comprendre quelqu'un qui a commis l'irréparable ? Et si oui, cette compréhension change-t-elle notre jugement moral ?",
+      redac_a2: "Ce qui rend Romand si troublant, c'est qu'il ne ressemble pas à un monstre. Il n'a pas tué par haine ou par avidité. Il a menti pendant dix-huit ans parce qu'il était incapable d'exister hors du regard des autres. Son identité entière reposait sur ce que les autres croyaient de lui. Quand le mensonge a menacé de s'effondrer, il a préféré tout détruire plutôt que d'affronter la réalité.",
+      redac_a3: "Carrère va plus loin : il reconnaît en Romand quelque chose qu'il ne peut pas nommer. Cette phrase est la plus déstabilisante du livre. Elle oblige le lecteur à se poser la même question : en quoi sommes-nous différents de Romand ? Les années 1990 ont vu monter une société du paraître où le statut social, le diplôme, la réussite sont devenus des identités à part entière. Romand n'est pas un cas isolé — il est la version extrême d'un vertige que beaucoup connaissent.",
+      redac_a4: "L'Adversaire est un livre qui dérange parce qu'il refuse le jugement simple. Comprendre Romand ne signifie pas l'excuser. Mais Carrère nous oblige à regarder la société qui l'a produit, et peut-être à reconnaître notre propre rapport au regard des autres. Ce récit impossible — comment raconter dix-huit ans de vide ? — devient, grâce à la sobriété du style et à l'honnêteté du narrateur, l'un des textes les plus nécessaires de la littérature française contemporaine."
+    },
+    lineaire: {
+      intro1: "L'Adversaire est un récit factuel d'Emmanuel Carrère, publié en 2000 aux éditions P.O.L. Il reçoit le Prix Fémina la même année. Ce texte appartient au courant de la littérature de non-fiction française contemporaine — souvent appelé 'autofiction' ou 'récit factuel'. Carrère refuse l'étiquette 'roman' : les faits sont réels, les victimes sont réelles.",
+      intro2: "L'extrait étudié est l'incipit du récit — les premières pages qui posent les meurtres commis par Jean-Claude Romand le 9 janvier 1993 et établissent la présence du narrateur. Son intérêt est double : il annonce d'emblée les faits bruts, et révèle immédiatement le projet de Carrère — déplacer le suspense du 'quoi' vers le 'pourquoi', et du 'lui' vers le 'nous'.",
+      intro3: "Par quels procédés Carrère construit-il un incipit qui déplace les enjeux narratifs du fait divers vers la compréhension de l'incompréhensible, tout en engageant sa propre responsabilité d'écrivain ?",
+      intro4: "Ton sobre, clinique — presque froid. Lire la première phrase lentement, en marquant chaque victime. Ne pas dramatiser : la sobriété est le procédé. Marquer les pauses avant les questions rhétoriques. Légère hésitation sur les modalisateurs ('peut-être', 'sans doute') — ce sont des aveux, pas des ornements.",
+      intro5: "Mvt 1 — L'énoncé clinique des faits (l.1-3) : la parataxe comme procédé d'horreur froide / Mvt 2 — Le déplacement du regard : du quoi vers le pourquoi (l.4-10) / Mvt 3 — L'irruption du narrateur : Carrère s'engage (l.11-fin)",
+      mvts: [
+        {
+          titre: "Mvt 1 — L'énoncé clinique des faits (l.1-3)",
+          texte: "'Le 9 janvier 1993, Jean-Claude Romand tua sa femme, ses deux enfants, et tenta de tuer ses parents.' → In medias res radical : le récit s'ouvre sur l'acte lui-même, sans mise en place ni présentation.\n→ Parataxe : trois propositions juxtaposées, chaque victime condensée en quelques mots. Aucune dramatisation.\n→ Passé simple 'tua' : temps du fait accompli, sans état d'âme narratif.\n→ Effet produit : la brutalité naît de la neutralité. L'horreur n'est pas amplifiée — elle est constatée. C'est la décision esthétique fondamentale de Carrère : ne pas dramatiser ce qui est déjà insoutenable.\n→ Lien avec problématique : le 'quoi' est posé dès la première ligne. Le suspense criminel classique est éliminé — ce qui s'annonce, c'est un autre type de suspense."
+        },
+        {
+          titre: "Mvt 2 — Le déplacement du regard : pourquoi ? (l.4-10)",
+          texte: "Description des journées de Romand sur les aires d'autoroute. 'Chaque jour pareil au précédent.' 'Peut-être ne savait-il pas lui-même où il était.'\n→ Ellipse temporelle : dix-huit ans de mensonge condensés en quelques lignes. La compression mime le vide.\n→ Répétition 'chaque jour' : la structure même de la phrase mime la répétition vide des journées de Romand.\n→ Modalisation 'peut-être' : aveu d'ignorance de Carrère. Il refuse l'omniscience romanesque — c'est une décision éthique autant que stylistique.\n→ Effet produit : le suspense se déplace. Ce n'est plus 'qu'a-t-il fait ?' (on le sait) mais 'qui était-il ?' et 'comment est-ce possible ?' — suspense de la compréhension."
+        },
+        {
+          titre: "Mvt 3 — L'irruption du narrateur (l.11-fin)",
+          texte: "Carrère s'introduit dans le récit en son propre nom : il était à Paris le 9 janvier 1993 quand il a lu l'affaire dans les journaux. Il reconnaissait quelque chose dans Romand qu'il ne pouvait pas nommer.\n→ Autofiction : le narrateur est simultanément personnage. Deux temporalités superposées — celle de Romand (1993) et celle de l'écrivain qui écrit (2000).\n→ Aveu troublant et incomplet : 'quelque chose qu'il ne pouvait pas nommer'. Le flou est délibéré — c'est la phrase la plus déstabilisante du livre.\n→ Effet produit : le lecteur ne peut pas maintenir une distance confortable. Carrère est impliqué. Le lecteur l'est aussi, par contagion. L'inconfort est la matière même du récit."
+        }
+      ],
+      conclu1: "Carrère construit un incipit qui élimine délibérément le suspense criminel classique — on sait ce qui s'est passé dès la première ligne — pour imposer un suspense d'un autre ordre : celui de la compréhension de l'incompréhensible. Par la parataxe clinique, la modalisation et l'irruption de sa propre voix, il fait du 'comment est-ce possible ?' le véritable sujet du récit. La réponse à notre problématique : Carrère construit un incipit qui déplace le fait divers vers la littérature en y engageant sa propre responsabilité.",
+      conclu2: "On peut mettre cet incipit en relation avec celui de De sang-froid de Truman Capote (1966) — autre récit factuel qui ouvre sur les meurtres pour déplacer l'enjeu vers la compréhension psychologique et sociale. Carrère s'inscrit dans cette tradition du New Journalism américain, qu'il porte à un niveau d'exigence éthique inédit en France. On peut aussi le relier à L'Étranger de Camus (1942) : deux incipit qui refusent l'explication, deux figures masculines opaques, deux récits qui font de l'acte sans mobile leur sujet central."
+    },
+    commentaire: {
+      amorce: "À la fin du XXe siècle, la littérature française se réinvente dans son rapport au réel. Après les expérimentations formelles du Nouveau Roman, une génération d'écrivains — Carrère, Ernaux, Vuillard — fait du réel son matériau premier. Cette évolution soulève une question éthique fondamentale : peut-on faire de la littérature avec des vies réelles, des meurtres réels, des victimes réelles ? Et si oui, à quelles conditions ?",
+      presentation: "Emmanuel Carrère (né en 1957 à Paris) est un écrivain français représentatif de la littérature de non-fiction contemporaine. Dans L'Adversaire, publié en 2000 et récompensé du Prix Fémina, il s'empare de l'affaire Jean-Claude Romand — un homme qui a vécu dix-huit ans dans un mensonge total avant de tuer toute sa famille le 9 janvier 1993. L'extrait étudié — l'incipit et la description des journées de Romand sur les aires d'autoroute — constitue le coeur stylistique et éthique du récit.",
+      problematique: "Comment Carrère, en décrivant le vide absolu des journées de Romand avec une sobriété clinique, fait-il de l'absence d'existence le véritable sujet de son récit, et interroge-t-il simultanément la responsabilité de l'écrivain face à la réalité ?",
+      plan: "Dans un premier temps, nous étudierons comment le style sobre et factuel de Carrère crée un effet d'horreur plus puissant que toute dramatisation (I). Dans un second temps, nous analyserons comment l'irruption du narrateur dans le récit constitue une posture éthique inédite en littérature française (II). Dans un troisième temps, nous verrons comment cet extrait fait du vide identitaire une figure de la condition humaine moderne (III).",
+      axes: [
+        {
+          titre: "I — La sobriété stylistique comme figure de l'horreur",
+          texte: "Idée directrice : Carrère choisit la neutralité stylistique comme procédé principal — et c'est cette neutralité qui génère l'effroi, plus efficacement que toute dramatisation.\n→ Parataxe et phrases courtes : les propositions sont juxtaposées sans lien logique ni affect apparent. Effet de réel journalistique.\n→ Ellipse temporelle : dix-huit ans de mensonge résumés en quelques lignes. 'Chaque jour pareil au précédent.' La compression mime le vide existentiel de Romand.\n→ Champ lexical du non-lieu : 'aires d'autoroute', 'entre la France et la Suisse', 'nulle part'. Romand habite l'espace de l'absence.\n→ Passé simple des faits bruts alternant avec l'imparfait de la répétition : la grammaire dit ce que Carrère ne commente pas.\n→ Effet produit : en ne dramatisant pas, Carrère laisse le réel produire son propre effroi. La sobriété est une décision esthétique et morale.\nTransition : Cette sobriété stylistique s'accompagne d'une décision narrative tout aussi radicale — celle de s'introduire lui-même dans le récit."
+        },
+        {
+          titre: "II — L'irruption du narrateur : une posture éthique inédite",
+          texte: "Idée directrice : en s'introduisant dans son propre récit, Carrère résout les deux problèmes constitutifs du récit factuel — l'omniscience impossible et la responsabilité éthique.\n→ Modalisation systématique : 'peut-être', 'sans doute', 'je suppose'. Carrère dit explicitement ce qu'il ne sait pas. Éthique du doute plutôt que fiction de la certitude.\n→ Aveu personnel : Carrère reconnaît en Romand quelque chose qu'il ne peut pas nommer. Phrase la plus déstabilisante du livre — l'identification n'est pas explicitée, elle est suggérée.\n→ Autofiction : deux temporalités superposées. Le récit a une géographie double — celle de Romand et celle de l'écrivain.\n→ Refus du genre 'roman' : Carrère appelle ce texte 'récit'. Les victimes sont réelles ; il n'a pas le droit de les romancer.\n→ Effet produit : le lecteur ne peut pas maintenir une distance confortable. Il est impliqué, comme Carrère.\nTransition : Cette implication dépasse la question stylistique — elle ouvre sur une réflexion profonde sur l'identité et la société du paraître."
+        },
+        {
+          titre: "III — Le vide comme condition humaine moderne",
+          texte: "Idée directrice : à travers Romand, Carrère fait du vide identitaire non un cas clinique isolé mais le révélateur d'une pathologie sociale — la société du paraître qui produit des identités fictives.\n→ Romand n'existe que dans le regard des autres : sa famille, ses parents, ses amis sont les auteurs involontaires de son identité fictive. Paradoxe : le personnage n'a d'existence que par l'extérieur.\n→ Les non-lieux : aires d'autoroute, parkings, frontières — Romand habite des espaces sans identité, entre deux mondes. Référence implicite à Marc Augé (Non-Lieux, 1992).\n→ Chiasme fondamental : 'Il avait construit une existence entière sur un mensonge. Et ce mensonge était lui.' — le mensonge n'est pas un masque sur une vraie identité : il EST l'identité. C'est le vertige central du livre.\n→ Effet produit : Romand n'est pas un monstre d'exception — il est la version extrême d'un vertige que la société du paraître (diplômes, statut, réussite comme marqueurs identitaires) produit à toutes les échelles."
+        }
+      ],
+      bilan: "Carrère construit dans L'Adversaire un récit qui fait de la sobriété stylistique, de la modalisation et de l'irruption du narrateur les outils d'une éthique littéraire inédite. En refusant de dramatiser, en disant ce qu'il ne sait pas, en s'exposant lui-même, il ne fait pas de Romand un monstre littéraire — il en fait un miroir déformant tendu à la société du paraître. Ce faisant, il répond à notre problématique : le style factuel n'est pas un effacement de la littérature — c'est sa forme la plus exigeante.",
+      ouverture: "On pourrait prolonger ce commentaire en lisant D'autres vies que la mienne (Carrère, 2009), où il applique la même méthode à des deuils ordinaires — confirmant que L'Adversaire n'est pas un livre sur un monstre mais la fondation d'une poétique du réel. On peut aussi l'associer aux Années d'Annie Ernaux (2008), autre grande entreprise de la littérature française contemporaine : faire du réel un matériau littéraire à part entière, avec la même exigence éthique sur ce que l'écrivain doit à ceux dont il s'empare."
     }
   }
 ];
@@ -1866,6 +1988,25 @@ function mettreAJourLivresDemo() {
       if (aVraiContenu(existant.redac))         majour.redac         = existant.redac;
       if (existant.redacType) majour.redacType = existant.redacType;
       if (existant.schemaType) majour.schemaType = existant.schemaType;
+
+      // lineaire et commentaire : préserver UNIQUEMENT si l'élève a saisi du contenu
+      // (sinon on garde le contenu démo fraîchement copié dans majour)
+      const aContenuLineaire = (obj) => {
+        if (!obj || typeof obj !== 'object') return false;
+        const hasFields = ['intro1','intro2','intro3','intro4','intro5','conclu1','conclu2']
+          .some(k => obj[k] && obj[k].trim());
+        const hasMvts = Array.isArray(obj.mvts) && obj.mvts.some(m => (m.titre||'').trim() || (m.texte||'').trim());
+        return hasFields || hasMvts;
+      };
+      const aContenuCommentaire = (obj) => {
+        if (!obj || typeof obj !== 'object') return false;
+        const hasFields = ['amorce','presentation','problematique','plan','bilan','ouverture']
+          .some(k => obj[k] && obj[k].trim());
+        const hasAxes = Array.isArray(obj.axes) && obj.axes.some(a => (a.titre||'').trim() || (a.texte||'').trim());
+        return hasFields || hasAxes;
+      };
+      if (aContenuLineaire(existant.lineaire))       majour.lineaire     = existant.lineaire;
+      if (aContenuCommentaire(existant.commentaire)) majour.commentaire  = existant.commentaire;
 
       // Personnages : garder les démo (déjà dans majour) + ajouter ceux créés par l'utilisateur
       const idsDemo = demo.personnages.map(p => p.id);
@@ -2630,7 +2771,10 @@ function genererPDF(style) {
      </div>`;
 
   const champ = (label, val) => val ?
-    `<div class="field-row"><b>${label} :</b><span>${br(val)}</span></div>` : '';
+    '<div style="margin-bottom:9px;">' +
+    '<div style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:#555;margin-bottom:2px;">' + label + '</div>' +
+    '<div style="font-size:12px;line-height:1.7;color:#333;white-space:pre-wrap;">' + br(val) + '</div>' +
+    '</div>' : '';
 
   const dissAxel = () => {
     const d = L.dissertation || {};
@@ -2850,9 +2994,7 @@ function genererPDF(style) {
   .ent{border-left:3px solid #333;padding:6px 10px;margin-bottom:7px;background:${nb?'#f9f9f9':'#fafcff'};border-radius:0 6px 6px 0;}
   .ent-nom{font-weight:800;font-size:.88rem;margin-bottom:2px;}
   .ent-notes{font-size:.80rem;line-height:1.55;color:#444;}
-  .field-row{display:flex;gap:6px;margin-bottom:7px;font-size:12px;align-items:flex-start;}
-  .field-row b{white-space:nowrap;min-width:120px;color:${nb?'#333':P.bleu};flex-shrink:0;}
-  .field-row span{color:#333;line-height:1.6;}
+  .field-block{margin-bottom:9px;}
   .diss-sujet{background:${nb?'#f0f0f0':'#F3E5F5'};border-radius:6px;padding:8px 12px;margin-bottom:10px;font-size:12px;font-weight:700;}
   .diss-step{border-left:3px solid #ccc;padding:5px 10px;margin-bottom:7px;background:${nb?'#fafafa':'#fdfdfd'};}
   .diss-label{font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px;}
@@ -2879,15 +3021,28 @@ function genererPDF(style) {
   ${L.genre  ? `<span>📚 ${h(L.genre)}</span>` : ''}
   ${L.pages  ? `<span>📄 ${h(L.pages)} pages</span>` : ''}
   ${L.annee  ? `<span>🕰️ ${h(L.annee)}</span>` : ''}
-  ${L.courant? `<span>🖊️ ${h(L.courant)}</span>` : ''}
 </div>
 ${body_html}
 <div class="pdf-footer">Guide de lecture · ${h(L.titre||'')} · généré le ${new Date().toLocaleDateString('fr-FR')}</div>
 </body></html>`;
 
-  const win = window.open('', '_blank');
-  win.document.write(html);
-  win.document.close();
+  try {
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url  = URL.createObjectURL(blob);
+    const win  = window.open(url, '_blank');
+    if (!win) {
+      // Popup bloqué — fallback : lien de téléchargement
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = (L.titre || 'guide') + '.html';
+      a.click();
+    }
+    // Libérer la mémoire après ouverture
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  } catch(e) {
+    console.error('genererPDF error:', e);
+    showToast('Erreur PDF : ' + e.message, 'warn');
+  }
 }
 
 
@@ -3610,6 +3765,11 @@ function fbInit(code, cfg) {
       const tsLocal  = BIBLIO.tsMaj  || 0;
       if (tsRemote > tsLocal) {
         BIBLIO = { livres: remote.livres, demoVersion: remote.demoVersion || BIBLIO.demoVersion, tsMaj: tsRemote };
+        // Appliquer les mises à jour démo si nécessaire
+        if ((BIBLIO.demoVersion || 0) < DEMO_VERSION) {
+          mettreAJourLivresDemo();
+          BIBLIO.demoVersion = DEMO_VERSION;
+        }
         try { localStorage.setItem('axel_biblio', JSON.stringify(BIBLIO)); } catch(e){}
         renderBiblio();
         // Si un livre est ouvert, le rafraîchir si besoin
@@ -3677,6 +3837,11 @@ async function fbPull(force) {
     const tsLocal  = BIBLIO.tsMaj  || 0;
     if (force || tsRemote > tsLocal) {
       BIBLIO = { livres: remote.livres, demoVersion: remote.demoVersion || BIBLIO.demoVersion, tsMaj: tsRemote };
+      // Appliquer les mises à jour démo (nouveaux champs lineaire/commentaire, etc.)
+      if ((BIBLIO.demoVersion || 0) < DEMO_VERSION) {
+        mettreAJourLivresDemo();
+        BIBLIO.demoVersion = DEMO_VERSION;
+      }
       try { localStorage.setItem('axel_biblio', JSON.stringify(BIBLIO)); } catch(e){}
       renderBiblio();
       setSyncBadge('ok', '☁️ Synchro ✓');
@@ -4885,6 +5050,7 @@ function fermerExempleDiss() {
 }
 
 
+chargerBiblio();
 renderBiblio();
 initRedacZones();
 renderSchemaPhases();
