@@ -675,6 +675,7 @@ body.mode-elise .only-elise{display:block;}
       <div class="mots-subtab-bar" id="ecrire-tabs" style="margin-bottom:14px;">
         <button class="mots-subtab" id="etab-diss" onclick="showEcrirePanel('diss',this)" style="color:var(--violet);">✍️ Dissertation</button>
         <button class="mots-subtab" id="etab-redac" onclick="showEcrirePanel('redac',this)">📖 Rédaction</button>
+        <button class="mots-subtab only-elise" id="etab-lineaire" onclick="showEcrirePanel('lineaire',this)" style="color:#00838F;">🔍 Analyse linéaire</button>
       </div>
 
       <!-- ══ VERSION AXEL (6ème) ══ -->
@@ -938,6 +939,7 @@ body.mode-elise .only-elise{display:block;}
       <div class="mots-subtab-bar" id="ecrire-tabs-redac" style="margin-bottom:14px;">
         <button class="mots-subtab" id="etab-diss2" onclick="showEcrirePanel('diss',this)" style="">✍️ Dissertation</button>
         <button class="mots-subtab active" id="etab-redac2" onclick="showEcrirePanel('redac',this)" style="color:#2E7D32;">📖 Rédaction</button>
+        <button class="mots-subtab only-elise" id="etab-lineaire2" onclick="showEcrirePanel('lineaire',this)" style="color:#00838F;">🔍 Analyse linéaire</button>
       </div>
       <div class="card" style="border-left:4px solid var(--vert);">
         <div class="card-title" style="color:var(--vert)">✍️ Rédaction guidée</div>
@@ -982,6 +984,81 @@ body.mode-elise .only-elise{display:block;}
         </div>
       </div>
     </div>
+
+    <!-- ANALYSE LINÉAIRE (Élise - 2nde) -->
+    <div class="section only-elise" id="sec-lineaire">
+      <div class="card" style="border-left:5px solid #00838F;">
+        <div class="card-title" style="color:#00838F;">🔍 Analyse linéaire — Bac oral</div>
+        <p style="font-size:.78rem;color:#888;margin-bottom:14px;line-height:1.6;">Méthode en 5 étapes pour l'introduction, puis développement mouvement par mouvement, puis conclusion en deux parties.</p>
+
+        <!-- INTRODUCTION -->
+        <div style="background:#E0F7FA;border-radius:10px;padding:12px 14px;margin-bottom:14px;">
+          <div style="font-weight:800;color:#00838F;font-size:.82rem;margin-bottom:10px;">① INTRODUCTION</div>
+
+          <div style="font-size:.73rem;font-weight:700;color:#00838F;margin-bottom:4px;">1. Présentation de l'œuvre</div>
+          <textarea class="field" rows="2" style="margin-bottom:10px;resize:vertical;" placeholder="Titre, auteur, siècle, genre, courant littéraire…"
+            oninput="if(LIVRE_ACTIF){if(!LIVRE_ACTIF.lineaire)LIVRE_ACTIF.lineaire={};LIVRE_ACTIF.lineaire.intro1=this.value;sauvegarderBiblio();}"
+            id="lin-intro1"></textarea>
+
+          <div style="font-size:.73rem;font-weight:700;color:#00838F;margin-bottom:4px;">2. Présentation de l'extrait et son intérêt</div>
+          <textarea class="field" rows="2" style="margin-bottom:10px;resize:vertical;" placeholder="De quel passage s'agit-il ? Pourquoi est-il intéressant dans l'œuvre ?"
+            oninput="if(LIVRE_ACTIF){if(!LIVRE_ACTIF.lineaire)LIVRE_ACTIF.lineaire={};LIVRE_ACTIF.lineaire.intro2=this.value;sauvegarderBiblio();}"
+            id="lin-intro2"></textarea>
+
+          <div style="font-size:.73rem;font-weight:700;color:#00838F;margin-bottom:4px;">3. Problématique <span style="font-weight:400;font-style:italic;color:#888;">("Par quels moyens…", "Quels procédés…", "Comment l'écrivain…" → nous montre / révèle / construit…)</span></div>
+          <textarea class="field" rows="2" style="margin-bottom:10px;resize:vertical;" placeholder='Ex : "Par quels procédés l'auteur nous montre-t-il que…"'
+            oninput="if(LIVRE_ACTIF){if(!LIVRE_ACTIF.lineaire)LIVRE_ACTIF.lineaire={};LIVRE_ACTIF.lineaire.intro3=this.value;sauvegarderBiblio();}"
+            id="lin-intro3"></textarea>
+
+          <div style="font-size:.73rem;font-weight:700;color:#00838F;margin-bottom:4px;">4. Lecture expressive <span style="font-weight:400;font-style:italic;color:#888;">(à l'oral — note ici tes indications de ton, rythme, pauses…)</span></div>
+          <textarea class="field" rows="2" style="margin-bottom:10px;resize:vertical;" placeholder="Ton général, passages à marquer, effets de voix particuliers…"
+            oninput="if(LIVRE_ACTIF){if(!LIVRE_ACTIF.lineaire)LIVRE_ACTIF.lineaire={};LIVRE_ACTIF.lineaire.intro4=this.value;sauvegarderBiblio();}"
+            id="lin-intro4"></textarea>
+
+          <div style="font-size:.73rem;font-weight:700;color:#00838F;margin-bottom:4px;">5. Les mouvements du texte</div>
+          <textarea class="field" rows="2" style="margin-bottom:4px;resize:vertical;" placeholder="Ex : Mvt 1 (l.1-8) — Description / Mvt 2 (l.9-15) — Montée de la tension / Mvt 3 (l.16-fin) — Retournement"
+            oninput="if(LIVRE_ACTIF){if(!LIVRE_ACTIF.lineaire)LIVRE_ACTIF.lineaire={};LIVRE_ACTIF.lineaire.intro5=this.value;sauvegarderBiblio();}"
+            id="lin-intro5"></textarea>
+        </div>
+
+        <!-- DÉVELOPPEMENT -->
+        <div style="background:#F3E5F5;border-radius:10px;padding:12px 14px;margin-bottom:14px;">
+          <div style="font-weight:800;color:#6A1B9A;font-size:.82rem;margin-bottom:6px;">② DÉVELOPPEMENT — analyse mouvement par mouvement</div>
+          <p style="font-size:.72rem;color:#888;margin-bottom:10px;line-height:1.55;">
+            Suis le texte <b>ligne par ligne</b>. Appuie-toi sur des <b>citations précises</b>. Interprète les procédés. 
+            <b style="color:#6A1B9A;">NE DÉCRIRE QUE CE QUI A DU SENS POUR TA PROBLÉMATIQUE.</b>
+          </p>
+          <div id="lin-mvts-container"></div>
+          <button class="btn btn-sm" style="background:var(--violetC);color:var(--violet);font-weight:800;margin-top:6px;" onclick="ajouterMouvement()">＋ Ajouter un mouvement</button>
+        </div>
+
+        <!-- CONCLUSION -->
+        <div style="background:#E8F5E9;border-radius:10px;padding:12px 14px;margin-bottom:14px;">
+          <div style="font-weight:800;color:#2E7D32;font-size:.82rem;margin-bottom:10px;">③ CONCLUSION</div>
+
+          <div style="font-size:.73rem;font-weight:700;color:#2E7D32;margin-bottom:4px;">Réponse à la problématique</div>
+          <textarea class="field" rows="3" style="margin-bottom:10px;resize:vertical;" placeholder="Reprends ta problématique et réponds-y clairement en résumant les points clés de ton analyse."
+            oninput="if(LIVRE_ACTIF){if(!LIVRE_ACTIF.lineaire)LIVRE_ACTIF.lineaire={};LIVRE_ACTIF.lineaire.conclu1=this.value;sauvegarderBiblio();}"
+            id="lin-conclu1"></textarea>
+
+          <div style="font-size:.73rem;font-weight:700;color:#2E7D32;margin-bottom:4px;">Ouverture ❗ <span style="font-weight:400;font-style:italic;color:#888;">(autre poème / auteur, actualisation, place dans le monde actuel, autre œuvre littéraire ou artistique…)</span></div>
+          <textarea class="field" rows="3" style="margin-bottom:4px;resize:vertical;" placeholder="Ex : On peut mettre cet extrait en relation avec… / Cela fait écho à… / Dans notre monde actuel…"
+            oninput="if(LIVRE_ACTIF){if(!LIVRE_ACTIF.lineaire)LIVRE_ACTIF.lineaire={};LIVRE_ACTIF.lineaire.conclu2=this.value;sauvegarderBiblio();}"
+            id="lin-conclu2"></textarea>
+        </div>
+      </div>
+
+      <div class="card" style="background:var(--jauneC);border:1.5px solid var(--jaune);">
+        <div class="card-title" style="color:var(--jaune)">💡 Rappel méthode</div>
+        <p style="font-size:.8rem;line-height:1.7;color:#555;">
+          <b>Procédé → Citation → Interprétation.</b> Toujours dans cet ordre.<br>
+          <b>Ne jamais paraphraser</b> — citer le texte exactement, entre guillemets.<br>
+          <b>Chaque observation doit servir la problématique.</b> Si ça ne répond pas à la question, ne le dis pas.<br>
+          <b>La conclusion n'est pas un résumé</b> — c'est une réponse et une ouverture.
+        </p>
+      </div>
+    </div>
+
   </div><!-- fin content -->
 </div><!-- fin screen-guide -->
 
@@ -1936,8 +2013,10 @@ function showEcrirePanel(panel, btnEl) {
   window._lastEcritPanel = panel;
   document.getElementById('sec-dissertation')?.classList.remove('active');
   document.getElementById('sec-redaction')?.classList.remove('active');
-  const secId = panel === 'diss' ? 'sec-dissertation' : 'sec-redaction';
+  document.getElementById('sec-lineaire')?.classList.remove('active');
+  const secId = panel === 'diss' ? 'sec-dissertation' : panel === 'lineaire' ? 'sec-lineaire' : 'sec-redaction';
   document.getElementById(secId)?.classList.add('active');
+  if (panel === 'lineaire') loadLineaire();
   document.querySelectorAll('#ecrire-tabs .mots-subtab, #ecrire-tabs-redac .mots-subtab')
     .forEach(b => b.classList.remove('active'));
   document.getElementById('etab-' + panel)?.classList.add('active');
@@ -2644,6 +2723,60 @@ function initRedacZones() {
         'oninput="saveRedac(\'' + key + '\',this.value)">' +
       '</textarea>';
   });
+}
+
+// ── Analyse linéaire ────────────────────────────────────
+function loadLineaire() {
+  const L = LIVRE_ACTIF;
+  if (!L) return;
+  const d = L.lineaire || {};
+  ['intro1','intro2','intro3','intro4','intro5','conclu1','conclu2'].forEach(k => {
+    const el = document.getElementById('lin-' + k);
+    if (el) el.value = d[k] || '';
+  });
+  renderMouvements();
+}
+
+function renderMouvements() {
+  const L = LIVRE_ACTIF;
+  if (!L) return;
+  if (!L.lineaire) L.lineaire = {};
+  if (!Array.isArray(L.lineaire.mvts)) L.lineaire.mvts = [];
+  const container = document.getElementById('lin-mvts-container');
+  if (!container) return;
+  container.innerHTML = '';
+  L.lineaire.mvts.forEach((mvt, i) => {
+    const div = document.createElement('div');
+    div.style.cssText = 'background:#fff;border:1.5px solid #CE93D8;border-radius:8px;padding:10px 12px;margin-bottom:10px;';
+    div.innerHTML = `
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+        <span style="font-weight:800;color:#6A1B9A;font-size:.78rem;">Mouvement ${i+1}</span>
+        <input class="field" style="flex:1;padding:4px 8px;font-size:.75rem;" placeholder="Titre + lignes (ex: La montée de la tension, l.5-12)"
+          value="${esc(mvt.titre||'')}"
+          oninput="if(LIVRE_ACTIF&&LIVRE_ACTIF.lineaire&&LIVRE_ACTIF.lineaire.mvts[${i}]){LIVRE_ACTIF.lineaire.mvts[${i}].titre=this.value;sauvegarderBiblio();}">
+        <button class="btn btn-rouge btn-xs" onclick="supprimerMouvement(${i})">🗑️</button>
+      </div>
+      <textarea class="field" rows="4" style="resize:vertical;font-size:.78rem;" placeholder="Citation → Procédé → Interprétation&#10;Ex: &#34;le loup bondit&#34; (l.8) → champ lexical de la violence → montre l'animalité du personnage"
+        oninput="if(LIVRE_ACTIF&&LIVRE_ACTIF.lineaire&&LIVRE_ACTIF.lineaire.mvts[${i}]){LIVRE_ACTIF.lineaire.mvts[${i}].texte=this.value;sauvegarderBiblio();}"
+      >${esc(mvt.texte||'')}</textarea>`;
+    container.appendChild(div);
+  });
+}
+
+function ajouterMouvement() {
+  if (!LIVRE_ACTIF) return;
+  if (!LIVRE_ACTIF.lineaire) LIVRE_ACTIF.lineaire = {};
+  if (!Array.isArray(LIVRE_ACTIF.lineaire.mvts)) LIVRE_ACTIF.lineaire.mvts = [];
+  LIVRE_ACTIF.lineaire.mvts.push({ titre:'', texte:'' });
+  sauvegarderBiblio();
+  renderMouvements();
+}
+
+function supprimerMouvement(i) {
+  if (!LIVRE_ACTIF?.lineaire?.mvts) return;
+  LIVRE_ACTIF.lineaire.mvts.splice(i, 1);
+  sauvegarderBiblio();
+  renderMouvements();
 }
 
 function setTypeRedac(type) {
