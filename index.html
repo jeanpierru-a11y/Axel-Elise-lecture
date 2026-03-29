@@ -27,9 +27,36 @@ html,body{height:100%;overflow:hidden;}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gris);color:var(--texte);display:flex;flex-direction:column;}
 
 /* ── ONGLET MOTS — 3 SOUS-ZONES ── */
-.mots-subtab-bar{display:flex;gap:0;border-bottom:2px solid var(--gris2);margin-bottom:12px;}
-.mots-subtab{flex:1;padding:8px 6px;font-size:.72rem;font-weight:800;color:#444;background:none;border:none;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;font-family:inherit;white-space:nowrap;}
-.mots-subtab.active{color:var(--violet);border-bottom-color:var(--violet);}
+.mots-subtab-bar{display:flex;gap:3px;align-items:flex-end;border-bottom:3px solid var(--gris2);margin-bottom:14px;padding:0 2px;position:sticky;top:0;z-index:50;background:#fff;box-shadow:0 3px 10px rgba(0,0,0,.12);margin:-12px -12px 14px;padding:12px 12px 0;}
+.mots-subtab{
+  flex:1;
+  padding:9px 8px 10px;
+  font-size:.8rem;
+  font-weight:800;
+  color:#666;
+  background:var(--gris);
+  border:2px solid var(--gris2);
+  border-bottom:none;
+  border-radius:8px 8px 0 0;
+  cursor:pointer;
+  font-family:inherit;
+  white-space:nowrap;
+  text-align:center;
+  margin-bottom:-3px;
+  transition:background .15s,color .15s,transform .1s;
+  position:relative;
+  line-height:1.3;
+}
+.mots-subtab:hover{background:#e8e8f0;color:var(--violet);transform:translateY(-1px);}
+.mots-subtab.active{
+  background:#fff;
+  color:var(--violet);
+  border-color:var(--gris2);
+  border-bottom:3px solid #fff;
+  z-index:2;
+  transform:translateY(-2px);
+  box-shadow:0 -2px 8px rgba(106,27,154,.10);
+}
 .mots-panel{display:none;}
 .mots-panel.active{display:block;}
 /* Tableau thématique */
@@ -371,6 +398,15 @@ body.mode-elise .only-elise{display:block;}
     <button class="tab" onclick="showTab('pdf',this)">🖨️ PDF</button>
   </div>
 
+  <!-- Sous-onglets Écrire — hors du scroll, entre le menu principal et le contenu -->
+  <div id="ecrire-tabs" style="display:none;flex-shrink:0;border-bottom:3px solid var(--gris2);background:#fff;padding:0 12px;">
+    <div style="display:flex;gap:3px;align-items:flex-end;max-width:100%;">
+      <button class="mots-subtab" id="etab-diss" onclick="showEcrirePanel('diss',this)" style="color:var(--violet);">✍️ Dissertation</button>
+      <button class="mots-subtab" id="etab-redac" onclick="showEcrirePanel('redac',this)">📖 Rédaction</button>
+      <button class="mots-subtab only-elise" id="etab-lineaire" onclick="showEcrirePanel('lineaire',this)" style="color:#00838F;">🔍 Analyse linéaire</button>
+      <button class="mots-subtab only-elise" id="etab-commentaire" onclick="showEcrirePanel('commentaire',this)" style="color:#AD1457;">📝 Commentaire litt.</button>
+    </div>
+  </div>
   <div id="content">
 
     <!-- LIVRE -->
@@ -432,6 +468,26 @@ body.mode-elise .only-elise{display:block;}
             placeholder="Ex. : Mauriac utilise un style sobre et dense. Les phrases sont souvent longues, sinueuses, comme le monologue intérieur de Thérèse. Le point de vue est interne : on voit tout depuis la conscience de Thérèse. Figures récurrentes : métaphores de l'étouffement et de la prison (la forêt = la cage), ironie douce-amère…"
             oninput="saveLivreElise()"></textarea>
         </div>
+      </div>
+
+      <!-- Narrateurs & Focalisations — Livre Élise -->
+      <div class="card only-elise" style="border:1.5px solid #00838F;">
+        <details>
+          <summary style="font-weight:800;color:#00838F;font-size:.82rem;cursor:pointer;padding:2px 0;">🎥 Narrateurs &amp; Focalisations — aide-mémoire</summary>
+          <div style="margin-top:12px;font-size:.78rem;line-height:1.7;color:#444;">
+            <b style="color:#00838F;">Types de narrateur</b><br>
+            <b>Narrateur interne</b> (→ pronom « je » / « nous ») : personnage de l'histoire. Ne connaît que ce que le personnage connaît.<br>
+            <b>Narrateur externe</b> (→ pronom « il » / « elle » / « ils ») : n'est pas un personnage. Libre de choisir sa focalisation.<br>
+            <hr style="margin:8px 0;border:none;border-top:1px solid #b2dfdb;">
+            <b style="color:#00838F;">Types de focalisation</b><br>
+            <b>Interne</b> — à travers les yeux d'un personnage. Accès à ses pensées. Connaissance limitée.<br>
+            <span style="font-style:italic;color:#888;">Ex : Thérèse Desqueyroux.</span><br><br>
+            <b>Externe</b> — comme une caméra. Seuls les faits, pas d'accès aux pensées.<br>
+            <span style="font-style:italic;color:#888;">Ex : « Deux hommes parurent… » (Flaubert)</span><br><br>
+            <b>Zéro (omnisciente)</b> — sait tout : caractère, passé, avenir de tous les personnages.<br>
+            <span style="font-style:italic;color:#888;">Ex : Balzac, Tolstoï.</span>
+          </div>
+        </details>
       </div>
 
       <div class="export-card">
@@ -671,12 +727,9 @@ body.mode-elise .only-elise{display:block;}
 
 
     <!-- DISSERTATION -->
-    <div class="section" id="sec-dissertation">
-      <div class="mots-subtab-bar" id="ecrire-tabs" style="margin-bottom:14px;">
-        <button class="mots-subtab" id="etab-diss" onclick="showEcrirePanel('diss',this)" style="color:var(--violet);">✍️ Dissertation</button>
-        <button class="mots-subtab" id="etab-redac" onclick="showEcrirePanel('redac',this)">📖 Rédaction</button>
-        <button class="mots-subtab only-elise" id="etab-lineaire" onclick="showEcrirePanel('lineaire',this)" style="color:#00838F;">🔍 Analyse linéaire</button>
-      </div>
+    <div class="section" id="sec-ecrire-wrap">
+      <!-- panneau dissertation -->
+      <div id="sec-dissertation" style="display:none;">
 
       <!-- ══ VERSION AXEL (6ème) ══ -->
       <div class="only-axel">
@@ -838,16 +891,29 @@ body.mode-elise .only-elise{display:block;}
           </div>
         </div>
 
-        <!-- Connecteurs -->
+        <!-- Connecteurs + Types de plan + Verbes -->
         <div class="card" style="background:var(--jauneC);border:1.5px solid var(--jaune)">
-          <div class="card-title" style="color:var(--jaune)">💡 Connecteurs logiques</div>
+          <div class="card-title" style="color:var(--jaune)">💡 Outils de la dissertation</div>
           <div style="font-size:.78rem;line-height:1.8;color:#555;">
+            <b>Connecteurs :</b><br>
             <b>Introduire :</b> D'abord • En premier lieu • Tout d'abord<br>
-            <b>Ajouter :</b> De plus • Par ailleurs • En outre • Également<br>
+            <b>Ajouter :</b> De plus • Par ailleurs • En outre • En effet<br>
             <b>Opposer :</b> En revanche • Cependant • Néanmoins • Pourtant<br>
-            <b>Conséquence :</b> Ainsi • Donc • Par conséquent • C'est pourquoi<br>
+            <b>Conséquence :</b> Ainsi • Dès lors • Par conséquent • C'est pourquoi<br>
             <b>Concéder :</b> Certes • Il est vrai que • On peut admettre que<br>
-            <b>Conclure :</b> En définitive • En conclusion • Pour conclure • Finalement
+            <b>Conclure :</b> En définitive • En conclusion • Finalement
+          </div>
+          <hr style="margin:10px 0;border:none;border-top:1px solid #e0c060;">
+          <div style="font-size:.78rem;line-height:1.8;color:#555;">
+            <b>Verbes d'analyse :</b> montrer • suggérer • défendre • nuancer • contester • interroger • opposer • dépasser • illustrer • démontrer • révéler • mettre en tension • déconstruire • dramatiser<br>
+          </div>
+          <hr style="margin:10px 0;border:none;border-top:1px solid #e0c060;">
+          <div style="font-size:.78rem;line-height:1.8;color:#555;">
+            <b>Types de plan :</b><br>
+            <b>Dialectique :</b> Thèse → Antithèse → Dépassement (le plus courant au Bac)<br>
+            <b>Analytique :</b> Constat → Causes → Conséquences<br>
+            <b>Thématique :</b> Différents aspects d'une même notion<br>
+            <b style="color:#E65100;">Plan de secours :</b> I. Pourquoi la thèse du sujet semble valable → II. Ses limites et nuances → III. Une réponse plus fine et dépassée
           </div>
         </div>
       </div>
@@ -932,15 +998,20 @@ body.mode-elise .only-elise{display:block;}
           <b>Arc moderne (8 étapes)</b> : le plus précis — donne un mot sur chaque moment clé du récit.
         </p>
       </div>
+
+      <div class="export-card">
+        <div class="card-title" style="color:var(--bleu);margin-bottom:6px;">📄 Exporter en PDF</div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-bleu" style="flex:1" onclick="genererPDF('couleur')">🎨 PDF couleur</button>
+          <button class="btn btn-gris" style="flex:1" onclick="genererPDF('sobre')">🖤 PDF sobre</button>
+        </div>
+      </div>
     </div>
 
     <!-- RÉDACTION -->
-    <div class="section" id="sec-redaction">
-      <div class="mots-subtab-bar" id="ecrire-tabs-redac" style="margin-bottom:14px;">
-        <button class="mots-subtab" id="etab-diss2" onclick="showEcrirePanel('diss',this)" style="">✍️ Dissertation</button>
-        <button class="mots-subtab active" id="etab-redac2" onclick="showEcrirePanel('redac',this)" style="color:#2E7D32;">📖 Rédaction</button>
-        <button class="mots-subtab only-elise" id="etab-lineaire2" onclick="showEcrirePanel('lineaire',this)" style="color:#00838F;">🔍 Analyse linéaire</button>
-      </div>
+      <!-- panneau rédaction -->
+      <div id="sec-redaction" style="display:none;">
+
       <div class="card" style="border-left:4px solid var(--vert);">
         <div class="card-title" style="color:var(--vert)">✍️ Rédaction guidée</div>
         <p style="font-size:.78rem;color:#888;margin-bottom:10px;">Deux types de rédaction : <b>Récit</b> (raconter une histoire) ou <b>Texte argumentatif</b> (donner son avis). Sélectionne le type puis dicte dans chaque zone.</p>
@@ -976,17 +1047,18 @@ body.mode-elise .only-elise{display:block;}
         </p>
       </div>
 
+
       <div class="export-card">
-        <div class="card-title" style="color:var(--bleu);margin-bottom:6px;">📄 Exporter la rédaction</div>
+        <div class="card-title" style="color:var(--bleu);margin-bottom:6px;">📄 Exporter en PDF</div>
         <div style="display:flex;gap:8px;">
-          <button class="btn btn-bleu" style="flex:1" onclick="exportPDF('couleur')">🎨 PDF couleur</button>
-          <button class="btn btn-gris" style="flex:1" onclick="exportPDF('nb')">⬜ PDF noir/blanc</button>
+          <button class="btn btn-bleu" style="flex:1" onclick="genererPDF('couleur')">🎨 PDF couleur</button>
+          <button class="btn btn-gris" style="flex:1" onclick="genererPDF('sobre')">🖤 PDF sobre</button>
         </div>
       </div>
     </div>
 
-    <!-- ANALYSE LINÉAIRE (Élise - 2nde) -->
-    <div class="section only-elise" id="sec-lineaire">
+      <!-- panneau analyse linéaire -->
+      <div id="sec-lineaire" style="display:none;" class="only-elise">
       <div class="card" style="border-left:5px solid #00838F;">
         <div class="card-title" style="color:#00838F;">🔍 Analyse linéaire — Bac oral</div>
         <p style="font-size:.78rem;color:#888;margin-bottom:14px;line-height:1.6;">Méthode en 5 étapes pour l'introduction, puis développement mouvement par mouvement, puis conclusion en deux parties.</p>
@@ -1057,8 +1129,121 @@ body.mode-elise .only-elise{display:block;}
           <b>La conclusion n'est pas un résumé</b> — c'est une réponse et une ouverture.
         </p>
       </div>
+
+      <div class="card" style="border:1.5px solid #00838F;">
+        <details>
+          <summary style="font-weight:800;color:#00838F;font-size:.82rem;cursor:pointer;padding:2px 0;">🎥 Narrateurs &amp; Focalisations — aide-mémoire</summary>
+          <div style="margin-top:12px;font-size:.78rem;line-height:1.7;color:#444;">
+            <b style="color:#00838F;">Types de narrateur</b><br>
+            <b>Narrateur interne</b> (→ pronom « je » / « nous ») : personnage de l'histoire. Il ne connaît que ce que le personnage connaît.<br>
+            <b>Narrateur externe</b> (→ pronom « il » / « elle » / « ils ») : n'est pas un personnage. Libre de choisir sa focalisation.<br>
+            <hr style="margin:8px 0;border:none;border-top:1px solid #b2dfdb;">
+            <b style="color:#00838F;">Types de focalisation</b><br>
+            <b>Interne</b> — récit à travers les yeux d'un personnage. Accès à ses pensées et sentiments. Connaissance limitée au personnage.<br>
+            <span style="font-style:italic;color:#888;">Ex : Thérèse Desqueyroux — tout filtré par la conscience de Thérèse.</span><br><br>
+            <b>Externe</b> — récit comme une caméra. Seuls les faits. Pas d'accès aux pensées ni sentiments.<br>
+            <span style="font-style:italic;color:#888;">Ex : « Deux hommes parurent. L'un venait de la Bastille… » (Flaubert)</span><br><br>
+            <b>Zéro (omnisciente)</b> — narrateur sait tout : caractère, passé, avenir de tous les personnages. Il en sait plus qu'eux.<br>
+            <span style="font-style:italic;color:#888;">Ex : Romans réalistes de Balzac, Tolstoï.</span><br>
+            <hr style="margin:8px 0;border:none;border-top:1px solid #b2dfdb;">
+            <b style="color:#888;font-size:.72rem;">Rappel : narrateur ≠ auteur. Le narrateur est une instance fictive qui prend en charge le récit.</b>
+          </div>
+        </details>
+      </div>
+
+      <div class="export-card">
+        <div class="card-title" style="color:var(--bleu);margin-bottom:6px;">📄 Exporter en PDF</div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-bleu" style="flex:1" onclick="genererPDF('couleur')">🎨 PDF couleur</button>
+          <button class="btn btn-gris" style="flex:1" onclick="genererPDF('sobre')">🖤 PDF sobre</button>
+        </div>
+      </div>
     </div>
 
+      <!-- panneau commentaire littéraire -->
+      <div id="sec-commentaire" style="display:none;" class="only-elise">
+      <div class="card" style="border-left:5px solid #AD1457;">
+        <div class="card-title" style="color:#AD1457;">📝 Commentaire littéraire — Bac écrit</div>
+        <p style="font-size:.78rem;color:#888;margin-bottom:14px;line-height:1.6;">
+          Le commentaire n'est pas une paraphrase ni un résumé : c'est une <b>argumentation fondée sur le texte</b> qui articule le <i>quoi</i> (contenu), le <i>comment</i> (procédés) et le <i>pourquoi</i> (intention, effet).
+        </p>
+
+        <!-- INTRODUCTION -->
+        <div style="background:#FCE4EC;border-radius:10px;padding:12px 14px;margin-bottom:14px;">
+          <div style="font-weight:800;color:#AD1457;font-size:.82rem;margin-bottom:10px;">① INTRODUCTION <span style="font-weight:400;font-size:.72rem;color:#888;">(10–12 lignes min. — progression en entonnoir : du général au particulier)</span></div>
+
+          <div style="font-size:.73rem;font-weight:700;color:#AD1457;margin-bottom:4px;">1. Amorce <span style="font-weight:400;font-style:italic;color:#888;">(contexte culturel ou esthétique large : mouvement, topos, problématique d'époque)</span></div>
+          <textarea class="field" rows="2" style="margin-bottom:10px;resize:vertical;" placeholder="Ex : Au XIXe siècle, le réalisme cherche à représenter la société dans toute sa complexité…"
+            oninput="if(LIVRE_ACTIF){if(!LIVRE_ACTIF.commentaire)LIVRE_ACTIF.commentaire={};LIVRE_ACTIF.commentaire.amorce=this.value;sauvegarderBiblio();}"
+            id="com-amorce"></textarea>
+
+          <div style="font-size:.73rem;font-weight:700;color:#AD1457;margin-bottom:4px;">2. Présentation <span style="font-weight:400;font-style:italic;color:#888;">(auteur + dates + genre littéraire + œuvre + titre + date + situation de l'extrait + thème)</span></div>
+          <textarea class="field" rows="2" style="margin-bottom:10px;resize:vertical;" placeholder="Ex : Gustave Flaubert, romancier réaliste du XIXe s., publie Madame Bovary en 1857. L'extrait étudié, au chapitre III, présente…"
+            oninput="if(LIVRE_ACTIF){if(!LIVRE_ACTIF.commentaire)LIVRE_ACTIF.commentaire={};LIVRE_ACTIF.commentaire.presentation=this.value;sauvegarderBiblio();}"
+            id="com-presentation"></textarea>
+
+          <div style="font-size:.73rem;font-weight:700;color:#AD1457;margin-bottom:4px;">3. Problématique <span style="font-weight:400;font-style:italic;color:#888;">(question de sens — jamais descriptive)</span></div>
+          <div style="font-size:.7rem;color:#888;margin-bottom:6px;padding:5px 8px;background:#fff;border-radius:6px;">
+            ❌ « Comment l'auteur décrit-il un paysage ? »<br>
+            ✅ « Comment la description d'un paysage devient-elle l'occasion d'une méditation existentielle ? »
+          </div>
+          <textarea class="field" rows="2" style="margin-bottom:10px;resize:vertical;" placeholder="Nous nous demanderons comment… / Par quels moyens l'auteur…"
+            oninput="if(LIVRE_ACTIF){if(!LIVRE_ACTIF.commentaire)LIVRE_ACTIF.commentaire={};LIVRE_ACTIF.commentaire.problematique=this.value;sauvegarderBiblio();}"
+            id="com-problematique"></textarea>
+
+          <div style="font-size:.73rem;font-weight:700;color:#AD1457;margin-bottom:4px;">4. Annonce du plan <span style="font-weight:400;font-style:italic;color:#888;">(2 ou 3 axes — progressive, sans lourdeur mécanique)</span></div>
+          <textarea class="field" rows="2" style="margin-bottom:4px;resize:vertical;" placeholder="Dans un premier temps, nous étudierons… Dans un second temps, nous analyserons…"
+            oninput="if(LIVRE_ACTIF){if(!LIVRE_ACTIF.commentaire)LIVRE_ACTIF.commentaire={};LIVRE_ACTIF.commentaire.plan=this.value;sauvegarderBiblio();}"
+            id="com-plan"></textarea>
+        </div>
+
+        <!-- DÉVELOPPEMENT -->
+        <div style="background:#F3E5F5;border-radius:10px;padding:12px 14px;margin-bottom:14px;">
+          <div style="font-weight:800;color:#6A1B9A;font-size:.82rem;margin-bottom:6px;">② DÉVELOPPEMENT — axes</div>
+          <p style="font-size:.72rem;color:#888;margin-bottom:10px;line-height:1.55;">
+            Chaque paragraphe : <b>Idée directrice → Citation courte intégrée → Procédé → Analyse/interprétation → Transition</b>.<br>
+            <b style="color:#6A1B9A;">Ne jamais séparer fond et forme. Ne jamais paraphraser.</b>
+          </p>
+          <div id="com-axes-container"></div>
+          <button class="btn btn-sm" style="background:var(--violetC);color:var(--violet);font-weight:800;margin-top:6px;" onclick="ajouterAxeCommentaire()">＋ Ajouter un axe</button>
+        </div>
+
+        <!-- CONCLUSION -->
+        <div style="background:#E8F5E9;border-radius:10px;padding:12px 14px;margin-bottom:14px;">
+          <div style="font-weight:800;color:#2E7D32;font-size:.82rem;margin-bottom:10px;">③ CONCLUSION <span style="font-weight:400;font-size:.72rem;color:#888;">(5–7 lignes)</span></div>
+
+          <div style="font-size:.73rem;font-weight:700;color:#2E7D32;margin-bottom:4px;">Bilan — réponse à la problématique</div>
+          <textarea class="field" rows="3" style="margin-bottom:10px;resize:vertical;" placeholder="Synthèse claire de l'analyse en réponse directe à la problématique posée."
+            oninput="if(LIVRE_ACTIF){if(!LIVRE_ACTIF.commentaire)LIVRE_ACTIF.commentaire={};LIVRE_ACTIF.commentaire.bilan=this.value;sauvegarderBiblio();}"
+            id="com-bilan"></textarea>
+
+          <div style="font-size:.73rem;font-weight:700;color:#2E7D32;margin-bottom:4px;">Ouverture</div>
+          <textarea class="field" rows="2" style="margin-bottom:4px;resize:vertical;" placeholder="Élargissement vers une autre œuvre du même auteur, un mouvement littéraire voisin, une question esthétique ou philosophique connexe…"
+            oninput="if(LIVRE_ACTIF){if(!LIVRE_ACTIF.commentaire)LIVRE_ACTIF.commentaire={};LIVRE_ACTIF.commentaire.ouverture=this.value;sauvegarderBiblio();}"
+            id="com-ouverture"></textarea>
+        </div>
+      </div>
+
+      <div class="card" style="background:var(--jauneC);border:1.5px solid var(--jaune);">
+        <div class="card-title" style="color:var(--jaune)">💡 Erreurs à éviter absolument</div>
+        <p style="font-size:.8rem;line-height:1.7;color:#555;">
+          <b>Jamais de paraphrase</b> — on n'explique pas le texte, on l'interprète.<br>
+          <b>Jamais de « je »</b> — utiliser « nous » ou une formulation neutre.<br>
+          <b>Citations brèves et intégrées</b> — jamais coupées, jamais seules sans commentaire.<br>
+          <b>Procédé → Citation → Interprétation</b> — toujours dans cet ordre.<br>
+          <b>Chaque partie = fond ET forme</b> — ne jamais analyser les idées sans les procédés.
+        </p>
+      </div>
+      <div class="export-card">
+        <div class="card-title" style="color:var(--bleu);margin-bottom:6px;">📄 Exporter en PDF</div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-bleu" style="flex:1" onclick="genererPDF('couleur')">🎨 PDF couleur</button>
+          <button class="btn btn-gris" style="flex:1" onclick="genererPDF('sobre')">🖤 PDF sobre</button>
+        </div>
+      </div>
+    </div>
+
+    </div><!-- fin sec-ecrire-wrap -->
   </div><!-- fin content -->
 </div><!-- fin screen-guide -->
 
@@ -1982,16 +2167,20 @@ function saveDiss() {
 // ════════════════════════════════════════════════════════
 function showTab(id, tabEl) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  // Masquer la barre d'onglets Écrire quand on quitte cet onglet
+  const tabBar = document.getElementById('ecrire-tabs');
+  if (tabBar && id !== 'ecrire') tabBar.style.display = 'none';
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
 
   if (id === 'ecrire') {
     const last = window._lastEcritPanel || 'diss';
-    const secId = last === 'diss' ? 'sec-dissertation' : 'sec-redaction';
-    document.getElementById(secId)?.classList.add('active');
-    document.querySelectorAll('#ecrire-tabs .mots-subtab, #ecrire-tabs-redac .mots-subtab')
-      .forEach(b => b.classList.remove('active'));
-    document.getElementById('etab-' + last)?.classList.add('active');
-    document.getElementById('etab-' + last + '2')?.classList.add('active');
+    // Afficher la barre d'onglets (sibling du wrapper)
+    const tabBar = document.getElementById('ecrire-tabs');
+    if (tabBar) tabBar.style.display = 'flex';
+    // Le wrapper s'active comme une section normale
+    document.getElementById('sec-ecrire-wrap')?.classList.add('active');
+    // Déléguer l'affichage du bon panneau
+    showEcrirePanel(last, document.getElementById('etab-' + last));
   } else {
     document.getElementById('sec-' + id)?.classList.add('active');
   }
@@ -2011,16 +2200,25 @@ function showTab(id, tabEl) {
 
 function showEcrirePanel(panel, btnEl) {
   window._lastEcritPanel = panel;
-  document.getElementById('sec-dissertation')?.classList.remove('active');
-  document.getElementById('sec-redaction')?.classList.remove('active');
-  document.getElementById('sec-lineaire')?.classList.remove('active');
-  const secId = panel === 'diss' ? 'sec-dissertation' : panel === 'lineaire' ? 'sec-lineaire' : 'sec-redaction';
-  document.getElementById(secId)?.classList.add('active');
+  // Masquer tous les panneaux
+  ['sec-dissertation','sec-redaction','sec-lineaire','sec-commentaire'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  // Remonter en haut de la zone de défilement
+  document.getElementById('content')?.scrollTo({ top: 0, behavior: 'instant' });
+  // Afficher le panneau cible
+  const panelId = panel === 'diss' ? 'sec-dissertation'
+                : panel === 'lineaire' ? 'sec-lineaire'
+                : panel === 'commentaire' ? 'sec-commentaire'
+                : 'sec-redaction';
+  const el = document.getElementById(panelId);
+  if (el) el.style.display = 'block';
   if (panel === 'lineaire') loadLineaire();
-  document.querySelectorAll('#ecrire-tabs .mots-subtab, #ecrire-tabs-redac .mots-subtab')
-    .forEach(b => b.classList.remove('active'));
+  if (panel === 'commentaire') loadCommentaire();
+  // Mettre à jour les onglets actifs
+  document.querySelectorAll('#ecrire-tabs .mots-subtab').forEach(b => b.classList.remove('active'));
   document.getElementById('etab-' + panel)?.classList.add('active');
-  document.getElementById('etab-' + panel + '2')?.classList.add('active');
 }
 
 // ════════════════════════════════════════════════════════
@@ -2723,6 +2921,61 @@ function initRedacZones() {
         'oninput="saveRedac(\'' + key + '\',this.value)">' +
       '</textarea>';
   });
+}
+
+// ── Commentaire littéraire ──────────────────────────────
+function loadCommentaire() {
+  const L = LIVRE_ACTIF;
+  if (!L) return;
+  const d = L.commentaire || {};
+  ['amorce','presentation','problematique','plan','bilan','ouverture'].forEach(k => {
+    const el = document.getElementById('com-' + k);
+    if (el) el.value = d[k] || '';
+  });
+  renderAxesCommentaire();
+}
+
+function renderAxesCommentaire() {
+  const L = LIVRE_ACTIF;
+  if (!L) return;
+  if (!L.commentaire) L.commentaire = {};
+  if (!Array.isArray(L.commentaire.axes)) L.commentaire.axes = [];
+  const container = document.getElementById('com-axes-container');
+  if (!container) return;
+  container.innerHTML = '';
+  L.commentaire.axes.forEach((axe, i) => {
+    const div = document.createElement('div');
+    div.style.cssText = 'background:#fff;border:1.5px solid #CE93D8;border-radius:8px;padding:10px 12px;margin-bottom:10px;';
+    const rn = i => Math.random().toString(36).slice(2,6);
+    div.innerHTML = `
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+        <span style="font-weight:800;color:#6A1B9A;font-size:.78rem;">Axe ${i+1}</span>
+        <input class="field" style="flex:1;padding:4px 8px;font-size:.75rem;" placeholder="Titre de l\'axe (ex: La mise en scène du désespoir)"
+          value="${esc(axe.titre||'')}"
+          oninput="if(LIVRE_ACTIF?.commentaire?.axes?.[${i}]!=null){LIVRE_ACTIF.commentaire.axes[${i}].titre=this.value;sauvegarderBiblio();}">
+        <button class="btn btn-rouge btn-xs" onclick="supprimerAxeCommentaire(${i})">🗑️</button>
+      </div>
+      <textarea class="field" rows="5" style="resize:vertical;font-size:.78rem;" placeholder="Idée directrice / Procédé → Citation → Interprétation / Transition vers l\'axe suivant"
+        oninput="if(LIVRE_ACTIF?.commentaire?.axes?.[${i}]!=null){LIVRE_ACTIF.commentaire.axes[${i}].texte=this.value;sauvegarderBiblio();}"
+      >${esc(axe.texte||'')}</textarea>`;
+    container.appendChild(div);
+  });
+}
+
+function ajouterAxeCommentaire() {
+  if (!LIVRE_ACTIF) return;
+  if (!LIVRE_ACTIF.commentaire) LIVRE_ACTIF.commentaire = {};
+  if (!Array.isArray(LIVRE_ACTIF.commentaire.axes)) LIVRE_ACTIF.commentaire.axes = [];
+  LIVRE_ACTIF.commentaire.axes.push({ titre:'', texte:'' });
+  sauvegarderBiblio();
+  renderAxesCommentaire();
+}
+
+function supprimerAxeCommentaire(i) {
+  if (!LIVRE_ACTIF?.commentaire?.axes) return;
+  LIVRE_ACTIF.commentaire.axes.splice(i, 1);
+  sauvegarderBiblio();
+  renderAxesCommentaire();
 }
 
 // ── Analyse linéaire ────────────────────────────────────
@@ -3688,31 +3941,43 @@ const THEMES_LIST = ['—','Amour / Sentiments','Pouvoir / Domination','Liberté
 
 const PROCEDES = [
   {nom:'—',def:'',ex:''},
-  {nom:'Métaphore',def:'Comparaison implicite entre deux réalités sans « comme » ni « tel que ». L\'une remplace l\'autre.',ex:'<b>Ex. :</b> « La vie est un naufrage. »<br><b>Effet :</b> image forte, révèle une ressemblance cachée.'},
-  {nom:'Comparaison',def:'Rapprochement explicite de deux réalités à l\'aide d\'un mot outil (comme, tel, ainsi que…).',ex:'<b>Ex. :</b> « Il est fort comme un lion. »<br><b>Effet :</b> illustre une qualité, crée une image claire.'},
-  {nom:'Personnification',def:'Attribution de caractéristiques humaines à un être inanimé, un animal ou une abstraction.',ex:'<b>Ex. :</b> « La lune nous regardait tristement. »<br><b>Effet :</b> anime le décor, crée une connivence entre nature et personnage.'},
-  {nom:'Hyperbole',def:'Exagération volontaire pour frapper l\'imagination ou renforcer une idée.',ex:'<b>Ex. :</b> « Je l\'ai dit mille fois. »<br><b>Effet :</b> insistance, effet comique ou dramatique.'},
-  {nom:'Litote',def:'Dire moins pour faire entendre plus. On atténue l\'expression pour suggérer quelque chose de fort.',ex:'<b>Ex. :</b> « Va, je ne te hais point. » (Corneille) = je t\'aime.<br><b>Effet :</b> suggestion, pudeur, ironie douce.'},
-  {nom:'Antithèse',def:'Opposition de deux idées, mots ou images dans un même énoncé pour créer un contraste.',ex:'<b>Ex. :</b> « Je vis, je meurs ; je me brûle et me noie. » (Louise Labé)<br><b>Effet :</b> met en valeur un conflit, une tension.'},
-  {nom:'Oxymore',def:'Alliance de deux termes contradictoires appliqués au même objet.',ex:'<b>Ex. :</b> « Cette obscure clarté qui tombe des étoiles. » (Corneille)<br><b>Effet :</b> paradoxe saisissant, traduit une réalité complexe.'},
-  {nom:'Anaphore',def:'Répétition d\'un mot ou groupe de mots au début de plusieurs propositions successives.',ex:'<b>Ex. :</b> « Paris ! Paris outragé ! Paris brisé ! Paris martyrisé ! »<br><b>Effet :</b> insistance, rythme, émotion croissante.'},
-  {nom:'Chiasme',def:'Structure symétrique inversée ABBA.',ex:'<b>Ex. :</b> « Il faut manger pour vivre et non vivre pour manger. »<br><b>Effet :</b> balance, mise en relief d\'une vérité.'},
-  {nom:'Gradation',def:'Suite de termes ou d\'idées de force croissante (ascendante) ou décroissante (descendante).',ex:'<b>Ex. :</b> « Il frémit, pâlit, tremble, s\'évanouit. »<br><b>Effet :</b> intensité progressive, dramatisation.'},
-  {nom:'Allitération',def:'Répétition de la même consonne dans des mots proches.',ex:'<b>Ex. :</b> « Pour qui sont ces serpents qui sifflent sur vos têtes ? » (Racine)<br><b>Effet :</b> musicalité, renforcement d\'une atmosphère.'},
-  {nom:'Assonance',def:'Répétition du même son vocalique dans des mots proches.',ex:'<b>Ex. :</b> « Les sanglots longs des violons de l\'automne. » (Verlaine)<br><b>Effet :</b> mélodie, langueur, émotion.'},
-  {nom:'Euphémisme',def:'Atténuation d\'une réalité dure par une formulation plus douce.',ex:'<b>Ex. :</b> « Il nous a quittés. » (= il est mort)<br><b>Effet :</b> adoucit, contourne une réalité difficile.'},
-  {nom:'Ironie',def:'On dit le contraire de ce qu\'on pense pour se moquer ou critiquer.',ex:'<b>Ex. :</b> « Quelle brillante idée ! » (dit sarcastiquement)<br><b>Effet :</b> critique voilée, distance, humour.'},
-  {nom:'Périphrase',def:'Expression développée qui remplace un mot simple.',ex:'<b>Ex. :</b> « Le roi des animaux » (= le lion)<br><b>Effet :</b> mise en valeur, élégance stylistique.'},
-  {nom:'Ellipse',def:'Omission d\'éléments grammaticaux pour un effet de brièveté.',ex:'<b>Ex. :</b> « Parti sans un mot. »<br><b>Effet :</b> rapidité, tension, style nerveux.'},
-  {nom:'Style indirect libre',def:'Discours intérieur d\'un personnage fondu dans la narration, sans marqueur ni guillemets.',ex:'<b>Ex. :</b> « Elle rentra. Pourquoi lui avait-il dit cela ? C\'était injuste. »<br><b>Effet :</b> proximité avec le personnage, ambiguïté.'},
-  {nom:'Focalisation interne',def:'Le narrateur adopte le point de vue d\'un personnage : on ne sait que ce que ce personnage sait.',ex:'<b>Ex. :</b> Thérèse Desqueyroux — tout est filtré par la conscience de Thérèse.<br><b>Effet :</b> intimité, empathie, subjectivité.'},
-  {nom:'In medias res',def:'Technique narrative qui commence au cœur de l\'action, sans introduction chronologique.',ex:'<b>Ex. :</b> L\'Adversaire commence le jour des meurtres.<br><b>Effet :</b> tension immédiate, déplacement du suspense.'},
-  {nom:'Analepse (flashback)',def:'Retour en arrière dans la narration.',ex:'<b>Ex. :</b> Dans Thérèse Desqueyroux, le trajet en train est une longue analepse.<br><b>Effet :</b> révélation progressive, compréhension des motivations.'},
-  {nom:'Prolepse (anticipation)',def:'Anticipation narrative — on raconte un événement futur.',ex:'<b>Ex. :</b> « Plus tard, il comprendrait que ce jour avait tout changé. »<br><b>Effet :</b> suspense, sentiment de destin inéluctable.'},
-  {nom:'Champ lexical',def:'Ensemble de mots qui appartiennent au même domaine de sens.',ex:'<b>Ex. :</b> Champ lexical de la mer : flot, vague, nager, sel, tempête.<br><b>Effet :</b> insistance sur un thème, révèle les obsessions de l\'auteur.'},
-  {nom:'Registre lyrique',def:'Registre qui exprime les sentiments personnels avec intensité.',ex:'<b>Ex. :</b> Les poèmes de Lamartine sur le deuil.<br><b>Effet :</b> émotion, subjectivité.'},
-  {nom:'Registre tragique',def:'Registre qui met en scène un destin inéluctable et douloureux.',ex:'<b>Ex. :</b> La fin de Thérèse Desqueyroux. Phèdre de Racine.<br><b>Effet :</b> pitié, terreur, grandeur dans la souffrance.'},
-  {nom:'Registre ironique / satirique',def:'Registre qui critique en utilisant l\'humour ou l\'exagération.',ex:'<b>Ex. :</b> Candide de Voltaire. Les planètes des adultes dans Le Petit Prince.<br><b>Effet :</b> dénonciation voilée, complicité avec le lecteur.'},
+  {nom:'Métaphore',def:'Rapprochement de deux réalités sans outil de comparaison — l\'une remplace l\'autre. Quand développée sur plusieurs phrases : <b>métaphore filée</b>.',ex:'<b>Ex. :</b> « Mon âme est un tombeau. » (Baudelaire)<br><b>Effet :</b> image forte, révèle une ressemblance cachée.'},
+  {nom:'Comparaison',def:'Rapprochement explicite de deux réalités à l\'aide d\'un outil (<i>comme, tel, pareil à, semblable à…</i>) et d\'un point de comparaison.',ex:'<b>Ex. :</b> « Le poète est semblable au Prince des nuées. » (Baudelaire)<br>« Sa barbe était d\'argent comme un ruisseau d\'avril. » (Hugo)<br><b>Effet :</b> illustre une qualité, crée une image claire.'},
+  {nom:'Personnification',def:'Attribution de caractéristiques humaines (sentiments, actions, parole) à un objet inanimé, un animal ou une abstraction.',ex:'<b>Ex. :</b> « La rue assourdissante autour de moi hurlait. » (Baudelaire)<br><b>Effet :</b> anime le décor, connivence entre le monde et le personnage.'},
+  {nom:'Allégorie',def:'Une idée ou concept abstrait est représenté de façon incarnée et imagée pour le rendre vivant et frappant.',ex:'<b>Ex. :</b> Marianne = allégorie de la République. La Liberté guidant le peuple (Delacroix).<br><b>Effet :</b> rend visible une idée abstraite.'},
+  {nom:'Métonymie',def:'Désigner quelque chose par un terme qui lui est lié (contenant/contenu, instrument/utilisateur, lieu/chose).',ex:'<b>Ex. :</b> « La salle a applaudi. » (= le public) — « J\'ai bu trois verres. » (= le contenu)<br><b>Effet :</b> raccourci expressif, condensation du sens.'},
+  {nom:'Antonomase',def:'Utiliser un nom propre comme nom commun pour désigner quelqu\'un qui partage les caractéristiques de ce nom.',ex:'<b>Ex. :</b> « C\'est un vrai Dom Juan ! » (= un séducteur)<br><b>Effet :</b> référence culturelle immédiate.'},
+  {nom:'Prosopopée',def:'On prête la parole à un être inanimé, mort ou absent, comme s\'il pouvait répondre.',ex:'<b>Ex. :</b> « Un soir, l\'âme du vin chantait dans les bouteilles… » (Baudelaire)<br><b>Effet :</b> dramatisation, effet poétique saisissant.'},
+  {nom:'Hypallage',def:'L\'adjectif est syntaxiquement lié au "mauvais" nom — décalage voulu entre sens et construction.',ex:'<b>Ex. :</b> « Prennent des albatros, vastes oiseaux des mers » — <i>vaste</i> qualifie les oiseaux mais désigne la mer.<br><b>Effet :</b> décalage poétique, effet de surprise.'},
+  {nom:'Antithèse',def:'Opposition de deux idées, mots ou images radicalement différents dans un même énoncé.',ex:'<b>Ex. :</b> « Je vis, je meurs ; je me brûle et me noie. » (Louise Labé)<br>Titres : Le Rouge et le Noir, La Belle et la Bête…<br><b>Effet :</b> met en valeur un conflit ou une tension.'},
+  {nom:'Oxymore',def:'Alliance de deux mots de sens contraire appliqués au même objet.',ex:'<b>Ex. :</b> « Cette obscure clarté qui tombe des étoiles. » (Corneille)<br>« Un silence éloquent » — « Une douce violence »<br><b>Effet :</b> paradoxe saisissant, réalité complexe ou contradictoire.'},
+  {nom:'Paradoxe',def:'Idée qui contredit le sens commun et surprend par son opposition aux idées reçues.',ex:'<b>Ex. :</b> « Les gens qui ne rient jamais ne sont pas des gens sérieux. » (Alphonse Allais)<br><b>Effet :</b> provoque la réflexion, renverse les évidences.'},
+  {nom:'Antiphrase',def:'Procédé de l\'ironie : dire le contraire de ce que l\'on pense. Des indices permettent de comprendre le décalage.',ex:'<b>Ex. :</b> « Tu as raison de si peu travailler, tu devrais même travailler encore moins ! »<br><b>Effet :</b> critique voilée, sarcasme.'},
+  {nom:'Litote',def:'Dire moins pour faire entendre plus — atténuer l\'expression pour en réalité la renforcer. Diffère de l\'euphémisme : la litote <i>renforce</i>, l\'euphémisme <i>protège</i>.',ex:'<b>Ex. :</b> « Va, je ne te hais point. » (Corneille) = je t\'aime profondément.<br>« Ce n\'est pas mauvais. » — « Pas mal ! »<br><b>Effet :</b> suggestion, pudeur, élégance.'},
+  {nom:'Euphémisme',def:'Atténuation d\'une réalité dure par une formulation plus douce, pour protéger l\'interlocuteur.',ex:'<b>Ex. :</b> « Il nous a quittés. » (= il est mort)<br><b>Effet :</b> adoucit une réalité difficile.'},
+  {nom:'Anaphore',def:'Répétition d\'un mot ou groupe de mots au début de plusieurs propositions, phrases ou vers successifs.',ex:'<b>Ex. :</b> « J\'ai vu lever le jour, j\'ai vu lever le soir / J\'ai vu grêler, tonner… » (Ronsard)<br><b>Effet :</b> insistance, rythme martelé, émotion croissante.'},
+  {nom:'Épiphore',def:'Contraire de l\'anaphore : mot ou groupe de mots répété en <i>fin</i> de proposition, phrase ou vers.',ex:'<b>Ex. :</b> « Il n\'enseignait rien celui-là, ne savait rien, ne souhaitait rien. » (Flaubert)<br><b>Effet :</b> insistance finale, effet de clôture.'},
+  {nom:'Gradation',def:'Énumération dont les éléments sont classés du plus faible au plus fort (ascendante) ou l\'inverse (descendante).',ex:'<b>Ex. :</b> « C\'en est fait ; je n\'en puis plus ; je me meurs ; je suis mort ; je suis enterré. » (Molière)<br><b>Effet :</b> intensité progressive, dramatisation.'},
+  {nom:'Accumulation',def:'Énumération très longue dont tous les éléments sont de même nature grammaticale.',ex:'<b>Ex. :</b> «…rompait bras et jambes, disloquait les spondyles, démolissait les reins, aplatissait le nez… » (Rabelais)<br><b>Effet :</b> profusion, excès, puissance ou comique.'},
+  {nom:'Énumération',def:'Liste de plusieurs éléments mis côte à côte.',ex:'<b>Ex. :</b> « J\'aime les pâtes, Paris, les comédies romantiques et les romans de Balzac. »<br><b>Effet :</b> richesse, diversité.'},
+  {nom:'Chiasme',def:'Parallélisme inversé (structure ABBA) : les éléments sont repris dans l\'ordre inverse.',ex:'<b>Ex. :</b> « Il faut manger pour vivre et non vivre pour manger. » (Molière)<br>« Un roi chantait en bas, en haut mourait un Dieu. » (Hugo)<br><b>Effet :</b> balance, symétrie frappante.'},
+  {nom:'Parallélisme',def:'Succession de deux constructions syntaxiquement très proches pour exprimer deux idées analogues ou opposées.',ex:'<b>Ex. :</b> « Lucien avait beaucoup lu, beaucoup comparé ; David avait beaucoup pensé, beaucoup médité. » (Balzac)<br><b>Effet :</b> symétrie, comparaison implicite.'},
+  {nom:'Syllepse',def:'Répétition d\'un mot ou groupe de mots en début ET en fin de phrase (effet d\'encadrement).',ex:'<b>Ex. :</b> « Le roi est mort, vive le roi ! »<br><b>Effet :</b> encadrement frappant, retournement.'},
+  {nom:'Allitération',def:'Répétition insistante d\'un même son <b>consonantique</b>. (Aide-mémoire : allit<u>é</u>ration → consonne)',ex:'<b>Ex. :</b> « Pour qui sont ces serpents qui sifflent sur vos têtes ? » (Racine) — [s] imite le sifflement.<br><b>Effet :</b> musicalité, renforcement d\'une atmosphère.'},
+  {nom:'Assonance',def:'Répétition insistante d\'un même son <b>vocalique</b>. (Aide-mémoire : assona<u>nce</u> → voyelle)',ex:'<b>Ex. :</b> « Tout m\'afflige et me nuit et conspire à me nuire. » (Racine) — son [i] omniprésent.<br><b>Effet :</b> mélodie, plainte, émotion diffuse.'},
+  {nom:'Champ lexical',def:'Ensemble de mots appartenant au même domaine de sens dans un texte.',ex:'<b>Ex. :</b> Champ lexical de la violence : frapper, blesser, sang, cri, fureur.<br><b>Effet :</b> insistance sur un thème, révèle les obsessions de l\'auteur.'},
+  {nom:'Style indirect libre',def:'Discours intérieur d\'un personnage fondu dans la narration, sans guillemets ni verbe de parole.',ex:'<b>Ex. :</b> « Elle rentra. Pourquoi lui avait-il dit cela ? C\'était injuste. »<br><b>Effet :</b> proximité avec la conscience du personnage, ambiguïté.'},
+  {nom:'Focalisation interne',def:'Narrateur adopte le point de vue d\'un personnage : on ne sait que ce que ce personnage sait et ressent.',ex:'<b>Ex. :</b> Thérèse Desqueyroux — tout filtré par la conscience de Thérèse.<br><b>Effet :</b> intimité, empathie, subjectivité.'},
+  {nom:'Focalisation externe',def:'Le récit est raconté de l\'extérieur, comme une caméra : seuls les faits, sans accès aux pensées ni sentiments.',ex:'<b>Ex. :</b> « Deux hommes parurent. L\'un venait de la Bastille, l\'autre du Jardin des Plantes. » (Flaubert)<br><b>Effet :</b> distance, neutralité, mystère.'},
+  {nom:'Focalisation zéro (omnisciente)',def:'Narrateur omniscient : il sait tout sur tous les personnages — caractère, passé, avenir. Il en sait plus qu\'eux.',ex:'<b>Ex. :</b> Romans réalistes de Balzac, Tolstoï.<br><b>Effet :</b> maîtrise totale, regard surplombant.'},
+  {nom:'In medias res',def:'La narration commence au cœur de l\'action, sans introduction chronologique.',ex:'<b>Ex. :</b> L\'Adversaire commence le jour des meurtres.<br><b>Effet :</b> tension immédiate, le lecteur est directement plongé dans l\'action.'},
+  {nom:'Analepse (flashback)',def:'Retour en arrière dans la narration : on raconte des événements antérieurs au présent du récit.',ex:'<b>Ex. :</b> Dans Thérèse Desqueyroux, le trajet en train est une longue analepse.<br><b>Effet :</b> révélation progressive, compréhension des motivations.'},
+  {nom:'Prolepse (anticipation)',def:'Anticipation narrative : on évoque un événement futur avant qu\'il se produise.',ex:'<b>Ex. :</b> « Plus tard, il comprendrait que ce jour avait tout changé. »<br><b>Effet :</b> suspense, sentiment de destin inéluctable.'},
+  {nom:'Registre lyrique',def:'Exprime les sentiments personnels avec intensité — amour, mélancolie, joie, deuil.',ex:'<b>Ex. :</b> Lamartine, Verlaine, Hugo.<br><b>Effet :</b> émotion, subjectivité, communion avec le lecteur.'},
+  {nom:'Registre tragique',def:'Met en scène un destin inéluctable et douloureux : le personnage est écrasé par des forces qui le dépassent.',ex:'<b>Ex. :</b> Phèdre (Racine), fin de Thérèse Desqueyroux.<br><b>Effet :</b> pitié, terreur, grandeur dans la souffrance.'},
+  {nom:'Registre ironique / satirique',def:'Critique une réalité en utilisant l\'humour, la distorsion ou l\'exagération.',ex:'<b>Ex. :</b> Candide (Voltaire), Les Caractères (La Bruyère).<br><b>Effet :</b> dénonciation voilée, complicité avec le lecteur.'},
+  {nom:'Registre épique',def:'Amplifie les actions pour leur donner une dimension grandiose, héroïque ou mythique.',ex:'<b>Ex. :</b> Descriptions de batailles chez Hugo, dans L\'Iliade.<br><b>Effet :</b> admiration, souffle, sentiment de grandeur.'},
+  {nom:'Registre pathétique',def:'Cherche à émouvoir, susciter compassion et pitié par la description de souffrances.',ex:'<b>Ex. :</b> Scènes de misère dans Les Misérables (Hugo).<br><b>Effet :</b> compassion, identification, larmes.'},
 ];
 
 function getCitationsArray() {
