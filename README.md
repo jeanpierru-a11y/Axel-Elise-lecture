@@ -3,7 +3,7 @@
 Application web de guide de lecture scolaire, hébergée sur GitHub Pages.  
 Conçue par un grand-père pour accompagner deux petits-enfants dans leur lecture — Axel (6ème, dyslexie) et Élise (2nde).
 
-🌐 **Live :** https://jeanpierru-a11y.github.io/mon-premier-projet
+🌐 **Live :** https://jeanpierru-a11y.github.io/Axel-Elise-lecture
 
 ---
 
