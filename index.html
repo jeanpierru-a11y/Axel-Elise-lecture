@@ -919,101 +919,13 @@ body.mode-elise .only-elise{display:block;}
       </div>
 
       <div class="export-card">
-        <div class="card-title" style="color:var(--bleu);margin-bottom:6px;">📄 Exporter en PDF</div>
+        <div class="card-title" style="color:var(--bleu);margin-bottom:6px;">📄 Exporter cette dissertation en PDF</div>
         <div style="display:flex;gap:8px;">
-          <button class="btn btn-bleu" style="flex:1" onclick="genererPDF('couleur')">🎨 PDF couleur</button>
-          <button class="btn btn-gris" style="flex:1" onclick="genererPDF('sobre')">🖤 PDF sobre</button>
+          <button class="btn btn-bleu" style="flex:1" onclick="genererPDF_diss()">🎨 PDF couleur</button>
+          <button class="btn btn-gris" style="flex:1" onclick="genererPDF_diss()">🖤 PDF sobre</button>
         </div>
       </div>
 
-    </div>
-
-    <!-- CARNET DE LECTURE -->
-    <div class="section" id="sec-carnet">
-      <div class="card">
-        <div class="card-title" style="color:var(--violet)">📓 Carnet de lecture</div>
-        <p style="font-size:.73rem;color:#888;margin-bottom:8px;line-height:1.5;">Dicte ou écris librement, puis laisse l'IA distribuer tes notes dans les bonnes zones.</p>
-        <textarea id="carnet-input" class="field" rows="4" style="margin-bottom:10px;resize:vertical;min-height:80px;" placeholder="p.47 — Nemo apparaît, inquiétant et mystérieux&#10;p.52 — mot inconnu : nautilus&#10;p.60 — citation intéressante…"></textarea>
-        <div style="display:flex;gap:8px;margin-bottom:6px;flex-wrap:wrap;align-items:center;">
-          <button class="btn btn-violet" style="flex:1;font-weight:900;" onclick="saisirEtTrier()">🤖 Enregistrer et trier avec l'IA</button>
-          <button class="btn btn-gris btn-sm" onclick="ajouterNoteCarnet()" title="Enregistrer sans trier">＋</button>
-        </div>
-        <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;">
-          <span id="ia-key-badge" style="font-size:.68rem;color:#aaa;cursor:pointer;" onclick="ouvrirModalSync();setTimeout(()=>showSyncTab('ia'),100)"></span>
-          <button class="btn btn-gris btn-sm" style="margin-left:auto;" onclick="viderCarnetTrie()">🗑️ Effacer triées</button>
-        </div>
-      </div>
-
-      <!-- Historique des tris -->
-      <div id="carnet-historique-section" style="display:none;">
-        <div style="font-size:.75rem;font-weight:800;color:var(--violet);margin:10px 0 6px;display:flex;align-items:center;gap:8px;">
-          📋 Historique des tris
-          <button class="btn btn-gris btn-xs" onclick="toggleHistorique()">▼</button>
-        </div>
-        <div id="carnet-historique-list"></div>
-      </div>
-
-      <div id="carnet-list"></div>
-      <div id="carnet-vide" style="text-align:center;padding:24px;color:#ccc;font-size:.82rem;">Aucune note pour l'instant — commence à lire !</div>
-    </div>
-
-    <!-- PDF -->
-    <div class="section" id="sec-pdf">
-      <div class="card">
-        <div class="card-title" style="color:var(--bleu)">🖨️ Générer mon PDF</div>
-        <p style="font-size:.8rem;color:#666;margin-bottom:12px;">Choisis le style puis génère ton PDF. Il s'ouvrira dans un nouvel onglet, prêt à imprimer.</p>
-        <div style="display:flex;flex-direction:column;gap:10px;">
-          <button class="btn btn-bleu btn-full" onclick="genererPDF('couleur')" style="padding:14px;font-size:.9rem;">
-            🎨 PDF Coloré (écran &amp; impression couleur)
-          </button>
-          <button class="btn btn-gris btn-full" onclick="genererPDF('sobre')" style="padding:14px;font-size:.9rem;color:#333;">
-            🖤 PDF Sobre (impression noir &amp; blanc)
-          </button>
-        </div>
-      </div>
-      <div class="help-card">
-        <b>Comment imprimer ?</b><br>
-        Une fois le PDF ouvert dans l'onglet, appuie sur <b>Ctrl+P</b> (PC) ou le bouton imprimer du navigateur.<br><br>
-        <b>Contenu du PDF :</b> personnages, lieux, époque, mots difficiles, thèmes, citations (avec procédés), schéma narratif, compréhension et dissertation. Les sections vides sont omises automatiquement.
-      </div>
-    </div>
-
-
-    <!-- INTRIGUE — SCHÉMA NARRATIF -->
-    <div class="section" id="sec-intrigue">
-      <div class="card" style="border-left:5px solid #00838F">
-        <div class="card-title" style="color:#00838F">🎭 Structure de l'intrigue</div>
-        <p style="font-size:.78rem;color:#888;margin-bottom:12px;">Choisis un modèle narratif, puis remplis chaque phase de l'histoire.</p>
-        <div class="schema-modeles">
-          <button class="schema-btn active" id="sbtn-aristote" onclick="setSchema('aristote',this)">
-            🏛️ Aristote<br><span style="font-size:.62rem;font-weight:500">3 actes</span>
-          </button>
-          <button class="schema-btn" id="sbtn-freytag" onclick="setSchema('freytag',this)">
-            🔺 Freytag<br><span style="font-size:.62rem;font-weight:500">5 actes</span>
-          </button>
-          <button class="schema-btn" id="sbtn-moderne" onclick="setSchema('moderne',this)">
-            🌊 Arc moderne<br><span style="font-size:.62rem;font-weight:500">8 étapes</span>
-          </button>
-        </div>
-      </div>
-      <div class="schema-phases" id="schema-phases"></div>
-
-      <div class="card" style="background:var(--jauneC);border:1.5px solid var(--jaune)">
-        <div class="card-title" style="color:var(--jaune)">💡 À quoi servent ces modèles ?</div>
-        <p style="font-size:.78rem;line-height:1.65;color:#555;">
-          <b>Aristote (3 actes)</b> : le plus simple — début, milieu, fin. Parfait pour un premier résumé.<br>
-          <b>Freytag (5 actes)</b> : montre comment la tension monte puis redescend (pyramide).<br>
-          <b>Arc moderne (8 étapes)</b> : le plus précis — donne un mot sur chaque moment clé du récit.
-        </p>
-      </div>
-
-      <div class="export-card">
-        <div class="card-title" style="color:var(--bleu);margin-bottom:6px;">📄 Exporter en PDF</div>
-        <div style="display:flex;gap:8px;">
-          <button class="btn btn-bleu" style="flex:1" onclick="genererPDF('couleur')">🎨 PDF couleur</button>
-          <button class="btn btn-gris" style="flex:1" onclick="genererPDF('sobre')">🖤 PDF sobre</button>
-        </div>
-      </div>
     </div>
 
     <!-- RÉDACTION -->
@@ -1057,10 +969,10 @@ body.mode-elise .only-elise{display:block;}
 
 
       <div class="export-card">
-        <div class="card-title" style="color:var(--bleu);margin-bottom:6px;">📄 Exporter en PDF</div>
+        <div class="card-title" style="color:var(--bleu);margin-bottom:6px;">📄 Exporter cette rédaction en PDF</div>
         <div style="display:flex;gap:8px;">
-          <button class="btn btn-bleu" style="flex:1" onclick="genererPDF('couleur')">🎨 PDF couleur</button>
-          <button class="btn btn-gris" style="flex:1" onclick="genererPDF('sobre')">🖤 PDF sobre</button>
+          <button class="btn btn-bleu" style="flex:1" onclick="genererPDF_redac()">🎨 PDF couleur</button>
+          <button class="btn btn-gris" style="flex:1" onclick="genererPDF_redac()">🖤 PDF sobre</button>
         </div>
       </div>
     </div>
@@ -1160,10 +1072,10 @@ body.mode-elise .only-elise{display:block;}
       </div>
 
       <div class="export-card">
-        <div class="card-title" style="color:var(--bleu);margin-bottom:6px;">📄 Exporter en PDF</div>
+        <div class="card-title" style="color:var(--bleu);margin-bottom:6px;">📄 Exporter cette analyse linéaire en PDF</div>
         <div style="display:flex;gap:8px;">
-          <button class="btn btn-bleu" style="flex:1" onclick="genererPDF('couleur')">🎨 PDF couleur</button>
-          <button class="btn btn-gris" style="flex:1" onclick="genererPDF('sobre')">🖤 PDF sobre</button>
+          <button class="btn btn-bleu" style="flex:1" onclick="genererPDF_lineaire()">🎨 PDF couleur</button>
+          <button class="btn btn-gris" style="flex:1" onclick="genererPDF_lineaire()">🖤 PDF sobre</button>
         </div>
       </div>
     </div>
@@ -1243,6 +1155,96 @@ body.mode-elise .only-elise{display:block;}
         </p>
       </div>
       <div class="export-card">
+        <div class="card-title" style="color:var(--bleu);margin-bottom:6px;">📄 Exporter ce commentaire en PDF</div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-bleu" style="flex:1" onclick="genererPDF_commentaire()">🎨 PDF couleur</button>
+          <button class="btn btn-gris" style="flex:1" onclick="genererPDF_commentaire()">🖤 PDF sobre</button>
+        </div>
+      </div>
+    </div>
+
+    </div><!-- fin sec-ecrire-wrap -->
+
+    <!-- CARNET DE LECTURE -->
+    <div class="section" id="sec-carnet">
+      <div class="card">
+        <div class="card-title" style="color:var(--violet)">📓 Carnet de lecture</div>
+        <p style="font-size:.73rem;color:#888;margin-bottom:8px;line-height:1.5;">Dicte ou écris librement, puis laisse l'IA distribuer tes notes dans les bonnes zones.</p>
+        <textarea id="carnet-input" class="field" rows="4" style="margin-bottom:10px;resize:vertical;min-height:80px;" placeholder="p.47 — Nemo apparaît, inquiétant et mystérieux&#10;p.52 — mot inconnu : nautilus&#10;p.60 — citation intéressante…"></textarea>
+        <div style="display:flex;gap:8px;margin-bottom:6px;flex-wrap:wrap;align-items:center;">
+          <button class="btn btn-violet" style="flex:1;font-weight:900;" onclick="saisirEtTrier()">🤖 Enregistrer et trier avec l'IA</button>
+          <button class="btn btn-gris btn-sm" onclick="ajouterNoteCarnet()" title="Enregistrer sans trier">＋</button>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;">
+          <span id="ia-key-badge" style="font-size:.68rem;color:#aaa;cursor:pointer;" onclick="ouvrirModalSync();setTimeout(()=>showSyncTab('ia'),100)"></span>
+          <button class="btn btn-gris btn-sm" style="margin-left:auto;" onclick="viderCarnetTrie()">🗑️ Effacer triées</button>
+        </div>
+      </div>
+
+      <!-- Historique des tris -->
+      <div id="carnet-historique-section" style="display:none;">
+        <div style="font-size:.75rem;font-weight:800;color:var(--violet);margin:10px 0 6px;display:flex;align-items:center;gap:8px;">
+          📋 Historique des tris
+          <button class="btn btn-gris btn-xs" onclick="toggleHistorique()">▼</button>
+        </div>
+        <div id="carnet-historique-list"></div>
+      </div>
+
+      <div id="carnet-list"></div>
+      <div id="carnet-vide" style="text-align:center;padding:24px;color:#ccc;font-size:.82rem;">Aucune note pour l'instant — commence à lire !</div>
+    </div>
+
+    <!-- PDF -->
+    <div class="section" id="sec-pdf">
+      <div class="card">
+        <div class="card-title" style="color:var(--bleu)">🖨️ Générer mon PDF</div>
+        <p style="font-size:.8rem;color:#666;margin-bottom:14px;">Choisis les sections à inclure puis génère ton PDF. Il s'ouvrira dans un nouvel onglet, prêt à imprimer.</p>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <button class="btn btn-bleu btn-full" onclick="ouvrirModalPDF('couleur')" style="padding:14px;font-size:.9rem;">
+            🎨 PDF Coloré — choisir les sections
+          </button>
+          <button class="btn btn-gris btn-full" onclick="ouvrirModalPDF('sobre')" style="padding:14px;font-size:.9rem;color:#333;">
+            🖤 PDF Sobre — choisir les sections
+          </button>
+        </div>
+      </div>
+      <div class="help-card">
+        <b>Comment imprimer ?</b><br>
+        Une fois le PDF ouvert dans l'onglet, appuie sur <b>Ctrl+P</b> (PC) ou le bouton imprimer du navigateur.<br><br>
+        <b>Astuce :</b> toutes les sections sont pré-cochées. Décoche ce dont tu n'as pas besoin avant de générer.
+      </div>
+    </div>
+
+
+    <!-- INTRIGUE — SCHÉMA NARRATIF -->
+    <div class="section" id="sec-intrigue">
+      <div class="card" style="border-left:5px solid #00838F">
+        <div class="card-title" style="color:#00838F">🎭 Structure de l'intrigue</div>
+        <p style="font-size:.78rem;color:#888;margin-bottom:12px;">Choisis un modèle narratif, puis remplis chaque phase de l'histoire.</p>
+        <div class="schema-modeles">
+          <button class="schema-btn active" id="sbtn-aristote" onclick="setSchema('aristote',this)">
+            🏛️ Aristote<br><span style="font-size:.62rem;font-weight:500">3 actes</span>
+          </button>
+          <button class="schema-btn" id="sbtn-freytag" onclick="setSchema('freytag',this)">
+            🔺 Freytag<br><span style="font-size:.62rem;font-weight:500">5 actes</span>
+          </button>
+          <button class="schema-btn" id="sbtn-moderne" onclick="setSchema('moderne',this)">
+            🌊 Arc moderne<br><span style="font-size:.62rem;font-weight:500">8 étapes</span>
+          </button>
+        </div>
+      </div>
+      <div class="schema-phases" id="schema-phases"></div>
+
+      <div class="card" style="background:var(--jauneC);border:1.5px solid var(--jaune)">
+        <div class="card-title" style="color:var(--jaune)">💡 À quoi servent ces modèles ?</div>
+        <p style="font-size:.78rem;line-height:1.65;color:#555;">
+          <b>Aristote (3 actes)</b> : le plus simple — début, milieu, fin. Parfait pour un premier résumé.<br>
+          <b>Freytag (5 actes)</b> : montre comment la tension monte puis redescend (pyramide).<br>
+          <b>Arc moderne (8 étapes)</b> : le plus précis — donne un mot sur chaque moment clé du récit.
+        </p>
+      </div>
+
+      <div class="export-card">
         <div class="card-title" style="color:var(--bleu);margin-bottom:6px;">📄 Exporter en PDF</div>
         <div style="display:flex;gap:8px;">
           <button class="btn btn-bleu" style="flex:1" onclick="genererPDF('couleur')">🎨 PDF couleur</button>
@@ -1251,7 +1253,6 @@ body.mode-elise .only-elise{display:block;}
       </div>
     </div>
 
-    </div><!-- fin sec-ecrire-wrap -->
   </div><!-- fin content -->
 </div><!-- fin screen-guide -->
 
@@ -1325,7 +1326,7 @@ function sauvegarderBiblio() {
 // ════════════════════════════════════════════════════════
 // VERSION — incrémenter à chaque mise à jour des livres démo
 // ════════════════════════════════════════════════════════
-const DEMO_VERSION = 12; // v12 : redac Récit + Argumentatif Thérèse Desqueyroux et L'Adversaire
+const DEMO_VERSION = 14; // v14 : dissertation2 + lineaire + commentaire pour les 3 livres Axel (contenu Élise)
 const LIVRES_DEMO = [
   {
     id: 'liv_petit_prince_001',
@@ -1386,7 +1387,11 @@ const LIVRES_DEMO = [
       redac_r2: "Un petit garçon mystérieux apparaît soudainement et lui demande de dessiner un mouton. Ce petit garçon vient d'une toute petite planète, l'astéroïde B-612, et il a voyagé de planète en planète avant d'arriver sur Terre.",
       redac_r3: "Au fil des jours, le Petit Prince raconte ses aventures à l'aviateur. Il lui parle de sa rose, qu'il aime mais qui est trop capricieuse. Il lui raconte les planètes bizarres qu'il a visitées, habitées chacune par un adulte ridicule. Il rencontre aussi un renard qui lui apprend le secret de l'amitié.",
       redac_r4: "Le Petit Prince comprend grâce au renard que sa rose est unique et précieuse parce qu'il a pris soin d'elle. Il décide de rentrer sur sa planète pour retrouver sa rose. Le serpent l'aide à rentrer chez lui d'une façon mystérieuse.",
-      redac_r5: "L'aviateur réussit à réparer son avion. Il repart dans le monde des hommes, mais il ne voit plus les choses de la même façon. Il regarde les étoiles différemment, en pensant que l'une d'elles cache la petite planète du Petit Prince. Cette histoire lui a rappelé ce qui est vraiment important dans la vie."
+      redac_r5: "L'aviateur réussit à réparer son avion. Il repart dans le monde des hommes, mais il ne voit plus les choses de la même façon. Il regarde les étoiles différemment, en pensant que l'une d'elles cache la petite planète du Petit Prince. Cette histoire lui a rappelé ce qui est vraiment important dans la vie.",
+      redac_a1: "Le Petit Prince, écrit par Antoine de Saint-Exupéry en 1943, est un conte qui parle à la fois aux enfants et aux adultes. Un aviateur tombe en panne dans le désert et rencontre un mystérieux petit garçon venu d'une autre planète. Ce livre nous pose une question importante : qu'est-ce qui compte vraiment dans la vie ? Je vais montrer que le livre défend deux grandes idées : l'amitié est plus précieuse que tout, et les adultes ont souvent oublié ce qui est essentiel.",
+      redac_a2: "Tout d'abord, Le Petit Prince nous montre que l'amitié et l'amour donnent de la valeur aux choses. Le renard explique au Petit Prince que sa rose est unique et précieuse parce qu'il a pris soin d'elle et passé du temps avec elle. Cette idée est résumée dans la phrase du renard : c'est le temps que tu as perdu pour ta rose qui la rend si importante. Ainsi, ce ne sont pas les choses matérielles qui comptent, mais les liens que l'on crée avec les autres.",
+      redac_a3: "Ensuite, le livre critique les adultes qui passent leur temps sur des choses sans importance. Le Petit Prince visite six planètes où les adultes sont ridicules : le roi veut commander sans avoir de sujets, le vaniteux veut être admiré, le businessman croit posséder les étoiles en les comptant. Tous ces personnages montrent, avec humour, que les adultes ont oublié de regarder ce qui est vraiment important : la beauté, l'amitié et les sentiments.",
+      redac_a4: "Pour conclure, Le Petit Prince nous rappelle deux choses essentielles : les relations avec les autres sont plus précieuses que les objets ou le pouvoir, et il faut savoir garder un regard d'enfant pour voir le monde tel qu'il est vraiment. Ce livre, même s'il est court, contient un message que l'on peut lire et relire toute sa vie : l'essentiel est invisible pour les yeux."
     },
     comprehension: "Livre très court mais très profond. Il parle aux enfants et aux adultes en même temps. Le message principal : les adultes oublient ce qui est vraiment important — l'amitié, l'amour, la beauté des choses simples. La fin est triste car on ne sait pas vraiment si le Petit Prince est mort ou rentré chez lui. Passage préféré : quand le renard explique ce que veut dire apprivoiser.",
     dissertation: {
@@ -1417,6 +1422,72 @@ const LIVRES_DEMO = [
       nar_m6: "L'aviateur réussit à réparer son avion et peut repartir. Mais le corps du Petit Prince a disparu — il est retourné sur sa planète, parmi les étoiles.",
       nar_m7: "L'aviateur quitte le désert. Le conflit central — peut-on sauver ce que l'on aime ? — reste ouvert : il ne sait pas si le Petit Prince est vivant sur B-612.",
       nar_m8: "L'aviateur ne regarde plus les étoiles de la même façon. L'une d'elles renferme peut-être le rire du Petit Prince. La perte et l'amour transforment le monde ordinaire."
+    },
+    dissertation2: {
+      sujet:         "Dans quelle mesure Le Petit Prince est-il un conte philosophique ?",
+      motsCles:      "« Dans quelle mesure » = nuance (pas oui pur ni non pur). « Conte » = récit fictif avec dimension merveilleuse, codes du conte (voyage, rencontres, leçon). « Philosophique » = qui pose des questions sur la vie, le sens, les valeurs humaines. Les deux mots semblent contradictoires — un conte est naïf, la philosophie est abstraite — mais ici ils coexistent.",
+      reformulation: "En quoi ce récit en apparence simple — un petit garçon qui voyage de planète en planète — est-il aussi une réflexion profonde sur ce qui donne de la valeur à la vie ? Tensions : naïveté / profondeur — enfant / adulte — légèreté / mélancolie — merveilleux / réel.",
+      problematique: "Comment Saint-Exupéry parvient-il à faire d'un conte apparemment naïf une méditation philosophique sur l'amour, la perte et les vraies valeurs de l'existence ?",
+      typePlan:      "Plan dialectique. I. Le Petit Prince est bien un conte : merveilleux, voyage initiatique, morale. II. Mais c'est aussi une œuvre philosophique profonde : critique des adultes, réflexion sur l'amour et la mort. III. L'hybridité du genre est elle-même le message : seul le regard de l'enfant permet de voir l'essentiel.",
+      accroche:      "En 1943, depuis l'exil américain, Antoine de Saint-Exupéry publie un livre illustré de ses propres dessins : Le Petit Prince. Traduit en 300 langues, il est l'un des livres les plus lus au monde — et pourtant il n'a pas d'âge ni de lectorat clairement défini. Est-ce un livre pour enfants ? Un essai philosophique ? Une fable ?",
+      introSuite:    "Dans Le Petit Prince (1943), Saint-Exupéry construit un conte qui met en scène un petit garçon venu de l'astéroïde B-612, voyageant de planète en planète avant de rencontrer un aviateur en panne dans le Sahara. Ce conte est « philosophique » dans la mesure où il interroge ce qui donne du sens à l'existence. Comment Saint-Exupéry parvient-il à faire d'un récit en apparence naïf une méditation profonde sur l'amour, la perte et les vraies valeurs ? Nous verrons d'abord que l'œuvre respecte les codes du conte (I), puis qu'elle dépasse ces codes par sa dimension philosophique (II), avant d'examiner comment l'hybridité du genre constitue elle-même le cœur du message (III).",
+      p1arg:         "Le Petit Prince respecte les codes du conte merveilleux : voyage initiatique, univers impossible, rencontres symboliques et leçon finale.",
+      p1ex:          "Le Petit Prince voyage de planète en planète, rencontre des personnages allégoriques (le roi sans sujets, le vaniteux, le businessman qui compte des étoiles), et chaque rencontre lui enseigne quelque chose sur la folie des adultes. La structure est celle d'un voyage initiatique — schéma classique du conte.",
+      p1ana:         "Saint-Exupéry mobilise tous les codes du conte : l'espace merveilleux (des planètes minuscules habitées d'un seul adulte), le héros enfant naïf mais sage, les épreuves symboliques. Mais cette armature narrative n'est qu'un véhicule — ce qui se joue est plus profond.",
+      p2arg:         "Le conte est aussi une œuvre philosophique : il pose les questions fondamentales de l'existence — qu'est-ce qui donne de la valeur aux êtres ? Que perd-on en grandissant ? Comment vivre avec la perte ?",
+      p2ex:          "Le renard enseigne la leçon centrale : « C'est le temps que tu as perdu pour ta rose qui fait ta rose si importante. » Cette phrase, en apparence simple, est une définition philosophique de la valeur : elle ne réside pas dans l'objet mais dans la relation, le temps, l'investissement affectif. Et la fin du livre — le Petit Prince qui se laisse mordre par le serpent pour rentrer chez lui — est une méditation sur la mort et l'amour.",
+      p2ana:         "Saint-Exupéry ne cherche pas à résoudre ces questions — il les pose en les incarnant dans des images simples. C'est la définition même de la philosophie vulgarisée : rendre sensibles les abstractions. L'aviateur qui ne sait pas si le Petit Prince est vivant sur B-612, et qui le cherche désormais dans les étoiles, est une figure de deuil et d'espoir simultanés.",
+      p3arg:         "L'hybridité conte/philosophie n'est pas une faiblesse mais le cœur du message : seul le regard de l'enfant — naïf, direct, non formaté — permet de voir l'essentiel que les adultes ont oublié.",
+      p3ex:          "Dès le chapitre 1, l'aviateur montre son dessin d'un boa avalant un éléphant. Tous les adultes voient un chapeau. Le Petit Prince, lui, voit immédiatement le boa — sans explication. C'est ce décalage de regard qui structure tout le livre.",
+      p3ana:         "Saint-Exupéry dit que les grandes personnes ont besoin d'explications chiffrées pour comprendre (âge, poids, prix) alors que l'enfant voit directement l'essentiel invisible. En choisissant le conte — forme réservée aux enfants — pour parler de philosophie, il fait du genre lui-même son argument : la vérité se dit mieux en images naïves qu'en traités abstraits.",
+      bilan:         "Nous avons vu que Le Petit Prince mobilise les codes du conte (voyage, merveilleux, leçon) mais les dépasse par une méditation philosophique sur l'amour, la valeur et la mort. L'hybridité du genre n'est pas une ambiguïté mais une décision esthétique : le conte est le seul véhicule capable de rendre visible l'essentiel invisible.",
+      reponse:       "Le Petit Prince est un conte philosophique au sens plein : il n'est pas philosophique malgré sa forme de conte, mais grâce à elle. C'est précisément parce qu'il parle en images simples, avec le regard d'un enfant, qu'il atteint des vérités que la philosophie abstraite peine à formuler.",
+      ouverture:     "On pourrait prolonger cette réflexion en lisant Voltaire, Candide (1759) — autre conte philosophique qui utilise la naïveté d'un héros pour critiquer le monde des adultes. Ou en se demandant pourquoi les grandes œuvres philosophiques du XXe siècle ont souvent choisi des formes légères : le conte, l'album, la fable."
+    },
+    lineaire: {
+      intro1: "Le Petit Prince est un conte philosophique d'Antoine de Saint-Exupéry, publié en 1943 à New York, alors que l'auteur est en exil. Il s'inscrit dans la tradition du conte philosophique français (Voltaire, Candide) tout en étant un texte hybride entre littérature jeunesse et méditation existentielle.",
+      intro2: "L'extrait étudié est la scène du renard (chapitre 21) — le moment central du livre. C'est ici que le Petit Prince apprend ce que signifie « apprivoiser » et reçoit le secret qui deviendra la phrase la plus célèbre du livre : « On ne voit bien qu'avec le cœur. L'essentiel est invisible pour les yeux. » C'est le cœur philosophique de l'œuvre.",
+      intro3: "Par quels procédés Saint-Exupéry parvient-il à formuler, dans un dialogue en apparence simple entre un enfant et un renard, une définition philosophique de l'amour et de la valeur des êtres ?",
+      intro4: "Ton doux, lent, comme une confidence. Marquer les pauses après les répliques du renard — ce sont des maximes qui méritent de résonner. Légère accélération sur l'impatience du Petit Prince (« S'il te plaît… apprivoise-moi ! »). La conclusion doit être dite lentement, avec gravité.",
+      intro5: "Mvt 1 — La question d'apprivoiser (l.1-8) : le renard définit un concept nouveau / Mvt 2 — Le rituel et le temps (l.9-18) : comment apprivoiser, l'importance du rite / Mvt 3 — Le secret (l.19-fin) : la leçon philosophique finale sur l'essentiel invisible",
+      mvts: [
+        {
+          titre: "Mvt 1 — La définition d'apprivoiser (l.1-8)",
+          texte: "« Apprivoiser » : mot inconnu pour le Petit Prince, central pour le renard.\n→ Dialogue de question-réponse : structure pédagogique. Le renard enseigne, le Petit Prince apprend — inversion du rapport adulte/enfant habituel.\n→ Définition par négation d'abord : « Tu n'es pour moi qu'un petit garçon semblable à cent mille petits garçons. » Avant d'apprivoiser, on est interchangeable.\n→ Puis définition positive : apprivoiser = « créer des liens ». Formule philosophique condensée.\n→ Procédé : anaphore de « tu n'es pour moi » / parataxe des définitions.\n→ Effet produit : l'amour est défini non comme un sentiment mais comme un acte — créer des liens uniques. C'est une définition relationnelle et active."
+        },
+        {
+          titre: "Mvt 2 — Le rituel et l'importance du temps (l.9-18)",
+          texte: "Le renard explique comment apprivoiser : progressivement, en silence, en respectant les rites.\n→ Gradation de la proximité : venir chaque jour un peu plus près. Le temps est nécessaire — on ne peut pas brûler les étapes.\n→ La leçon sur les rites : « Les rites, c'est ce qui fait qu'un jour est différent des autres jours. » Philosophie du quotidien : le sens vient de la répétition attentive, pas de l'exceptionnel.\n→ Exemple concret : le jeudi — jour de la chasse, donc de la liberté. Ce détail ordinaire devient symbole.\n→ Procédé : dialogue socratique, exemples concrets, ton didactique mais jamais abstrait.\n→ Effet produit : Saint-Exupéry montre que l'amour se construit dans la durée et la régularité — contre la culture de l'immédiat."
+        },
+        {
+          titre: "Mvt 3 — Le secret : l'essentiel invisible (l.19-fin)",
+          texte: "La leçon finale : deux maximes enchaînées.\n→ « On ne voit bien qu'avec le cœur. L'essentiel est invisible pour les yeux. » — Antithèse cœur/yeux. Ce qui compte vraiment ne se voit pas, il se ressent.\n→ « C'est le temps que tu as perdu pour ta rose qui fait ta rose si importante. » — Chiasme de la valeur : la valeur ne vient pas de l'objet mais de l'investissement.\n→ Répétition de « tu es responsable » : la responsabilité est la condition de l'amour.\n→ Procédé : maximes, chiasme, antithèse, répétition anaphorique.\n→ Effet produit : Saint-Exupéry formule une éthique de la relation — contre le monde des adultes qui mesurent tout (prix, nombre, utilité)."
+        }
+      ],
+      conclu1: "Saint-Exupéry réussit à formuler, dans ce dialogue apparemment naïf, une définition philosophique complète de l'amour et de la valeur : l'amour est un acte (créer des liens), il se construit dans le temps et les rites, et il donne de la valeur aux êtres par la relation elle-même, non par leurs qualités intrinsèques.",
+      conclu2: "On peut mettre cet extrait en relation avec le concept d'amitié chez Aristote (l'amitié vraie naît de la vertu et du temps partagé) ou avec Saint-Exupéry dans Vol de nuit (1931). On peut aussi relier cette scène à la définition de l'amour dans la Bible (1 Corinthiens 13) : l'amour est patient, il dure dans le temps."
+    },
+    commentaire: {
+      amorce: "La littérature philosophique française a souvent choisi des formes légères pour transmettre des vérités profondes : le conte chez Voltaire (Candide, 1759), la fable chez La Fontaine. En 1943, Saint-Exupéry choisit le conte illustré — forme réputée enfantine — pour formuler une philosophie de l'amour et du sens.",
+      presentation: "Antoine de Saint-Exupéry (1900-1944), aviateur et écrivain, publie Le Petit Prince en 1943 à New York. L'extrait étudié — la scène du renard (ch. 21) — est le cœur philosophique du livre : c'est là que se formule le secret central sur l'essentiel invisible.",
+      problematique: "Comment Saint-Exupéry parvient-il, dans une scène en apparence simple entre un enfant et un renard, à formuler une définition philosophique de l'amour qui remet en cause les valeurs du monde adulte ?",
+      plan: "Dans un premier temps, nous étudierons comment le dialogue construit une définition de l'amour fondée sur la relation et le temps (I). Dans un second temps, nous analyserons comment les procédés stylistiques rendent cette philosophie sensible (II). Dans un troisième temps, nous verrons comment cette scène constitue une critique du monde adulte matérialiste (III).",
+      axes: [
+        {
+          titre: "I — Une définition philosophique de l'amour fondée sur la relation",
+          texte: "Idée directrice : à travers la leçon du renard, Saint-Exupéry définit l'amour comme un acte construit dans le temps — « créer des liens ».\n→ La définition par strates : d'abord l'interchangeabilité (avant d'apprivoiser, on est comme les autres), puis l'unicité (après, on est unique l'un pour l'autre).\n→ Le temps comme condition de l'amour : la progression graduelle du rapprochement. Contre la logique du coup de foudre.\n→ La responsabilité : « tu es responsable pour toujours de ce que tu as apprivoisé ». L'amour crée une obligation éthique.\n→ Effet produit : la définition est active, volontaire — l'amour n'arrive pas, il se fait.\nTransition : Pour rendre cette philosophie accessible, Saint-Exupéry use de procédés stylistiques précis."
+        },
+        {
+          titre: "II — Des procédés stylistiques au service de la philosophie",
+          texte: "Idée directrice : les maximes, antithèses et chiasmes sont des outils philosophiques qui rendent la pensée abstraite sensible et mémorable.\n→ Les maximes : « On ne voit bien qu'avec le cœur. L'essentiel est invisible pour les yeux. » — formule brève, universelle, antithétique.\n→ Le chiasme de la valeur : « C'est le temps que tu as perdu pour ta rose qui fait ta rose si importante. » — la valeur vient de l'investissement affectif, pas de l'objet.\n→ Le dialogue socratique : le renard ne donne pas les réponses — il laisse le Petit Prince découvrir.\n→ Effet produit : ces procédés font que les phrases restent en mémoire bien après la lecture.\nTransition : cette esthétique porte une critique du monde adulte."
+        },
+        {
+          titre: "III — Une critique implicite du monde adulte",
+          texte: "Idée directrice : la leçon du renard remet en cause les valeurs dominantes du monde adulte — l'utilité, la quantité, la possession.\n→ Contraste avec les adultes des autres planètes : le businessman qui « possède » les étoiles en les comptant. Ces adultes mesurent tout, ne créent rien.\n→ La rose du Petit Prince vaut non parce qu'elle est la plus belle mais parce qu'il lui a consacré du temps. Critique du marché : la valeur n'est pas la rareté, c'est la relation.\n→ « Les grandes personnes aiment les chiffres » : contre le réductionnisme adulte, Saint-Exupéry pose le regard de l'enfant qui voit l'essentiel.\n→ Effet produit : la leçon du renard est une éthique de résistance au monde du paraître."
+        }
+      ],
+      bilan: "Saint-Exupéry réussit dans cette scène à faire du conte un véhicule philosophique : le dialogue naïf entre un enfant et un renard formule une définition rigoureuse de l'amour (relation, temps, responsabilité), l'exprime par des procédés stylistiques efficaces et l'inscrit dans une critique du matérialisme adulte.",
+      ouverture: "On pourrait prolonger ce commentaire en lisant Antoine de Saint-Exupéry, Terre des hommes (1939) : le même combat contre la déshumanisation du monde moderne, la même défense des liens humains comme seules vraies richesses. On peut aussi rapprocher cette scène du concept d'amitié chez Aristote dans l'Éthique à Nicomaque — l'amitié vraie est fondée sur la vertu et le temps partagé, pas sur l'utilité."
     }
   },
   {
@@ -1478,7 +1549,12 @@ const LIVRES_DEMO = [
       redac_a1: "Dans le roman Les Aventures de Tom Sawyer de Mark Twain, le personnage principal est un garçon espiègle qui vit au bord du Mississippi au XIXe siècle. On peut se demander si Tom Sawyer est vraiment un héros malgré ses nombreuses bêtises. Je vais montrer qu'il est bien un héros, mais un héros de son âge.",
       redac_a2: "Tout d'abord, Tom Sawyer fait preuve d'un courage exceptionnel dans les moments importants. Quand il est perdu dans la grotte de McDougal avec Becky Thatcher, il ne panique pas et continue de chercher une sortie pour eux deux. Il affronte sa peur du méchant Joe l'Indien pour sauver son amie. Ce courage face au danger prouve qu'il n'est pas seulement un farceur.",
       redac_a3: "De plus, Tom a un sens de la justice très fort pour son âge. Quand il voit Joe l'Indien commettre un meurtre dans le cimetière, il prend le risque de témoigner au procès malgré sa peur. Il aurait pu se taire pour se protéger, mais il choisit de dire la vérité. Cela montre qu'il a de vraies valeurs morales.",
-      redac_a4: "En conclusion, Tom Sawyer est bien un héros, différent des héros adultes des grands romans. Ses bêtises font partie de sa personnalité d'enfant libre et imaginatif, mais quand la situation l'exige, il montre un vrai courage et un sens du bien et du mal. Ce roman nous rappelle que l'enfance est une période précieuse qu'il faut savoir préserver."
+      redac_a4: "En conclusion, Tom Sawyer est bien un héros, différent des héros adultes des grands romans. Ses bêtises font partie de sa personnalité d'enfant libre et imaginatif, mais quand la situation l'exige, il montre un vrai courage et un sens du bien et du mal. Ce roman nous rappelle que l'enfance est une période précieuse qu'il faut savoir préserver.",
+      redac_r1: "Au début du roman, Tom Sawyer vit à Saint Petersburg avec sa tante Polly. C'est un garçon espiègle de 12 ans qui évite l'école, fait des bêtises et rêve d'aventures. Il est amoureux de Becky Thatcher et son meilleur ami est Huckleberry Finn, le fils de l'ivrogne du village.",
+      redac_r2: "Une nuit, Tom et Huck vont au cimetière et assistent sans le vouloir à un meurtre : Joe l'Indien tue le docteur Robinson. Les deux garçons s'enfuient terrifiés. Un innocent, Muff Potter, est accusé à leur place. Tom est rongé par la culpabilité mais n'ose pas parler.",
+      redac_r3: "Tom et ses amis fuguent sur l'île Jackson, crus morts par tout le village. Quand ils reviennent pour leur propre enterrement, le village est soulagé. Mais le secret du meurtre continue de tourmenter Tom. Puis Tom et Becky se perdent dans la grotte de McDougal, où se cache Joe l'Indien.",
+      redac_r4: "Lors du procès de Muff Potter, Tom prend une grande décision : il témoigne contre Joe l'Indien et dit la vérité devant tout le village. Joe s'enfuit. Tom a sauvé un innocent, mais il sait que Joe veut maintenant se venger. Dans la grotte, Tom trouve une sortie et sauve Becky après plusieurs jours perdus dans le noir.",
+      redac_r5: "Joe l'Indien est retrouvé mort dans la grotte, murée par les habitants. Tom et Huck découvrent son trésor caché — une fortune en pièces d'or. Les deux garçons deviennent riches. Huck est adopté par la veuve Douglas. Tom est le héros du village. L'enfance libre et dangereuse laisse place à une vie plus rangée, mais Tom a prouvé ce qu'il valait vraiment."
     },
     comprehension: "Roman très amusant et plein d'aventures. Tom est attachant car il fait des bêtises mais est courageux quand c'est vraiment important. La scène dans la grotte est la plus impressionnante. Message : l'enfance est une période de liberté et d'imagination précieuse. Mark Twain se moque gentiment des adultes et de leurs règles. Scène préférée : la clôture où Tom convainc ses amis de faire son travail à sa place.",
     dissertation: {
@@ -1509,6 +1585,72 @@ const LIVRES_DEMO = [
       nar_m6: "Tom et Becky se perdent dans la grotte de McDougal pendant plusieurs jours. Joe l'Indien s'y cache aussi. Tom erre dans le noir, protège Becky, affronte sa peur.",
       nar_m7: "Tom trouve une sortie et sauve Becky. Joe l'Indien est retrouvé mort dans la grotte murée. Le danger est définitivement écarté.",
       nar_m8: "Tom et Huck découvrent le trésor de Joe l'Indien. Ils deviennent riches. Huck est adopté. Tom est le héros de Saint Petersburg. L'enfance sauvage se termine, mais Tom a grandi en courage et en justice."
+    },
+    dissertation2: {
+      sujet:         "En quoi Les Aventures de Tom Sawyer est-il un roman de l'enfance ?",
+      motsCles:      "« En quoi » = chercher les aspects qui font de ce roman une œuvre sur l'enfance (pas seulement une œuvre pour enfants). « Roman » = forme narrative longue, personnages psychologiques, structure narrative. « Enfance » = période de vie, mais aussi ensemble de valeurs, de libertés, de rapport au monde propre à l'enfant.",
+      reformulation: "Comment ce roman de Mark Twain construit-il une représentation de l'enfance comme espace de liberté, d'imagination et de formation morale ? Tensions : innocence / violence — liberté / contrainte sociale — enfant / adulte — jeu / réalité.",
+      problematique: "Comment Mark Twain fait-il de Tom Sawyer une figure exemplaire de l'enfance — à la fois libre et responsable, espiègle et courageux — en montrant que c'est dans l'aventure et non dans les règles adultes que se forme le caractère ?",
+      typePlan:      "Plan dialectique. I. Tom est l'enfant libre par excellence : il refuse les contraintes adultes et vit par l'imagination. II. Mais il se révèle aussi un enfant courageux et juste : quand les circonstances l'exigent, il agit moralement. III. Twain montre ainsi que l'enfance est un temps de formation — pas une période à dépasser mais à traverser pleinement.",
+      accroche:      "En 1876, Mark Twain publie un roman qui ne ressemble à aucun autre : son héros est un garçon de 12 ans qui déteste l'école, ment à sa tante et rêve de devenir pirate. Et pourtant, Tom Sawyer est un héros. Twain invente avec ce roman une figure nouvelle dans la littérature : l'enfant espiègle qui devient courageux sans pour autant devenir adulte.",
+      introSuite:    "Dans Les Aventures de Tom Sawyer (1876), Mark Twain campe un garçon de 12 ans dans le village de Saint Petersburg, au bord du Mississippi. Tom est à la fois un enfant ordinaire — il fait des bêtises, évite l'école, ment à sa tante Polly — et un héros en puissance qui se révèle dans les épreuves. Comment Twain fait-il de ce personnage une figure emblématique de l'enfance ? Nous verrons d'abord que Tom incarne une enfance de la liberté et de l'imagination (I), puis qu'il se révèle dans les épreuves comme un enfant courageux et juste (II), avant d'examiner comment ce roman construit une vision de l'enfance comme temps de formation irremplaçable (III).",
+      p1arg:         "Tom incarne une enfance fondée sur la liberté et l'imagination : il refuse les contraintes adultes et transforme chaque corvée en aventure.",
+      p1ex:          "L'épisode de la clôture (ch. 2) est emblématique : condamné à badigeonner une clôture un dimanche, Tom réussit à convaincre ses amis que c'est un privilège rare. En quelques heures, ils font son travail à sa place et lui donnent leurs trésors. Tom a transformé une punition en jeu, une contrainte en désir.",
+      p1ana:         "Twain montre que l'imagination de Tom est une force, pas une faiblesse. En inventant le désir là où il y avait obligation, Tom anticipe une vérité que les adultes ont oublié : la valeur d'une activité vient souvent du cadre qu'on lui donne, non de l'activité elle-même. C'est une petite philosophie de la liberté.",
+      p2arg:         "Mais Tom n'est pas seulement espiègle : il se révèle courageux et juste quand les circonstances l'exigent, même au prix de sa sécurité.",
+      p2ex:          "Au procès de Muff Potter (ch. 23), Tom sait que Joe l'Indien est le vrai coupable du meurtre qu'il a vu au cimetière. Il aurait pu se taire — Joe est dangereux, la peur est légitime. Mais Tom choisit de témoigner, sauvant un innocent condamné à tort. Ce geste lui vaut d'être menacé par Joe l'Indien.",
+      p2ana:         "Twain construit ce moment comme une épreuve initiatique : Tom ne devient pas héros par calcul ou par ambition, mais parce que son sens de la justice est plus fort que sa peur. Cette justice enfantine — directe, sans calcul politique — est présentée comme plus pure que celle des adultes qui ont laissé condamner un innocent.",
+      p3arg:         "Twain montre ainsi que l'enfance n'est pas une période à dépasser mais à traverser pleinement : c'est dans ses aventures, et non dans l'école ou les règles adultes, que Tom se forme moralement.",
+      p3ex:          "À la fin du roman, Tom et Huck trouvent le trésor de Joe l'Indien. Mais la vraie richesse du roman n'est pas monétaire — c'est la série d'épreuves traversées : la culpabilité, la peur, le courage, la perte et l'amitié. Huck, adopté par la veuve Douglas, résiste d'abord à la civilisation — et le lecteur comprend que ce n'est pas par méchanceté mais parce que la liberté enfantine a une valeur irremplaçable.",
+      p3ana:         "Twain écrit ce roman en nostalgie de sa propre enfance au bord du Mississippi. Il ne moralise pas — il célèbre. L'enfance de Tom est présentée comme un âge d'or de la liberté, de l'imagination et de la formation du caractère, avant que la société adulte ne ferme toutes les portes.",
+      bilan:         "Nous avons vu que Tom Sawyer incarne une enfance de la liberté et de l'imagination, se révèle courageux dans les épreuves, et que son parcours constitue une formation morale que l'école ne lui aurait jamais donnée. Twain construit ainsi un portrait de l'enfance comme temps plein — non comme une préparation à l'âge adulte mais comme une valeur en soi.",
+      reponse:       "Les Aventures de Tom Sawyer est un roman de l'enfance parce qu'il prend l'enfance au sérieux : Tom n'est pas un adulte en miniature ni un enfant à corriger — c'est un être complet dont les valeurs (liberté, imagination, justice directe) sont présentées comme supérieures à celles des adultes qui l'entourent.",
+      ouverture:     "On pourrait prolonger cette réflexion en lisant Les Aventures de Huckleberry Finn (Twain, 1884), suite directe où la question de la liberté de l'enfance se complexifie avec les enjeux de l'esclavage et de la société américaine. On peut aussi penser à L'Attrape-cœurs de Salinger (1951) — autre roman de l'enfance résistante au monde adulte, mais avec une tonalité bien plus amère."
+    },
+    lineaire: {
+      intro1: "Les Aventures de Tom Sawyer est un roman de Mark Twain, publié en 1876 aux États-Unis, ancré dans la tradition du réalisme américain.",
+      intro2: "L'extrait étudié est la scène de la clôture (chapitre 2) — la scène la plus célèbre du roman. Tom, condamné à badigeonner une clôture le dimanche, manipule ses amis pour qu'ils fassent son travail à sa place.",
+      intro3: "Par quels procédés Mark Twain transforme-t-il une scène comique en mini-philosophie sur la nature humaine, tout en dessinant un portrait du héros comme enfant supérieurement intelligent ?",
+      intro4: "Ton plaisant, légèrement ironique. Ralentir sur les moments de réflexion intérieure de Tom, accélérer sur le dialogue avec Ben Rogers. Sourire perceptible dans la voix.",
+      intro5: "Mvt 1 — La catastrophe du dimanche (l.1-6) / Mvt 2 — L'éclair de génie (l.7-12) : Tom invente la stratégie / Mvt 3 — La mise en scène et le renversement (l.13-fin)",
+      mvts: [
+        {
+          titre: "Mvt 1 — La catastrophe du dimanche (l.1-6)",
+          texte: "Tom découvre qu'il doit badigeonner la clôture alors que ses amis s'amusent.\n→ Contraste : dimanche = liberté / clôture = corvée humiliante.\n→ Arrivée de Ben Rogers : tout ce que Tom voudrait être.\n→ La honte sociale est le vrai problème, pas le travail.\n→ Procédé : focalisation interne, comique de situation.\n→ Effet : la question fondamentale est posée."
+        },
+        {
+          titre: "Mvt 2 — L'éclair de génie (l.7-12)",
+          texte: "Tom comprend que la valeur d'une activité dépend du désir, pas de l'activité.\n→ Monologue intérieur : « Qu'est-ce qui fait qu'un garçon aime travailler ? »\n→ Réponse : obligation = travail, désir = jeu.\n→ Procédé : monologue, question rhétorique, antithèse.\n→ Effet : bascule du comique au philosophique."
+        },
+        {
+          titre: "Mvt 3 — La mise en scène et le renversement (l.13-fin)",
+          texte: "Tom feint d'être passionné — Ben finit par le supplier.\n→ Dialogue : désinvolture simulée de Tom, naïveté de Ben.\n→ Gradation : regarder → toucher → travailler → donner sa pomme.\n→ Twain : Tom avait découvert « une grande loi de l'action humaine ».\n→ Procédé : ironie, commentaire omniscient.\n→ Effet : satire — on veut ce qu'on nous interdit."
+        }
+      ],
+      conclu1: "Twain réussit à faire de cette scène comique une leçon sur la psychologie humaine : la valeur d'une activité vient du désir qu'on lui prête. Tom, 12 ans, découvre une vérité que les philosophes ont mis des siècles à formuler.",
+      conclu2: "On peut rapprocher cette scène de la réflexion de Rousseau dans l'Émile (1762) : l'enfant apprend mieux par le désir que par la contrainte. On peut aussi penser à la psychologie du désir contemporaine : l'effet de rareté artificielle sur la perception de la valeur."
+    },
+    commentaire: {
+      amorce: "La littérature du XIXe siècle américain, portée par le réalisme, s'intéresse aux mécanismes de la société humaine. Mark Twain (1835-1910) est l'un de ses représentants les plus acérés, avec une arme particulière : l'humour et la satire.",
+      presentation: "Dans Les Aventures de Tom Sawyer (1876), Twain campe un garçon de 12 ans dans la ville de Saint Petersburg, Missouri. L'extrait étudié — la scène de la clôture (ch. 2) — est la plus célèbre du roman : condamné à badigeonner une clôture le dimanche, Tom manipule ses amis pour faire son travail à sa place.",
+      problematique: "Comment Twain transforme-t-il une scène comique en satire de la psychologie humaine, tout en construisant Tom comme un personnage d'une intelligence supérieure à celle des adultes ?",
+      plan: "Dans un premier temps, nous étudierons comment la scène exploite le comique (I). Dans un second temps, nous analyserons comment ce comique porte une philosophie du désir (II). Dans un troisième temps, nous verrons comment Tom devient une figure satirique de l'intelligence enfantine (III).",
+      axes: [
+        {
+          titre: "I — Une scène comique construite sur le renversement",
+          texte: "Idée directrice : renversement comique — punition→plaisir — le lecteur est complice de Tom.\n→ Situation défavorable : Tom doit travailler pendant que ses amis jouent.\n→ Ben Rogers : le rival espiègle. Structure classique : trompeur / trompé.\n→ Ironie narrative : Twain sait plus que ses personnages.\n→ Effet : le lecteur admire — Tom contrôle.\nTransition : mais la scène porte aussi une vraie réflexion."
+        },
+        {
+          titre: "II — Une philosophie du désir formulée par un enfant de 12 ans",
+          texte: "Idée directrice : au cœur de la scène, une théorie du désir formulée par Tom.\n→ Obligation = travail, désir = jeu. Formule radicale et universelle.\n→ La valeur n'est pas intrinsèque — elle est construite par le rapport au désir.\n→ Twain confirme : Tom avait découvert « une grande loi de l'action humaine ».\n→ Procédé : focalisation interne, antithèse, commentaire omniscient.\nTransition : cette philosophie fait de Tom un personnage plus sage que les adultes."
+        },
+        {
+          titre: "III — Tom comme figure satirique de l'intelligence enfantine",
+          texte: "Idée directrice : un enfant de 12 ans comprend le désir mieux que les adultes — satire douce.\n→ Les adultes croient que la contrainte forme le caractère. Tom prouve le contraire.\n→ En fin de scène : Tom a accompli sa punition sans travailler une minute et a gagné de l'argent.\n→ La satire porte sur les adultes, pas sur Tom.\n→ Effet : l'enfance comme espace d'intelligence pratique."
+        }
+      ],
+      bilan: "Twain articule trois niveaux dans cette scène : le comique (manipulation réussie), le philosophique (théorie du désir) et le satirique (enfant plus intelligent que la société adulte).",
+      ouverture: "On peut prolonger ce commentaire vers Molière (L'Avare) — même comique du personnage aveuglé par ses désirs. On peut aussi penser au behaviorisme (Skinner, 1938) : la récompense et le désir sont de meilleurs moteurs d'apprentissage que la punition — ce que Tom sait instinctivement à 12 ans."
     }
   },
   {
@@ -1572,7 +1714,11 @@ const LIVRES_DEMO = [
       redac_r2: "Prise de curiosité, Alice se lève d'un bond et suit le lapin jusqu'à son terrier. Sans réfléchir, elle saute dans le trou et tombe, tombe, tombe très longtemps dans un puits étrange rempli d'étagères et d'objets bizarres. Elle atterrit finalement dans un couloir rempli de petites portes fermées.",
       redac_r3: "Alice vit alors une série d'aventures impossibles. Elle grandit et rapetisse en mangeant des gâteaux magiques. Elle rencontre des personnages tous plus fous les uns que les autres : le Chapelier Fou bloqué dans une fête du thé éternelle, la Chenille bleue qui fume un narghilé et lui pose des questions philosophiques, le Chat du Cheshire qui disparaît en ne laissant que son sourire, et la terrifiante Reine de Coeur qui veut couper la tête de tout le monde.",
       redac_r4: "Lors d'un procès absurde organisé par la Reine, Alice perd patience. Elle se met à grandir très vite jusqu'à devenir immense et n'a plus peur de personne. Elle crie à la Reine et à tous ses sujets que ce ne sont que des cartes à jouer et qu'ils n'ont aucun pouvoir sur elle.",
-      redac_r5: "Soudain, Alice se réveille sur la berge. Sa soeur l'a secouée doucement. Elle réalise qu'elle a rêvé tout cela. Elle rentre chez elle pour le thé en pensant à ses aventures extraordinaires. Mais quelque chose a changé : Alice a appris à ne pas se laisser intimider par les gens qui font semblant d'avoir de l'autorité."
+      redac_r5: "Soudain, Alice se réveille sur la berge. Sa soeur l'a secouée doucement. Elle réalise qu'elle a rêvé tout cela. Elle rentre chez elle pour le thé en pensant à ses aventures extraordinaires. Mais quelque chose a changé : Alice a appris à ne pas se laisser intimider par les gens qui font semblant d'avoir de l'autorité.",
+      redac_a1: "Alice au Pays des Merveilles, écrit par Lewis Carroll en 1865, raconte l'aventure d'une petite fille de 7 ans qui tombe dans un terrier de lapin et découvre un monde complètement absurde. Dans ce monde, rien ne fonctionne normalement et tout le monde est fou. On peut se demander : qu'est-ce que ce livre veut nous apprendre sur le monde réel ?",
+      redac_a2: "Tout d'abord, Alice au Pays des Merveilles montre que les règles des adultes sont souvent absurdes. Dans le roman, la Reine de Cœur crie constamment « Qu'on lui coupe la tête ! » pour des raisons ridicules, le Chapelier est bloqué dans une fête du thé pour toujours à cause d'une dispute avec le Temps, et le procès final condamne sans aucune preuve. Lewis Carroll se moque des règles injustes et des gens qui font semblant d'avoir de l'autorité.",
+      redac_a3: "Ensuite, Alice reste elle-même face à l'absurdité et finit par ne plus avoir peur. Tout au long du livre, elle grandit, rapetisse, est intimidée par des personnages étranges. Mais à la fin, devant la Reine et toute sa cour, elle s'affirme et leur dit qu'ils ne sont que des cartes à jouer. Cette scène montre que la vraie force, c'est de rester soi-même même quand tout est bizarre autour de soi.",
+      redac_a4: "Pour conclure, Alice au Pays des Merveilles est un livre en apparence pour enfants, mais qui dit quelque chose d'important : le monde des adultes est souvent aussi illogique que le Pays des Merveilles — on s'y est juste habitué. Ce roman nous apprend à garder notre sens critique, à questionner les règles injustes et à rester courageux face à ce qu'on ne comprend pas."
     },
     comprehension: "Livre très bizarre mais fascinant. On ne comprend pas tout mais c'est fait exprès. Le Pays des Merveilles représente un monde où les règles des adultes n'existent plus. Alice doit se débrouiller seule dans un monde sans sens. Message caché : le monde des adultes est aussi absurde, on y est juste habitué. Personnage préféré : le Chat du Cheshire, mystérieux et ses conseils sont étranges mais vrais.",
     dissertation: {
@@ -1603,6 +1749,72 @@ const LIVRES_DEMO = [
       nar_m6: "Les cartes s'envolent et attaquent Alice de toutes parts. Le Pays des Merveilles se désintègre dans le chaos.",
       nar_m7: "Alice se réveille sur la berge. Sa sœur la tient. C'était un rêve. Le cauchemar est terminé.",
       nar_m8: "Alice rentre chez elle pour le thé. Elle a changé : elle n'a plus peur de l'autorité injuste. Le Pays des Merveilles lui a appris à rester elle-même face à l'absurde."
+    },
+    dissertation2: {
+      sujet:         "Comment Lewis Carroll fait-il du Pays des Merveilles une critique du monde adulte ?",
+      motsCles:      "« Comment » = chercher les procédés, les moyens. « Pays des Merveilles » = monde fictif absurde. « Critique » = regard satirique, mise à distance. « Monde adulte » = la société victorienne, ses règles, ses hiérarchies, ses institutions. Le sujet suppose que le monde absurde d'Alice est un miroir déformant du monde réel.",
+      reformulation: "Par quels moyens Carroll utilise-t-il le cadre du rêve et de l'absurde pour remettre en question les règles, les pouvoirs et les certitudes de la société adulte victorienne ? Tensions : réel / absurde — enfant / adulte — liberté / contrainte — rire / critique.",
+      problematique: "Comment Carroll parvient-il à faire d'un conte en apparence fantaisiste une satire acérée de l'autorité, des règles sociales et du conformisme adulte, en faisant de l'enfant Alice le seul personnage sensé dans un monde de fous ?",
+      typePlan:      "Plan dialectique. I. Le Pays des Merveilles est le monde adulte représenté sous forme absurde : ses règles sont arbitraires, son pouvoir est ridicule. II. Alice, figure de l'enfant sensé, résiste progressivement à cette absurdité jusqu'à s'affirmer. III. La structure du rêve permet à Carroll d'aller plus loin qu'une satire directe : elle donne à la critique une liberté totale.",
+      accroche:      "En 1865, Lewis Carroll — mathématicien de formation — publie Alice au Pays des Merveilles pour Alice Liddell, la fille de son collègue. Ce conte en apparence enfantin est aussi un texte philosophique et satirique : le Pays des Merveilles, monde de l'absurde total, est un miroir grossissant de la société victorienne anglaise.",
+      introSuite:    "Dans Alice au Pays des Merveilles (1865), Lewis Carroll envoie une petite fille de 7 ans dans un monde souterrain où rien n'a de sens : les cartes jouent au croquet avec des flamants roses, les procès condamnent avant de juger, et la Reine décapite pour un oui ou un non. Comment Carroll fait-il de cette absurdité une critique du monde adulte ? Nous verrons d'abord que le Pays des Merveilles est le monde adulte vu à travers un prisme absurde (I), puis qu'Alice constitue la figure de résistance sensée face à ce monde fou (II), avant d'examiner comment la forme du rêve donne à la satire une liberté maximale (III).",
+      p1arg:         "Le Pays des Merveilles est le monde adulte victorien représenté sous une forme absurde : ses institutions (justice, pouvoir) et ses règles y sont exposées dans leur arbitraire fondamental.",
+      p1ex:          "Le procès final (ch. 11-12) en est l'exemple le plus net : la Reine de Cœur condamne avant d'entendre les preuves (« La sentence d'abord, le verdict ensuite »). Le jury est composé d'animaux qui écrivent leurs propres noms de peur de les oublier. Les règles du croquet changent constamment au gré du caprice de la Reine.",
+      p1ana:         "Carroll montre que les institutions adultes — justice, règles, hiérarchies — ne sont pas fondées sur la raison mais sur le pouvoir arbitraire. La Reine n'est pas plus absurde que les juges victoriens qui condamnent les pauvres sans les écouter. Carroll inverse simplement le masque : en montrant l'absurdité à nu, il dévoile ce qui reste caché dans le monde réel.",
+      p2arg:         "Face à ce monde de fous, Alice est la seule figure sensée : elle maintient sa logique enfantine, questionne sans cesse et finit par s'affirmer contre l'autorité.",
+      p2ex:          "Tout au long du livre, Alice pose des questions que personne ne peut répondre (« Qui es-tu ? » lui demande la Chenille — question philosophique à laquelle Alice ne sait pas répondre non plus). Mais au procès, Alice grandit littéralement et finalement crie à la Reine et à tous ses sujets : « Vous n'êtes qu'un jeu de cartes ! » — phrase qui renverse le pouvoir.",
+      p2ana:         "Carroll fait d'Alice une figure d'émancipation progressive. Son courage final — dire la vérité à la face du pouvoir — est la conclusion logique de son parcours initiatique. La petite fille qui avait peur de se tromper sur les règles est devenue celle qui refuse des règles insensées. C'est une bildungsroman condensée en forme de rêve.",
+      p3arg:         "La structure du rêve donne à Carroll une liberté satirique totale : dans le rêve, tout est permis, et la satire peut aller jusqu'aux fondements sans être censurée.",
+      p3ex:          "En 1865, l'Angleterre victorienne est une société strictement hiérarchisée : classe, genre, âge, institution. Une satire directe de la justice ou du pouvoir royal aurait été impossible ou risquée. Le cadre du rêve d'enfant permet tout : la Reine peut être ridicule, les juges imbéciles, les règles absurdes — c'est « seulement » un rêve.",
+      p3ana:         "Mais le rêve est aussi une forme philosophique : il montre ce que la réalité cache. Carroll utilise la logique mathématique — il était logicien — pour pousser les règles sociales jusqu'à leur absurde conclusion. Si les règles ne sont fondées que sur l'autorité et non sur la raison, alors elles sont aussi arbitraires que celles de la Reine de Cœur. C'est une critique radicale.",
+      bilan:         "Nous avons vu que le Pays des Merveilles est le monde adulte victorien représenté dans son absurde arbitraire, qu'Alice en est la figure de résistance sensée, et que la forme du rêve donne à Carroll une liberté satirique maximale. L'enfant est le seul personnage sain dans un monde d'adultes fous.",
+      reponse:       "Alice au Pays des Merveilles est une critique du monde adulte d'autant plus efficace qu'elle se déguise en conte : Carroll peut aller plus loin que n'importe quelle satire directe, parce que l'absurde du rêve dit ce que le réalisme ne peut pas dire.",
+      ouverture:     "On pourrait prolonger cette réflexion avec Jonathan Swift, Les Voyages de Gulliver (1726) — même procédé : un voyageur dans des mondes étranges qui sont autant de miroirs satiriques du monde réel. Ou avec Kafka, La Métamorphose (1915) : même absurde comme révélateur de la violence ordinaire de la société sur l'individu."
+    },
+    lineaire: {
+      intro1: "Alice au Pays des Merveilles est un conte fantastique de Lewis Carroll, publié en 1865 en Angleterre victorienne. Carroll — mathématicien et logicien à Oxford — appartient au courant du nonsense littéraire anglais tout en étant l'auteur d'une satire philosophique de la société victorienne.",
+      intro2: "L'extrait étudié est le procès final (chapitres 11-12) — le point culminant du livre. La Reine de Cœur juge le Valet pour avoir prétendument volé des tartes. Le procès est absurde de bout en bout — c'est l'extrait le plus politiquement chargé du livre.",
+      intro3: "Par quels procédés Carroll fait-il du procès une satire de la justice arbitraire, tout en construisant le moment où Alice s'affranchit définitivement de l'autorité du Pays des Merveilles ?",
+      intro4: "Registre oscillant : le ton est pince-sans-rire. Donner à la Reine un ton autoritaire et absurde. Alice doit sonner de plus en plus ferme — sa voix grandit avec elle. Le final fort, libérateur.",
+      intro5: "Mvt 1 — L'absurdité du procès (l.1-10) : la justice inversée / Mvt 2 — La résistance d'Alice qui grandit (l.11-20) / Mvt 3 — La déclaration finale (l.21-fin) : Alice s'affranchit",
+      mvts: [
+        {
+          titre: "Mvt 1 — L'absurdité du procès (l.1-10)",
+          texte: "Le procès renverse systématiquement la logique judiciaire.\n→ Ordre inversé : « La sentence d'abord, le verdict ensuite ! » — parodie des tribunaux qui condamnent sans écouter.\n→ Jury d'animaux qui écrivent leurs propres noms sur leurs ardoises.\n→ Témoin qui témoigne contre lui-même sous la pression.\n→ Procédé : ironie, inversion logique, accumulation d'absurdités.\n→ Effet produit : Carroll désacralise la justice en rendant ses mécanismes ridicules."
+        },
+        {
+          titre: "Mvt 2 — La résistance d'Alice qui grandit (l.11-20)",
+          texte: "Alice commence à contester — et physiquement, elle grandit.\n→ Alice trouve les règles absurdes et le dit : « C'est n'importe quoi ! »\n→ Croissance physique progressive : métaphore de la confiance en soi.\n→ La Reine tente d'intimider — mais Alice ne cède plus.\n→ Procédé : métaphore physique / métaphore morale.\n→ Effet produit : le basculement est préparé — Alice va refuser l'autorité."
+        },
+        {
+          titre: "Mvt 3 — La déclaration finale et l'effondrement (l.21-fin)",
+          texte: "Alice, devenue immense, proclame que la Reine et ses sujets ne sont que des cartes.\n→ « Vous n'êtes qu'un jeu de cartes ! » — phrase performative : nommer le simulacre le défait.\n→ Les cartes s'envolent — réaction paniquée du pouvoir contesté.\n→ Alice se réveille. C'était un rêve.\n→ Procédé : discours direct performatif, gradation, ellipse du réveil.\n→ Effet produit : le courage montré dans le rêve, Alice peut le garder dans la réalité."
+        }
+      ],
+      conclu1: "Carroll construit ce procès comme la somme de sa satire : les institutions adultes sont arbitraires, leur autorité ne repose que sur l'intimidation. Face à elles, Alice finit par s'imposer par la parole juste.",
+      conclu2: "On peut rapprocher cet extrait du procès de Socrate (399 av. J.-C.) — condamné par un tribunal athénien pour avoir questionné les certitudes. Carroll connaissait Platon. On peut aussi relier cette scène aux théories de Foucault sur le pouvoir disciplinaire (Surveiller et punir, 1975)."
+    },
+    commentaire: {
+      amorce: "La littérature fantastique et le conte ont souvent servi de véhicules à la satire sociale : La Fontaine avec ses fables, Swift avec Gulliver. En 1865, Lewis Carroll choisit un autre véhicule : le rêve d'une petite fille de 7 ans.",
+      presentation: "Lewis Carroll (1832-1898), mathématicien à Oxford, publie Alice au Pays des Merveilles en 1865. Ce conte fantastique raconte la chute d'Alice dans un terrier de lapin et ses aventures dans un monde absurde. L'extrait étudié — le procès final — est le moment le plus explicitement satirique : la Reine condamne avant d'entendre.",
+      problematique: "Comment Carroll, dans cette scène de procès absurde, parvient-il à transformer le comique du nonsense en satire de l'autorité arbitraire, tout en faisant d'Alice le personnage qui dit la vérité que le pouvoir ne veut pas entendre ?",
+      plan: "Dans un premier temps, nous étudierons comment le nonsense construit une parodie de la justice (I). Dans un second temps, nous analyserons comment Alice devient la figure de la parole vraie (II). Dans un troisième temps, nous verrons comment la structure rêve/réveil donne à la satire sa portée philosophique (III).",
+      axes: [
+        {
+          titre: "I — Le nonsense comme parodie de la justice",
+          texte: "Idée directrice : Carroll utilise le nonsense pour dévoiler l'arbitraire des institutions judiciaires.\n→ L'inversion systématique : sentence avant verdict. Chaque procédure montrée dans sa version absurde — qui est sa version vraie.\n→ La Reine : figure du pouvoir arbitraire pur. Satire du pouvoir monarchique absolu.\n→ Le jury d'animaux : ceux qui appliquent des règles sans les comprendre.\n→ Procédé : ironie systématique, inversion logique, accumulation.\n→ Effet produit : Carroll montre l'absurde en poussant les mécanismes à leur limite.\nTransition : face à ce simulacre, Alice est le seul personnage logique."
+        },
+        {
+          titre: "II — Alice : la parole vraie face au pouvoir arbitraire",
+          texte: "Idée directrice : Alice devient progressivement la figure de la parole juste.\n→ Progression : questionne intérieurement → conteste à voix basse → proclame la vérité.\n→ La croissance physique : métaphore de la confiance en soi.\n→ « Vous n'êtes qu'un jeu de cartes ! » — phrase performative : nommer le simulacre le défait.\n→ Procédé : gradation, métaphore physique/morale, discours direct performatif.\n→ Effet : Alice n'est plus l'enfant perdue — elle dit la vérité.\nTransition : mais la scène se termine par un réveil."
+        },
+        {
+          titre: "III — Le rêve et le réveil : la satire comme prise de conscience",
+          texte: "Idée directrice : la structure rêve/réveil donne à la satire sa portée universelle.\n→ Le réveil n'annule pas la satire : la sœur d'Alice rêva aussi du Pays des Merveilles. Le rêve se transmet.\n→ Le Pays des Merveilles : territoire de la vérité sans masque.\n→ La leçon est irréversible : Alice ne peut plus regarder le monde adulte comme avant.\n→ Procédé : métalepse, ellipse, ouverture sur l'avenir d'Alice.\n→ Effet : le roman se referme sur une question ouverte."
+        }
+      ],
+      bilan: "Carroll construit dans ce procès une satire à plusieurs niveaux : le nonsense démasque la justice, Alice dit la vérité que le pouvoir refuse, et la structure rêve/réveil donne à cette vérité une portée universelle.",
+      ouverture: "On pourrait prolonger ce commentaire vers Ionesco, Rhinocéros (1960) : même absurde comme révélateur du conformisme — les personnages se transforment en rhinocéros sous nos yeux. On peut aussi penser à Orwell, La Ferme des animaux (1945) : même fable politique sous couvert de conte."
     }
   },
 
@@ -2957,12 +3169,17 @@ function genererPDF(style) {
     // Mots difficiles
     L.mots ? sec('💬 Mots difficiles', P.violet, `<div style="font-size:12px;line-height:1.7;white-space:pre-wrap;color:#333;">${br(L.mots)}</div>`) : '',
 
-    // Thèmes
-    (L.themes && Object.values(L.themes||{}).some(v=>v)) ? sec('🎯 Toile thématique', P.violet,
-      Object.entries({amour:'❤️ Amour',pouvoir:'⚡ Pouvoir',liberte:'🕊️ Liberté',identite:'🔍 Identité',societe:'🏛️ Société',nature:'🌿 Nature'})
+    // Thèmes + radar
+    (() => {
+      if (!L.themes || !Object.values(L.themes).some(v=>v)) return '';
+      const radarSvg = _buildRadarSVG(L.themes, 280);
+      const liste = Object.entries({amour:'❤️ Amour',pouvoir:'⚡ Pouvoir',liberte:'🕊️ Liberté',identite:'🔍 Identité',societe:'🏛️ Société',nature:'🌿 Nature'})
         .filter(([k])=>L.themes[k]).map(([k,label])=>
           `<div style="display:flex;gap:8px;margin-bottom:5px;font-size:12px;"><b style="white-space:nowrap;min-width:90px;">${label}</b><span style="color:#444;">${br(L.themes[k])}</span></div>`
-        ).join('')) : '',
+        ).join('');
+      return sec('🎯 Toile thématique', P.violet,
+        '<div style="text-align:center;margin-bottom:12px;">' + radarSvg + '</div>' + liste);
+    })(),
 
     // Citations structurées
     (() => { const s = citsSection(); return s ? sec('« Citations & Procédés littéraires', P.orange, s) : ''; })(),
@@ -3043,6 +3260,585 @@ ${body_html}
     console.error('genererPDF error:', e);
     showToast('Erreur PDF : ' + e.message, 'warn');
   }
+}
+
+// ════════════════════════════════════════════════════════
+// MODAL PDF — SÉLECTION DES SECTIONS
+// ════════════════════════════════════════════════════════
+
+var _pdfStyle = 'couleur'; // mémorise le style choisi à l'ouverture
+
+// Arborescence des sections disponibles
+// chaque item : { id, label, parent|null, available:fn→bool }
+function _pdfGetSections() {
+  const L = LIVRE_ACTIF;
+  if (!L) return [];
+  const isElise = document.body.classList.contains('mode-elise');
+  const has = (v) => !!(v && (typeof v === 'string' ? v.trim() : Object.values(v).some(x=>x)));
+  const hasCits = Array.isArray(L.citations) && L.citations.length > 0;
+  const hasNarr = L.narration && Object.values(L.narration).some(v=>v);
+  const hasRedacR = L.redac && ['redac_r1','redac_r2','redac_r3','redac_r4','redac_r5'].some(k=>L.redac[k]);
+  const hasRedacA = L.redac && ['redac_a1','redac_a2','redac_a3','redac_a4'].some(k=>L.redac[k]);
+  const hasDissAxel = !isElise && has(L.dissertation);
+  const hasDissElise = isElise && has(L.dissertation2);
+  const hasLineaire = isElise && L.lineaire && (
+    ['intro1','intro2','intro3','intro4','intro5','conclu1','conclu2'].some(k=>L.lineaire[k]) ||
+    (Array.isArray(L.lineaire.mvts) && L.lineaire.mvts.some(m=>m.titre||m.texte))
+  );
+  const hasComm = isElise && L.commentaire && (
+    ['amorce','presentation','problematique','plan','bilan','ouverture'].some(k=>L.commentaire[k]) ||
+    (Array.isArray(L.commentaire.axes) && L.commentaire.axes.some(a=>a.titre||a.texte))
+  );
+
+  return [
+    { id:'livre',     label:'📚 Livre',                   parent:null,     avail: has(L.contexte)||has(L.auteurVie)||has(L.trajectoire)||has(L.courant)||has(L.style) },
+    { id:'ctx',       label:'Contexte historique',        parent:'livre',  avail: has(L.contexte)||has(L.auteurVie)||has(L.trajectoire) },
+    { id:'style',     label:'Style & Courant littéraire', parent:'livre',  avail: has(L.courant)||has(L.style) },
+    { id:'persos',    label:'👤 Personnages & Relations',  parent:null,     avail: L.personnages.length > 0 },
+    { id:'lieux',     label:'🗺️ Lieux',                   parent:null,     avail: L.lieux.length > 0 },
+    { id:'temps',     label:'⏳ Temps',                   parent:null,     avail: has(L.temps) || has(L.temps2) },
+    { id:'temps-base',label:'Époque & Chronologie',       parent:'temps',  avail: has(L.temps) },
+    { id:'temps-2nde',label:'Analyse (Élise — 2nde)',     parent:'temps',  avail: isElise && has(L.temps2) },
+    { id:'mots',      label:'💬 Mots difficiles',         parent:null,     avail: has(L.mots) },
+    { id:'themes',    label:'🎯 Toile thématique',        parent:null,     avail: has(L.themes) },
+    { id:'citations', label:'« Citations & Procédés',     parent:null,     avail: hasCits },
+    { id:'compre',    label:'💭 Compréhension & Avis',    parent:null,     avail: has(L.comprehension) },
+    { id:'intrigue',  label:'🎭 Intrigue',                parent:null,     avail: hasNarr },
+    { id:'ecrire',    label:'✍️ Écrire',                  parent:null,     avail: hasDissAxel||hasDissElise||hasRedacR||hasRedacA||hasLineaire||hasComm },
+    { id:'diss',      label:'Dissertation',               parent:'ecrire', avail: hasDissAxel||hasDissElise },
+    { id:'redac',     label:'Rédaction',                  parent:'ecrire', avail: hasRedacR||hasRedacA },
+    { id:'redac-r',   label:'Récit',                      parent:'redac',  avail: hasRedacR },
+    { id:'redac-a',   label:'Argumentatif',               parent:'redac',  avail: hasRedacA },
+    { id:'lineaire',  label:'Analyse linéaire',           parent:'ecrire', avail: hasLineaire },
+    { id:'commentaire',label:'Commentaire littéraire',    parent:'ecrire', avail: hasComm },
+  ].filter(s => s.avail);
+}
+
+function ouvrirModalPDF(style) {
+  if (!LIVRE_ACTIF) { showToast('Aucun livre ouvert', 'warn'); return; }
+  _pdfStyle = style || 'couleur';
+  _renderPdfTree();
+  document.getElementById('modal-pdf-select').style.display = 'flex';
+}
+
+function fermerModalPDF() {
+  document.getElementById('modal-pdf-select').style.display = 'none';
+}
+
+function _renderPdfTree() {
+  var sections = _pdfGetSections();
+  var container = document.getElementById('pdf-tree');
+  if (!container) return;
+
+  if (!sections.length) {
+    container.innerHTML = '<div style="color:#aaa;font-size:.8rem;padding:10px;">Aucune section disponible.</div>';
+    return;
+  }
+
+  window._pdfChecked = window._pdfChecked || {};
+
+  function makeRow(s, depth) {
+    var checked = window._pdfChecked[s.id] !== false;
+    var pad = depth * 22;
+    var kids = sections.filter(function(c){ return c.parent === s.id; });
+    var childRows = kids.map(function(c){ return makeRow(c, depth+1); }).join('');
+    return '<div style="margin-left:' + pad + 'px;">'
+      + '<div style="display:flex;align-items:center;gap:7px;padding:5px 4px;">'
+      + '<input type="checkbox" id="pdfck_' + s.id + '" data-id="' + s.id + '"'
+      + (checked ? ' checked' : '')
+      + ' onchange="_pdfCkChange(this)"'
+      + ' style="width:16px;height:16px;cursor:pointer;accent-color:#2E5FA3;flex-shrink:0;">'
+      + '<label for="pdfck_' + s.id + '" style="cursor:pointer;font-size:.82rem;flex:1;">' + s.label + '</label>'
+      + '</div>'
+      + childRows
+      + '</div>';
+  }
+
+  // Store sections list for the change handler
+  window._pdfSections = sections;
+
+  var top = sections.filter(function(s){ return s.parent === null; });
+  container.innerHTML = top.map(function(s){ return makeRow(s, 0); }).join('');
+}
+
+function _pdfCkChange(el) {
+  var id = el.dataset.id;
+  var checked = el.checked;
+  window._pdfChecked = window._pdfChecked || {};
+  window._pdfChecked[id] = checked;
+  // Propagate to direct children and grandchildren
+  var secs = window._pdfSections || [];
+  secs.forEach(function(s) {
+    if (s.parent === id) {
+      var childEl = document.getElementById('pdfck_' + s.id);
+      if (childEl) { childEl.checked = checked; window._pdfChecked[s.id] = checked; }
+      secs.forEach(function(gc) {
+        if (gc.parent === s.id) {
+          var gcEl = document.getElementById('pdfck_' + gc.id);
+          if (gcEl) { gcEl.checked = checked; window._pdfChecked[gc.id] = checked; }
+        }
+      });
+    }
+  });
+}
+
+function pdfToutCocher(val) {
+  window._pdfChecked = {};
+  document.querySelectorAll('#pdf-tree input[type=checkbox]').forEach(cb => {
+    cb.checked = val;
+    window._pdfChecked[cb.dataset.pdfId] = val;
+  });
+}
+
+function _ck(id) {
+  // Is a section checked in the modal? Defaults to true if not in state
+  const el = document.getElementById('pdfck_' + id);
+  if (el) return el.checked;
+  return (window._pdfChecked || {})[id] !== false;
+}
+
+function genererPDF_selection() {
+  const L = LIVRE_ACTIF;
+  if (!L) return;
+  const style = _pdfStyle;
+  const nb = style !== 'couleur';
+
+  // ── Palette & helpers (same as genererPDF) ──
+  const c = (col) => nb ? '#333' : col;
+  const P = {
+    bleu:'#2E5FA3', vert:'#2E7D32', orange:'#E65100',
+    violet:'#6A1B9A', rouge:'#c0392b', jaune:'#F9A825', teal:'#00838F'
+  };
+  const h = (txt) => esc(txt || '');
+  const br = (txt) => esc(txt || '').replace(/\n/g,'<br>');
+
+  const sec = (titre, col, contenu) => !contenu ? '' :
+    `<div class="sec">
+       <div class="sec-head" style="background:${c(col)}">${titre}</div>
+       <div class="sec-body" style="border-color:${c(col)};background:${nb?'#fafafa':col+'0d'};">${contenu}</div>
+     </div>`;
+
+  const champ = (label, val) => val ?
+    '<div style="margin-bottom:9px;">' +
+    '<div style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:#555;margin-bottom:2px;">' + label + '</div>' +
+    '<div style="font-size:12px;line-height:1.7;color:#333;white-space:pre-wrap;">' + br(val) + '</div>' +
+    '</div>' : '';
+
+  const entite = (e) =>
+    `<div class="ent" style="border-left-color:${nb?'#333':e.couleur};">
+       <div class="ent-nom">${h(e.nom)}</div>
+       ${e.notes ? `<div class="ent-notes">${br(e.notes)}</div>` : ''}
+     </div>`;
+
+  // ── Récupérer les helpers de genererPDF ──
+  const isElise = document.body.classList.contains('mode-elise');
+  const schNom = {aristote:'Aristote — 3 actes', freytag:'Freytag — 5 actes', moderne:'Arc moderne — 8 étapes'};
+
+  const narrSection = () => {
+    const narr = L.narration;
+    if (!narr || !Object.keys(narr).some(k => narr[k])) return '';
+    const schema = L.schemaType || 'aristote';
+    const PHASES = {
+      aristote:[{key:'nar_a1',nom:'① Début',coul:P.bleu},{key:'nar_a2',nom:'② Développement',coul:P.orange},{key:'nar_a3',nom:'③ Fin',coul:P.vert}],
+      freytag:[{key:'nar_f1',nom:'① Exposition',coul:P.bleu},{key:'nar_f2',nom:'② Action montante',coul:P.vert},{key:'nar_f3',nom:'③ Climax',coul:P.orange},{key:'nar_f4',nom:'④ Action descendante',coul:P.violet},{key:'nar_f5',nom:'⑤ Dénouement',coul:P.teal}],
+      moderne:[{key:'nar_m1',nom:'① Situation initiale',coul:P.bleu},{key:'nar_m2',nom:'② Déclencheur',coul:P.vert},{key:'nar_m3',nom:'③ Montée',coul:P.orange},{key:'nar_m4',nom:'④ Obstacles',coul:P.violet},{key:'nar_m5',nom:'⑤ Climax',coul:P.rouge},{key:'nar_m6',nom:'⑥ Conséquences',coul:P.teal},{key:'nar_m7',nom:'⑦ Résolution',coul:P.jaune},{key:'nar_m8',nom:'⑧ Situation finale',coul:P.vert}]
+    };
+    return (PHASES[schema]||PHASES.aristote).filter(p=>narr[p.key]).map(p=>
+      `<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:7px;">
+         <div style="background:${c(p.coul)};color:#fff;padding:2px 8px;border-radius:5px;font-size:11px;font-weight:800;white-space:nowrap;flex-shrink:0;">${p.nom}</div>
+         <div style="font-size:12px;line-height:1.6;color:#333;">${br(narr[p.key])}</div>
+       </div>`).join('');
+  };
+
+  const citsSection = () => {
+    const cits = Array.isArray(L.citations) ? L.citations : [];
+    if (!cits.length) return '';
+    const stars = n => '★'.repeat(n||0)+'☆'.repeat(3-(n||0));
+    return [...cits].sort((a,b)=>(b.importance||0)-(a.importance||0)).map(c_ =>
+      `<div class="cit-item">
+         <div class="cit-text">« ${h(c_.texte||'')} »</div>
+         <div class="cit-meta">
+           ${c_.ref ? `<span>${h(c_.ref)}</span>` : ''}
+           ${c_.importance ? `<span style="color:#F9A825">${stars(c_.importance)}</span>` : ''}
+           ${c_.procede && c_.procede!=='—' ? `<span class="tag" style="background:${nb?'#eee':P.orange+'18'};color:${c(P.orange)}">${h(c_.procede)}</span>` : ''}
+           ${c_.theme && c_.theme!=='—' ? `<span class="tag">${h(c_.theme)}</span>` : ''}
+         </div>
+         ${c_.interpretation ? `<div class="cit-interp">${br(c_.interpretation)}</div>` : ''}
+       </div>`
+    ).join('');
+  };
+
+  const matriceSection = () => {
+    const persos = L.personnages; const mat = L.matrice || {};
+    if (persos.length < 2) return '';
+    const lignes = [];
+    persos.forEach((pa,i) => { persos.forEach((pb,j) => {
+      if (j<=i) return;
+      const kAB = pa.id+'__'+pb.id; const kBA = pb.id+'__'+pa.id;
+      const rAB = mat[kAB]; const rBA = mat[kBA];
+      if (rAB && rAB!=='—') lignes.push({a:pa.nom,b:pb.nom,r:rAB});
+      else if (rBA && rBA!=='—') lignes.push({a:pb.nom,b:pa.nom,r:rBA});
+    });});
+    if (!lignes.length) return '';
+    return `<table style="width:100%;border-collapse:collapse;font-size:12px;">
+      <thead><tr style="background:${nb?'#eee':P.bleu+'18'};">
+        <th style="padding:5px 10px;text-align:left;font-size:11px;">Perso A</th>
+        <th style="padding:5px 8px;"></th>
+        <th style="padding:5px 10px;text-align:left;font-size:11px;">Perso B</th>
+        <th style="padding:5px 10px;text-align:left;font-size:11px;">Relation</th>
+      </tr></thead>
+      <tbody>${lignes.map(l=>`<tr><td style="padding:4px 10px;font-weight:700;">${h(l.a)}</td><td style="padding:4px 8px;text-align:center;">→</td><td style="padding:4px 10px;font-weight:700;">${h(l.b)}</td><td style="padding:4px 10px;color:${c(P.violet)};">${h(l.r)}</td></tr>`).join('')}</tbody>
+    </table>`;
+  };
+
+  // ── Assembler selon les cases cochées ──
+  const parts = [];
+
+  if (_ck('ctx') && (L.contexte||L.auteurVie||L.trajectoire)) {
+    parts.push(sec('📚 Contexte historique & culturel', P.bleu,
+      champ('Époque', L.contexte) + champ("Vie de l'auteur", L.auteurVie) + champ("Trajectoire de l'œuvre", L.trajectoire)));
+  }
+  if (_ck('style') && (L.courant||L.style)) {
+    parts.push(sec('🖊️ Style & Courant littéraire', P.violet,
+      champ('Courant littéraire', L.courant) + champ('Style', L.style)));
+  }
+  if (_ck('persos') && L.personnages.length) {
+    parts.push(sec('👤 Personnages & Relations', P.bleu, L.personnages.map(entite).join('')));
+    // Graphe D3 — forcer le rendu si nécessaire, puis capturer le SVG live
+    if (L.personnages.length >= 2) {
+      const svgEl = document.getElementById('graphe-svg');
+      if (svgEl && !svgEl.querySelector('circle')) { _buildGraphe(); }
+    }
+    const svgEl2 = document.getElementById('graphe-svg');
+    const m = matriceSection();
+    if (svgEl2 && svgEl2.style.display !== 'none' && svgEl2.innerHTML) {
+      const clone = svgEl2.cloneNode(true);
+      clone.removeAttribute('style');
+      clone.style.width = '100%'; clone.style.height = 'auto';
+      clone.style.maxWidth = '600px'; clone.style.display = 'block'; clone.style.margin = '0 auto 12px';
+      clone.querySelectorAll('text').forEach(t => { t.style.fontFamily = "'Segoe UI', sans-serif"; });
+      const legende = m ? '<div style="margin-top:10px;">' + m + '</div>' : '';
+      parts.push(sec('🔗 Graphe des relations inter-personnages', P.bleu,
+        '<div style="text-align:center;">' + clone.outerHTML + '</div>' + legende));
+    } else if (m) {
+      parts.push(sec('🔗 Relations entre personnages', P.bleu, m));
+    }
+  }
+  if (_ck('lieux') && L.lieux.length) {
+    parts.push(sec('🗺️ Lieux', P.vert, L.lieux.map(entite).join('')));
+  }
+  if (_ck('temps-base') && L.temps) {
+    parts.push(sec('⏳ Époque & Chronologie', P.orange,
+      `<div style="font-size:12px;line-height:1.7;white-space:pre-wrap;color:#333;">${br(L.temps)}</div>`));
+  }
+  if (_ck('temps-2nde') && L.temps2 && Object.values(L.temps2).some(v=>v)) {
+    parts.push(sec('⏳ Temps & Narration — Analyse (2nde)', P.orange,
+      champ('Ordre', L.temps2.ordre) + champ('Durée & Rythme', L.temps2.duree) +
+      champ('Fréquence', L.temps2.frequence) + champ('Espace', L.temps2.espace)));
+  }
+  if (_ck('mots') && L.mots) {
+    parts.push(sec('💬 Mots difficiles', P.violet,
+      `<div style="font-size:12px;line-height:1.7;white-space:pre-wrap;color:#333;">${br(L.mots)}</div>`));
+  }
+  if (_ck('themes') && L.themes && Object.values(L.themes).some(v=>v)) {
+    const radarSvg = _buildRadarSVG(L.themes, 280);
+    const liste = Object.entries({amour:'❤️ Amour',pouvoir:'⚡ Pouvoir',liberte:'🕊️ Liberté',identite:'🔍 Identité',societe:'🏛️ Société',nature:'🌿 Nature'})
+      .filter(([k])=>L.themes[k]).map(([k,label])=>
+        '<div style="display:flex;gap:8px;margin-bottom:5px;font-size:12px;"><b style="white-space:nowrap;min-width:90px;">'+label+'</b><span style="color:#444;">'+br(L.themes[k])+'</span></div>'
+      ).join('');
+    parts.push(sec('🎯 Toile thématique', P.violet,
+      '<div style="text-align:center;margin-bottom:12px;">' + radarSvg + '</div>' + liste));
+  }
+  if (_ck('citations')) {
+    const s = citsSection();
+    if (s) parts.push(sec('« Citations & Procédés littéraires', P.orange, s));
+  }
+  if (_ck('compre') && L.comprehension) {
+    parts.push(sec('💭 Compréhension & Avis', P.violet,
+      `<div style="font-size:12px;line-height:1.7;white-space:pre-wrap;color:#333;">${br(L.comprehension)}</div>`));
+  }
+  if (_ck('intrigue')) {
+    const s = narrSection();
+    if (s) parts.push(sec(`🎭 Structure de l'intrigue — ${schNom[L.schemaType||'aristote']||''}`, P.teal, s));
+  }
+
+  // ÉCRIRE — Dissertation
+  if (_ck('diss')) {
+    if (!isElise) {
+      const d = L.dissertation || {};
+      if (d.sujet||d.intro||d.arg1) {
+        let out = d.sujet ? `<div class="diss-sujet">${h(d.sujet)}</div>` : '';
+        [['① Introduction',d.intro,P.bleu],['② Argument 1',d.arg1,P.vert],['③ Argument 2',d.arg2,P.orange],['④ Argument 3',d.arg3,P.teal],['⑤ Conclusion',d.conclu,P.rouge]]
+          .forEach(([lbl,val,col]) => { if(val) out += `<div class="diss-step" style="border-left-color:${c(col)}"><div class="diss-label" style="color:${c(col)}">${lbl}</div><div class="diss-text">${br(val)}</div></div>`; });
+        parts.push(sec('✍️ Dissertation — Méthode 6ème', P.violet, out));
+      }
+    } else {
+      const d2 = L.dissertation2 || {};
+      const vals = [d2.sujet,d2.motsCles,d2.reformulation,d2.problematique,d2.accroche,d2.introSuite,d2.p1arg,d2.p1ex,d2.p1ana,d2.p2arg,d2.p2ex,d2.p2ana,d2.bilan,d2.reponse,d2.ouverture];
+      if (vals.some(v=>v&&v.trim())) {
+        const grp = (titre, col, items) => {
+          const body = items.filter(([,v])=>v).map(([l,v])=>`<div class="diss-step" style="border-left-color:${c(col)}"><div class="diss-label" style="color:${c(col)}">${l}</div><div class="diss-text">${br(v)}</div></div>`).join('');
+          return body ? `<div style="margin-bottom:8px;font-weight:800;font-size:12px;color:${c(col)};border-bottom:1px solid ${c(col)}22;padding-bottom:2px;margin-top:8px;">${titre}</div>${body}` : '';
+        };
+        let out = (d2.sujet ? `<div class="diss-sujet">${h(d2.sujet)}</div>` : '') +
+          grp('① Analyse du sujet',P.bleu,[['Mots-clés',d2.motsCles],['Reformulation',d2.reformulation],['Problématique',d2.problematique]]) +
+          grp('② Introduction',P.violet,[['Accroche',d2.accroche],['Présentation + plan',d2.introSuite]]) +
+          grp('③ Partie I',P.vert,[['Argument',d2.p1arg],['Exemple',d2.p1ex],['Analyse',d2.p1ana]]) +
+          grp('④ Partie II',P.orange,[['Argument',d2.p2arg],['Exemple',d2.p2ex],['Analyse',d2.p2ana]]) +
+          (d2.p3arg ? grp('⑤ Partie III',P.teal,[['Argument',d2.p3arg],['Exemple',d2.p3ex],['Analyse',d2.p3ana]]) : '') +
+          grp('⑥ Conclusion',P.rouge,[['Bilan',d2.bilan],['Réponse',d2.reponse],['Ouverture',d2.ouverture]]);
+        parts.push(sec('✍️ Dissertation — Méthode 2nde A.E.A.', P.violet, out));
+      }
+    }
+  }
+
+  // ÉCRIRE — Rédaction
+  const r = L.redac || {};
+  if (_ck('redac-r') && ['redac_r1','redac_r2','redac_r3','redac_r4','redac_r5'].some(k=>r[k])) {
+    let out = '';
+    [['① Situation initiale','redac_r1'],['② Élément déclencheur','redac_r2'],['③ Péripéties','redac_r3'],['④ Dénouement','redac_r4'],['⑤ Situation finale','redac_r5']]
+      .forEach(([lbl,k]) => { if(r[k]) out += `<div class="diss-step" style="border-left-color:${c(P.vert)}"><div class="diss-label" style="color:${c(P.vert)}">${lbl}</div><div class="diss-text">${br(r[k])}</div></div>`; });
+    parts.push(sec('📖 Rédaction — Récit', P.vert, out));
+  }
+  if (_ck('redac-a') && ['redac_a1','redac_a2','redac_a3','redac_a4'].some(k=>r[k])) {
+    let out = '';
+    [['① Introduction','redac_a1'],['② Argument principal','redac_a2'],['③ Deuxième argument','redac_a3'],['④ Conclusion','redac_a4']]
+      .forEach(([lbl,k]) => { if(r[k]) out += `<div class="diss-step" style="border-left-color:${c(P.orange)}"><div class="diss-label" style="color:${c(P.orange)}">${lbl}</div><div class="diss-text">${br(r[k])}</div></div>`; });
+    parts.push(sec('💬 Rédaction — Argumentatif', P.orange, out));
+  }
+
+  // ÉCRIRE — Analyse linéaire
+  if (_ck('lineaire') && isElise && L.lineaire) {
+    const d = L.lineaire;
+    let out = '';
+    [["1. Présentation de l'œuvre","intro1"],["2. Présentation de l'extrait","intro2"],["3. Problématique","intro3"],["4. Lecture expressive","intro4"],["5. Les mouvements","intro5"]]
+      .forEach(([lbl,k]) => { if(d[k]) out += champ(lbl, d[k]); });
+    if (d.mvts && d.mvts.length) {
+      out += `<div style="font-weight:800;color:#00838F;font-size:11px;margin:8px 0 5px;">MOUVEMENTS</div>`;
+      d.mvts.forEach((m,i) => {
+        if(m.titre||m.texte) out += `<div style="background:#E0F7FA;border-radius:7px;padding:8px 10px;margin-bottom:7px;"><div style="font-weight:800;font-size:.75rem;color:#00838F;margin-bottom:3px;">Mouvement ${i+1}${m.titre?' — '+h(m.titre):''}</div><div style="font-size:12px;line-height:1.7;white-space:pre-wrap;">${br(m.texte||'')}</div></div>`;
+      });
+    }
+    [['Réponse à la problématique','conclu1'],['Ouverture','conclu2']]
+      .forEach(([lbl,k]) => { if(d[k]) out += champ(lbl, d[k]); });
+    if (out) parts.push(sec('🔍 Analyse linéaire', P.teal, out));
+  }
+
+  // ÉCRIRE — Commentaire littéraire
+  if (_ck('commentaire') && isElise && L.commentaire) {
+    const d = L.commentaire;
+    let out = '';
+    [['Amorce','amorce'],['Présentation','presentation'],['Problématique','problematique'],['Annonce du plan','plan']]
+      .forEach(([lbl,k]) => { if(d[k]) out += champ(lbl, d[k]); });
+    if (d.axes && d.axes.length) {
+      out += `<div style="font-weight:800;color:#AD1457;font-size:11px;margin:8px 0 5px;">AXES DE DÉVELOPPEMENT</div>`;
+      d.axes.forEach((a,i) => {
+        if(a.titre||a.texte) out += `<div style="background:#FCE4EC;border-radius:7px;padding:8px 10px;margin-bottom:7px;"><div style="font-weight:800;font-size:.75rem;color:#AD1457;margin-bottom:3px;">Axe ${i+1}${a.titre?' — '+h(a.titre):''}</div><div style="font-size:12px;line-height:1.7;white-space:pre-wrap;">${br(a.texte||'')}</div></div>`;
+      });
+    }
+    [['Bilan','bilan'],['Ouverture','ouverture']]
+      .forEach(([lbl,k]) => { if(d[k]) out += champ(lbl, d[k]); });
+    if (out) parts.push(sec('📝 Commentaire littéraire', P.violet, out));
+  }
+
+  if (!parts.length) { showToast('Aucune section sélectionnée', 'warn'); return; }
+
+  // ── HTML complet ──
+  const body_html = parts.filter(Boolean).join('\n');
+  const html = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8">
+<title>Guide — ${h(L.titre||'Livre')}</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Segoe UI',system-ui,sans-serif;color:#1a1a2e;font-size:13px;max-width:820px;margin:0 auto;padding:24px;}
+  .pdf-header{background:${nb?'#333':P.bleu};color:#fff;padding:18px 22px;border-radius:12px;margin-bottom:16px;}
+  .pdf-header h1{font-size:1.25rem;font-weight:900;margin-bottom:4px;}
+  .pdf-header p{font-size:.82rem;opacity:.85;}
+  .pdf-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+  .pdf-meta span{background:${nb?'#eee':'#D6E4F7'};color:${nb?'#333':P.bleu};font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:20px;}
+  .sec{margin-bottom:16px;break-inside:avoid;}
+  .sec-head{background:${nb?'#333':P.bleu};color:#fff;padding:6px 12px;border-radius:7px 7px 0 0;font-size:.78rem;font-weight:800;}
+  .sec-body{border:1.5px solid ${nb?'#333':'#ccc'};border-top:none;border-radius:0 0 7px 7px;padding:12px;}
+  .ent{border-left:3px solid #333;padding:6px 10px;margin-bottom:7px;background:${nb?'#f9f9f9':'#fafcff'};border-radius:0 6px 6px 0;}
+  .ent-nom{font-weight:800;font-size:.88rem;margin-bottom:2px;}
+  .ent-notes{font-size:.80rem;line-height:1.55;color:#444;}
+  .diss-sujet{background:${nb?'#f0f0f0':'#F3E5F5'};border-radius:6px;padding:8px 12px;margin-bottom:10px;font-size:12px;font-weight:700;}
+  .diss-step{border-left:3px solid #ccc;padding:5px 10px;margin-bottom:7px;background:${nb?'#fafafa':'#fdfdfd'};}
+  .diss-label{font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px;}
+  .diss-text{font-size:12px;line-height:1.65;color:#333;}
+  .cit-item{border-left:3px solid ${nb?'#333':P.orange};padding:8px 10px;margin-bottom:9px;background:${nb?'#fafafa':'#FFFDE7'};}
+  .cit-text{font-style:italic;font-size:12.5px;line-height:1.6;margin-bottom:4px;color:#1a1a2e;}
+  .cit-meta{display:flex;flex-wrap:wrap;gap:5px;font-size:10.5px;color:#666;margin-bottom:4px;}
+  .cit-interp{font-size:11px;color:#444;line-height:1.5;padding-top:4px;border-top:1px solid #eee;}
+  .tag{background:#eee;padding:1px 7px;border-radius:10px;}
+  .field-block{margin-bottom:9px;}
+  .pdf-footer{margin-top:24px;padding-top:10px;border-top:1px solid #eee;font-size:.68rem;color:#aaa;text-align:center;}
+  @media print{body{padding:0;max-width:100%;}@page{margin:1.4cm;}.sec,.ent,.cit-item,.diss-step{break-inside:avoid;}}
+</style></head><body>
+<button onclick="window.print()" style="background:${nb?'#333':P.bleu};color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:13px;cursor:pointer;margin-bottom:18px;font-family:inherit;">🖨️ Imprimer / Enregistrer en PDF</button>
+<div class="pdf-header">
+  <h1>📖 ${h(L.titre||'Guide de lecture')}</h1>
+  <p>${h(L.auteur||'')}${L.genre?' · '+h(L.genre):''}${L.dateCreation?' · Créé le '+h(L.dateCreation):''}</p>
+</div>
+<div class="pdf-meta">
+  ${L.genre  ? `<span>📚 ${h(L.genre)}</span>` : ''}
+  ${L.pages  ? `<span>📄 ${h(L.pages)} pages</span>` : ''}
+  ${L.annee  ? `<span>🕰️ ${h(L.annee)}</span>` : ''}
+</div>
+${body_html}
+<div class="pdf-footer">Guide de lecture · ${h(L.titre||'')} · généré le ${new Date().toLocaleDateString('fr-FR')}</div>
+</body></html>`;
+
+  fermerModalPDF();
+  try {
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url  = URL.createObjectURL(blob);
+    const win  = window.open(url, '_blank');
+    if (!win) { const a = document.createElement('a'); a.href=url; a.download=(L.titre||'guide')+'.html'; a.click(); }
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  } catch(e) { showToast('Erreur PDF : ' + e.message, 'warn'); }
+}
+
+// ── PDF spécifiques par sous-onglet Écrire ──────────────
+function _pdfOuvrir(html, nomFichier) {
+  try {
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url  = URL.createObjectURL(blob);
+    const win  = window.open(url, '_blank');
+    if (!win) {
+      const a = document.createElement('a');
+      a.href = url; a.download = nomFichier + '.html'; a.click();
+    }
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  } catch(e) { showToast('Erreur PDF : ' + e.message, 'warn'); }
+}
+
+function _pdfEnveloppe(titre, couleur, contenuHTML, styleExtra) {
+  const nb = false; // toujours couleur pour ces exports
+  return `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8">
+<title>${titre}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;color:#1a1a2e;font-size:13px;max-width:820px;margin:0 auto;padding:24px;}
+h2{font-size:1rem;font-weight:900;color:${couleur};border-bottom:2px solid ${couleur};padding-bottom:6px;margin:16px 0 10px;}
+h3{font-size:.85rem;font-weight:800;color:${couleur};margin:12px 0 5px;}
+.bloc{background:${couleur}18;border-left:4px solid ${couleur};border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:10px;}
+.label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:${couleur};margin-bottom:3px;}
+.val{font-size:12px;line-height:1.75;color:#333;white-space:pre-wrap;}
+.step{border-left:3px solid ${couleur}88;padding:6px 10px;margin-bottom:8px;}
+.step-label{font-size:.7rem;font-weight:800;text-transform:uppercase;color:${couleur};margin-bottom:2px;}
+.step-val{font-size:12px;line-height:1.65;color:#333;}
+.mvt{background:#F3E5F5;border-radius:8px;padding:10px 12px;margin-bottom:8px;}
+.mvt-titre{font-size:.78rem;font-weight:800;color:#6A1B9A;margin-bottom:5px;}
+.mvt-val{font-size:12px;line-height:1.7;color:#333;white-space:pre-wrap;}
+.axe{background:#FCE4EC;border-radius:8px;padding:10px 12px;margin-bottom:8px;}
+.axe-titre{font-size:.78rem;font-weight:800;color:#AD1457;margin-bottom:5px;}
+.axe-val{font-size:12px;line-height:1.7;color:#333;white-space:pre-wrap;}
+.header{background:${couleur};color:#fff;padding:14px 18px;border-radius:10px;margin-bottom:16px;}
+.header h1{font-size:1.15rem;font-weight:900;margin-bottom:3px;}
+.header p{font-size:.8rem;opacity:.85;}
+.footer{margin-top:20px;padding-top:8px;border-top:1px solid #eee;font-size:.65rem;color:#aaa;text-align:center;}
+${styleExtra||''}
+@media print{body{padding:0;max-width:100%;}@page{margin:1.4cm;}}
+</style></head><body>
+<button onclick="window.print()" style="background:${couleur};color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:12px;cursor:pointer;margin-bottom:14px;font-family:inherit;">🖨️ Imprimer / PDF</button>
+${contenuHTML}
+</body></html>`;
+}
+
+function genererPDF_redac() {
+  const L = LIVRE_ACTIF;
+  if (!L) { showToast('Aucun livre ouvert', 'warn'); return; }
+  const h = (s) => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const br = (s) => h(s).replace(/\n/g,'<br>');
+  const r = L.redac || {};
+  const type = L.redacType || 'recit';
+  let corps = `<div class="header"><h1>📖 ${h(L.titre)} — Rédaction</h1><p>${h(L.auteur||'')} · Créé le ${h(L.dateCreation||'')}</p></div>`;
+  if (type === 'recit') {
+    const items = [['1. Situation initiale','redac_r1'],['2. Élément déclencheur','redac_r2'],['3. Péripéties','redac_r3'],['4. Dénouement','redac_r4'],['5. Situation finale','redac_r5']];
+    corps += '<h2>📖 Récit</h2>';
+    items.forEach(([lbl,k]) => { if(r[k]) corps += '<div class="step"><div class="step-label">'+lbl+'</div><div class="step-val">'+br(r[k])+'</div></div>'; });
+  } else {
+    const items = [['1. Introduction','redac_a1'],['2. Argument principal','redac_a2'],['3. Deuxième argument','redac_a3'],['4. Conclusion','redac_a4']];
+    corps += '<h2>💬 Texte argumentatif</h2>';
+    items.forEach(([lbl,k]) => { if(r[k]) corps += '<div class="step"><div class="step-label">'+lbl+'</div><div class="step-val">'+br(r[k])+'</div></div>'; });
+  }
+  corps += '<div class="footer">Guide de lecture · ' + h(L.titre) + ' · Rédaction</div>';
+  _pdfOuvrir(_pdfEnveloppe('Rédaction — ' + h(L.titre), '#2E7D32', corps), 'redaction_' + (L.titre||'').replace(/\s+/g,'_'));
+}
+
+function genererPDF_lineaire() {
+  const L = LIVRE_ACTIF;
+  if (!L) { showToast('Aucun livre ouvert', 'warn'); return; }
+  const h = (s) => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const br = (s) => h(s).replace(/\n/g,'<br>');
+  const d = L.lineaire || {};
+  let corps = `<div class="header"><h1>🔍 ${h(L.titre)} — Analyse linéaire</h1><p>${h(L.auteur||'')} · Créé le ${h(L.dateCreation||'')}</p></div>`;
+  corps += '<h2>① Introduction</h2>';
+  [["1. Présentation de l'œuvre","intro1"],["2. Présentation de l'extrait","intro2"],["3. Problématique","intro3"],["4. Lecture expressive","intro4"],["5. Les mouvements","intro5"]]
+    .forEach(([lbl,k]) => { if(d[k]) corps += '<div class="bloc"><div class="label">'+lbl+'</div><div class="val">'+br(d[k])+'</div></div>'; });
+  if (d.mvts && d.mvts.length) {
+    corps += '<h2>② Développement</h2>';
+    d.mvts.forEach((m,i) => {
+      if(m.titre||m.texte) corps += '<div class="mvt"><div class="mvt-titre">Mouvement '+(i+1)+(m.titre?' — '+h(m.titre):'')+'</div><div class="mvt-val">'+br(m.texte||'')+'</div></div>';
+    });
+  }
+  corps += '<h2>③ Conclusion</h2>';
+  [['Réponse à la problématique','conclu1'],['Ouverture','conclu2']]
+    .forEach(([lbl,k]) => { if(d[k]) corps += '<div class="bloc"><div class="label">'+lbl+'</div><div class="val">'+br(d[k])+'</div></div>'; });
+  corps += '<div class="footer">Guide de lecture · ' + h(L.titre) + ' · Analyse linéaire</div>';
+  _pdfOuvrir(_pdfEnveloppe('Analyse linéaire — ' + h(L.titre), '#00838F', corps), 'lineaire_' + (L.titre||'').replace(/\s+/g,'_'));
+}
+
+function genererPDF_commentaire() {
+  const L = LIVRE_ACTIF;
+  if (!L) { showToast('Aucun livre ouvert', 'warn'); return; }
+  const h = (s) => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const br = (s) => h(s).replace(/\n/g,'<br>');
+  const d = L.commentaire || {};
+  let corps = `<div class="header"><h1>📝 ${h(L.titre)} — Commentaire littéraire</h1><p>${h(L.auteur||'')} · Créé le ${h(L.dateCreation||'')}</p></div>`;
+  corps += '<h2>① Introduction</h2>';
+  [['Amorce','amorce'],['Présentation','presentation'],['Problématique','problematique'],['Annonce du plan','plan']]
+    .forEach(([lbl,k]) => { if(d[k]) corps += '<div class="bloc"><div class="label">'+lbl+'</div><div class="val">'+br(d[k])+'</div></div>'; });
+  if (d.axes && d.axes.length) {
+    corps += '<h2>② Développement</h2>';
+    d.axes.forEach((a,i) => {
+      if(a.titre||a.texte) corps += '<div class="axe"><div class="axe-titre">Axe '+(i+1)+(a.titre?' — '+h(a.titre):'')+'</div><div class="axe-val">'+br(a.texte||'')+'</div></div>';
+    });
+  }
+  corps += '<h2>③ Conclusion</h2>';
+  [['Bilan','bilan'],['Ouverture','ouverture']]
+    .forEach(([lbl,k]) => { if(d[k]) corps += '<div class="bloc"><div class="label">'+lbl+'</div><div class="val">'+br(d[k])+'</div></div>'; });
+  corps += '<div class="footer">Guide de lecture · ' + h(L.titre) + ' · Commentaire littéraire</div>';
+  _pdfOuvrir(_pdfEnveloppe('Commentaire littéraire — ' + h(L.titre), '#AD1457', corps), 'commentaire_' + (L.titre||'').replace(/\s+/g,'_'));
+}
+
+function genererPDF_diss() {
+  const L = LIVRE_ACTIF;
+  if (!L) { showToast('Aucun livre ouvert', 'warn'); return; }
+  const h = (s) => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const br = (s) => h(s).replace(/\n/g,'<br>');
+  const isElise = document.body.classList.contains('mode-elise');
+  let corps = `<div class="header"><h1>✍️ ${h(L.titre)} — Dissertation</h1><p>${h(L.auteur||'')} · Créé le ${h(L.dateCreation||'')}</p></div>`;
+  if (isElise) {
+    const d2 = L.dissertation2 || {};
+    const grp = (titre, items) => {
+      const b = items.filter(([,v])=>v).map(([l,v])=>'<div class="step"><div class="step-label">'+l+'</div><div class="step-val">'+br(v)+'</div></div>').join('');
+      return b ? '<h3>'+titre+'</h3>'+b : '';
+    };
+    if(d2.sujet) corps += '<div class="bloc"><div class="label">Sujet</div><div class="val">'+h(d2.sujet)+'</div></div>';
+    corps += grp('① Analyse du sujet', [['Mots-clés',d2.motsCles],['Reformulation',d2.reformulation],['Problématique',d2.problematique]]);
+    corps += grp('② Introduction', [['Accroche',d2.accroche],['Présentation + plan',d2.introSuite]]);
+    corps += grp('③ Partie I', [['Argument',d2.p1arg],['Exemple',d2.p1ex],['Analyse',d2.p1ana]]);
+    corps += grp('④ Partie II', [['Argument',d2.p2arg],['Exemple',d2.p2ex],['Analyse',d2.p2ana]]);
+    if(d2.p3arg) corps += grp('⑤ Partie III', [['Argument',d2.p3arg],['Exemple',d2.p3ex],['Analyse',d2.p3ana]]);
+    corps += grp('⑥ Conclusion', [['Bilan',d2.bilan],['Réponse',d2.reponse],['Ouverture',d2.ouverture]]);
+  } else {
+    const d = L.dissertation || {};
+    [['① Introduction',d.intro],['② Argument 1',d.arg1],['③ Argument 2',d.arg2],['④ Argument 3',d.arg3],['⑤ Conclusion',d.conclu]]
+      .forEach(([lbl,v]) => { if(v) corps += '<div class="step"><div class="step-label">'+lbl+'</div><div class="step-val">'+br(v)+'</div></div>'; });
+  }
+  corps += '<div class="footer">Guide de lecture · ' + h(L.titre) + ' · Dissertation</div>';
+  _pdfOuvrir(_pdfEnveloppe('Dissertation — ' + h(L.titre), '#6A1B9A', corps), 'dissertation_' + (L.titre||'').replace(/\s+/g,'_'));
 }
 
 
@@ -4283,6 +5079,48 @@ function countThemeWords(text) {
   return Math.min(text.split(/[·,;]+/).map(s=>s.trim()).filter(s=>s.length>2).length, 10);
 }
 
+function _buildRadarSVG(themes, size) {
+  // Génère un SVG radar standalone à partir d'un objet themes {amour,pouvoir,...}
+  // size: dimension du viewBox (défaut 300)
+  size = size || 300;
+  const cx=size/2, cy=size/2, R=size*0.3, n=6;
+  const axes = THEME_AXES;
+  const scores = axes.map(a => {
+    const val = themes ? (themes[a.key]||'') : '';
+    return Math.min(countThemeWords(val)/8, 1);
+  });
+  const hasData = scores.some(s=>s>0);
+  const pt = (i,r) => {
+    const angle = (2*Math.PI*i/n) - Math.PI/2;
+    return {x: cx+r*Math.cos(angle), y: cy+r*Math.sin(angle)};
+  };
+  let html='';
+  [0.33,0.66,1].forEach(lv => {
+    const pts = axes.map((_,i)=>pt(i,R*lv));
+    const d = pts.map((p,i)=>(i===0?'M':'L')+p.x.toFixed(1)+','+p.y.toFixed(1)).join(' ')+' Z';
+    html+='<path d="'+d+'" fill="none" stroke="'+(lv===1?'#bbb':'#ddd')+'" stroke-width="'+(lv===1?1.5:0.8)+'"/>';
+  });
+  axes.forEach((_,i) => {
+    const o=pt(i,R);
+    html+='<line x1="'+cx+'" y1="'+cy+'" x2="'+o.x.toFixed(1)+'" y2="'+o.y.toFixed(1)+'" stroke="#ccc" stroke-width="0.8"/>';
+  });
+  if (hasData) {
+    const dp = axes.map((_,i)=>pt(i,R*(scores[i]||0.04)));
+    const dd = dp.map((p,i)=>(i===0?'M':'L')+p.x.toFixed(1)+','+p.y.toFixed(1)).join(' ')+' Z';
+    html+='<path d="'+dd+'" fill="rgba(106,27,154,0.15)" stroke="#6A1B9A" stroke-width="2" stroke-linejoin="round"/>';
+    dp.forEach((p,i) => {
+      if (scores[i]>0) html+='<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="4" fill="'+axes[i].color+'" stroke="#fff" stroke-width="1.5"/>';
+    });
+  }
+  axes.forEach((a,i) => {
+    const lp=pt(i,R+26);
+    const anchor=lp.x<cx-5?'end':lp.x>cx+5?'start':'middle';
+    const bold=scores[i]>0.6;
+    html+='<text x="'+lp.x.toFixed(1)+'" y="'+(lp.y+4).toFixed(1)+'" text-anchor="'+anchor+'" font-family="Arial,sans-serif" font-size="11" font-weight="'+(bold?800:600)+'" fill="'+(bold?a.color:'#666')+'">'+a.label+'</text>';
+  });
+  return '<svg viewBox="0 0 '+size+' '+size+'" xmlns="http://www.w3.org/2000/svg" style="max-width:280px;width:100%;display:block;margin:0 auto;">'+html+'</svg>';
+}
+
 function drawThemeRadar() {
   const svg = document.getElementById('theme-radar-svg');
   if (!svg) return;
@@ -5263,5 +6101,31 @@ window.addEventListener('DOMContentLoaded', chargerMode);
   </div>
 </div>
 
+
+<!-- ══════════════════════════════════════════
+     MODAL SÉLECTION PDF
+══════════════════════════════════════════ -->
+<div id="modal-pdf-select" onclick="if(event.target===this)fermerModalPDF()" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9400;display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:20px 10px;">
+  <div style="background:#fff;border-radius:16px;padding:20px;width:100%;max-width:480px;margin:auto;box-shadow:0 8px 40px rgba(0,0,0,.18);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+      <div style="font-weight:900;font-size:.95rem;color:var(--bleu)">📄 Choisir les sections du PDF</div>
+      <button class="btn btn-gris btn-xs" onclick="fermerModalPDF()">✕</button>
+    </div>
+    <p style="font-size:.72rem;color:#888;margin-bottom:14px;">Décoche ce que tu ne veux pas inclure. Les sections vides sont automatiquement ignorées.</p>
+
+    <!-- Boutons tout cocher / tout décocher -->
+    <div style="display:flex;gap:8px;margin-bottom:12px;">
+      <button class="btn btn-gris btn-sm" style="flex:1;" onclick="pdfToutCocher(true)">✅ Tout cocher</button>
+      <button class="btn btn-gris btn-sm" style="flex:1;" onclick="pdfToutCocher(false)">☐ Tout décocher</button>
+    </div>
+
+    <div id="pdf-tree" style="font-size:.82rem;line-height:1.5;user-select:none;"></div>
+
+    <div style="display:flex;gap:8px;margin-top:16px;">
+      <button class="btn btn-bleu" style="flex:1;padding:11px;" id="pdf-gen-btn" onclick="genererPDF_selection()">🖨️ Générer le PDF</button>
+      <button class="btn btn-gris btn-sm" onclick="fermerModalPDF()">Annuler</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
