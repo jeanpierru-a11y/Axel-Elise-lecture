@@ -1088,6 +1088,227 @@ body.ni-on.ni-sec-mots #ni-mots-panel{display:grid;}
   font-size:.78rem;cursor:pointer;display:flex;align-items:center;justify-content:center;
 }
 .ni-m-step-mic.rec{border-color:#E53935;color:#E53935;animation:niblink .6s infinite;}
+
+
+/* ═══════════════════════════════════════════
+   NI ÉCRIRE — layout 2 colonnes
+═══════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   BOUTON AIDE + DRAWER CONTEXTUEL
+═══════════════════════════════════════════ */
+#btn-aide-ecrire{
+  flex-shrink:0;
+  background:none;border-left:1.5px solid var(--gris2);
+  border-bottom:none;border-top:none;border-right:none;
+  padding:0 14px;font-size:.9rem;cursor:pointer;
+  color:#aaa;font-family:inherit;
+  transition:background .15s,color .15s;
+  align-self:stretch;
+  display:flex;align-items:center;justify-content:center;
+}
+#btn-aide-ecrire:hover{background:var(--jauneC);color:#7a5800;}
+#btn-aide-ecrire.open{background:var(--jauneC);color:#7a5800;border-bottom:3px solid var(--jauneC);}
+/* La barre d'onglets doit être flex pour que le bouton soit séparé à droite */
+#ecrire-tabs{display:flex;align-items:stretch;}
+
+/* Drawer — ancré sur guide-content-wrap (pas #content) pour scroll isolé */
+#aide-drawer{
+  position:absolute;top:0;right:0;bottom:0;
+  width:min(360px,88%);
+  background:#fff;
+  box-shadow:-4px 0 24px rgba(0,0,0,.16);
+  display:flex;flex-direction:column;
+  transform:translateX(100%);
+  transition:transform .22s cubic-bezier(.4,0,.2,1);
+  z-index:501;
+  border-left:3px solid var(--jaune);
+  overflow:hidden;
+}
+#aide-drawer.open{transform:translateX(0);}
+#aide-drawer-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;
+  background:linear-gradient(135deg,#F57F17 0%,#F9A825 100%);
+  flex-shrink:0;
+}
+#aide-drawer-titre{
+  font-size:.82rem;font-weight:900;color:#fff;
+}
+#aide-drawer-close{
+  background:rgba(255,255,255,.22);color:#fff;border:none;
+  border-radius:6px;padding:3px 9px;font-size:.85rem;
+  cursor:pointer;font-family:inherit;
+}
+#aide-drawer-close:hover{background:rgba(255,255,255,.38);}
+#aide-drawer-body{
+  flex:1;overflow-y:auto;padding:14px;
+  font-size:.78rem;line-height:1.7;color:#444;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;   /* ← isole le scroll, ne remonte plus */
+}
+/* Sections internes du drawer */
+.aide-sec{margin-bottom:16px;}
+.aide-sec-titre{
+  font-size:.7rem;font-weight:900;text-transform:uppercase;
+  letter-spacing:.4px;color:var(--jaune);
+  border-bottom:2px solid var(--jauneC);
+  padding-bottom:4px;margin-bottom:8px;
+  display:flex;align-items:center;gap:5px;
+}
+.aide-sec-body{font-size:.77rem;line-height:1.75;color:#444;}
+.aide-sec-body b{color:#1a1a2e;}
+.aide-sec-body .aide-zone{
+  background:#FAFAFA;border-left:3px solid var(--gris2);
+  border-radius:0 6px 6px 0;padding:6px 10px;
+  margin-bottom:6px;font-size:.74rem;
+}
+.aide-sec-body .aide-zone strong{
+  display:block;font-size:.69rem;font-weight:900;
+  text-transform:uppercase;letter-spacing:.3px;color:#888;
+  margin-bottom:2px;
+}
+.aide-erreur{
+  background:#FFEBEE;border-left:3px solid #c0392b;
+  border-radius:0 6px 6px 0;padding:6px 10px;
+  margin-bottom:5px;font-size:.75rem;
+}
+.aide-erreur::before{content:'⚠️ ';font-size:.72rem;}
+.aide-tip{
+  background:var(--jauneC);border-left:3px solid var(--jaune);
+  border-radius:0 6px 6px 0;padding:6px 10px;
+  margin-bottom:5px;font-size:.75rem;
+}
+/* Le drawer se positionne sur guide-content-wrap */
+body.ni-on.ni-sec-ecrire #guide-content-wrap{position:relative;}
+/* #content n'a plus besoin d'être relatif */
+</style>
+<style>
+/* ═══════════════════════════════════════════
+   Masquer les autres panneaux NI + layout Écrire
+═══════════════════════════════════════════ */
+body.ni-on.ni-sec-ecrire #ni-perso-panel,
+body.ni-on.ni-sec-ecrire #ni-lieux-panel,
+body.ni-on.ni-sec-ecrire #ni-temps-panel,
+body.ni-on.ni-sec-ecrire #ni-mots-panel,
+body.ni-on.ni-sec-ecrire #ni-livre-panel,
+body.ni-on.ni-sec-ecrire #ni-intrigue-panel{display:none !important;}
+/* En mode ni-sec-ecrire, guide-content-wrap devient une grille */
+body.ni-on.ni-sec-ecrire #guide-content-wrap{
+  display:grid;
+  grid-template-columns:38% 62%;
+  grid-template-rows:auto 1fr;
+  overflow:hidden;
+}
+/* Colonne gauche : panneau référence, occupe les 2 rangées */
+body.ni-on.ni-sec-ecrire #ni-ecrire-panel{
+  display:flex !important;
+  grid-column:1;
+  grid-row:1 / 3;
+  flex-direction:column;
+  border-right:2px solid #C9D4E8;
+  background:#fff;
+  overflow:hidden;
+  height:100%;
+}
+/* Quand masqué : colonne gauche réduite à 0, tout l'espace au formulaire */
+body.ni-on.ni-sec-ecrire.ni-ec-hidden #guide-content-wrap{
+  grid-template-columns:0 100%;
+}
+body.ni-on.ni-sec-ecrire.ni-ec-hidden #ni-ecrire-panel{
+  display:none !important;
+}
+/* Colonne droite : barre d'onglets */
+body.ni-on.ni-sec-ecrire #guide-content-wrap>#ecrire-tabs{
+  display:flex !important;
+  grid-column:2;
+  grid-row:1;
+  border-bottom:3px solid var(--gris2);
+  background:#fff;
+  flex-shrink:0;
+  padding:0 10px;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);
+}
+/* Colonne droite : zone de contenu */
+body.ni-on.ni-sec-ecrire #guide-content-wrap>#content{
+  display:flex !important;
+  flex-direction:column;
+  grid-column:2;
+  grid-row:2;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  flex:1;
+  background:#F5F7FA;
+}
+/* Header du panneau référence */
+#ni-ec-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:7px 10px;
+  background:linear-gradient(135deg,#1A237E 0%,#1565C0 100%);
+  flex-shrink:0;
+}
+#ni-ec-title{
+  font-size:.72rem;font-weight:800;color:#fff;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  flex:1;margin-right:6px;
+}
+#ni-ec-actions{display:flex;gap:4px;flex-shrink:0;}
+#ni-ec-refresh,#ni-ec-toggle{
+  background:rgba(255,255,255,.18);color:#fff;border:none;
+  border-radius:6px;padding:3px 8px;font-size:.8rem;cursor:pointer;
+  font-family:inherit;transition:background .15s;
+}
+#ni-ec-refresh:hover,#ni-ec-toggle:hover{background:rgba(255,255,255,.32);}
+/* Iframe occupe tout l'espace restant */
+#ni-ec-iframe{
+  flex:1;width:100%;border:none;
+  background:#fff;
+}
+/* Bouton "afficher" quand panneau masqué */
+#ni-ec-show-btn{
+  position:absolute;top:50%;left:0;transform:translateY(-50%);
+  background:#1565C0;color:#fff;border:none;
+  border-radius:0 8px 8px 0;padding:10px 6px;
+  font-size:.75rem;writing-mode:vertical-rl;
+  cursor:pointer;z-index:10;display:none;
+  box-shadow:2px 0 8px rgba(0,0,0,.15);
+}
+body.ni-on.ni-sec-ecrire.ni-ec-hidden #ni-ec-show-btn{display:block;}
+/* Sur petits écrans : panneau par-dessus (drawer) */
+@media(max-width:700px){
+  body.ni-on.ni-sec-ecrire #guide-content-wrap{
+    grid-template-columns:100%;
+    grid-template-rows:auto 1fr;
+    position:relative;
+  }
+  body.ni-on.ni-sec-ecrire #ni-ecrire-panel{
+    position:absolute;left:0;top:0;bottom:0;
+    width:88%;z-index:200;
+    box-shadow:4px 0 24px rgba(0,0,0,.25);
+    grid-row:unset;grid-column:unset;
+    display:none !important;
+  }
+  body.ni-on.ni-sec-ecrire.ni-ec-open #ni-ecrire-panel{
+    display:flex !important;
+  }
+  body.ni-on.ni-sec-ecrire #guide-content-wrap>#ecrire-tabs,
+  body.ni-on.ni-sec-ecrire #guide-content-wrap>#content{
+    grid-column:1;
+  }
+  body.ni-on.ni-sec-ecrire #guide-content-wrap>#ecrire-tabs{grid-row:1;}
+  body.ni-on.ni-sec-ecrire #guide-content-wrap>#content{grid-row:2;}
+  #ni-ec-toggle{display:none;}
+  /* Bouton flottant pour ouvrir le drawer sur mobile */
+  body.ni-on.ni-sec-ecrire #ni-ec-open-fab{display:flex !important;}
+}
+/* Bouton FAB mobile pour ouvrir le panneau notes */
+#ni-ec-open-fab{
+  display:none;
+  position:fixed;bottom:80px;left:10px;z-index:7900;
+  background:#1565C0;color:#fff;border:none;border-radius:50%;
+  width:44px;height:44px;font-size:1.1rem;cursor:pointer;
+  box-shadow:0 3px 12px rgba(21,101,192,.45);
+  align-items:center;justify-content:center;
+}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 </head>
@@ -1114,8 +1335,8 @@ body.ni-on.ni-sec-mots #ni-mots-panel{display:grid;}
   <div class="ni-sep"></div>
   <div class="ni-grp">Écrire</div>
   <div class="ni-mi" id="ni-diss" onclick="niGoEcrire('diss',this)"><div class="ni-dot" style="background:#6A1B9A"></div><span class="ni-ml">📝 Dissertation</span><div class="ni-cb on" id="cb-diss" onclick="niToggleCb(this,event)"></div></div>
-  <div class="ni-mi" id="ni-recit" onclick="niGoEcrire('redac',this)"><div class="ni-dot" style="background:#E65100"></div><span class="ni-ml">📖 Récit</span><div class="ni-cb on" id="cb-recit" onclick="niToggleCb(this,event)"></div></div>
-  <div class="ni-mi" id="ni-arg" onclick="niGoEcrire('redac',this)"><div class="ni-dot" style="background:#E65100"></div><span class="ni-ml">💬 Argumentatif</span><div class="ni-cb on" id="cb-arg" onclick="niToggleCb(this,event)"></div></div>
+  <div class="ni-mi" id="ni-recit" onclick="niGoEcrire('redac',this,'recit')"><div class="ni-dot" style="background:#E65100"></div><span class="ni-ml">📖 Récit</span><div class="ni-cb on" id="cb-recit" onclick="niToggleCb(this,event)"></div></div>
+  <div class="ni-mi" id="ni-arg" onclick="niGoEcrire('redac',this,'argument')"><div class="ni-dot" style="background:#E65100"></div><span class="ni-ml">💬 Argumentatif</span><div class="ni-cb on" id="cb-arg" onclick="niToggleCb(this,event)"></div></div>
   <div class="ni-mi only-elise" id="ni-lin" onclick="niGoEcrire('lineaire',this)"><div class="ni-dot" style="background:#00838F"></div><span class="ni-ml">🔍 Ana. linéaire</span><div class="ni-cb on" id="cb-lin" onclick="niToggleCb(this,event)"></div></div>
   <div class="ni-mi only-elise" id="ni-com" onclick="niGoEcrire('commentaire',this)"><div class="ni-dot" style="background:#AD1457"></div><span class="ni-ml">📄 Commentaire</span><div class="ni-cb on" id="cb-com" onclick="niToggleCb(this,event)"></div></div>
   <div class="ni-mi" id="ni-carnet" onclick="niGo('carnet',this)"><div class="ni-dot" style="background:#E65100"></div><span class="ni-ml">📓 Carnet</span><div class="ni-cb on" id="cb-carnet" onclick="niToggleCb(this,event)"></div></div>
@@ -1581,14 +1802,38 @@ body.ni-on.ni-sec-mots #ni-mots-panel{display:grid;}
     </div>
   </div>
 
-  <div id="ecrire-tabs" style="display:none;flex-shrink:0;border-bottom:3px solid var(--gris2);background:#fff;padding:0 12px;">
-    <div style="display:flex;gap:3px;align-items:flex-end;max-width:100%;">
+
+  <!-- ═══ NI ÉCRIRE — PANNEAU RÉFÉRENCE (colonne gauche) ═══ -->
+  <div id="ni-ecrire-panel">
+    <div id="ni-ec-header">
+      <span id="ni-ec-title">📄 <span id="ni-ec-livre-nom">Mes notes</span></span>
+      <div id="ni-ec-actions">
+        <button id="ni-ec-refresh" onclick="niEcRefresh()" title="Actualiser les notes">🔄</button>
+        <button id="ni-ec-toggle" onclick="niEcToggle()" title="Masquer le panneau">◀</button>
+      </div>
+    </div>
+    <iframe id="ni-ec-iframe" frameborder="0" title="Notes de lecture"></iframe>
+  </div>
+
+  <div id="ecrire-tabs" style="display:none;flex-shrink:0;border-bottom:3px solid var(--gris2);background:#fff;padding:0 0 0 12px;">
+    <div id="ecrire-tabs-inner" style="display:flex;gap:3px;align-items:flex-end;flex:1;min-width:0;">
       <button class="mots-subtab" id="etab-diss" onclick="showEcrirePanel('diss',this)" style="color:var(--violet);">✍️ Dissertation</button>
       <button class="mots-subtab" id="etab-redac" onclick="showEcrirePanel('redac',this)">📖 Rédaction</button>
       <button class="mots-subtab only-elise" id="etab-lineaire" onclick="showEcrirePanel('lineaire',this)" style="color:#00838F;">🔍 Analyse linéaire</button>
       <button class="mots-subtab only-elise" id="etab-commentaire" onclick="showEcrirePanel('commentaire',this)" style="color:#AD1457;">📝 Commentaire litt.</button>
     </div>
+    <button id="btn-aide-ecrire" onclick="niAideToggle()" title="Aide pour cet exercice" aria-label="Aide">❓</button>
   </div>
+
+  <!-- ═══ DRAWER AIDE ÉCRIRE ═══ (sibling de #content — scroll isolé) -->
+  <div id="aide-drawer" aria-label="Aide contextuelle" role="complementary">
+    <div id="aide-drawer-header">
+      <span id="aide-drawer-titre">💡 Aide</span>
+      <button id="aide-drawer-close" onclick="niAideClose()" aria-label="Fermer l'aide">✕</button>
+    </div>
+    <div id="aide-drawer-body"></div>
+  </div>
+
   <div id="content">
 
     <!-- LIVRE -->
@@ -3761,6 +4006,9 @@ function showEcrirePanel(panel, btnEl) {
   if (el) el.style.display = 'block';
   if (panel === 'lineaire') loadLineaire();
   if (panel === 'commentaire') loadCommentaire();
+  // Mettre à jour l'aide contextuelle si le drawer est ouvert
+  _aideCurPanel = panel;
+  if (_aideOpen) niAideShow(panel);
   // Mettre à jour les onglets actifs
   document.querySelectorAll('#ecrire-tabs .mots-subtab').forEach(b => b.classList.remove('active'));
   document.getElementById('etab-' + panel)?.classList.add('active');
@@ -4145,8 +4393,9 @@ function supprimerLivre(id) {
 // ════════════════════════════════════════════════════════
 // GÉNÉRATION PDF (via impression navigateur)
 // ════════════════════════════════════════════════════════
-function genererPDF(style) {
-  if (!LIVRE_ACTIF) { showToast('Aucun livre ouvert', 'warn'); return; }
+// ── Construit le HTML du guide de lecture (réutilisé pour iframe et PDF) ──
+function _buildPdfHtml(style) {
+  if (!LIVRE_ACTIF) return '';
   const L = LIVRE_ACTIF;
   const nb = style !== 'couleur';  // nb = noir & blanc
 
@@ -4435,18 +4684,22 @@ ${body_html}
 <div class="pdf-footer">Guide de lecture · ${h(L.titre||'')} · généré le ${new Date().toLocaleDateString('fr-FR')}</div>
 </body></html>`;
 
+  return html;
+}
+
+function genererPDF(style) {
+  const html = _buildPdfHtml(style);
+  if (!html) { showToast('Aucun livre ouvert', 'warn'); return; }
   try {
     const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
     const url  = URL.createObjectURL(blob);
     const win  = window.open(url, '_blank');
     if (!win) {
-      // Popup bloqué — fallback : lien de téléchargement
       const a = document.createElement('a');
       a.href = url;
-      a.download = (L.titre || 'guide') + '.html';
+      a.download = (LIVRE_ACTIF.titre || 'guide') + '.html';
       a.click();
     }
-    // Libérer la mémoire après ouverture
     setTimeout(() => URL.revokeObjectURL(url), 60000);
   } catch(e) {
     console.error('genererPDF error:', e);
@@ -7784,10 +8037,14 @@ function niISave(key, val) {
 
 
 // niGoEcrire: go to ecrire tab then switch sub-panel
-function niGoEcrire(panel, el) {
+// panel = 'diss' | 'redac' | 'lineaire' | 'commentaire'
+// subtype (optionnel) = 'recit' | 'argument'  → pour setTypeRedac
+function niGoEcrire(panel, el, subtype) {
   document.querySelectorAll('.ni-mi').forEach(function(m){m.classList.remove('act');});
   if(el)el.classList.add('act');
-  document.body.className = document.body.className.split(' ').filter(function(c){return c.indexOf('ni-sec-')<0;}).join(' ');
+  // Remplacer toute classe ni-sec-* et poser ni-sec-ecrire
+  document.body.className = document.body.className.replace(/\bni-sec-\S+/g,'').trim();
+  document.body.classList.add('ni-sec-ecrire');
   var btn = null;
   document.querySelectorAll('#tabs .tab').forEach(function(b){
     if(b.getAttribute('onclick')&&b.getAttribute('onclick').indexOf("'ecrire'")>-1)btn=b;
@@ -7795,6 +8052,8 @@ function niGoEcrire(panel, el) {
   showTab('ecrire', btn);
   setTimeout(function(){
     showEcrirePanel(panel, document.getElementById('etab-'+panel));
+    if(subtype && typeof setTypeRedac === 'function') setTypeRedac(subtype);
+    niEcBuild();
   }, 50);
   var c = document.getElementById('content'); if(c)c.scrollTop=0;
 }
@@ -8141,12 +8400,268 @@ function niMRenderCit() {
   });
 }
 
+// ════════════════════════════════════════════════════════
+// AIDE CONTEXTUELLE — PANEL ÉCRIRE
+// ════════════════════════════════════════════════════════
+var _aideOpen = false;
+var _aideCurPanel = 'diss';
 
+var AIDE = {
+
+  diss_axel: {
+    titre: '✍️ Aide — Dissertation (6ème)',
+    sections: [
+      { titre: '📐 Structure à suivre', corps:
+        '<div class="aide-zone"><strong>① Introduction</strong>Présente le livre (titre, auteur, sujet) et explique ce dont tu vas parler.</div>' +
+        '<div class="aide-zone"><strong>② Argument 1</strong>Ton idée la plus importante. Donne un exemple précis tiré du livre.</div>' +
+        '<div class="aide-zone"><strong>③ Argument 2</strong>Deuxième idée. Encore un exemple — une scène, une phrase du livre.</div>' +
+        '<div class="aide-zone"><strong>④ Argument 3 (optionnel)</strong>Si tu en as un troisième, c\'est parfait. Sinon, laisse vide.</div>' +
+        '<div class="aide-zone"><strong>⑤ Conclusion</strong>Rappelle tes idées en 2–3 phrases. Tu peux donner ton avis.</div>'
+      },
+      { titre: '🔗 Connecteurs utiles', corps:
+        '<div class="aide-tip"><b>Pour commencer :</b> Tout d\'abord · En premier lieu · D\'abord</div>' +
+        '<div class="aide-tip"><b>Pour ajouter :</b> Ensuite · De plus · Par ailleurs · En outre</div>' +
+        '<div class="aide-tip"><b>Pour illustrer :</b> Par exemple · En effet · Ainsi · C\'est le cas quand</div>' +
+        '<div class="aide-tip"><b>Pour conclure :</b> Pour conclure · En résumé · Finalement · En somme</div>'
+      },
+      { titre: '⚠️ Erreurs fréquentes', corps:
+        '<div class="aide-erreur">Ne pas commencer par "Je pense que…" — commence par une phrase sur le livre.</div>' +
+        '<div class="aide-erreur">Évite de raconter toute l\'histoire — cite juste les passages utiles.</div>' +
+        '<div class="aide-erreur">Chaque argument doit avoir un exemple du livre, pas une idée générale.</div>'
+      }
+    ]
+  },
+
+  diss_elise: {
+    titre: '✍️ Aide — Dissertation (2nde)',
+    sections: [
+      { titre: '📐 Les 5 étapes', corps:
+        '<div class="aide-zone"><strong>① Analyse du sujet</strong>Identifie les mots-clés. Donne plusieurs sens à chaque terme. Cherche la tension cachée.</div>' +
+        '<div class="aide-zone"><strong>② Problématique</strong>Question ouverte : « Dans quelle mesure… ? » ou « En quoi… bien que… ? » — jamais de réponse par oui/non.</div>' +
+        '<div class="aide-zone"><strong>③ Plan</strong>Dialectique (thèse/antithèse/dépassement) · Analytique (constat/causes/conséquences) · Thématique.</div>' +
+        '<div class="aide-zone"><strong>④ Rédaction</strong>Méthode A.E.A. : <b>A</b>rgument → <b>E</b>xemple (citation + page) → <b>A</b>nalyse (lien).</div>' +
+        '<div class="aide-zone"><strong>⑤ Relecture</strong>Vérifie : cohérence du plan, transitions entre parties, réponse à la problématique en conclusion.</div>'
+      },
+      { titre: '🔗 Connecteurs & verbes', corps:
+        '<b>Introduire :</b> D\'abord · En premier lieu · Tout d\'abord<br>' +
+        '<b>Ajouter :</b> De plus · Par ailleurs · En outre<br>' +
+        '<b>Opposer :</b> En revanche · Cependant · Néanmoins<br>' +
+        '<b>Conséquence :</b> Ainsi · Dès lors · Par conséquent<br>' +
+        '<b>Concéder :</b> Certes · Il est vrai que<br>' +
+        '<b>Conclure :</b> En définitive · Finalement<br><br>' +
+        '<b>Verbes d\'analyse :</b> montrer · suggérer · nuancer · contester · interroger · mettre en tension · déconstruire · révéler · dramatiser'
+      },
+      { titre: '📋 Types de plan', corps:
+        '<div class="aide-zone"><strong>Dialectique</strong>Thèse → Antithèse → Dépassement. Le plus courant au Bac.</div>' +
+        '<div class="aide-zone"><strong>Analytique</strong>Constat → Causes → Conséquences.</div>' +
+        '<div class="aide-zone"><strong>Plan de secours</strong>I. Pourquoi la thèse du sujet semble valable → II. Ses limites → III. Réponse plus fine.</div>'
+      },
+      { titre: '⚠️ Erreurs fréquentes', corps:
+        '<div class="aide-erreur">Problématique fermée (réponse oui/non) — reformule en « Dans quelle mesure… ».</div>' +
+        '<div class="aide-erreur">Exemple sans analyse — il faut expliquer le lien entre l\'exemple et l\'argument.</div>' +
+        '<div class="aide-erreur">Conclusion qui répète l\'introduction mot pour mot — synthétise, ne répète pas.</div>' +
+        '<div class="aide-erreur">Ouverture forcée — elle doit être naturelle, pas plaquée.</div>'
+      }
+    ]
+  },
+
+  redac_recit: {
+    titre: '📖 Aide — Récit (narration)',
+    sections: [
+      { titre: '📐 Les 5 zones du récit', corps:
+        '<div class="aide-zone"><strong>1. Situation initiale</strong>Qui ? Où ? Quand ? Présente les personnages et le cadre. Tout est stable.</div>' +
+        '<div class="aide-zone"><strong>2. Élément déclencheur</strong>L\'événement qui brise l\'équilibre. Qu\'est-ce qui change tout soudainement ?</div>' +
+        '<div class="aide-zone"><strong>3. Péripéties</strong>Les aventures, obstacles, rebondissements. C\'est le cœur de l\'histoire.</div>' +
+        '<div class="aide-zone"><strong>4. Dénouement</strong>Comment le problème est résolu. La tension retombe.</div>' +
+        '<div class="aide-zone"><strong>5. Situation finale</strong>Comment les choses sont à la fin. Qu\'est-ce qui a changé par rapport au début ?</div>'
+      },
+      { titre: '✏️ Conseils d\'écriture', corps:
+        '<div class="aide-tip"><b>Chaque zone = un paragraphe.</b> Saute une ligne entre chaque partie.</div>' +
+        '<div class="aide-tip"><b>Ne commence jamais par</b> « il », « elle », « car », « parce que ».</div>' +
+        '<div class="aide-tip"><b>Connecteurs narratifs :</b> D\'abord · Soudain · Alors · Ensuite · Finalement · À la fin</div>' +
+        '<div class="aide-tip"><b>Cite le livre :</b> mets le titre entre guillemets ou en italique.</div>' +
+        '<div class="aide-tip"><b>Relis-toi</b> à voix haute pour repérer les maladresses.</div>'
+      },
+      { titre: '⚠️ Erreurs fréquentes', corps:
+        '<div class="aide-erreur">Raconter toute l\'histoire au lieu de se concentrer sur une scène précise.</div>' +
+        '<div class="aide-erreur">Oublier le cadre (lieu, époque) dès le début.</div>' +
+        '<div class="aide-erreur">Pas de situation finale — l\'histoire doit boucler.</div>'
+      }
+    ]
+  },
+
+  redac_argument: {
+    titre: '💬 Aide — Texte argumentatif',
+    sections: [
+      { titre: '📐 Les 4 zones', corps:
+        '<div class="aide-zone"><strong>1. Introduction</strong>Présente le sujet, pose la question, annonce ce que tu vas démontrer.</div>' +
+        '<div class="aide-zone"><strong>2. Argument principal</strong>Ton idée la plus forte. Explique-la + exemple tiré du livre.</div>' +
+        '<div class="aide-zone"><strong>3. Deuxième argument</strong>Deuxième idée qui appuie ta réponse + autre exemple.</div>' +
+        '<div class="aide-zone"><strong>4. Conclusion</strong>Résume ta réponse en 2–3 phrases. Tu peux donner ton avis personnel.</div>'
+      },
+      { titre: '✏️ Conseils', corps:
+        '<div class="aide-tip"><b>Structure AEA :</b> Argument → Exemple → Analyse du lien.</div>' +
+        '<div class="aide-tip"><b>Connecteurs :</b> D\'abord · Ensuite · De plus · En effet · Ainsi · Pour conclure</div>' +
+        '<div class="aide-tip"><b>Chaque paragraphe</b> = une seule idée, clairement énoncée dès la 1re phrase.</div>'
+      },
+      { titre: '⚠️ Erreurs fréquentes', corps:
+        '<div class="aide-erreur">Donner son avis sans argument ni exemple — toujours justifier.</div>' +
+        '<div class="aide-erreur">Exemple sans lien explicite avec l\'argument — expliquer le lien.</div>'
+      }
+    ]
+  },
+
+  lineaire: {
+    titre: '🔍 Aide — Analyse linéaire (Bac oral)',
+    sections: [
+      { titre: '📐 Structure de l\'introduction (5 éléments)', corps:
+        '<div class="aide-zone"><strong>1. Présentation de l\'œuvre</strong>Titre, auteur, siècle, genre, courant littéraire.</div>' +
+        '<div class="aide-zone"><strong>2. Situation du passage</strong>De quel passage s\'agit-il ? Pourquoi est-il intéressant dans l\'œuvre ?</div>' +
+        '<div class="aide-zone"><strong>3. Problématique</strong>« Par quels procédés l\'auteur nous montre-t-il que… »</div>' +
+        '<div class="aide-zone"><strong>4. Projet de lecture</strong>Ton général, passages à marquer, effets de voix.</div>' +
+        '<div class="aide-zone"><strong>5. Plan des mouvements</strong>Mvt 1 (l.1–8) — … / Mvt 2 (l.9–15) — … / Mvt 3 (l.16–fin) — …</div>'
+      },
+      { titre: '🔑 La règle d\'or : P → C → I', corps:
+        '<div class="aide-tip"><b>Procédé</b> : identifier la figure, le temps verbal, le registre, le rythme…</div>' +
+        '<div class="aide-tip"><b>Citation</b> : citer exactement, entre guillemets, avec les lignes.</div>' +
+        '<div class="aide-tip"><b>Interprétation</b> : expliquer l\'effet produit, le lien avec la problématique.</div>' +
+        '<br><div class="aide-erreur">Ne jamais paraphraser — citer le texte exactement.</div>' +
+        '<div class="aide-erreur">Chaque observation doit servir la problématique.</div>' +
+        '<div class="aide-erreur">La conclusion n\'est pas un résumé — c\'est une réponse + une ouverture.</div>'
+      },
+      { titre: '📚 Narrateurs & Focalisations', corps:
+        '<b style="color:#00838F;">Types de narrateur</b><br>' +
+        '<b>Interne</b> (pronom « je ») : personnage de l\'histoire — connaissance limitée.<br>' +
+        '<b>Externe</b> (pronom « il/elle ») : pas un personnage — libre de choisir sa focalisation.<br><br>' +
+        '<b style="color:#00838F;">Types de focalisation</b><br>' +
+        '<b>Interne</b> — récit à travers les yeux d\'un personnage. Accès à ses pensées.<br>' +
+        '<b>Externe</b> — récit comme une caméra. Seuls les faits visibles.<br>' +
+        '<b>Zéro (omnisciente)</b> — narrateur sait tout sur tous les personnages.<br><br>' +
+        '<span style="font-size:.7rem;color:#888;"><b>Rappel :</b> narrateur ≠ auteur. Le narrateur est une instance fictive.</span>'
+      }
+    ]
+  },
+
+  commentaire: {
+    titre: '📝 Aide — Commentaire littéraire (Bac écrit)',
+    sections: [
+      { titre: '📐 Principe fondamental', corps:
+        '<div class="aide-tip">Le commentaire n\'est pas une paraphrase ni un résumé : c\'est une <b>argumentation fondée sur le texte</b> qui articule :<br>' +
+        '· le <b>quoi</b> (contenu) · le <b>comment</b> (procédés) · le <b>pourquoi</b> (intention, effet)</div>'
+      },
+      { titre: '📐 Structure de l\'introduction', corps:
+        '<div class="aide-zone"><strong>Amorce</strong>Contexte culturel/esthétique large : mouvement, topos, problématique d\'époque. (2–3 lignes)</div>' +
+        '<div class="aide-zone"><strong>Présentation de l\'œuvre</strong>Auteur, titre, date, genre, courant + situation de l\'extrait.</div>' +
+        '<div class="aide-zone"><strong>Problématique</strong>« Nous nous demanderons comment… » / « Par quels moyens l\'auteur… »</div>' +
+        '<div class="aide-zone"><strong>Annonce du plan</strong>« Dans un premier temps… Dans un second temps… »</div>'
+      },
+      { titre: '🔑 La règle d\'or : P → C → I', corps:
+        '<div class="aide-tip"><b>Procédé</b> → <b>Citation</b> → <b>Interprétation</b> — toujours dans cet ordre.</div>' +
+        '<div class="aide-tip">Chaque partie = <b>fond ET forme</b> — ne jamais analyser les idées sans les procédés.</div>'
+      },
+      { titre: '⚠️ Erreurs à éviter absolument', corps:
+        '<div class="aide-erreur">Paraphrase — on n\'explique pas le texte, on l\'interprète.</div>' +
+        '<div class="aide-erreur">Utiliser « je » — utiliser « nous » ou une formulation neutre.</div>' +
+        '<div class="aide-erreur">Citations coupées ou seules sans commentaire — toujours courtes et intégrées.</div>' +
+        '<div class="aide-erreur">Analyser le fond sans les procédés — les deux sont indissociables.</div>' +
+        '<div class="aide-erreur">Introduction trop courte — minimum 10–12 lignes en entonnoir.</div>'
+      }
+    ]
+  }
+};
+
+function _aideGetKey(panel) {
+  var isElise = document.body.classList.contains('mode-elise');
+  if (panel === 'diss') return isElise ? 'diss_elise' : 'diss_axel';
+  if (panel === 'redac') {
+    var type = (LIVRE_ACTIF && LIVRE_ACTIF.redacType) || 'recit';
+    return type === 'argument' ? 'redac_argument' : 'redac_recit';
+  }
+  return panel; // lineaire, commentaire
+}
+
+function _aideBuild(key) {
+  var data = AIDE[key];
+  if (!data) return '<p style="color:#aaa;font-style:italic;">Aucune aide disponible.</p>';
+  return data.sections.map(function(sec) {
+    return '<div class="aide-sec">' +
+      '<div class="aide-sec-titre">' + sec.titre + '</div>' +
+      '<div class="aide-sec-body">' + sec.corps + '</div>' +
+      '</div>';
+  }).join('');
+}
+
+function niAideShow(panel) {
+  var key = _aideGetKey(panel || _aideCurPanel);
+  var data = AIDE[key];
+  var titre = data ? data.titre : '💡 Aide';
+  var t = document.getElementById('aide-drawer-titre');
+  var b = document.getElementById('aide-drawer-body');
+  if (t) t.textContent = titre;
+  if (b) b.innerHTML = _aideBuild(key);
+  _aideCurPanel = panel || _aideCurPanel;
+}
+
+function niAideToggle() {
+  var drawer = document.getElementById('aide-drawer');
+  var btn = document.getElementById('btn-aide-ecrire');
+  if (!drawer) return;
+  _aideOpen = !_aideOpen;
+  drawer.classList.toggle('open', _aideOpen);
+  if (btn) btn.classList.toggle('open', _aideOpen);
+  if (_aideOpen) niAideShow(_aideCurPanel);
+}
+
+function niAideClose() {
+  _aideOpen = false;
+  var drawer = document.getElementById('aide-drawer');
+  var btn = document.getElementById('btn-aide-ecrire');
+  if (drawer) drawer.classList.remove('open');
+  if (btn) btn.classList.remove('open');
+}
+
+// ════════════════════════════════════════════════════════
+// NI ÉCRIRE — Panneau référence (colonne gauche)
+// ════════════════════════════════════════════════════════
+var _niEcBlobUrl = null;
+
+function niEcBuild() {
+  if (!LIVRE_ACTIF) return;
+  var html = _buildPdfHtml('couleur');
+  if (!html) return;
+  if (_niEcBlobUrl) { try { URL.revokeObjectURL(_niEcBlobUrl); } catch(e){} }
+  var blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  _niEcBlobUrl = URL.createObjectURL(blob);
+  var iframe = document.getElementById('ni-ec-iframe');
+  if (iframe) iframe.src = _niEcBlobUrl;
+  var nom = document.getElementById('ni-ec-livre-nom');
+  if (nom) nom.textContent = LIVRE_ACTIF.titre || 'Mes notes';
+}
+
+function niEcRefresh() {
+  var btn = document.getElementById('ni-ec-refresh');
+  if (btn) { btn.textContent = '⏳'; btn.disabled = true; }
+  niEcBuild();
+  setTimeout(function() {
+    if (btn) { btn.textContent = '🔄'; btn.disabled = false; }
+  }, 800);
+}
+
+function niEcToggle() {
+  var hidden = document.body.classList.toggle('ni-ec-hidden');
+  var btn = document.getElementById('ni-ec-toggle');
+  if (btn) btn.textContent = hidden ? '▶' : '◀';
+}
+
+function niEcToggleMobile() {
+  document.body.classList.toggle('ni-ec-open');
+}
 
 </script>
 
 <!-- ── BOUTON FLOTTANT CARNET ── -->
 <button id="btn-carnet-float" onclick="ouvrirCarnetQuick()" title="Ajouter une note rapide">📓</button>
+<button id="ni-ec-open-fab" onclick="niEcToggleMobile()" title="Afficher mes notes">📄</button>
 
 <!-- ── MODAL SAISIE RAPIDE ── -->
 <div id="modal-carnet-quick">
