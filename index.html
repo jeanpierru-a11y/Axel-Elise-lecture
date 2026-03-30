@@ -343,7 +343,7 @@ body.mode-elise .ni-mi.only-elise{display:flex;}
 
 /* ═══ NOUVELLE INTERFACE — SIDEBAR ═══ */
 #ni-sidebar{
-  position:fixed;top:0;left:0;bottom:0;width:210px;
+  position:fixed;top:0;left:0;bottom:0;width:180px;
   background:#0A1628;
   display:none;flex-direction:column;
   overflow-y:auto;-webkit-overflow-scrolling:touch;overflow-x:hidden;
@@ -351,7 +351,7 @@ body.mode-elise .ni-mi.only-elise{display:flex;}
   box-shadow:3px 0 16px rgba(0,0,0,.5);
 }
 #ni-sidebar.vis{display:flex;}
-body.ni-on #screen-guide{margin-left:210px;}
+body.ni-on #screen-guide{margin-left:180px;}
 body.ni-on #vert-nav{display:none !important;visibility:hidden;width:0 !important;min-width:0 !important;max-width:0 !important;overflow:hidden;flex:0 0 0 !important;padding:0 !important;}
 body.ni-on #guide-content-wrap{margin-left:0;}
 
@@ -492,30 +492,58 @@ body.ni-on.ni-sec-personnages #guide-content-wrap > #content{display:none !impor
   background:#fff;
 }
 
-/* Focus — spans full width of left half */
-#ni-focus{
+/* ── Focus bar (Personnages & Lieux) ── */
+#ni-focus, #ni-l-focus{
   background:#FFFDE7;border-bottom:2px solid #F9A825;
-  padding:10px 12px 9px;flex-shrink:0;
+  padding:8px 10px;flex-shrink:0;
 }
-.ni-flbl{font-size:.6rem;font-weight:900;text-transform:uppercase;
+#ni-l-focus{background:#E8F5E9;border-bottom-color:#66BB6A;}
+.ni-flbl{font-size:.59rem;font-weight:900;text-transform:uppercase;
   letter-spacing:.5px;color:#E65100;
-  display:flex;align-items:center;gap:5px;margin-bottom:6px;}
+  display:flex;align-items:center;gap:5px;margin-bottom:5px;}
+#ni-l-focus .ni-flbl{color:#2E7D32;}
 .ni-fpulse{width:6px;height:6px;border-radius:50%;
   background:#F57F17;animation:niblink .9s infinite;flex-shrink:0;}
+#ni-l-focus .ni-fpulse{background:#2E7D32;}
 @keyframes niblink{0%,100%{opacity:1;}50%{opacity:.2;}}
+/* Row: input + buttons */
+.ni-focus-row{display:flex;gap:5px;align-items:stretch;}
 #ni-focus-ta{
-  width:100%;border:1.5px solid #F9A825;border-radius:8px;
+  flex:1;border:1.5px solid #F9A825;border-radius:8px;
   padding:7px 10px;font-size:.78rem;font-family:inherit;
   background:#fff;resize:none;outline:none;line-height:1.5;
-  min-height:48px;
+  min-height:58px;
 }
 #ni-focus-ta:focus{border-color:#E65100;box-shadow:0 0 0 2px rgba(245,127,23,.15);}
-#ni-focus-actions{display:flex;gap:6px;margin-top:7px;align-items:center;}
-#ni-focus-add{
-  background:#1565C0;color:#fff;border:none;border-radius:8px;
-  padding:7px 16px;font-size:.75rem;font-weight:800;font-family:inherit;cursor:pointer;
+#ni-l-inp{
+  flex:1;border:1.5px solid #66BB6A;border-radius:8px;
+  padding:7px 10px;font-size:.78rem;font-family:inherit;
+  background:#fff;outline:none;line-height:1.5;
+  min-height:58px;resize:none;
 }
-#ni-focus-add:active{background:#0D47A1;}
+#ni-l-inp:focus{border-color:#2E7D32;box-shadow:0 0 0 2px rgba(46,125,50,.15);}
+.ni-focus-btns{display:flex;flex-direction:column;gap:4px;flex-shrink:0;}
+.ni-fb-add{
+  background:#1565C0;color:#fff;border:none;border-radius:8px;
+  padding:0 11px;font-size:.8rem;font-weight:900;font-family:inherit;
+  cursor:pointer;flex:1;display:flex;align-items:center;justify-content:center;
+  min-height:26px;
+}
+.ni-fb-add:active{background:#0D47A1;}
+#ni-l-focus .ni-fb-add{background:#2E7D32;}
+#ni-l-focus .ni-fb-add:active{background:#1B5E20;}
+.ni-fb-mic{
+  border:1.5px solid #F9A825;background:#fff;color:#E65100;
+  border-radius:8px;font-size:.88rem;
+  padding:0 8px;cursor:pointer;flex:1;
+  display:flex;align-items:center;justify-content:center;
+  min-height:26px;transition:background .15s;
+}
+.ni-fb-mic:active,.ni-fb-mic.rec{background:#FFF3E0;}
+.ni-fb-mic.rec{border-color:#E53935;color:#E53935;animation:niblink .6s infinite;}
+#ni-l-focus .ni-fb-mic{border-color:#66BB6A;color:#2E7D32;}
+#ni-l-focus .ni-fb-mic:active,#ni-l-focus .ni-fb-mic.rec{background:#E8F5E9;}
+#ni-l-focus .ni-fb-mic.rec{border-color:#E53935;color:#E53935;}
 
 /* 2-column zone: list | detail */
 #ni-listdet{
@@ -684,15 +712,77 @@ body.ni-on.ni-sec-mots #guide-content-wrap>#content{display:none !important;}
 .ni-aide-card h4{margin:0 0 5px;font-size:.74rem;font-weight:900;color:#1A2540;}
 .ni-aide-card p{margin:0;color:#546E7A;}
 
-/* ── LIEUX ── */
+/* Arc moderne — liste 2 colonnes */
+#ni-i-liste{display:none;flex:1;flex-direction:column;overflow:hidden;}
+#ni-i-liste.on{display:flex;}
+#ni-i-liste-hdr{
+  padding:9px 14px 7px;background:#00695C;border-bottom:2px solid #00897B;
+  flex-shrink:0;display:flex;align-items:center;gap:10px;
+}
+#ni-i-liste-titre{
+  font-size:.82rem;font-weight:900;color:#fff;flex:1;
+  display:flex;align-items:center;gap:6px;
+}
+#ni-i-rc-title-right{
+  font-size:.72rem;font-weight:800;color:rgba(255,255,255,.85);
+  flex-shrink:0;font-style:italic;
+}
+#ni-i-liste-body{flex:1;overflow:hidden;display:flex;flex-direction:row;}
+#ni-i-left-col{
+  flex:1;display:flex;flex-direction:column;
+  overflow-y:auto;overflow-x:hidden;
+  background:#fff;-webkit-overflow-scrolling:touch;
+}
+.ni-m-step{
+  cursor:default;border-left:3px solid #B2DFDB;
+  display:flex;flex-direction:row;align-items:stretch;
+  gap:0;flex:0 0 auto;border-bottom:1px solid #EEF2F7;
+  min-height:80px;
+}
+.ni-m-step:last-child{border-bottom:none;}
+.ni-m-step-info{
+  flex:0 0 22%;display:flex;flex-direction:column;
+  padding:8px 10px;justify-content:flex-start;
+  background:#E0F2F1;border-right:1px solid #B2DFDB;
+  gap:2px;overflow:hidden;
+}
+.ni-m-step-num{font-size:.55rem;font-weight:900;text-transform:uppercase;
+  letter-spacing:.4px;color:#00897B;flex-shrink:0;}
+.ni-m-step-nom{font-size:.68rem;font-weight:800;color:#004D40;line-height:1.2;flex-shrink:0;}
+.ni-m-step-def{font-size:.57rem;color:#546E7A;line-height:1.2;margin-top:2px;
+  overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;}
+.ni-m-step-input{
+  flex:1;display:flex;align-items:stretch;padding:6px 8px;
+  background:#fff;
+}
+.ni-m-step-ta{
+  flex:1;border:1px solid #D4DCF0;border-radius:6px;
+  padding:6px 9px;font-size:.74rem;font-family:inherit;
+  resize:none;outline:none;background:#FAFBFC;
+  line-height:1.6;min-height:60px;
+}
+.ni-m-step-ta:focus{border-color:#00695C;box-shadow:0 0 0 2px rgba(0,105,92,.08);}
+#ni-i-right-col{display:none;}
+#ni-i-rc-hdr{display:none;}
+#ni-i-rc-hint{display:none;}
+#ni-i-rc-ta{display:none;}
+#ni-i-rc-foot{display:none;}
+.ni-i-sv{
+  background:#00695C;color:#fff;border:none;border-radius:7px;
+  padding:5px 13px;font-size:.7rem;font-weight:800;font-family:inherit;cursor:pointer;
+}
+.ni-i-sv:active{background:#004D40;}
+.ni-i-mic-btn{
+  border:1.5px solid #80CBC4;background:#fff;color:#00695C;
+  border-radius:7px;font-size:.82rem;padding:0 9px;height:28px;
+  cursor:pointer;display:flex;align-items:center;
+}
+.ni-i-mic-btn.rec{border-color:#E53935;color:#E53935;animation:niblink .6s infinite;}
+
 #ni-l-left{flex:0 0 64%;display:flex;flex-direction:column;border-right:2px solid #C9D4E8;overflow:hidden;background:#fff;}
 #ni-l-right{flex:1;display:flex;flex-direction:column;overflow-y:auto;background:#EEF2F8;padding:14px;gap:10px;-webkit-overflow-scrolling:touch;}
-#ni-l-focus{padding:10px 12px 8px;border-bottom:1px solid #D4DCF0;flex-shrink:0;}
-#ni-l-inp{width:100%;border:1.5px solid #2E7D32;border-radius:8px;padding:7px 10px;font-size:.78rem;font-family:inherit;outline:none;box-sizing:border-box;margin-bottom:6px;display:block;}
-#ni-l-inp:focus{border-color:#1B5E20;box-shadow:0 0 0 2px rgba(46,125,50,.15);}
-#ni-l-add{background:#2E7D32;color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:.75rem;font-weight:800;font-family:inherit;cursor:pointer;width:100%;}
-#ni-l-add:active{background:#1B5E20;}
-#ni-l-listdet{flex:0 0 auto;max-height:55%;display:flex;overflow:hidden;}
+#ni-l-focus{background:#E8F5E9;border-bottom-color:#66BB6A;}
+#ni-l-listdet{flex:0 0 auto;height:calc(5 * 44px + 28px);display:flex;overflow:hidden;}
 #ni-l-list-col{flex:0 0 42%;display:flex;flex-direction:column;border-right:1px solid #D4DCF0;overflow:hidden;}
 #ni-l-list-hdr{padding:5px 11px 4px;font-size:.59rem;font-weight:900;color:#94A3B8;text-transform:uppercase;letter-spacing:.5px;background:#FAFBFC;border-bottom:1px solid #EEF2F7;flex-shrink:0;}
 #ni-l-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
@@ -718,11 +808,11 @@ body.ni-on.ni-sec-mots #guide-content-wrap>#content{display:none !important;}
 .ni-l-dl{background:#fff;border:1.5px solid #EF9A9A;color:#C62828;border-radius:8px;padding:0 10px;height:34px;font-size:.72rem;font-weight:800;font-family:inherit;cursor:pointer;margin-left:auto;}
 
 /* ── TEMPS ── */
-#ni-t-left{flex:0 0 67%;display:flex;flex-direction:column;border-right:2px solid #C9D4E8;overflow-y:auto;background:#fff;padding:14px;gap:11px;-webkit-overflow-scrolling:touch;}
+#ni-t-left{flex:0 0 67%;display:flex;flex-direction:column;border-right:2px solid #C9D4E8;overflow:hidden;background:#fff;padding:14px;gap:11px;-webkit-overflow-scrolling:touch;}
 #ni-t-right{flex:1;display:flex;flex-direction:column;overflow-y:auto;background:#EEF2F8;padding:12px;gap:10px;-webkit-overflow-scrolling:touch;}
-.ni-t-sec{display:flex;flex-direction:column;}
-.ni-t-lbl{font-size:.63rem;font-weight:900;text-transform:uppercase;letter-spacing:.4px;padding:5px 10px;border-radius:7px 7px 0 0;display:flex;align-items:center;gap:5px;}
-.ni-t-ta{width:100%;border:1.5px solid #CFD8DC;border-top:none;border-radius:0 0 7px 7px;padding:8px 10px;font-size:.78rem;font-family:inherit;resize:vertical;outline:none;background:#FAFBFC;line-height:1.6;min-height:78px;box-sizing:border-box;}
+.ni-t-sec{display:flex;flex-direction:column;flex:1;min-height:0;}
+.ni-t-lbl{font-size:.63rem;font-weight:900;text-transform:uppercase;letter-spacing:.4px;padding:5px 10px;border-radius:7px 7px 0 0;display:flex;align-items:center;gap:5px;flex-shrink:0;}
+.ni-t-ta{flex:1;width:100%;border:1.5px solid #CFD8DC;border-top:none;border-radius:0 0 7px 7px;padding:8px 10px;font-size:.78rem;font-family:inherit;resize:vertical;outline:none;background:#FAFBFC;line-height:1.6;min-height:78px;box-sizing:border-box;}
 .ni-t-ta:focus{border-color:#E65100;box-shadow:0 0 0 2px rgba(230,81,0,.1);}
 
 
@@ -742,9 +832,9 @@ body.ni-on.ni-sec-livre #guide-content-wrap>#content{display:none !important;}
 }
 #ni-lv-card{
   flex:0 0 auto;display:flex;flex-direction:column;justify-content:center;
-  padding:12px 14px 10px;
+  padding:12px 14px 10px;margin-top:8px;
   background:linear-gradient(145deg,#1A237E 0%,#1565C0 60%,#1976D2 100%);
-  position:relative;overflow:hidden;
+  position:relative;overflow:hidden;border-radius:0;
 }
 #ni-lv-card::before{
   content:'';position:absolute;top:-20px;right:-20px;
@@ -938,20 +1028,66 @@ body.ni-on.ni-sec-mots #ni-mots-panel{display:grid;}
 }
 .ni-q-ta:focus{border-color:#6A1B9A;box-shadow:0 0 0 2px rgba(106,27,154,.1);}
 /* Citations within quadrant */
-.ni-m-add-cit{background:#E65100;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:.69rem;font-weight:800;font-family:inherit;cursor:pointer;flex-shrink:0;align-self:flex-start;}
+.ni-m-add-cit{background:#E65100;color:#fff;border:none;border-radius:8px;padding:5px 10px;font-size:.67rem;font-weight:800;font-family:inherit;cursor:pointer;flex-shrink:0;align-self:flex-start;}
 .ni-m-add-cit:active{background:#BF360C;}
-.ni-m-cit-card{background:#FFF8F5;border-radius:7px;border:1px solid #FFCCBC;padding:7px 9px;font-size:.69rem;flex-shrink:0;}
-.ni-m-cit-ta{width:100%;border:1.5px solid #FFCCBC;border-radius:6px;padding:5px 7px;font-size:.69rem;font-family:inherit;resize:none;outline:none;background:#FFF8F5;min-height:34px;font-style:italic;line-height:1.5;box-sizing:border-box;}
-.ni-m-cit-ta:focus{border-color:#E64A19;}
-.ni-m-cit-inp{width:100%;border:1.5px solid #FFCCBC;border-radius:6px;padding:3px 7px;font-size:.63rem;font-family:inherit;outline:none;margin-top:4px;background:#FFF8F5;box-sizing:border-box;}
-.ni-m-cit-del{background:none;border:none;color:#FFAB91;font-size:.7rem;cursor:pointer;float:right;padding:0;line-height:1;}
+.ni-m-cit-card{background:#FFF8F5;border-radius:6px;border:1px solid #FFCCBC;padding:4px 6px;font-size:.69rem;flex-shrink:0;display:flex;gap:5px;align-items:stretch;}
+.ni-m-cit-del{background:none;border:none;color:#FFCCBC;font-size:.82rem;cursor:pointer;padding:0 2px;line-height:1;flex-shrink:0;align-self:flex-start;padding-top:2px;}
 .ni-m-cit-del:hover{color:#E64A19;}
+.ni-m-cit-ta{flex:1;border:1.5px solid #FFCCBC;border-radius:5px;padding:4px 6px;font-size:.69rem;font-family:inherit;resize:none;outline:none;background:#FFF8F5;min-height:38px;max-height:52px;font-style:italic;line-height:1.45;box-sizing:border-box;overflow-y:auto;}
+.ni-m-cit-ta:focus{border-color:#E64A19;}
+.ni-m-cit-side{display:flex;flex-direction:column;gap:3px;flex-shrink:0;align-items:center;}
+.ni-m-cit-inp{width:68px;border:1.5px solid #FFCCBC;border-radius:5px;padding:3px 5px;font-size:.6rem;font-family:inherit;outline:none;background:#FFF8F5;box-sizing:border-box;text-align:center;}
+.ni-m-cit-inp:focus{border-color:#E64A19;}
+.ni-m-cit-mic{background:none;border:1.5px solid #FFCCBC;border-radius:50%;width:20px;height:20px;font-size:.62rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#E65100;flex-shrink:0;}
+.ni-m-cit-mic.rec{border-color:#E53935;color:#E53935;animation:niblink .6s infinite;}
 .ni-m-empty{text-align:center;padding:20px 10px;color:#CFD8DC;font-size:.72rem;}
 /* Themes within quadrant */
-.ni-m-th-row{display:flex;align-items:flex-start;gap:6px;flex-shrink:0;}
-.ni-m-th-lbl{flex:0 0 33%;font-size:.65rem;font-weight:800;padding-top:5px;line-height:1.3;}
-.ni-m-th-ta{flex:1;border:1.5px solid #E1D5F0;border-radius:6px;padding:4px 7px;font-size:.65rem;font-family:inherit;resize:none;outline:none;background:#FAF7FF;min-height:28px;line-height:1.5;}
+.ni-m-th-row{display:flex;align-items:stretch;gap:5px;flex:1;min-height:0;}
+.ni-m-th-lbl{flex:0 0 13%;font-size:.6rem;font-weight:800;padding-top:4px;line-height:1.25;display:flex;align-items:flex-start;}
+.ni-m-th-ta{flex:1;border:1.5px solid #E1D5F0;border-radius:6px;padding:4px 7px;font-size:.65rem;font-family:inherit;resize:none;outline:none;background:#FAF7FF;line-height:1.5;min-height:0;}
 .ni-m-th-ta:focus{border-color:#6A1B9A;}
+/* Override ni-q-body for themes to be a tight column */
+#ni-q-themes .ni-q-body{gap:3px;padding:6px 8px;overflow:hidden;}
+/* Analyse zone — mic+save in header */
+.ni-q-hdr{display:flex;align-items:center;}
+.ni-q-hdr-lbl{flex:1;}
+.ni-q-mic{
+  width:22px;height:22px;border-radius:50%;
+  border:1.5px solid rgba(0,0,0,.12);background:rgba(255,255,255,.7);
+  font-size:.75rem;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-left:4px;
+}
+.ni-q-mic.rec{border-color:#E53935;color:#E53935;animation:niblink .6s infinite;}
+.ni-q-sv{
+  font-size:.58rem;font-weight:800;border:1.5px solid rgba(0,0,0,.14);
+  background:rgba(255,255,255,.7);border-radius:6px;
+  padding:1px 6px;height:22px;cursor:pointer;
+  display:flex;align-items:center;gap:2px;
+  flex-shrink:0;margin-left:4px;font-family:inherit;color:inherit;
+}
+.ni-q-sv:active{background:rgba(0,0,0,.08);}
+/* Theme row mic */
+.ni-m-th-mic{
+  width:22px;height:22px;border-radius:50%;
+  border:1.5px solid #C5CAE9;background:#FAF7FF;
+  font-size:.7rem;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;align-self:center;
+}
+.ni-m-th-mic.rec{border-color:#E53935;color:#E53935;animation:niblink .6s infinite;}
+/* Citation mic */
+.ni-m-cit-mic{
+  background:none;border:1.5px solid #FFCCBC;border-radius:50%;
+  width:20px;height:20px;font-size:.66rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;color:#E65100;
+}
+.ni-m-cit-mic.rec{border-color:#E53935;color:#E53935;animation:niblink .6s infinite;}
+/* Step mic */
+.ni-m-step-mic{
+  width:26px;height:26px;border-radius:50%;flex-shrink:0;align-self:flex-start;margin-top:4px;
+  border:1.5px solid #B2DFDB;background:#fff;color:#00695C;
+  font-size:.78rem;cursor:pointer;display:flex;align-items:center;justify-content:center;
+}
+.ni-m-step-mic.rec{border-color:#E53935;color:#E53935;animation:niblink .6s infinite;}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 </head>
@@ -1092,9 +1228,13 @@ body.ni-on.ni-sec-mots #ni-mots-panel{display:grid;}
       <!-- FOCUS: spans full left width -->
       <div id="ni-focus">
         <div class="ni-flbl"><div class="ni-fpulse"></div>Nouveau personnage</div>
-        <textarea id="ni-focus-ta" rows="2" placeholder="Dicte ou tape… ex : « Le Renard, ami du PP, lui enseigne l'apprivoisement »"></textarea>
-        <div id="ni-focus-actions">
-          <button id="ni-focus-add" onclick="niPAjouter()">＋ Ajouter</button>
+        <div class="ni-focus-row">
+          <textarea id="ni-focus-ta" placeholder="Dicte ou tape… ex : « Le Renard, ami du PP, lui enseigne l'apprivoisement »"
+            onkeydown="if(event.ctrlKey&&event.key==='Enter')niPAjouter()"></textarea>
+          <div class="ni-focus-btns">
+            <button class="ni-fb-add" onclick="niPAjouter()" title="Ajouter (Ctrl+Entrée)">＋</button>
+            <button class="ni-fb-mic" id="ni-focus-mic" onclick="niMicStart('ni-focus-ta','ni-focus-mic')" title="Dicter">🎤</button>
+          </div>
         </div>
       </div>
 
@@ -1254,10 +1394,15 @@ body.ni-on.ni-sec-mots #ni-mots-panel{display:grid;}
   <div id="ni-lieux-panel">
     <div id="ni-l-left">
       <div id="ni-l-focus">
-        <div style="font-size:.62rem;font-weight:900;color:#2E7D32;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;display:flex;align-items:center;gap:5px;"><div style="width:6px;height:6px;border-radius:50%;background:#2E7D32;animation:niblink .9s infinite;flex-shrink:0;"></div>Nouveau lieu</div>
-        <input id="ni-l-inp" type="text" placeholder="Nom du lieu… ex : La maison de Tante Élisabeth"
-          onkeydown="if(event.key==='Enter')niLAjouter()">
-        <button id="ni-l-add" onclick="niLAjouter()">＋ Ajouter ce lieu</button>
+        <div class="ni-flbl"><div class="ni-fpulse"></div>Nouveau lieu</div>
+        <div class="ni-focus-row">
+          <textarea id="ni-l-inp" placeholder="Nom du lieu… ex : La maison de Tante Élisabeth"
+            onkeydown="if(event.ctrlKey&&event.key==='Enter')niLAjouter()"></textarea>
+          <div class="ni-focus-btns">
+            <button class="ni-fb-add" onclick="niLAjouter()" title="Ajouter (Ctrl+Entrée)">＋</button>
+            <button class="ni-fb-mic" id="ni-l-mic" onclick="niMicStart('ni-l-inp','ni-l-mic')" title="Dicter">🎤</button>
+          </div>
+        </div>
       </div>
       <div id="ni-l-listdet">
         <div id="ni-l-list-col">
@@ -1310,7 +1455,7 @@ body.ni-on.ni-sec-mots #ni-mots-panel{display:grid;}
       <!-- AXEL : textarea simple -->
       <div class="only-axel ni-t-sec">
         <div class="ni-t-lbl" style="background:#FFF3E0;color:#E65100;">⏳ Époque &amp; Chronologie</div>
-        <textarea id="ni-t-simple" class="ni-t-ta" rows="16"
+        <textarea id="ni-t-simple" class="ni-t-ta"
           placeholder="L'époque, les dates importantes, l'ordre des événements…"
           oninput="niTSaveSimple()"></textarea>
       </div>
@@ -1354,7 +1499,7 @@ body.ni-on.ni-sec-mots #ni-mots-panel{display:grid;}
 
     <!-- Q1 : VOCABULAIRE (haut-gauche) -->
     <div class="ni-q" id="ni-q-vocab">
-      <div class="ni-q-hdr" style="background:#EDE7F6;color:#4A148C;">📖 Vocabulaire</div>
+      <div class="ni-q-hdr" style="background:#EDE7F6;color:#4A148C;"><span class="ni-q-hdr-lbl">📖 Vocabulaire</span><button class="ni-q-sv" onclick="niQSave('Vocabulaire')" title="Enregistrer">💾</button><button class="ni-q-mic" id="qmic-vocab" onclick="niMicStart('ni-m-mots-ta','qmic-vocab')" title="Dicter">🎤</button></div>
       <div class="ni-q-body">
         <div class="ni-q-hint">Un mot difficile par bloc, avec sa définition ou son contexte.</div>
         <textarea id="ni-m-mots-ta" class="ni-q-ta"
@@ -1365,7 +1510,7 @@ body.ni-on.ni-sec-mots #ni-mots-panel{display:grid;}
 
     <!-- Q2 : CITATIONS (haut-droite) -->
     <div class="ni-q" id="ni-q-cit">
-      <div class="ni-q-hdr" style="background:#FBE9E7;color:#BF360C;">« Citations</div>
+      <div class="ni-q-hdr" style="background:#FBE9E7;color:#BF360C;"><span class="ni-q-hdr-lbl">« Citations</span><button class="ni-q-sv" onclick="niQSave('Citations')" title="Enregistrer">💾</button></div>
       <div class="ni-q-body">
         <button class="ni-m-add-cit" onclick="niMAddCit()">＋ Nouvelle citation</button>
         <div id="ni-m-cit-list" style="margin-top:6px;display:flex;flex-direction:column;gap:6px;"></div>
@@ -1375,20 +1520,20 @@ body.ni-on.ni-sec-mots #ni-mots-panel{display:grid;}
 
     <!-- Q3 : THÈMES (bas-gauche) -->
     <div class="ni-q" id="ni-q-themes">
-      <div class="ni-q-hdr" style="background:#FFF3E0;color:#E65100;">🎯 Thèmes</div>
+      <div class="ni-q-hdr" style="background:#FFF3E0;color:#E65100;"><span class="ni-q-hdr-lbl">🎯 Thèmes</span><button class="ni-q-sv" onclick="niQSave('Thèmes')" title="Enregistrer">💾</button></div>
       <div class="ni-q-body">
-        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#AD1457">❤️ Amour</div><textarea id="ni-m-th-amour"    class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('amour',this.value)"></textarea></div>
-        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#c0392b">⚡ Pouvoir</div><textarea id="ni-m-th-pouvoir"  class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('pouvoir',this.value)"></textarea></div>
-        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#2E5FA3">🕊️ Liberté</div><textarea id="ni-m-th-liberte"  class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('liberte',this.value)"></textarea></div>
-        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#6A1B9A">🔍 Identité</div><textarea id="ni-m-th-identite" class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('identite',this.value)"></textarea></div>
-        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#E65100">🏛️ Société</div><textarea id="ni-m-th-societe"  class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('societe',this.value)"></textarea></div>
-        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#2E7D32">🌿 Nature</div><textarea id="ni-m-th-nature"   class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('nature',this.value)"></textarea></div>
+        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#AD1457">❤️ Amour</div><textarea id="ni-m-th-amour"    class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('amour',this.value)"></textarea><button class="ni-m-th-mic" id="thmic-amour"    onclick="niMicStart('ni-m-th-amour','thmic-amour')"    title="Dicter">🎤</button></div>
+        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#c0392b">⚡ Pouvoir</div><textarea id="ni-m-th-pouvoir"  class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('pouvoir',this.value)"></textarea><button class="ni-m-th-mic" id="thmic-pouvoir"  onclick="niMicStart('ni-m-th-pouvoir','thmic-pouvoir')"  title="Dicter">🎤</button></div>
+        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#2E5FA3">🕊️ Liberté</div><textarea id="ni-m-th-liberte"  class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('liberte',this.value)"></textarea><button class="ni-m-th-mic" id="thmic-liberte"  onclick="niMicStart('ni-m-th-liberte','thmic-liberte')"  title="Dicter">🎤</button></div>
+        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#6A1B9A">🔍 Identité</div><textarea id="ni-m-th-identite" class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('identite',this.value)"></textarea><button class="ni-m-th-mic" id="thmic-identite" onclick="niMicStart('ni-m-th-identite','thmic-identite')" title="Dicter">🎤</button></div>
+        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#E65100">🏛️ Société</div><textarea id="ni-m-th-societe"  class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('societe',this.value)"></textarea><button class="ni-m-th-mic" id="thmic-societe"  onclick="niMicStart('ni-m-th-societe','thmic-societe')"  title="Dicter">🎤</button></div>
+        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#2E7D32">🌿 Nature</div><textarea id="ni-m-th-nature"   class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('nature',this.value)"></textarea><button class="ni-m-th-mic" id="thmic-nature"   onclick="niMicStart('ni-m-th-nature','thmic-nature')"    title="Dicter">🎤</button></div>
       </div>
     </div>
 
     <!-- Q4 : AVIS (bas-droite) -->
     <div class="ni-q" id="ni-q-avis">
-      <div class="ni-q-hdr" style="background:#E3F2FD;color:#0D47A1;">💭 Avis &amp; Compréhension</div>
+      <div class="ni-q-hdr" style="background:#E3F2FD;color:#0D47A1;"><span class="ni-q-hdr-lbl">💭 Avis &amp; Compréhension</span><button class="ni-q-sv" onclick="niQSave('Avis')" title="Enregistrer">💾</button><button class="ni-q-mic" id="qmic-avis" onclick="niMicStart('ni-m-avis-ta','qmic-avis')" title="Dicter">🎤</button></div>
       <div class="ni-q-body">
         <div class="ni-q-hint">Ce que tu as compris, aimé, les passages marquants…</div>
         <textarea id="ni-m-avis-ta" class="ni-q-ta"
@@ -1403,15 +1548,37 @@ body.ni-on.ni-sec-mots #ni-mots-panel{display:grid;}
 
   <!-- ══ NI INTRIGUE PANEL ══ -->
   <div id="ni-intrigue-panel">
+    <!-- Courbe (Aristote + Freytag) -->
     <div id="ni-i-curve-wrap">
       <div id="ni-i-schema-bar">
         <button class="ni-i-sc act" id="ni-isc-aristote" onclick="niISetSchema('aristote',this)">🏛️ 3 parties</button>
         <button class="ni-i-sc"     id="ni-isc-freytag"  onclick="niISetSchema('freytag',this)">🔺 5 parties</button>
+        <button class="ni-i-sc"     id="ni-isc-moderne"  onclick="niISetSchema('moderne',this)">🌊 8 étapes</button>
       </div>
       <svg id="ni-i-svg" viewBox="0 0 600 170" xmlns="http://www.w3.org/2000/svg"
            preserveAspectRatio="xMidYMid meet"></svg>
     </div>
     <div id="ni-i-inputs"></div>
+    <!-- Arc moderne — liste 2 colonnes -->
+    <div id="ni-i-liste">
+      <div id="ni-i-liste-hdr">
+        <div id="ni-i-liste-titre">🌊 Arc moderne — 8 étapes</div>
+        <div id="ni-i-rc-title-right">Sélectionne une étape →</div>
+      </div>
+      <div id="ni-i-liste-body">
+        <div id="ni-i-left-col"></div>
+        <div id="ni-i-right-col">
+          <div id="ni-i-rc-hdr"></div>
+          <div id="ni-i-rc-hint"></div>
+          <textarea id="ni-i-rc-ta" placeholder=""></textarea>
+          <div id="ni-i-rc-foot">
+            <button class="ni-i-sv" onclick="niIModerneSave()">💾 Enregistrer</button>
+            <button class="ni-i-mic-btn" id="ni-i-rc-mic" onclick="niMicStart('ni-i-rc-ta','ni-i-rc-mic')" title="Dicter">🎤</button>
+            <span id="ni-i-rc-saved" style="font-size:.62rem;color:#00897B;opacity:0;transition:opacity .4s;margin-left:4px;">✓ Enregistré</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div id="ecrire-tabs" style="display:none;flex-shrink:0;border-bottom:3px solid var(--gris2);background:#fff;padding:0 12px;">
@@ -7063,6 +7230,41 @@ function niPSave() {
   if (p) { p.notes=(p.notes||'')+'\n\n✏️ '+val; inp.value=''; sauvegarderBiblio(); niPSelect(_niSelP); }
 }
 
+// ── Micro / speech recognition ──────────────────────────
+var _niMicRec = null;
+function niMicStart(taId, btnId) {
+  var SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRec) { showToast('Micro non disponible sur ce navigateur', 'warn'); return; }
+  var btn = document.getElementById(btnId);
+  // If already recording, stop
+  if (_niMicRec) {
+    _niMicRec.stop();
+    _niMicRec = null;
+    if (btn) btn.classList.remove('rec');
+    return;
+  }
+  var rec = new SpeechRec();
+  rec.lang = document.documentElement.lang || 'fr-FR';
+  rec.continuous = false;
+  rec.interimResults = false;
+  _niMicRec = rec;
+  if (btn) btn.classList.add('rec');
+  rec.onresult = function(e) {
+    var transcript = e.results[0][0].transcript;
+    var ta = document.getElementById(taId);
+    if (ta) {
+      ta.value = (ta.value ? ta.value + ' ' : '') + transcript;
+      ta.focus();
+    }
+  };
+  rec.onerror = function() { showToast('Erreur micro', 'warn'); };
+  rec.onend = function() {
+    _niMicRec = null;
+    if (btn) btn.classList.remove('rec');
+  };
+  rec.start();
+}
+
 function niPAjouter() {
   var ta = document.getElementById('ni-focus-ta'), val = ta.value.trim();
   if (!val || !LIVRE_ACTIF) { if(ta)ta.focus(); return; }
@@ -7261,7 +7463,7 @@ niToggle = function(on) {
   if (vn) {
     if (on) {
       vn.style.cssText = 'display:none !important;width:0;min-width:0;flex:0 0 0px;overflow:hidden;';
-      document.getElementById('ni-sidebar').style.width='210px';
+      document.getElementById('ni-sidebar').style.width='180px';
     } else {
       vn.style.cssText = '';
     }
@@ -7373,6 +7575,19 @@ var NI_I_DATA = {
         lines:['Dénouement'],
         hint:'Résolution finale — comment tout se termine.' }
     ]
+  },
+  moderne: {
+    name: 'Arc moderne', color: '#00695C',
+    phases: [
+      { key:'nar_m1', num:1, nom:'Exposition',        def:'Le monde ordinaire du personnage.',          hint:'Qui est le héros dans sa vie de tous les jours ?' },
+      { key:'nar_m2', num:2, nom:'Élém. déclencheur', def:'L\'événement qui met l\'histoire en mouvement.', hint:'Qu\'est-ce qui brise l\'équilibre et oblige le héros à agir ?' },
+      { key:'nar_m3', num:3, nom:'Péripéties',        def:'Complications et obstacles croissants.',     hint:'Quelles aventures et difficultés rencontre le héros ?' },
+      { key:'nar_m4', num:4, nom:'Crise',             def:'Le moment de la décision la plus difficile.',hint:'Face à quel choix impossible le héros est-il placé ?' },
+      { key:'nar_m5', num:5, nom:'Climax',            def:'Tension maximale — le tournant irréversible.',hint:'Quel est le moment culminant, le plus intense de l\'histoire ?' },
+      { key:'nar_m6', num:6, nom:'Action descendante',def:'Les conséquences immédiates du climax.',     hint:'Comment la situation évolue-t-elle après le climax ?' },
+      { key:'nar_m7', num:7, nom:'Dénouement',        def:'Le conflit principal est résolu.',           hint:'Comment se résout le problème central ?' },
+      { key:'nar_m8', num:8, nom:'Situation finale',  def:'Nouvel équilibre — le monde transformé.',   hint:'Comment les choses sont-elles à la fin ? Qu\'a appris le héros ?' }
+    ]
   }
 };
 
@@ -7387,7 +7602,6 @@ function niGoIntrigue(schema, el) {
     document.body.classList.add('ni-sec-intrigue');
     niIRender();
   } else {
-    // Fallback classique (arc moderne ou NI désactivée)
     var btn = null;
     document.querySelectorAll('#tabs .tab').forEach(function(b){
       if (b.getAttribute('onclick') && b.getAttribute('onclick').indexOf("'intrigue'") > -1) btn = b;
@@ -7413,14 +7627,27 @@ function niISetSchema(schema, el) {
 
 function niIRender() {
   if (!LIVRE_ACTIF) return;
-  // On first entry (no explicit schema chosen yet), read from book
-  // — but never override a deliberate selection already in _niISchema
   if (!NI_I_DATA[_niISchema]) {
     var fallback = LIVRE_ACTIF.schemaType || 'aristote';
     _niISchema = NI_I_DATA[fallback] ? fallback : 'aristote';
   }
   var data = NI_I_DATA[_niISchema];
   if (!data) return;
+
+  // ── Toggle views: curve vs liste ──────────────────
+  var curveWrap = document.getElementById('ni-i-curve-wrap');
+  var inputsWrap = document.getElementById('ni-i-inputs');
+  var listeWrap = document.getElementById('ni-i-liste');
+  var isModerne = _niISchema === 'moderne';
+  if (curveWrap) curveWrap.style.display = isModerne ? 'none' : '';
+  if (inputsWrap) inputsWrap.style.display = isModerne ? 'none' : '';
+  if (listeWrap) listeWrap.classList.toggle('on', isModerne);
+
+  if (isModerne) {
+    niIRenderModerne();
+    return;
+  }
+
   var narr = LIVRE_ACTIF.narration || {};
 
   // ── Sync chip buttons ─────────────────────────────
@@ -7431,28 +7658,21 @@ function niIRender() {
   // ── Draw SVG ──────────────────────────────────────
   var svg = document.getElementById('ni-i-svg');
   if (!svg) return;
-  var r = 30; // slightly larger circles
+  var r = 30;
   var html = '';
 
-  // Fill area under curve
   html += '<path d="' + data.fillD + '" fill="' + data.fill + '" stroke="none"/>';
-  // Main curve/polyline
   html += '<path d="' + data.pathD + '" fill="none" stroke="' + data.color + '" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>';
 
-  // Schema name label inside the curve (centred horizontally, vertically between curve top and baseline)
   html += '<text x="300" y="118"' +
     ' text-anchor="middle" dominant-baseline="central"' +
     ' font-size="18" font-weight="900" font-family="system-ui,sans-serif"' +
     ' fill="' + data.color + '" opacity="0.13" letter-spacing="2">' +
     data.name.toUpperCase() + '</text>';
 
-  // Node circles + labels
   data.nodes.forEach(function(n) {
-    // Drop-shadow circle
     html += '<circle cx="' + n.x + '" cy="' + n.y + '" r="' + (r+2) + '" fill="rgba(0,0,0,0.07)" stroke="none"/>';
-    // Main circle
     html += '<circle cx="' + n.x + '" cy="' + n.y + '" r="' + r + '" fill="#fff" stroke="' + data.color + '" stroke-width="2.5"/>';
-    // Label
     if (n.lines.length === 1) {
       html += '<text x="' + n.x + '" y="' + n.y + '"' +
         ' text-anchor="middle" dominant-baseline="central"' +
@@ -7497,6 +7717,58 @@ function niIRender() {
     wrap.appendChild(div);
   });
 }
+
+var _niIModerneKey = null;
+
+function niIRenderModerne() {
+  var data = NI_I_DATA.moderne;
+  var narr = LIVRE_ACTIF ? (LIVRE_ACTIF.narration || {}) : {};
+  var col = document.getElementById('ni-i-left-col');
+  if (!col) return;
+  col.innerHTML = '';
+  data.phases.forEach(function(ph) {
+    var taId = 'ni-im-ta-' + ph.key;
+    var micId = 'ni-im-mic-' + ph.key;
+    var d = document.createElement('div');
+    d.className = 'ni-m-step';
+    var info = document.createElement('div');
+    info.className = 'ni-m-step-info';
+    info.innerHTML =
+      '<div class="ni-m-step-num">Étape ' + ph.num + '</div>' +
+      '<div class="ni-m-step-nom">' + ph.nom + '</div>' +
+      '<div class="ni-m-step-def">' + ph.def + '</div>';
+    var inp = document.createElement('div');
+    inp.className = 'ni-m-step-input';
+    var ta = document.createElement('textarea');
+    ta.className = 'ni-m-step-ta';
+    ta.id = taId;
+    ta.placeholder = ph.hint;
+    ta.value = narr[ph.key] || '';
+    (function(key){ ta.addEventListener('input', function(){ niISaveInline(key, ta.value); }); })(ph.key);
+    var micBtn = document.createElement('button');
+    micBtn.className = 'ni-m-step-mic';
+    micBtn.id = micId;
+    micBtn.title = 'Dicter';
+    micBtn.textContent = '🎤';
+    (function(tid, mid){ micBtn.addEventListener('click', function(){ niMicStart(tid, mid); }); })(taId, micId);
+    inp.appendChild(ta);
+    inp.appendChild(micBtn);
+    d.appendChild(info);
+    d.appendChild(inp);
+    col.appendChild(d);
+  });
+}
+
+function niISaveInline(key, val) {
+  if (!LIVRE_ACTIF) return;
+  if (!LIVRE_ACTIF.narration) LIVRE_ACTIF.narration = {};
+  LIVRE_ACTIF.narration[key] = val;
+  sauvegarderBiblio();
+}
+
+function niIModerneSelect(key, skipSave) { /* no-op — inline layout */ }
+function niIModerneSave() { /* no-op — inline auto-save */ }
+
 
 function niIToggleHint(key) {
   var h = document.getElementById('ni-i-h-' + key);
@@ -7643,14 +7915,8 @@ function niLVTogglePDF() {
 // ════ NI LIEUX — fonctions ════
 var _niSelL = null;
 
-function niLRender() {
+function niLRefreshList() {
   if (!LIVRE_ACTIF) return;
-  // Reset PDF panel state
-  _niLPdfOn = false;
-  var btn = document.getElementById('ni-l-pdf-trigger');
-  var box = document.getElementById('ni-l-pdf-content');
-  if (btn) { btn.classList.remove('on'); btn.textContent = '📄 Résumé PDF des lieux'; }
-  if (box) { box.classList.remove('on'); box.innerHTML = ''; }
   var scroll = document.getElementById('ni-l-scroll');
   if (!scroll) return;
   scroll.innerHTML = '';
@@ -7672,8 +7938,20 @@ function niLRender() {
   });
 }
 
+function niLRender() {
+  if (!LIVRE_ACTIF) return;
+  // Reset PDF panel state only on full render (book change, etc.)
+  _niLPdfOn = false;
+  var btn = document.getElementById('ni-l-pdf-trigger');
+  var box = document.getElementById('ni-l-pdf-content');
+  if (btn) { btn.classList.remove('on'); btn.textContent = '📄 Résumé PDF des lieux'; }
+  if (box) { box.classList.remove('on'); box.innerHTML = ''; }
+  niLRefreshList();
+}
+
 function niLSelect(id) {
-  _niSelL = id; niLRender();
+  _niSelL = id;
+  niLRefreshList(); // ← only refreshes the list, never touches PDF state
   var l = (LIVRE_ACTIF.lieux || []).find(function(x){ return x.id === id; });
   if (!l) return;
   document.getElementById('ni-l-det-empty').style.display = 'none';
@@ -7699,7 +7977,7 @@ function niLSave() {
   l.notes = ta ? ta.value : '';
   sauvegarderBiblio();
   showToast('Lieu enregistré ✓', 'ok');
-  niLRender();
+  niLRefreshList();
   // Sync liste classique
   document.getElementById('list-lieux').innerHTML = '';
   (LIVRE_ACTIF.lieux || []).forEach(function(x){ renderEntity('lieux', x); });
@@ -7725,7 +8003,7 @@ function niLAjouter() {
   LIVRE_ACTIF.lieux.push({ id: id, nom: nom, notes: '', couleur: couleur });
   sauvegarderBiblio();
   if (inp) inp.value = '';
-  niLRender(); niLSelect(id);
+  niLRefreshList(); niLSelect(id);
   showToast('Lieu ajouté ✓', 'ok');
 }
 
@@ -7782,6 +8060,11 @@ function niMLoad() {
   niMRenderCit();
 }
 
+function niQSave(zone) {
+  sauvegarderBiblio();
+  showToast((zone || 'Analyse') + ' enregistré ✓', 'ok');
+}
+
 function niMSaveMots() {
   if (!LIVRE_ACTIF) return;
   var ta = document.getElementById('ni-m-mots-ta');
@@ -7835,16 +8118,26 @@ function niMRenderCit() {
   if (empty) empty.style.display = cits.length ? 'none' : '';
   list.innerHTML = '';
   cits.forEach(function(c) {
+    var taId  = 'cit-ta-'  + c.id;
+    var micId = 'cit-mic-' + c.id;
     var d = document.createElement('div');
     d.className = 'ni-m-cit-card';
     d.innerHTML =
-      '<button class="ni-m-cit-del" onclick="niMDelCit(\'' + c.id + '\')">🗑️</button>' +
-      '<div style="font-size:.62rem;color:#888;margin-bottom:3px;clear:right;">« Citation</div>' +
-      '<textarea class="ni-m-cit-ta" placeholder="Tape ou dicte la citation exacte…" ' +
-        'oninput="niMUpdateCit(\'' + c.id + '\',\'texte\',this.value)">' + esc(c.texte) + '</textarea>' +
-      '<input class="ni-m-cit-inp" placeholder="Référence : p. 12, ch. 3…" value="' + esc(c.ref) + '" ' +
-        'oninput="niMUpdateCit(\'' + c.id + '\',\'ref\',this.value)">';
+      '<button class="ni-m-cit-del" onclick="niMDelCit(\'' + c.id + '\')" title="Supprimer">🗑️</button>' +
+      '<textarea class="ni-m-cit-ta" id="' + taId + '" placeholder="Citation exacte…" ' +
+        'oninput="niMUpdateCit(\'' + c.id + '\',\'texte\',this.value)"></textarea>' +
+      '<div class="ni-m-cit-side">' +
+        '<input class="ni-m-cit-inp" placeholder="p. 12…" value="' + esc(c.ref) + '" ' +
+          'oninput="niMUpdateCit(\'' + c.id + '\',\'ref\',this.value)">' +
+        '<button class="ni-m-cit-mic" id="' + micId + '" title="Dicter">🎤</button>' +
+      '</div>';
     list.appendChild(d);
+    // Set textarea value (avoids XSS via innerHTML)
+    var ta = document.getElementById(taId);
+    if (ta) ta.value = c.texte || '';
+    // Wire mic
+    var mic = document.getElementById(micId);
+    if (mic) (function(tid, mid){ mic.addEventListener('click', function(){ niMicStart(tid, mid); }); })(taId, micId);
   });
 }
 
