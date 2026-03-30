@@ -85,6 +85,9 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gris);color:va
 .only-axel,.only-elise{display:none;}
 body.mode-axel .only-axel{display:block;}
 body.mode-elise .only-elise{display:block;}
+/* ni-mi dans le menu NI doit rester flex même avec only-elise/axel */
+body.mode-axel .ni-mi.only-axel{display:flex;}
+body.mode-elise .ni-mi.only-elise{display:flex;}
 /* Zones structurées Élise */
 .struct-zone{background:var(--gris);border-radius:10px;padding:12px 14px;margin-bottom:10px;}
 .struct-zone-title{font-size:.75rem;font-weight:800;color:var(--bleu);margin-bottom:6px;display:flex;align-items:center;gap:6px;}
@@ -340,7 +343,7 @@ body.mode-elise .only-elise{display:block;}
 
 /* ═══ NOUVELLE INTERFACE — SIDEBAR ═══ */
 #ni-sidebar{
-  position:fixed;top:0;left:0;bottom:0;width:200px;
+  position:fixed;top:0;left:0;bottom:0;width:210px;
   background:#0A1628;
   display:none;flex-direction:column;
   overflow-y:auto;-webkit-overflow-scrolling:touch;overflow-x:hidden;
@@ -348,7 +351,7 @@ body.mode-elise .only-elise{display:block;}
   box-shadow:3px 0 16px rgba(0,0,0,.5);
 }
 #ni-sidebar.vis{display:flex;}
-body.ni-on #screen-guide{margin-left:200px;}
+body.ni-on #screen-guide{margin-left:210px;}
 body.ni-on #vert-nav{display:none !important;visibility:hidden;width:0 !important;min-width:0 !important;max-width:0 !important;overflow:hidden;flex:0 0 0 !important;padding:0 !important;}
 body.ni-on #guide-content-wrap{margin-left:0;}
 
@@ -386,7 +389,7 @@ body.ni-on #guide-content-wrap{margin-left:0;}
 }
 .ni-tout:hover{color:rgba(255,255,255,.75);}
 .ni-pdf-row{display:flex;align-items:center;gap:5px;padding:7px 7px 3px;background:rgba(198,40,40,.14);border:1px solid rgba(198,40,40,.2);border-radius:8px;margin:8px 7px 0;}
-.ni-ml{flex:1;font-size:.76rem;font-weight:700;color:rgba(255,255,255,.9);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ni-ml{flex:1;min-width:0;font-size:.76rem;font-weight:700;color:rgba(255,255,255,.9);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .ni-mi.act .ni-ml{color:#fff;}
 
 /* ═══ GRANDE BIBLIOTHÈQUE ═══ */
@@ -484,7 +487,7 @@ body.ni-on.ni-sec-personnages #guide-content-wrap > #content{display:none !impor
 
 /* ── LEFT HALF (col1+col2) ── */
 #ni-left{
-  flex:0 0 50%;display:flex;flex-direction:column;
+  flex:0 0 56%;display:flex;flex-direction:column;
   border-right:2px solid #C9D4E8;overflow:hidden;
   background:#fff;
 }
@@ -593,7 +596,25 @@ body.ni-on.ni-sec-personnages #guide-content-wrap > #content{display:none !impor
 .ni-pdf-pav{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.52rem;font-weight:900;color:#fff;flex-shrink:0;}
 .ni-pdf-notes{font-size:.71rem;color:#37474F;line-height:1.6;white-space:pre-line;}
 
-/* ── RIGHT COL (col3) — Relations ── */
+#ni-l-pdf-row{padding:8px 12px;background:#fff;border-top:1px solid #D4DCF0;flex-shrink:0;}
+#ni-l-pdf-trigger{
+  width:100%;padding:8px;border-radius:8px;
+  border:1.5px solid #2E7D32;background:#fff;color:#2E7D32;
+  font-size:.72rem;font-weight:800;font-family:inherit;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+#ni-l-pdf-trigger:active{background:#E8F5E9;}
+#ni-l-pdf-trigger.on{background:#2E7D32;color:#fff;}
+#ni-l-pdf-content{
+  display:none;flex:1;overflow-y:auto;padding:11px;
+  background:#fff;animation:niSlide .16s ease;
+  -webkit-overflow-scrolling:touch;
+}
+#ni-l-pdf-content.on{display:block;}
+.ni-pdf-lieu{margin-bottom:10px;padding:8px 10px;border:1px solid #C8E6C9;border-radius:8px;background:#F1F8F1;}
+.ni-pdf-lieu-name{font-weight:900;font-size:.78rem;display:flex;align-items:center;gap:7px;margin-bottom:4px;color:#1B5E20;}
+.ni-pdf-lieu-av{width:18px;height:18px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:.72rem;flex-shrink:0;}
+
 #ni-right{
   flex:1;display:flex;flex-direction:column;
   background:#EEF2F8;overflow:hidden;
@@ -643,6 +664,294 @@ body.ni-on.ni-sec-personnages #guide-content-wrap > #content{display:none !impor
 #ni-graph-box{flex:1;background:#fff;border-radius:9px;border:1.5px solid #D4DCF0;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.07);}
 #ni-graph-svg{width:100%;height:100%;}
 
+
+/* ═══════════════════════════════════════════
+   NI LIEUX / TEMPS / MOTS — PANELS
+═══════════════════════════════════════════ */
+#ni-lieux-panel,#ni-temps-panel{display:none;flex:1;overflow:hidden;flex-direction:row;background:#EEF2F8;height:100%;}
+
+body.ni-on.ni-sec-lieux #ni-lieux-panel{display:flex;}
+body.ni-on.ni-sec-lieux #guide-content-wrap>#ecrire-tabs,
+body.ni-on.ni-sec-lieux #guide-content-wrap>#content{display:none !important;}
+body.ni-on.ni-sec-temps #ni-temps-panel{display:flex;}
+body.ni-on.ni-sec-temps #guide-content-wrap>#ecrire-tabs,
+body.ni-on.ni-sec-temps #guide-content-wrap>#content{display:none !important;}
+body.ni-on.ni-sec-mots #guide-content-wrap>#ecrire-tabs,
+body.ni-on.ni-sec-mots #guide-content-wrap>#content{display:none !important;}
+
+/* Shared aide card */
+.ni-aide-card{background:#fff;border-radius:10px;border:1px solid #D4DCF0;padding:11px 13px;font-size:.73rem;line-height:1.65;color:#37474F;}
+.ni-aide-card h4{margin:0 0 5px;font-size:.74rem;font-weight:900;color:#1A2540;}
+.ni-aide-card p{margin:0;color:#546E7A;}
+
+/* ── LIEUX ── */
+#ni-l-left{flex:0 0 64%;display:flex;flex-direction:column;border-right:2px solid #C9D4E8;overflow:hidden;background:#fff;}
+#ni-l-right{flex:1;display:flex;flex-direction:column;overflow-y:auto;background:#EEF2F8;padding:14px;gap:10px;-webkit-overflow-scrolling:touch;}
+#ni-l-focus{padding:10px 12px 8px;border-bottom:1px solid #D4DCF0;flex-shrink:0;}
+#ni-l-inp{width:100%;border:1.5px solid #2E7D32;border-radius:8px;padding:7px 10px;font-size:.78rem;font-family:inherit;outline:none;box-sizing:border-box;margin-bottom:6px;display:block;}
+#ni-l-inp:focus{border-color:#1B5E20;box-shadow:0 0 0 2px rgba(46,125,50,.15);}
+#ni-l-add{background:#2E7D32;color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:.75rem;font-weight:800;font-family:inherit;cursor:pointer;width:100%;}
+#ni-l-add:active{background:#1B5E20;}
+#ni-l-listdet{flex:0 0 auto;max-height:55%;display:flex;overflow:hidden;}
+#ni-l-list-col{flex:0 0 42%;display:flex;flex-direction:column;border-right:1px solid #D4DCF0;overflow:hidden;}
+#ni-l-list-hdr{padding:5px 11px 4px;font-size:.59rem;font-weight:900;color:#94A3B8;text-transform:uppercase;letter-spacing:.5px;background:#FAFBFC;border-bottom:1px solid #EEF2F7;flex-shrink:0;}
+#ni-l-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.ni-li{display:flex;align-items:center;gap:7px;padding:8px 10px;border-bottom:1px solid #F2F5FB;cursor:pointer;border-left:2px solid transparent;transition:background .1s;min-height:44px;}
+.ni-li:active,.ni-li.sel{background:#E8F5E9;}
+.ni-li.sel{border-left-color:#2E7D32;}
+.ni-li-av{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.82rem;flex-shrink:0;}
+.ni-li-name{font-weight:800;font-size:.75rem;color:#1A2540;line-height:1.2;}
+.ni-li-choc{font-size:.63rem;color:#64748B;font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+#ni-l-det-col{flex:1;display:flex;flex-direction:column;background:#FAFBFD;overflow:hidden;}
+#ni-l-det-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
+#ni-l-det-fiche{display:none;flex-direction:column;height:100%;animation:niSlide .16s ease;}
+#ni-l-det-fiche.on{display:flex;}
+#ni-l-det-hdr{padding:8px 12px;color:#fff;display:flex;align-items:center;gap:8px;flex-shrink:0;background:#2E7D32;}
+#ni-l-det-name{font-weight:900;font-size:.82rem;flex:1;}
+#ni-l-det-cls{background:rgba(255,255,255,.15);border:none;color:#fff;width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:.78rem;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+#ni-l-det-body{flex:1;overflow-y:auto;padding:9px 11px;-webkit-overflow-scrolling:touch;}
+#ni-l-det-ta{width:100%;border:1.5px solid #CFD8DC;border-radius:8px;padding:7px 9px;font-size:.76rem;font-family:inherit;resize:none;outline:none;background:#FAFBFC;line-height:1.7;min-height:100px;box-sizing:border-box;}
+#ni-l-det-ta:focus{border-color:#2E7D32;}
+#ni-l-det-foot{display:flex;gap:5px;padding:7px 10px;background:#fff;border-top:1px solid #D4DCF0;flex-shrink:0;}
+.ni-l-sv{background:#2E7D32;color:#fff;border:none;border-radius:8px;padding:0 12px;height:34px;font-size:.72rem;font-weight:800;font-family:inherit;cursor:pointer;}
+.ni-l-sv:active{background:#1B5E20;}
+.ni-l-dl{background:#fff;border:1.5px solid #EF9A9A;color:#C62828;border-radius:8px;padding:0 10px;height:34px;font-size:.72rem;font-weight:800;font-family:inherit;cursor:pointer;margin-left:auto;}
+
+/* ── TEMPS ── */
+#ni-t-left{flex:0 0 67%;display:flex;flex-direction:column;border-right:2px solid #C9D4E8;overflow-y:auto;background:#fff;padding:14px;gap:11px;-webkit-overflow-scrolling:touch;}
+#ni-t-right{flex:1;display:flex;flex-direction:column;overflow-y:auto;background:#EEF2F8;padding:12px;gap:10px;-webkit-overflow-scrolling:touch;}
+.ni-t-sec{display:flex;flex-direction:column;}
+.ni-t-lbl{font-size:.63rem;font-weight:900;text-transform:uppercase;letter-spacing:.4px;padding:5px 10px;border-radius:7px 7px 0 0;display:flex;align-items:center;gap:5px;}
+.ni-t-ta{width:100%;border:1.5px solid #CFD8DC;border-top:none;border-radius:0 0 7px 7px;padding:8px 10px;font-size:.78rem;font-family:inherit;resize:vertical;outline:none;background:#FAFBFC;line-height:1.6;min-height:78px;box-sizing:border-box;}
+.ni-t-ta:focus{border-color:#E65100;box-shadow:0 0 0 2px rgba(230,81,0,.1);}
+
+
+
+/* ═══════════════════════════════════════════
+   NI LIVRE PANEL
+═══════════════════════════════════════════ */
+#ni-livre-panel{display:none;flex:1;flex-direction:row;overflow:hidden;background:#EEF2F8;height:100%;}
+body.ni-on.ni-sec-livre #ni-livre-panel{display:flex;}
+body.ni-on.ni-sec-livre #guide-content-wrap>#ecrire-tabs,
+body.ni-on.ni-sec-livre #guide-content-wrap>#content{display:none !important;}
+
+/* Left column — miniature + PDF */
+#ni-lv-left{
+  flex:0 0 44%;display:flex;flex-direction:column;
+  border-right:2px solid #C9D4E8;overflow:hidden;background:#fff;
+}
+#ni-lv-card{
+  flex:0 0 auto;display:flex;flex-direction:column;justify-content:center;
+  padding:12px 14px 10px;
+  background:linear-gradient(145deg,#1A237E 0%,#1565C0 60%,#1976D2 100%);
+  position:relative;overflow:hidden;
+}
+#ni-lv-card::before{
+  content:'';position:absolute;top:-20px;right:-20px;
+  width:110px;height:110px;border-radius:50%;
+  background:rgba(255,255,255,.05);
+}
+#ni-lv-icon{font-size:1.6rem;margin-bottom:6px;line-height:1;}
+#ni-lv-titre{
+  font-size:.88rem;font-weight:900;color:#fff;
+  line-height:1.2;margin-bottom:4px;
+  text-shadow:0 1px 4px rgba(0,0,0,.25);
+}
+#ni-lv-auteur{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.82);margin-bottom:3px;}
+.ni-lv-badge{
+  display:inline-flex;align-items:center;
+  background:rgba(255,255,255,.18);border-radius:20px;
+  padding:2px 8px;font-size:.6rem;font-weight:800;
+  color:rgba(255,255,255,.9);margin-top:4px;margin-right:3px;
+}
+/* Small zones for Courant + Style under the card */
+#ni-lv-small{flex:0 0 auto;border-bottom:1px solid #D4DCF0;}
+.ni-lv-small-zone{
+  padding:6px 12px;border-bottom:1px solid #EEF2F7;
+}
+.ni-lv-small-zone:last-child{border-bottom:none;}
+.ni-lv-small-lbl{font-size:.58rem;font-weight:900;text-transform:uppercase;letter-spacing:.35px;margin-bottom:3px;}
+.ni-lv-small-ta{
+  width:100%;border:1px solid #D4DCF0;border-radius:6px;
+  padding:5px 8px;font-size:.69rem;font-family:inherit;
+  resize:none;outline:none;background:#FAFBFC;
+  line-height:1.55;min-height:36px;box-sizing:border-box;
+}
+.ni-lv-small-ta:focus{border-color:#1565C0;}
+/* PDF row — takes remaining half of column */
+#ni-lv-pdf-row{padding:8px 12px;background:#fff;border-top:1px solid #D4DCF0;flex-shrink:0;}
+#ni-lv-pdf-trigger{
+  width:100%;padding:8px;border-radius:8px;
+  border:1.5px solid #1565C0;background:#fff;color:#1565C0;
+  font-size:.72rem;font-weight:800;font-family:inherit;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+#ni-lv-pdf-trigger:active{background:#E3F2FD;}
+#ni-lv-pdf-trigger.on{background:#1565C0;color:#fff;}
+#ni-lv-pdf-content{
+  display:none;flex:1;overflow-y:auto;padding:10px 12px;
+  background:#fff;font-size:.71rem;color:#37474F;
+  line-height:1.7;
+  border-top:1px solid #E3F2FD;
+  -webkit-overflow-scrolling:touch;
+}
+#ni-lv-pdf-content.on{display:block;}
+
+/* Right column — 5 scrollable zones */
+#ni-lv-right{
+  flex:1;display:flex;flex-direction:column;
+  overflow-y:auto;overflow-x:hidden;
+  background:#EEF2F8;gap:0;
+  -webkit-overflow-scrolling:touch;
+}
+.ni-lv-zone{
+  flex:0 0 auto;min-height:33vh;
+  display:flex;flex-direction:column;
+  background:#fff;border-bottom:2px solid #D4DCF0;
+  padding:12px 14px;gap:6px;
+}
+.ni-lv-zone:last-child{border-bottom:none;}
+.ni-lv-zone-hdr{
+  font-size:.65rem;font-weight:900;text-transform:uppercase;
+  letter-spacing:.4px;flex-shrink:0;
+  display:flex;align-items:center;gap:6px;
+}
+.ni-lv-zone-hint{font-size:.63rem;color:#94A3B8;flex-shrink:0;line-height:1.4;}
+.ni-lv-ta{
+  flex:1;border:1.5px solid #D4DCF0;border-radius:8px;
+  padding:8px 10px;font-size:.76rem;font-family:inherit;
+  resize:none;outline:none;background:#FAFBFC;
+  line-height:1.65;min-height:80px;
+}
+.ni-lv-ta:focus{border-color:#1565C0;box-shadow:0 0 0 2px rgba(21,101,192,.1);}
+/* Aide narrateurs inline */
+#ni-lv-narrdetails{
+  flex-shrink:0;background:#E0F2F1;border-radius:8px;
+  border:1px solid #80CBC4;font-size:.72rem;color:#37474F;
+  overflow:hidden;
+}
+#ni-lv-narrdetails summary{
+  cursor:pointer;padding:7px 12px;font-weight:800;
+  color:#00695C;list-style:none;display:flex;align-items:center;gap:6px;
+}
+#ni-lv-narrdetails summary::marker{display:none;}
+#ni-lv-narrdetails summary::before{content:'▶';font-size:.6rem;transition:transform .2s;}
+#ni-lv-narrdetails[open] summary::before{transform:rotate(90deg);}
+#ni-lv-narrdetails .ni-lv-narr-body{padding:0 12px 10px;line-height:1.7;}
+
+#ni-intrigue-panel{display:none;flex:1;flex-direction:column;overflow:hidden;background:#EEF2F8;height:100%;}
+body.ni-on.ni-sec-intrigue #ni-intrigue-panel{display:flex;}
+body.ni-on.ni-sec-intrigue #guide-content-wrap>#ecrire-tabs,
+body.ni-on.ni-sec-intrigue #guide-content-wrap>#content{display:none !important;}
+
+/* Curve zone (top) */
+#ni-i-curve-wrap{
+  flex:0 0 auto;background:#fff;
+  border-bottom:2px solid #D4DCF0;
+  padding:8px 6px 6px;
+}
+#ni-i-schema-bar{display:flex;gap:6px;margin-bottom:8px;flex-shrink:0;padding:0 6px;}
+.ni-i-sc{
+  border:1.5px solid #CBD5E1;border-radius:20px;
+  padding:3px 12px;font-size:.65rem;font-weight:800;
+  color:#64748B;background:#fff;cursor:pointer;font-family:inherit;
+  transition:all .15s;
+}
+.ni-i-sc.act{background:#1565C0;color:#fff;border-color:#1565C0;}
+#ni-i-svg{
+  width:100%;height:auto;max-height:200px;
+  display:block;overflow:visible;
+}
+
+/* Input zones (bottom) */
+#ni-i-inputs{
+  flex:1;display:flex;flex-direction:row;
+  overflow:hidden;background:#EEF2F8;
+}
+.ni-i-zone{
+  flex:1;display:flex;flex-direction:column;
+  padding:11px 12px;border-right:1px solid #D4DCF0;
+  background:#fff;overflow:hidden;min-width:0;
+}
+.ni-i-zone:last-child{border-right:none;}
+.ni-i-zone-hdr{
+  display:flex;align-items:center;gap:5px;
+  margin-bottom:5px;flex-shrink:0;
+}
+.ni-i-zone-lbl{
+  font-size:.65rem;font-weight:900;
+  text-transform:uppercase;letter-spacing:.3px;flex:1;
+}
+.ni-i-qmark{
+  width:18px;height:18px;border-radius:50%;
+  border:1.5px solid #CBD5E1;background:#fff;
+  font-size:.65rem;font-weight:900;color:#94A3B8;
+  cursor:pointer;display:flex;align-items:center;
+  justify-content:center;flex-shrink:0;font-family:serif;
+}
+.ni-i-qmark:hover{border-color:#1565C0;color:#1565C0;}
+.ni-i-hint-box{
+  display:none;font-size:.63rem;color:#64748B;
+  line-height:1.5;padding:5px 8px;
+  background:#F1F5F9;border-radius:6px;
+  margin-bottom:6px;flex-shrink:0;
+  animation:niSlide .12s ease;
+}
+.ni-i-hint-box.on{display:block;}
+.ni-i-ta{
+  flex:1;border:1.5px solid #D4DCF0;border-radius:8px;
+  padding:8px 10px;font-size:.76rem;font-family:inherit;
+  resize:none;outline:none;background:#FAFBFC;
+  line-height:1.65;min-height:50px;
+}
+.ni-i-ta:focus{border-color:#1565C0;box-shadow:0 0 0 2px rgba(21,101,192,.1);}
+
+#ni-mots-panel{
+  display:none;
+  background:#EEF2F8;height:100%;
+  grid-template-columns:1fr 1fr;
+  grid-template-rows:1fr 1fr;
+  gap:0;
+}
+body.ni-on.ni-sec-mots #ni-mots-panel{display:grid;}
+.ni-q{display:flex;flex-direction:column;overflow:hidden;border:1px solid #D4DCF0;}
+#ni-q-vocab {border-right-width:2px;border-bottom-width:2px;}
+#ni-q-cit   {border-left-width:0;border-bottom-width:2px;}
+#ni-q-themes{border-right-width:2px;border-top-width:0;}
+#ni-q-avis  {border-left-width:0;border-top-width:0;}
+.ni-q-hdr{
+  padding:5px 11px;font-size:.65rem;font-weight:900;
+  letter-spacing:.3px;text-transform:uppercase;
+  flex-shrink:0;border-bottom:1px solid #D4DCF0;
+}
+.ni-q-body{
+  flex:1;overflow-y:auto;padding:8px 10px;
+  display:flex;flex-direction:column;gap:5px;
+  -webkit-overflow-scrolling:touch;background:#fff;
+}
+.ni-q-hint{font-size:.63rem;color:#94A3B8;flex-shrink:0;line-height:1.4;}
+.ni-q-ta{
+  flex:1;border:1.5px solid #E1D5F0;border-radius:8px;
+  padding:7px 9px;font-size:.76rem;font-family:inherit;
+  resize:none;outline:none;background:#FAFBFC;
+  line-height:1.7;min-height:60px;
+}
+.ni-q-ta:focus{border-color:#6A1B9A;box-shadow:0 0 0 2px rgba(106,27,154,.1);}
+/* Citations within quadrant */
+.ni-m-add-cit{background:#E65100;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:.69rem;font-weight:800;font-family:inherit;cursor:pointer;flex-shrink:0;align-self:flex-start;}
+.ni-m-add-cit:active{background:#BF360C;}
+.ni-m-cit-card{background:#FFF8F5;border-radius:7px;border:1px solid #FFCCBC;padding:7px 9px;font-size:.69rem;flex-shrink:0;}
+.ni-m-cit-ta{width:100%;border:1.5px solid #FFCCBC;border-radius:6px;padding:5px 7px;font-size:.69rem;font-family:inherit;resize:none;outline:none;background:#FFF8F5;min-height:34px;font-style:italic;line-height:1.5;box-sizing:border-box;}
+.ni-m-cit-ta:focus{border-color:#E64A19;}
+.ni-m-cit-inp{width:100%;border:1.5px solid #FFCCBC;border-radius:6px;padding:3px 7px;font-size:.63rem;font-family:inherit;outline:none;margin-top:4px;background:#FFF8F5;box-sizing:border-box;}
+.ni-m-cit-del{background:none;border:none;color:#FFAB91;font-size:.7rem;cursor:pointer;float:right;padding:0;line-height:1;}
+.ni-m-cit-del:hover{color:#E64A19;}
+.ni-m-empty{text-align:center;padding:20px 10px;color:#CFD8DC;font-size:.72rem;}
+/* Themes within quadrant */
+.ni-m-th-row{display:flex;align-items:flex-start;gap:6px;flex-shrink:0;}
+.ni-m-th-lbl{flex:0 0 33%;font-size:.65rem;font-weight:800;padding-top:5px;line-height:1.3;}
+.ni-m-th-ta{flex:1;border:1.5px solid #E1D5F0;border-radius:6px;padding:4px 7px;font-size:.65rem;font-family:inherit;resize:none;outline:none;background:#FAF7FF;min-height:28px;line-height:1.5;}
+.ni-m-th-ta:focus{border-color:#6A1B9A;}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 </head>
@@ -661,11 +970,7 @@ body.ni-on.ni-sec-personnages #guide-content-wrap > #content{display:none !impor
   <div class="ni-mi" id="ni-temps" onclick="niGo('temps',this)"><div class="ni-dot" style="background:#E65100"></div><span class="ni-ml">⏳ Temps</span><div class="ni-cb on" id="cb-temps" onclick="niToggleCb(this,event)"></div></div>
   <div class="ni-sep"></div>
   <div class="ni-grp">Analyse</div>
-  <div class="ni-mi" id="ni-mots" onclick="niGo('mots',this)"><div class="ni-dot" style="background:#6A1B9A"></div><span class="ni-ml">💬 Mots & Citations</span><div class="ni-cb on" id="cb-mots" onclick="niToggleCb(this,event)"></div></div>
-  <div class="ni-mi" id="ni-vocab" onclick="niGo('mots',this)"><div class="ni-dot" style="background:#6A1B9A"></div><span class="ni-ml" style="padding-left:8px;font-size:.72rem;">Vocabulaire</span><div class="ni-cb on" id="cb-vocab" onclick="niToggleCb(this,event)"></div></div>
-  <div class="ni-mi" id="ni-citations" onclick="niGo('mots',this)"><div class="ni-dot" style="background:#c0392b"></div><span class="ni-ml" style="padding-left:8px;font-size:.72rem;">« Citations</span><div class="ni-cb on" id="cb-citations" onclick="niToggleCb(this,event)"></div></div>
-  <div class="ni-mi" id="ni-themes" onclick="niGo('mots',this)"><div class="ni-dot" style="background:#E65100"></div><span class="ni-ml" style="padding-left:8px;font-size:.72rem;">🎯 Thèmes</span><div class="ni-cb on" id="cb-themes" onclick="niToggleCb(this,event)"></div></div>
-  <div class="ni-mi" id="ni-avis" onclick="niGo('mots',this)"><div class="ni-dot" style="background:#546E7A"></div><span class="ni-ml" style="padding-left:8px;font-size:.72rem;">💭 Avis</span><div class="ni-cb on" id="cb-avis" onclick="niToggleCb(this,event)"></div></div>
+  <div class="ni-mi" id="ni-analyse" onclick="niGo('mots',this)"><div class="ni-dot" style="background:#6A1B9A"></div><span class="ni-ml">📊 Vocabulaire · Citations · Thèmes · Avis</span><div class="ni-cb on" id="cb-analyse" onclick="niToggleCb(this,event)"></div></div>
   <div class="ni-grp">Intrigue</div>
   <div class="ni-mi" id="ni-i3" onclick="niGoIntrigue('aristote',this)"><div class="ni-dot" style="background:#2E7D32"></div><span class="ni-ml">3 parties</span><div class="ni-cb on" id="cb-i3" onclick="niToggleCb(this,event)"></div></div>
   <div class="ni-mi" id="ni-i5" onclick="niGoIntrigue('freytag',this)"><div class="ni-dot" style="background:#2E7D32"></div><span class="ni-ml">5 parties</span><div class="ni-cb on" id="cb-i5" onclick="niToggleCb(this,event)"></div></div>
@@ -865,6 +1170,249 @@ body.ni-on.ni-sec-personnages #guide-content-wrap > #content{display:none !impor
 
   </div><!-- /ni-perso-panel -->
 
+  <!-- ══ NI LIVRE PANEL ══ -->
+  <div id="ni-livre-panel">
+
+    <!-- Colonne gauche : miniature + courant + style + PDF -->
+    <div id="ni-lv-left">
+      <div id="ni-lv-card">
+        <div id="ni-lv-icon">📖</div>
+        <div id="ni-lv-titre">—</div>
+        <div id="ni-lv-auteur">—</div>
+        <div>
+          <span class="ni-lv-badge" id="ni-lv-genre">—</span>
+          <span class="ni-lv-badge" id="ni-lv-annee">—</span>
+        </div>
+      </div>
+      <!-- Petites zones Courant + Style -->
+      <div id="ni-lv-small">
+        <div class="ni-lv-small-zone">
+          <div class="ni-lv-small-lbl" style="color:#00838F">📚 Courant littéraire</div>
+          <textarea id="ni-lv-courant" class="ni-lv-small-ta" rows="2"
+            placeholder="Réalisme, Romantisme…"
+            oninput="niLVSave('courant',this.value)"></textarea>
+        </div>
+        <div class="ni-lv-small-zone">
+          <div class="ni-lv-small-lbl" style="color:#AD1457">🖋️ Style</div>
+          <textarea id="ni-lv-style" class="ni-lv-small-ta" rows="2"
+            placeholder="Lexique, syntaxe, figures récurrentes…"
+            oninput="niLVSave('style',this.value)">
+          </textarea>
+          <details id="ni-lv-narrdetails">
+            <summary>🎥 Narrateurs &amp; focalisation</summary>
+            <div class="ni-lv-narr-body">
+              <b style="color:#00695C;">Narrateur</b><br>
+              <b>Interne</b> (je/nous) : personnage de l'histoire.<br>
+              <b>Externe</b> (il/elle) : hors de l'histoire.<br>
+              <hr style="margin:5px 0;border:none;border-top:1px solid #80CBC4;">
+              <b style="color:#00695C;">Focalisation</b><br>
+              <b>Interne</b> — pensées d'un personnage. <span style="color:#666;font-style:italic;">Ex : Thérèse D.</span><br>
+              <b>Externe</b> — caméra, faits seuls. <span style="color:#666;font-style:italic;">Ex : Flaubert.</span><br>
+              <b>Zéro</b> — omnisciente, sait tout. <span style="color:#666;font-style:italic;">Ex : Balzac.</span>
+            </div>
+          </details>
+        </div>
+      </div>
+      <!-- PDF — prend la moitié restante -->
+      <div id="ni-lv-pdf-row">
+        <button id="ni-lv-pdf-trigger" onclick="niLVTogglePDF()">📄 Résumé PDF du livre</button>
+      </div>
+      <div id="ni-lv-pdf-content"></div>
+    </div>
+
+    <!-- Colonne droite : 5 zones scrollables -->
+    <div id="ni-lv-right">
+
+      <div class="ni-lv-zone">
+        <div class="ni-lv-zone-hdr" style="color:var(--orange)">🌍 Époque &amp; contexte historique</div>
+        <div class="ni-lv-zone-hint">Que se passait-il dans le monde quand ce livre a été écrit ? (politique, guerres, société, culture…)</div>
+        <textarea id="ni-lv-contexte" class="ni-lv-ta"
+          placeholder="Ex. : L'Angleterre victorienne (1837-1901) est une époque de révolution industrielle…"
+          oninput="niLVSave('contexte',this.value)"></textarea>
+      </div>
+
+      <div class="ni-lv-zone">
+        <div class="ni-lv-zone-hdr" style="color:var(--violet)">✍️ L'auteur·e au moment de l'écriture</div>
+        <div class="ni-lv-zone-hint">Quel âge avait-il/elle ? Sa vie à cette époque (santé, famille, rencontres importantes…)</div>
+        <textarea id="ni-lv-auteurVie" class="ni-lv-ta"
+          placeholder="Ex. : Quand il écrit ce livre, l'auteur a 38 ans. Il vient de traverser une période difficile…"
+          oninput="niLVSave('auteurVie',this.value)"></textarea>
+      </div>
+
+      <div class="ni-lv-zone">
+        <div class="ni-lv-zone-hdr" style="color:var(--vert)">📖 Place dans la trajectoire de l'auteur·e</div>
+        <div class="ni-lv-zone-hint">Est-ce son premier livre ? Une rupture dans son style ? Ce que ce livre représente dans sa carrière.</div>
+        <textarea id="ni-lv-trajectoire" class="ni-lv-ta"
+          placeholder="Ex. : Ce roman est son œuvre majeure. Il marque un tournant car… Avant, il avait publié… Après, il écrira…"
+          oninput="niLVSave('trajectoire',this.value)"></textarea>
+      </div>
+
+    </div>
+  </div><!-- /ni-livre-panel -->
+
+  <!-- ══ NI LIEUX PANEL ══ -->
+  <div id="ni-lieux-panel">
+    <div id="ni-l-left">
+      <div id="ni-l-focus">
+        <div style="font-size:.62rem;font-weight:900;color:#2E7D32;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;display:flex;align-items:center;gap:5px;"><div style="width:6px;height:6px;border-radius:50%;background:#2E7D32;animation:niblink .9s infinite;flex-shrink:0;"></div>Nouveau lieu</div>
+        <input id="ni-l-inp" type="text" placeholder="Nom du lieu… ex : La maison de Tante Élisabeth"
+          onkeydown="if(event.key==='Enter')niLAjouter()">
+        <button id="ni-l-add" onclick="niLAjouter()">＋ Ajouter ce lieu</button>
+      </div>
+      <div id="ni-l-listdet">
+        <div id="ni-l-list-col">
+          <div id="ni-l-list-hdr">Lieux (0)</div>
+          <div id="ni-l-scroll"></div>
+        </div>
+        <div id="ni-l-det-col">
+          <div id="ni-l-det-empty">
+            <div class="ni-de-i">🗺️</div>
+            <div class="ni-de-t">Sélectionne un lieu</div>
+          </div>
+          <div id="ni-l-det-fiche">
+            <div id="ni-l-det-hdr">
+              <div style="font-size:1rem;flex-shrink:0;">📍</div>
+              <div id="ni-l-det-name">—</div>
+              <button id="ni-l-det-cls" onclick="niLClose()">✕</button>
+            </div>
+            <div id="ni-l-det-body">
+              <textarea id="ni-l-det-ta" rows="8"
+                placeholder="Notes sur ce lieu : description, atmosphère, symbolique…&#10;&#10;Quel personnage y va ? Pourquoi ?&#10;Espace ouvert ou fermé ?"></textarea>
+            </div>
+            <div id="ni-l-det-foot">
+              <button class="ni-l-sv" onclick="niLSave()">💾 Enregistrer</button>
+              <button class="ni-l-dl" onclick="niLDelete()">🗑️ Supprimer</button>
+            </div>
+          </div>
+        </div>
+      </div><!-- /ni-l-listdet -->
+
+      <!-- PDF row + expandable content -->
+      <div id="ni-l-pdf-row">
+        <button id="ni-l-pdf-trigger" onclick="niLTogglePDF()">📄 Résumé PDF des lieux</button>
+      </div>
+      <div id="ni-l-pdf-content"></div>
+
+    </div><!-- /ni-l-left -->
+    <div id="ni-l-right">
+      <div style="font-size:.72rem;font-weight:900;color:#2E7D32;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;display:flex;align-items:center;gap:6px;">🗺️ Analyser un lieu</div>
+      <div class="ni-aide-card"><h4>🏠 Réel ou symbolique ?</h4><p>La maison peut représenter la famille, la prison le déterminisme social, la nature la liberté ou le danger.</p></div>
+      <div class="ni-aide-card"><h4>🔒 Ouvert ou fermé ?</h4><p>Un espace <em>fermé</em> crée oppression ou protection. Un espace <em>ouvert</em> suggère la liberté — ou le danger.</p></div>
+      <div class="ni-aide-card"><h4>🚶 Mouvements des personnages</h4><p>Les déplacements révèlent une quête, une fuite, une progression intérieure. Qui va où, et pourquoi ?</p></div>
+      <div class="ni-aide-card"><h4>🧭 Géographie symbolique</h4><p>Ville/campagne · Haut/bas · Intérieur/extérieur — ces oppositions ont souvent un sens idéologique ou moral.</p></div>
+      <div class="ni-aide-card" style="background:var(--vertC);border-color:#A5D6A7;"><h4 style="color:#1B5E20;">💡 Questions clés</h4><p>Qui va dans ce lieu ? Qu'est-ce qui s'y passe d'important ? Qu'est-ce que ce lieu représente pour le personnage ?</p></div>
+    </div>
+  </div>
+
+  <!-- ══ NI TEMPS PANEL ══ -->
+  <div id="ni-temps-panel">
+    <div id="ni-t-left">
+      <!-- AXEL : textarea simple -->
+      <div class="only-axel ni-t-sec">
+        <div class="ni-t-lbl" style="background:#FFF3E0;color:#E65100;">⏳ Époque &amp; Chronologie</div>
+        <textarea id="ni-t-simple" class="ni-t-ta" rows="16"
+          placeholder="L'époque, les dates importantes, l'ordre des événements…"
+          oninput="niTSaveSimple()"></textarea>
+      </div>
+      <!-- ÉLISE : 4 zones structurées -->
+      <div class="only-elise ni-t-sec">
+        <div class="ni-t-lbl" style="background:#FFF3E0;color:#E65100;">📐 Ordre narratif</div>
+        <textarea id="ni-t-ordre" class="ni-t-ta" rows="5"
+          placeholder="L'histoire est-elle dans l'ordre ? Flashbacks (analepse) ? Anticipations (prolepse) ? → Effets"
+          oninput="niTSave()"></textarea>
+      </div>
+      <div class="only-elise ni-t-sec">
+        <div class="ni-t-lbl" style="background:#FFF3E0;color:#BF360C;">⏱️ Durée &amp; Rythme</div>
+        <textarea id="ni-t-duree" class="ni-t-ta" rows="5"
+          placeholder="Quels moments sont dilatés (lents) ? Accélérés ? Ellipses ? Pourquoi ?"
+          oninput="niTSave()"></textarea>
+      </div>
+      <div class="only-elise ni-t-sec">
+        <div class="ni-t-lbl" style="background:#FFF3E0;color:#BF360C;">🔁 Fréquence</div>
+        <textarea id="ni-t-frequence" class="ni-t-ta" rows="5"
+          placeholder="Singulatif · Itératif (habitude) · Répétitif (obsession). Certains événements reviennent-ils ?"
+          oninput="niTSave()"></textarea>
+      </div>
+      <div class="only-elise ni-t-sec">
+        <div class="ni-t-lbl" style="background:#E8F5E9;color:#2E7D32;">🗺️ Organisation de l'espace</div>
+        <textarea id="ni-t-espace" class="ni-t-ta" rows="5"
+          placeholder="Espaces réels vs symboliques · Ouverts vs fermés · Mouvements des personnages…"
+          oninput="niTSave()"></textarea>
+      </div>
+    </div>
+    <div id="ni-t-right">
+      <div style="font-size:.72rem;font-weight:900;color:#E65100;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">⏳ Méthode : le temps</div>
+      <div class="ni-aide-card"><h4>📐 L'Ordre</h4><p>Chronologie vs anachronies : flashback <em>(analepse)</em>, anticipation <em>(prolepse)</em>. Effets : suspense, révélation, surprise.</p></div>
+      <div class="ni-aide-card"><h4>⏱️ La Durée</h4><p>Scène dilatée (lente), ellipse (saut), résumé, pause descriptive. L'auteur ralentit sur ce qui compte.</p></div>
+      <div class="ni-aide-card"><h4>🔁 La Fréquence</h4><p><em>Singulatif</em> (une fois) · <em>Itératif</em> (résumé habituel) · <em>Répétitif</em> (même scène rejouée → obsession).</p></div>
+      <div class="ni-aide-card" style="background:var(--vertC);border-color:#A5D6A7;"><h4 style="color:#1B5E20;">🗺️ Espace &amp; Géographie</h4><p>Ouverts/fermés · Ville/campagne · Les déplacements révèlent liberté ou contrainte des personnages.</p></div>
+    </div>
+  </div>
+
+  <!-- ══ NI ANALYSE PANEL (Vocabulaire · Citations · Thèmes · Avis) ══ -->
+  <div id="ni-mots-panel">
+
+    <!-- Q1 : VOCABULAIRE (haut-gauche) -->
+    <div class="ni-q" id="ni-q-vocab">
+      <div class="ni-q-hdr" style="background:#EDE7F6;color:#4A148C;">📖 Vocabulaire</div>
+      <div class="ni-q-body">
+        <div class="ni-q-hint">Un mot difficile par bloc, avec sa définition ou son contexte.</div>
+        <textarea id="ni-m-mots-ta" class="ni-q-ta"
+          placeholder="── Mot inconnu ──&#10;In medias res : commencer au cœur de l'action.&#10;&#10;── Mot inconnu ──&#10;Analepse : retour en arrière (flashback)."
+          oninput="niMSaveMots()"></textarea>
+      </div>
+    </div>
+
+    <!-- Q2 : CITATIONS (haut-droite) -->
+    <div class="ni-q" id="ni-q-cit">
+      <div class="ni-q-hdr" style="background:#FBE9E7;color:#BF360C;">« Citations</div>
+      <div class="ni-q-body">
+        <button class="ni-m-add-cit" onclick="niMAddCit()">＋ Nouvelle citation</button>
+        <div id="ni-m-cit-list" style="margin-top:6px;display:flex;flex-direction:column;gap:6px;"></div>
+        <div class="ni-m-empty" id="ni-m-cit-empty">Appuie sur <b>＋</b> pour commencer</div>
+      </div>
+    </div>
+
+    <!-- Q3 : THÈMES (bas-gauche) -->
+    <div class="ni-q" id="ni-q-themes">
+      <div class="ni-q-hdr" style="background:#FFF3E0;color:#E65100;">🎯 Thèmes</div>
+      <div class="ni-q-body">
+        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#AD1457">❤️ Amour</div><textarea id="ni-m-th-amour"    class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('amour',this.value)"></textarea></div>
+        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#c0392b">⚡ Pouvoir</div><textarea id="ni-m-th-pouvoir"  class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('pouvoir',this.value)"></textarea></div>
+        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#2E5FA3">🕊️ Liberté</div><textarea id="ni-m-th-liberte"  class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('liberte',this.value)"></textarea></div>
+        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#6A1B9A">🔍 Identité</div><textarea id="ni-m-th-identite" class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('identite',this.value)"></textarea></div>
+        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#E65100">🏛️ Société</div><textarea id="ni-m-th-societe"  class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('societe',this.value)"></textarea></div>
+        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#2E7D32">🌿 Nature</div><textarea id="ni-m-th-nature"   class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('nature',this.value)"></textarea></div>
+      </div>
+    </div>
+
+    <!-- Q4 : AVIS (bas-droite) -->
+    <div class="ni-q" id="ni-q-avis">
+      <div class="ni-q-hdr" style="background:#E3F2FD;color:#0D47A1;">💭 Avis &amp; Compréhension</div>
+      <div class="ni-q-body">
+        <div class="ni-q-hint">Ce que tu as compris, aimé, les passages marquants…</div>
+        <textarea id="ni-m-avis-ta" class="ni-q-ta"
+          placeholder="Mon avis sur ce livre…&#10;&#10;Les passages qui m'ont marqué…&#10;&#10;Ce que j'ai compris…"
+          oninput="niMSaveAvis()"></textarea>
+      </div>
+    </div>
+
+  </div>
+
+
+
+  <!-- ══ NI INTRIGUE PANEL ══ -->
+  <div id="ni-intrigue-panel">
+    <div id="ni-i-curve-wrap">
+      <div id="ni-i-schema-bar">
+        <button class="ni-i-sc act" id="ni-isc-aristote" onclick="niISetSchema('aristote',this)">🏛️ 3 parties</button>
+        <button class="ni-i-sc"     id="ni-isc-freytag"  onclick="niISetSchema('freytag',this)">🔺 5 parties</button>
+      </div>
+      <svg id="ni-i-svg" viewBox="0 0 600 170" xmlns="http://www.w3.org/2000/svg"
+           preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
+    <div id="ni-i-inputs"></div>
+  </div>
 
   <div id="ecrire-tabs" style="display:none;flex-shrink:0;border-bottom:3px solid var(--gris2);background:#fff;padding:0 12px;">
     <div style="display:flex;gap:3px;align-items:flex-end;max-width:100%;">
@@ -6546,6 +7094,35 @@ function niTogglePDF() {
   }
 }
 
+var _niLPdfOn = false;
+function niLTogglePDF() {
+  _niLPdfOn = !_niLPdfOn;
+  var btn = document.getElementById('ni-l-pdf-trigger');
+  var box = document.getElementById('ni-l-pdf-content');
+  if (!btn || !box) return;
+  btn.classList.toggle('on', _niLPdfOn);
+  btn.textContent = _niLPdfOn ? '✕ Fermer le résumé' : '📄 Résumé PDF des lieux';
+  box.classList.toggle('on', _niLPdfOn);
+  if (_niLPdfOn && LIVRE_ACTIF) {
+    var html = '<div class="ni-pdf-title" style="color:#2E7D32;border-bottom-color:#2E7D32;">🗺️ ' + esc(LIVRE_ACTIF.titre) + ' — Lieux</div>';
+    var lieux = LIVRE_ACTIF.lieux || [];
+    if (lieux.length === 0) {
+      html += '<div style="color:#aaa;font-size:.76rem;padding:12px 0;">Aucun lieu enregistré.</div>';
+    } else {
+      lieux.forEach(function(l) {
+        html += '<div class="ni-pdf-lieu">' +
+          '<div class="ni-pdf-lieu-name">' +
+            '<div class="ni-pdf-lieu-av" style="background:' + (l.couleur||'#2E7D32') + '">📍</div>' +
+            '<strong>' + esc(l.nom) + '</strong>' +
+          '</div>' +
+          '<div class="ni-pdf-notes">' + esc(l.notes || '(aucune note)') + '</div>' +
+        '</div>';
+      });
+    }
+    box.innerHTML = html;
+  }
+}
+
 function niRelKey(a,b){return a<b?a+'-'+b:b+'-'+a;}
 
 function niSyncMatrice() {
@@ -6684,38 +7261,255 @@ niToggle = function(on) {
   if (vn) {
     if (on) {
       vn.style.cssText = 'display:none !important;width:0;min-width:0;flex:0 0 0px;overflow:hidden;';
-      document.getElementById('ni-sidebar').style.width='200px';
+      document.getElementById('ni-sidebar').style.width='210px';
     } else {
       vn.style.cssText = '';
     }
   }
   if (on) {
-    document.body.classList.add('ni-sec-personnages');
-    niPRender();
+    // Detect which section was active in classic mode and open the same in NI
+    var activeVn = document.querySelector('#vert-nav .vn-item.act');
+    var activeSection = activeVn ? (activeVn.id || '').replace('vn-','') : 'personnages';
+    // Map vert-nav IDs to niGo tab IDs
+    var secMap = {
+      livre:'livre', personnages:'personnages', lieux:'lieux', temps:'temps',
+      mots:'mots', intrigue:'intrigue', ecrire:'ecrire', carnet:'carnet', pdf:'pdf'
+    };
+    var targetTab = secMap[activeSection] || 'personnages';
+    // Also check active tab if vert-nav gives nothing
+    if (!activeVn) {
+      var activeTab = document.querySelector('#tabs .tab.active');
+      if (activeTab && activeTab.getAttribute('onclick')) {
+        var m = activeTab.getAttribute('onclick').match(/'(\w+)'/);
+        if (m) targetTab = m[1];
+      }
+    }
+    // Fire the appropriate NI section
+    var niEl = null;
+    var niIdMap = {
+      livre:'ni-livre', personnages:'ni-personnages', lieux:'ni-lieux',
+      temps:'ni-temps', mots:'ni-analyse', intrigue:'ni-i3',
+      ecrire:'ni-diss', carnet:'ni-carnet'
+    };
+    var niId = niIdMap[targetTab] || 'ni-personnages';
+    niEl = document.getElementById(niId);
     document.querySelectorAll('.ni-mi').forEach(function(m){m.classList.remove('act');});
-    var el=document.getElementById('ni-personnages');if(el)el.classList.add('act');
+    if (niEl) niEl.classList.add('act');
+    if (targetTab === 'intrigue') {
+      var schema = (LIVRE_ACTIF && LIVRE_ACTIF.schemaType) || 'aristote';
+      if (NI_I_DATA && NI_I_DATA[schema]) {
+        _niISchema = schema;
+        document.body.classList.add('ni-sec-intrigue');
+        if (typeof niIRender === 'function') niIRender();
+      } else {
+        document.body.classList.add('ni-sec-personnages');
+        niPRender();
+      }
+    } else if (targetTab === 'livre') {
+      document.body.classList.add('ni-sec-livre');
+      if (typeof niLVLoad === 'function') niLVLoad();
+    } else if (targetTab === 'lieux') {
+      document.body.classList.add('ni-sec-lieux');
+      if (typeof niLRender === 'function') niLRender();
+    } else if (targetTab === 'temps') {
+      document.body.classList.add('ni-sec-temps');
+      if (typeof niTLoad === 'function') niTLoad();
+    } else if (targetTab === 'mots') {
+      document.body.classList.add('ni-sec-mots');
+      if (typeof niMLoad === 'function') niMLoad();
+    } else {
+      // personnages, ecrire, carnet, pdf — personnages par défaut pour panels non-NI
+      document.body.classList.add('ni-sec-personnages');
+      niPRender();
+    }
   } else {
     var cls = document.body.className.split(' ').filter(function(c){return c.indexOf('ni-sec-')<0;}).join(' ');
     document.body.className = cls;
   }
 };
 
-// niGoIntrigue: go to intrigue tab and select schema
+// niGoIntrigue: NI → panel dédié ; classique → showTab
+var _niISchema = 'aristote';
+
+// Données des courbes NI
+var NI_I_DATA = {
+  aristote: {
+    name: 'Aristote',
+    color: '#1565C0', fill: 'rgba(21,101,192,0.09)',
+    // Bézier M 40,142 Q Cx,-86 560,142 → pic à y=28
+    pathD: 'M 40,142 Q 300,-86 560,142',
+    fillD: 'M 40,142 Q 300,-86 560,142 L 560,160 L 40,160 Z',
+    nodes: [
+      { x:40,  y:142, key:'nar_a1', label:'Exposition',
+        lines:['Exposition'],
+        hint:'Qui ? Où ? Quand ? Le monde avant le conflit.' },
+      { x:300, y:28,  key:'nar_a2', label:'Conflit',
+        lines:['Conflit'],
+        hint:'Quel problème surgit ? Quelles difficultés le héros traverse-t-il ?' },
+      { x:560, y:142, key:'nar_a3', label:'Résolution',
+        lines:['Résolution'],
+        hint:'Comment le problème est-il résolu ? Qu\'est-ce qui a changé ?' }
+    ]
+  },
+  freytag: {
+    name: 'Freytag',
+    color: '#6A1B9A', fill: 'rgba(106,27,154,0.08)',
+    pathD: 'M 40,142 L 175,80 L 300,22 L 425,80 L 560,142',
+    fillD: 'M 40,142 L 175,80 L 300,22 L 425,80 L 560,142 L 560,160 L 40,160 Z',
+    nodes: [
+      { x:40,  y:142, key:'nar_f1', label:'Exposition',
+        lines:['Exposition'],
+        hint:'Le monde initial. Présente cadre et personnages.' },
+      { x:175, y:80,  key:'nar_f2', label:'Action montante',
+        lines:['Action','montante'],
+        hint:'Les tensions s\'accumulent. Quels obstacles ?' },
+      { x:300, y:22,  key:'nar_f3', label:'Climax',
+        lines:['Climax'],
+        hint:'Tension maximale. Le tournant décisif de l\'histoire.' },
+      { x:425, y:80,  key:'nar_f4', label:'Retombée',
+        lines:['Retombée'],
+        hint:'Les conséquences du climax. La tension baisse.' },
+      { x:560, y:142, key:'nar_f5', label:'Dénouement',
+        lines:['Dénouement'],
+        hint:'Résolution finale — comment tout se termine.' }
+    ]
+  }
+};
+
 function niGoIntrigue(schema, el) {
   document.querySelectorAll('.ni-mi').forEach(function(m){m.classList.remove('act');});
-  if(el)el.classList.add('act');
+  if (el) el.classList.add('act');
   document.body.className = document.body.className.split(' ').filter(function(c){return c.indexOf('ni-sec-')<0;}).join(' ');
-  var btn = null;
-  document.querySelectorAll('#tabs .tab').forEach(function(b){
-    if(b.getAttribute('onclick')&&b.getAttribute('onclick').indexOf("'intrigue'")>-1)btn=b;
-  });
-  showTab('intrigue', btn);
-  setTimeout(function(){
-    var sbtn = document.getElementById('sbtn-'+schema);
-    if(sbtn) sbtn.click();
-  }, 80);
-  var c = document.getElementById('content'); if(c)c.scrollTop=0;
+  if (_niOn && NI_I_DATA[schema]) {
+    _niISchema = schema;
+    // Persist immediately so niIRender doesn't override
+    if (LIVRE_ACTIF) { LIVRE_ACTIF.schemaType = schema; sauvegarderBiblio(); }
+    document.body.classList.add('ni-sec-intrigue');
+    niIRender();
+  } else {
+    // Fallback classique (arc moderne ou NI désactivée)
+    var btn = null;
+    document.querySelectorAll('#tabs .tab').forEach(function(b){
+      if (b.getAttribute('onclick') && b.getAttribute('onclick').indexOf("'intrigue'") > -1) btn = b;
+    });
+    showTab('intrigue', btn);
+    setTimeout(function(){
+      var sbtn = document.getElementById('sbtn-' + schema);
+      if (sbtn) sbtn.click();
+    }, 80);
+    var c = document.getElementById('content'); if (c) c.scrollTop = 0;
+  }
 }
+
+function niISetSchema(schema, el) {
+  _niISchema = schema;
+  if (LIVRE_ACTIF) { LIVRE_ACTIF.schemaType = schema; sauvegarderBiblio(); }
+  // Sync sidebar active state
+  document.querySelectorAll('.ni-mi').forEach(function(m){m.classList.remove('act');});
+  var sideId = schema === 'aristote' ? 'ni-i3' : schema === 'freytag' ? 'ni-i5' : 'ni-i8';
+  var sideEl = document.getElementById(sideId); if (sideEl) sideEl.classList.add('act');
+  niIRender();
+}
+
+function niIRender() {
+  if (!LIVRE_ACTIF) return;
+  // On first entry (no explicit schema chosen yet), read from book
+  // — but never override a deliberate selection already in _niISchema
+  if (!NI_I_DATA[_niISchema]) {
+    var fallback = LIVRE_ACTIF.schemaType || 'aristote';
+    _niISchema = NI_I_DATA[fallback] ? fallback : 'aristote';
+  }
+  var data = NI_I_DATA[_niISchema];
+  if (!data) return;
+  var narr = LIVRE_ACTIF.narration || {};
+
+  // ── Sync chip buttons ─────────────────────────────
+  document.querySelectorAll('.ni-i-sc').forEach(function(b){ b.classList.remove('act'); });
+  var scBtn = document.getElementById('ni-isc-' + _niISchema);
+  if (scBtn) scBtn.classList.add('act');
+
+  // ── Draw SVG ──────────────────────────────────────
+  var svg = document.getElementById('ni-i-svg');
+  if (!svg) return;
+  var r = 30; // slightly larger circles
+  var html = '';
+
+  // Fill area under curve
+  html += '<path d="' + data.fillD + '" fill="' + data.fill + '" stroke="none"/>';
+  // Main curve/polyline
+  html += '<path d="' + data.pathD + '" fill="none" stroke="' + data.color + '" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>';
+
+  // Schema name label inside the curve (centred horizontally, vertically between curve top and baseline)
+  html += '<text x="300" y="118"' +
+    ' text-anchor="middle" dominant-baseline="central"' +
+    ' font-size="18" font-weight="900" font-family="system-ui,sans-serif"' +
+    ' fill="' + data.color + '" opacity="0.13" letter-spacing="2">' +
+    data.name.toUpperCase() + '</text>';
+
+  // Node circles + labels
+  data.nodes.forEach(function(n) {
+    // Drop-shadow circle
+    html += '<circle cx="' + n.x + '" cy="' + n.y + '" r="' + (r+2) + '" fill="rgba(0,0,0,0.07)" stroke="none"/>';
+    // Main circle
+    html += '<circle cx="' + n.x + '" cy="' + n.y + '" r="' + r + '" fill="#fff" stroke="' + data.color + '" stroke-width="2.5"/>';
+    // Label
+    if (n.lines.length === 1) {
+      html += '<text x="' + n.x + '" y="' + n.y + '"' +
+        ' text-anchor="middle" dominant-baseline="central"' +
+        ' font-size="9.5" font-weight="800" font-family="system-ui,sans-serif"' +
+        ' fill="' + data.color + '">' + n.lines[0] + '</text>';
+    } else {
+      var y1 = n.y - 7, y2 = n.y + 7;
+      html += '<text x="' + n.x + '" y="' + y1 + '"' +
+        ' text-anchor="middle" dominant-baseline="central"' +
+        ' font-size="9" font-weight="800" font-family="system-ui,sans-serif"' +
+        ' fill="' + data.color + '">' + n.lines[0] + '</text>';
+      html += '<text x="' + n.x + '" y="' + y2 + '"' +
+        ' text-anchor="middle" dominant-baseline="central"' +
+        ' font-size="9" font-weight="800" font-family="system-ui,sans-serif"' +
+        ' fill="' + data.color + '">' + n.lines[1] + '</text>';
+    }
+  });
+
+  svg.innerHTML = html;
+
+  // ── Input zones ────────────────────────────────────
+  var wrap = document.getElementById('ni-i-inputs');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  var taFontSize = data.nodes.length > 3 ? '.7rem' : '.76rem';
+
+  data.nodes.forEach(function(n) {
+    var div = document.createElement('div');
+    div.className = 'ni-i-zone';
+    div.innerHTML =
+      '<div class="ni-i-zone-hdr">' +
+        '<span class="ni-i-zone-lbl" style="color:' + data.color + '">' + n.label + '</span>' +
+        '<button class="ni-i-qmark" onclick="niIToggleHint(\'' + n.key + '\')">?</button>' +
+      '</div>' +
+      '<div class="ni-i-hint-box" id="ni-i-h-' + n.key + '">' + n.hint + '</div>' +
+      '<textarea class="ni-i-ta" id="ni-i-ta-' + n.key + '"' +
+        ' style="font-size:' + taFontSize + '"' +
+        ' placeholder="' + n.hint + '"' +
+        ' oninput="niISave(\'' + n.key + '\',this.value)">' +
+        esc(narr[n.key] || '') +
+      '</textarea>';
+    wrap.appendChild(div);
+  });
+}
+
+function niIToggleHint(key) {
+  var h = document.getElementById('ni-i-h-' + key);
+  if (h) h.classList.toggle('on');
+}
+
+function niISave(key, val) {
+  if (!LIVRE_ACTIF) return;
+  if (!LIVRE_ACTIF.narration) LIVRE_ACTIF.narration = {};
+  LIVRE_ACTIF.narration[key] = val;
+  sauvegarderBiblio();
+}
+
 
 // niGoEcrire: go to ecrire tab then switch sub-panel
 function niGoEcrire(panel, el) {
@@ -6733,19 +7527,328 @@ function niGoEcrire(panel, el) {
   var c = document.getElementById('content'); if(c)c.scrollTop=0;
 }
 
-// Hook niGo
+// Hook niGo — gère personnages + lieux + temps + mots en mode NI
 var _origNiGo2 = niGo;
 niGo = function(tabId, el) {
-  document.body.className=document.body.className.replace(/\bni-sec-\S+/g,'').trim();
+  document.body.className = document.body.className.replace(/\bni-sec-\S+/g,'').trim();
   document.querySelectorAll('.ni-mi').forEach(function(m){m.classList.remove('act');});
-  if(el)el.classList.add('act');
-  if (tabId==='personnages' && _niOn) {
+  if (el) el.classList.add('act');
+  if (!_niOn) { _origNiGo2(tabId, el); return; }
+  if (tabId === 'livre') {
+    document.body.classList.add('ni-sec-livre');
+    niLVLoad();
+  } else if (tabId === 'personnages') {
     document.body.classList.add('ni-sec-personnages');
     niPRender();
+  } else if (tabId === 'lieux') {
+    document.body.classList.add('ni-sec-lieux');
+    niLRender();
+  } else if (tabId === 'temps') {
+    document.body.classList.add('ni-sec-temps');
+    niTLoad();
+  } else if (tabId === 'mots') {
+    document.body.classList.add('ni-sec-mots');
+    niMLoad();
+  } else if (tabId === 'intrigue') {
+    if (NI_I_DATA[_niISchema]) {
+      document.body.classList.add('ni-sec-intrigue');
+      niIRender();
+    } else {
+      _origNiGo2(tabId, el);
+    }
   } else {
-    _origNiGo2(tabId, el);
+    // Sections sans panel NI → affichage classique dans #content
+    var btn = null;
+    document.querySelectorAll('#tabs .tab').forEach(function(b){
+      if (b.getAttribute('onclick') && b.getAttribute('onclick').indexOf("'" + tabId + "'") !== -1) btn = b;
+    });
+    showTab(tabId, btn);
+    var c = document.getElementById('content');
+    if (c) c.scrollTop = 0;
   }
 };
+
+// ════ NI LIVRE — fonctions ════
+var _niLVPdfOn = false;
+
+function niLVLoad() {
+  if (!LIVRE_ACTIF) return;
+  _niLVPdfOn = false;
+  var btn = document.getElementById('ni-lv-pdf-trigger');
+  var box = document.getElementById('ni-lv-pdf-content');
+  if (btn) { btn.classList.remove('on'); btn.textContent = '📄 Résumé PDF du livre'; }
+  if (box) { box.classList.remove('on'); box.innerHTML = ''; }
+  niLVUpdateCard();
+  var sv = function(id, val){ var el = document.getElementById(id); if (el) el.value = val || ''; };
+  sv('ni-lv-contexte',    LIVRE_ACTIF.contexte    || '');
+  sv('ni-lv-auteurVie',   LIVRE_ACTIF.auteurVie   || '');
+  sv('ni-lv-trajectoire', LIVRE_ACTIF.trajectoire || '');
+  sv('ni-lv-courant',     LIVRE_ACTIF.courant     || '');
+  sv('ni-lv-style',       LIVRE_ACTIF.style       || '');  // Reset scroll
+  var r = document.getElementById('ni-lv-right');
+  if (r) r.scrollTop = 0;
+}
+
+function niLVUpdateCard() {
+  if (!LIVRE_ACTIF) return;
+  var t = document.getElementById('ni-lv-titre');
+  var a = document.getElementById('ni-lv-auteur');
+  var g = document.getElementById('ni-lv-genre');
+  var y = document.getElementById('ni-lv-annee');
+  if (t) t.textContent = LIVRE_ACTIF.titre  || '—';
+  if (a) a.textContent = LIVRE_ACTIF.auteur || '—';
+  if (g) g.textContent = LIVRE_ACTIF.genre  || '—';
+  if (y) y.textContent = LIVRE_ACTIF.annee  || '—';
+}
+
+function niLVSave(field, val) {
+  if (!LIVRE_ACTIF) return;
+  LIVRE_ACTIF[field] = val;
+  // Sync classic fields
+  var classicMap = {
+    contexte:    'livre-contexte',
+    auteurVie:   'livre-auteur-vie',
+    trajectoire: 'livre-trajectoire',
+    courant:     'livre-courant',
+    style:       'livre-style'
+  };
+  var cid = classicMap[field];
+  if (cid) { var c = document.getElementById(cid); if (c) c.value = val; }
+  sauvegarderBiblio();
+}
+
+function niLVTogglePDF() {
+  _niLVPdfOn = !_niLVPdfOn;
+  var btn = document.getElementById('ni-lv-pdf-trigger');
+  var box = document.getElementById('ni-lv-pdf-content');
+  if (!btn || !box) return;
+  btn.classList.toggle('on', _niLVPdfOn);
+  btn.textContent = _niLVPdfOn ? '✕ Fermer le résumé' : '📄 Résumé PDF du livre';
+  box.classList.toggle('on', _niLVPdfOn);
+  if (_niLVPdfOn && LIVRE_ACTIF) {
+    var L = LIVRE_ACTIF;
+    var line = function(label, val) {
+      return val ? '<div style="margin-bottom:8px;"><div style="font-size:.59rem;font-weight:900;text-transform:uppercase;letter-spacing:.3px;color:#94A3B8;">' + label + '</div><div style="white-space:pre-line;color:#37474F;">' + esc(val) + '</div></div>' : '';
+    };
+    box.innerHTML =
+      '<div style="font-weight:900;font-size:.78rem;color:#1565C0;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid #D4DCF0;">📚 ' + esc(L.titre || '—') + '</div>' +
+      line('Époque & contexte', L.contexte) +
+      line('L\'auteur·e', L.auteurVie) +
+      line('Trajectoire', L.trajectoire) +
+      line('Courant littéraire', L.courant) +
+      line('Style', L.style);
+  }
+}
+
+// ════ NI LIEUX — fonctions ════
+var _niSelL = null;
+
+function niLRender() {
+  if (!LIVRE_ACTIF) return;
+  // Reset PDF panel state
+  _niLPdfOn = false;
+  var btn = document.getElementById('ni-l-pdf-trigger');
+  var box = document.getElementById('ni-l-pdf-content');
+  if (btn) { btn.classList.remove('on'); btn.textContent = '📄 Résumé PDF des lieux'; }
+  if (box) { box.classList.remove('on'); box.innerHTML = ''; }
+  var scroll = document.getElementById('ni-l-scroll');
+  if (!scroll) return;
+  scroll.innerHTML = '';
+  var lieux = LIVRE_ACTIF.lieux || [];
+  var hdr = document.getElementById('ni-l-list-hdr');
+  if (hdr) hdr.textContent = 'Lieux (' + lieux.length + ')';
+  lieux.forEach(function(l) {
+    var choc = (l.notes || '').split('\n')[0].substring(0, 48);
+    var d = document.createElement('div');
+    d.className = 'ni-li' + (_niSelL === l.id ? ' sel' : '');
+    d.innerHTML =
+      '<div class="ni-li-av" style="background:' + (l.couleur || '#2E7D32') + '">📍</div>' +
+      '<div style="flex:1;min-width:0;">' +
+        '<div class="ni-li-name">' + esc(l.nom) + '</div>' +
+        '<div class="ni-li-choc">' + esc(choc) + '</div>' +
+      '</div>';
+    d.addEventListener('click', function(){ niLSelect(l.id); });
+    scroll.appendChild(d);
+  });
+}
+
+function niLSelect(id) {
+  _niSelL = id; niLRender();
+  var l = (LIVRE_ACTIF.lieux || []).find(function(x){ return x.id === id; });
+  if (!l) return;
+  document.getElementById('ni-l-det-empty').style.display = 'none';
+  var f = document.getElementById('ni-l-det-fiche'); f.classList.add('on');
+  document.getElementById('ni-l-det-hdr').style.background = l.couleur || '#2E7D32';
+  document.getElementById('ni-l-det-name').textContent = l.nom;
+  var ta = document.getElementById('ni-l-det-ta');
+  if (ta) ta.value = l.notes || '';
+}
+
+function niLClose() {
+  _niSelL = null;
+  document.getElementById('ni-l-det-empty').style.display = '';
+  var f = document.getElementById('ni-l-det-fiche');
+  if (f) f.classList.remove('on');
+}
+
+function niLSave() {
+  if (!LIVRE_ACTIF || !_niSelL) return;
+  var l = (LIVRE_ACTIF.lieux || []).find(function(x){ return x.id === _niSelL; });
+  if (!l) return;
+  var ta = document.getElementById('ni-l-det-ta');
+  l.notes = ta ? ta.value : '';
+  sauvegarderBiblio();
+  showToast('Lieu enregistré ✓', 'ok');
+  niLRender();
+  // Sync liste classique
+  document.getElementById('list-lieux').innerHTML = '';
+  (LIVRE_ACTIF.lieux || []).forEach(function(x){ renderEntity('lieux', x); });
+}
+
+function niLDelete() {
+  if (!LIVRE_ACTIF || !_niSelL) return;
+  if (!confirm('Supprimer ce lieu ?')) return;
+  LIVRE_ACTIF.lieux = (LIVRE_ACTIF.lieux || []).filter(function(x){ return x.id !== _niSelL; });
+  sauvegarderBiblio();
+  niLClose(); niLRender();
+  showToast('Lieu supprimé', 'warn');
+}
+
+function niLAjouter() {
+  if (!LIVRE_ACTIF) return;
+  var inp = document.getElementById('ni-l-inp');
+  var nom = inp ? inp.value.trim() : '';
+  if (!nom) { showToast('Écris un nom de lieu', 'warn'); return; }
+  var id = 'l_' + Date.now();
+  var couleur = COULEURS[((LIVRE_ACTIF.personnages||[]).length + (LIVRE_ACTIF.lieux||[]).length) % COULEURS.length];
+  if (!LIVRE_ACTIF.lieux) LIVRE_ACTIF.lieux = [];
+  LIVRE_ACTIF.lieux.push({ id: id, nom: nom, notes: '', couleur: couleur });
+  sauvegarderBiblio();
+  if (inp) inp.value = '';
+  niLRender(); niLSelect(id);
+  showToast('Lieu ajouté ✓', 'ok');
+}
+
+// ════ NI TEMPS — fonctions ════
+function niTLoad() {
+  if (!LIVRE_ACTIF) return;
+  var s = document.getElementById('ni-t-simple');
+  if (s) s.value = LIVRE_ACTIF.temps || '';
+  var t2 = LIVRE_ACTIF.temps2 || {};
+  var sv = function(id, val){ var el = document.getElementById(id); if (el) el.value = val || ''; };
+  sv('ni-t-ordre',     t2.ordre);
+  sv('ni-t-duree',     t2.duree);
+  sv('ni-t-frequence', t2.frequence);
+  sv('ni-t-espace',    t2.espace);
+}
+
+function niTSaveSimple() {
+  if (!LIVRE_ACTIF) return;
+  var s = document.getElementById('ni-t-simple');
+  LIVRE_ACTIF.temps = s ? s.value : '';
+  var c = document.getElementById('temps-text'); if (c) c.value = LIVRE_ACTIF.temps;
+  sauvegarderBiblio();
+}
+
+function niTSave() {
+  if (!LIVRE_ACTIF) return;
+  if (!LIVRE_ACTIF.temps2) LIVRE_ACTIF.temps2 = {};
+  var g = function(id){ var el = document.getElementById(id); return el ? el.value : ''; };
+  LIVRE_ACTIF.temps2.ordre     = g('ni-t-ordre');
+  LIVRE_ACTIF.temps2.duree     = g('ni-t-duree');
+  LIVRE_ACTIF.temps2.frequence = g('ni-t-frequence');
+  LIVRE_ACTIF.temps2.espace    = g('ni-t-espace');
+  // Sync classique
+  var sync = function(id, val){ var el = document.getElementById(id); if (el) el.value = val; };
+  sync('temps2-ordre',     LIVRE_ACTIF.temps2.ordre);
+  sync('temps2-duree',     LIVRE_ACTIF.temps2.duree);
+  sync('temps2-frequence', LIVRE_ACTIF.temps2.frequence);
+  sync('temps2-espace',    LIVRE_ACTIF.temps2.espace);
+  sauvegarderBiblio();
+}
+
+// ════ NI MOTS — fonctions ════
+function niMLoad() {
+  if (!LIVRE_ACTIF) return;
+  var ta = document.getElementById('ni-m-mots-ta');
+  if (ta) ta.value = LIVRE_ACTIF.mots || '';
+  var av = document.getElementById('ni-m-avis-ta');
+  if (av) av.value = LIVRE_ACTIF.comprehension || '';
+  var th = LIVRE_ACTIF.themes || {};
+  ['amour','pouvoir','liberte','identite','societe','nature'].forEach(function(k){
+    var el = document.getElementById('ni-m-th-' + k);
+    if (el) el.value = th[k] || '';
+  });
+  niMRenderCit();
+}
+
+function niMSaveMots() {
+  if (!LIVRE_ACTIF) return;
+  var ta = document.getElementById('ni-m-mots-ta');
+  LIVRE_ACTIF.mots = ta ? ta.value : '';
+  var c = document.getElementById('mots-zone'); if (c) c.value = LIVRE_ACTIF.mots;
+  sauvegarderBiblio();
+}
+
+function niMSaveAvis() {
+  if (!LIVRE_ACTIF) return;
+  var ta = document.getElementById('ni-m-avis-ta');
+  LIVRE_ACTIF.comprehension = ta ? ta.value : '';
+  var c = document.getElementById('compre-text'); if (c) c.value = LIVRE_ACTIF.comprehension;
+  sauvegarderBiblio();
+}
+
+function niMSaveTheme(axe, val) {
+  if (!LIVRE_ACTIF) return;
+  if (!LIVRE_ACTIF.themes) LIVRE_ACTIF.themes = {};
+  LIVRE_ACTIF.themes[axe] = val;
+  var c = document.getElementById('theme-' + axe); if (c) c.value = val;
+  sauvegarderBiblio();
+}
+
+function niMAddCit() {
+  if (!LIVRE_ACTIF) return;
+  var id = 'cit_ni_' + Date.now();
+  if (!Array.isArray(LIVRE_ACTIF.citations)) LIVRE_ACTIF.citations = [];
+  LIVRE_ACTIF.citations.push({id: id, texte: '', ref: '', theme: '—', procede: '—', interpretation: '', importance: 0});
+  sauvegarderBiblio();
+  niMRenderCit();
+}
+
+function niMDelCit(id) {
+  if (!LIVRE_ACTIF) return;
+  LIVRE_ACTIF.citations = (LIVRE_ACTIF.citations || []).filter(function(c){ return c.id !== id; });
+  sauvegarderBiblio(); niMRenderCit();
+}
+
+function niMUpdateCit(id, field, val) {
+  if (!LIVRE_ACTIF) return;
+  var cit = (LIVRE_ACTIF.citations || []).find(function(c){ return c.id === id; });
+  if (cit) { cit[field] = val; sauvegarderBiblio(); }
+}
+
+function niMRenderCit() {
+  var list = document.getElementById('ni-m-cit-list');
+  var empty = document.getElementById('ni-m-cit-empty');
+  if (!list) return;
+  var cits = (LIVRE_ACTIF && Array.isArray(LIVRE_ACTIF.citations)) ? LIVRE_ACTIF.citations : [];
+  if (empty) empty.style.display = cits.length ? 'none' : '';
+  list.innerHTML = '';
+  cits.forEach(function(c) {
+    var d = document.createElement('div');
+    d.className = 'ni-m-cit-card';
+    d.innerHTML =
+      '<button class="ni-m-cit-del" onclick="niMDelCit(\'' + c.id + '\')">🗑️</button>' +
+      '<div style="font-size:.62rem;color:#888;margin-bottom:3px;clear:right;">« Citation</div>' +
+      '<textarea class="ni-m-cit-ta" placeholder="Tape ou dicte la citation exacte…" ' +
+        'oninput="niMUpdateCit(\'' + c.id + '\',\'texte\',this.value)">' + esc(c.texte) + '</textarea>' +
+      '<input class="ni-m-cit-inp" placeholder="Référence : p. 12, ch. 3…" value="' + esc(c.ref) + '" ' +
+        'oninput="niMUpdateCit(\'' + c.id + '\',\'ref\',this.value)">';
+    list.appendChild(d);
+  });
+}
+
+
 
 </script>
 
