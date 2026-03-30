@@ -202,10 +202,7 @@ body.mode-elise .ni-mi.only-elise{display:flex;}
 #header-titre{flex:1;font-weight:900;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 #header-date{font-size:.65rem;opacity:.75;white-space:nowrap;}
 
-#tabs{display:flex;background:var(--blanc);border-bottom:2px solid var(--gris2);flex-shrink:0;overflow-x:auto;scrollbar-width:none;}
-#tabs::-webkit-scrollbar{display:none;}
-.tab{flex:0 0 auto;padding:9px 12px;font-size:.75rem;font-weight:800;color:#999;border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;}
-.tab.active{color:var(--bleu);border-bottom-color:var(--bleu);}
+
 
 #content{flex:1;overflow-y:auto;padding:12px;padding-bottom:60px;}
 .section{display:none;}
@@ -352,18 +349,9 @@ body.mode-elise .ni-mi.only-elise{display:flex;}
 }
 #ni-sidebar.vis{display:flex;}
 body.ni-on #screen-guide{margin-left:180px;}
-body.ni-on #vert-nav{display:none !important;visibility:hidden;width:0 !important;min-width:0 !important;max-width:0 !important;overflow:hidden;flex:0 0 0 !important;padding:0 !important;}
+/* NI toujours active */
 body.ni-on #guide-content-wrap{margin-left:0;}
 
-#ni-sw-wrap{display:flex;align-items:center;gap:7px;margin-left:8px;flex-shrink:0;}
-#ni-sw-lbl{font-size:.67rem;font-weight:800;color:rgba(255,255,255,.45);white-space:nowrap;transition:color .2s;}
-#ni-sw-lbl.on{color:#4CAF50;}
-.ni-sw{position:relative;width:42px;height:24px;flex-shrink:0;display:inline-block;}
-.ni-sw input{opacity:0;width:0;height:0;position:absolute;}
-.ni-sw .ni-trk{position:absolute;inset:0;border-radius:12px;background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.2);transition:all .2s;cursor:pointer;display:block;}
-.ni-sw input:checked + .ni-trk{background:#4CAF50;border-color:#4CAF50;}
-.ni-sw .ni-trk::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);}
-.ni-sw input:checked + .ni-trk::after{transform:translateX(18px);}
 
 .ni-pdf-btn{flex:1;background:#C62828;color:#fff;border:none;padding:6px 8px;border-radius:7px;font-weight:800;font-size:.71rem;font-family:inherit;cursor:pointer;}
 .ni-pdf-btn:active{background:#B71C1C;}
@@ -442,37 +430,10 @@ body.ni-on #guide-content-wrap{margin-left:0;}
 }
 .btn-nouveau-grid:active{opacity:.85;}
 
-/* ═══ MENU VERTICAL (remplace les onglets horizontaux) ═══ */
+/* ═══ LAYOUT GUIDE ═══ */
 #guide-layout{display:flex;flex:1;overflow:hidden;}
-#vert-nav{
-  width:80px;min-width:80px;
-  background:#0A1628;
-  display:flex;flex-direction:column;
-  overflow-y:auto;overflow-x:hidden;
-  flex-shrink:0;
-  scrollbar-width:none;
-}
-#vert-nav::-webkit-scrollbar{display:none;}
-.vn-item{
-  display:flex;flex-direction:column;align-items:center;
-  padding:13px 6px;cursor:pointer;
-  border-left:3px solid transparent;
-  transition:background .12s;gap:5px;
-  min-height:64px;
-}
-.vn-item:active{background:rgba(255,255,255,.07);}
-.vn-item.act{background:rgba(255,255,255,.13);border-left-color:#fff;}
-.vn-icon{font-size:1.35rem;line-height:1;}
-.vn-lbl{
-  font-size:.55rem;font-weight:800;text-transform:uppercase;
-  letter-spacing:.3px;color:rgba(255,255,255,.55);
-  text-align:center;line-height:1.2;
-}
-.vn-item.act .vn-lbl{color:#fff;}
-.vn-sep{height:1px;background:rgba(255,255,255,.08);margin:2px 8px;}
 #guide-content-wrap{flex:1;overflow:hidden;display:flex;flex-direction:column;}
-/* Hide old horizontal tabs */
-#tabs{display:none !important;}
+
 
 
 /* ═══ NI PERSONNAGES PANEL ═══ */
@@ -1385,58 +1346,9 @@ body.ni-on.ni-sec-ecrire.ni-ec-hidden #ni-ec-show-btn{display:block;}
       <div id="header-date"></div>
     </div>
     <button id="mode-badge-guide" class="axel" onclick="ouvrirModalMode()">👤</button>
-    <div id="ni-sw-wrap">
-      <span id="ni-sw-lbl" class="">Nouvelle interface</span>
-      <label class="ni-sw"><input type="checkbox" id="ni-cb" onchange="niToggle(this.checked)"><div class="ni-trk"></div></label>
-    </div>
-  </div>
-
-  <div id="tabs" style="display:none">
-    <button class="tab active" onclick="showTab('livre',this)">📚 Livre</button>
-    <button class="tab" onclick="showTab('personnages',this)">👤 Perso</button>
-    <button class="tab" onclick="showTab('lieux',this)">🗺️ Lieux</button>
-    <button class="tab" onclick="showTab('temps',this)">⏳ Temps</button>
-    <button class="tab" onclick="showTab('mots',this)">💬 Mots</button>
-    <button class="tab" onclick="showTab('intrigue',this)">🎭 Intrigue</button>
-    <button class="tab" id="tab-ecrire" onclick="showTab('ecrire',this)">✍️ Écrire</button>
-    <button class="tab" onclick="showTab('carnet',this)">📓 Carnet</button>
-    <button class="tab" onclick="showTab('pdf',this)">🖨️ PDF</button>
   </div>
 
   <div id="guide-layout">
-  <nav id="vert-nav">
-    <div class="vn-item act" id="vn-livre" onclick="vnGo('livre',this)">
-      <span class="vn-icon">📚</span><span class="vn-lbl">Livre</span>
-    </div>
-    <div class="vn-sep"></div>
-    <div class="vn-item" id="vn-personnages" onclick="vnGo('personnages',this)">
-      <span class="vn-icon">👤</span><span class="vn-lbl">Perso</span>
-    </div>
-    <div class="vn-item" id="vn-lieux" onclick="vnGo('lieux',this)">
-      <span class="vn-icon">🗺️</span><span class="vn-lbl">Lieux</span>
-    </div>
-    <div class="vn-item" id="vn-temps" onclick="vnGo('temps',this)">
-      <span class="vn-icon">⏳</span><span class="vn-lbl">Temps</span>
-    </div>
-    <div class="vn-sep"></div>
-    <div class="vn-item" id="vn-mots" onclick="vnGo('mots',this)">
-      <span class="vn-icon">💬</span><span class="vn-lbl">Mots</span>
-    </div>
-    <div class="vn-item" id="vn-intrigue" onclick="vnGo('intrigue',this)">
-      <span class="vn-icon">🎭</span><span class="vn-lbl">Intrig.</span>
-    </div>
-    <div class="vn-sep"></div>
-    <div class="vn-item" id="vn-ecrire" onclick="vnGo('ecrire',this)">
-      <span class="vn-icon">✍️</span><span class="vn-lbl">Écrire</span>
-    </div>
-    <div class="vn-item" id="vn-carnet" onclick="vnGo('carnet',this)">
-      <span class="vn-icon">📓</span><span class="vn-lbl">Carnet</span>
-    </div>
-    <div class="vn-sep"></div>
-    <div class="vn-item" id="vn-pdf" onclick="vnGo('pdf',this)">
-      <span class="vn-icon">🖨️</span><span class="vn-lbl">PDF</span>
-    </div>
-  </nav>
   <div id="guide-content-wrap">
 
 
@@ -3863,8 +3775,15 @@ function ouvrirLivre(id) {
   document.getElementById('screen-biblio').style.display = 'none';
   document.getElementById('screen-guide').style.display  = 'flex';
 
-  // Onglet livre par défaut
-  showTab('livre', document.querySelector('.tab'));
+  // Activer la NI automatiquement — ouvrir sur Livre par défaut
+  niToggle(true);
+
+  var niEl = document.getElementById('ni-livre');
+  document.querySelectorAll('.ni-mi').forEach(function(m){m.classList.remove('act');});
+  if (niEl) niEl.classList.add('act');
+  document.body.className = document.body.className.replace(/\bni-sec-\S+/g,'').trim();
+  document.body.classList.add('ni-sec-livre');
+  setTimeout(function(){ if(typeof niLVLoad==='function') niLVLoad(); }, 80);
   // Charger les zones de rédaction
   setTimeout(loadRedac, 50);
   // Charger le schéma narratif
@@ -3879,6 +3798,8 @@ function ouvrirLivre(id) {
 }
 
 function retourBiblio() {
+  niToggle(false);
+  document.body.className = document.body.className.replace(/\bni-sec-\S+/g,'').trim();
   document.getElementById('screen-guide').style.display  = 'none';
   document.getElementById('screen-biblio').style.display = 'flex';
   LIVRE_ACTIF = null;
@@ -7364,22 +7285,16 @@ showTab = function(id, tabEl) {
 };
 
 // ════ SIDEBAR NOUVELLE INTERFACE ════
-var _niOn = false;
+var _niOn = true; // NI toujours active
 
 function niToggle(on) {
   _niOn = on;
-  var lbl = document.getElementById('ni-sw-lbl');
-  if (lbl) {
-    lbl.textContent = on ? 'Nouvelle interface ✦' : 'Nouvelle interface';
-    lbl.className = on ? 'on' : '';
-  }
   var sb = document.getElementById('ni-sidebar');
   if (sb) sb.classList.toggle('vis', on);
   document.body.classList.toggle('ni-on', on);
-  var tabs = document.getElementById('tabs');
-  if (tabs) tabs.style.display = on ? 'none' : '';
-  var subtabs = document.querySelector('.mots-subtabs, #ecrire-subtabs');
-  // keep sub-tabs of ecrire visible if needed
+  // Masquer la vert-nav si elle existe encore
+  var vn = document.getElementById('vert-nav');
+  if (vn) vn.style.display = on ? 'none' : '';
 }
 
 function niGo(tabId, el) {
@@ -7394,32 +7309,6 @@ function niGo(tabId, el) {
   var c = document.getElementById('content');
   if (c) c.scrollTop = 0;
 }
-
-// Hide sidebar on return to library
-(function(){
-  var origRetour = window.retourBiblio;
-  if (origRetour) {
-    window.retourBiblio = function() {
-      var sb = document.getElementById('ni-sidebar');
-      if (sb) sb.classList.remove('vis');
-      document.body.classList.remove('ni-on');
-      origRetour.apply(this, arguments);
-    };
-  }
-  var origOuvrir = window.ouvrirLivre;
-  if (origOuvrir) {
-    window.ouvrirLivre = function(id) {
-      origOuvrir.apply(this, arguments);
-      if (_niOn) {
-        var sb = document.getElementById('ni-sidebar');
-        if (sb) sb.classList.add('vis');
-        document.body.classList.add('ni-on');
-        var tabs = document.getElementById('tabs');
-        if (tabs) tabs.style.display = 'none';
-      }
-    };
-  }
-})();
 
 
 // ════ NI PERSONNAGES PANEL ════
@@ -7708,80 +7597,8 @@ function niToggleAll(el, ev) {
 }
 
 // Hook niToggle
-var _origNiToggle2 = niToggle;
-niToggle = function(on) {
-  _origNiToggle2(on);
-  // JS-force hide vert-nav when ni is active
-  var vn = document.getElementById('vert-nav');
-  if (vn) {
-    if (on) {
-      vn.style.cssText = 'display:none !important;width:0;min-width:0;flex:0 0 0px;overflow:hidden;';
-      document.getElementById('ni-sidebar').style.width='180px';
-    } else {
-      vn.style.cssText = '';
-    }
-  }
-  if (on) {
-    // Detect which section was active in classic mode and open the same in NI
-    var activeVn = document.querySelector('#vert-nav .vn-item.act');
-    var activeSection = activeVn ? (activeVn.id || '').replace('vn-','') : 'personnages';
-    // Map vert-nav IDs to niGo tab IDs
-    var secMap = {
-      livre:'livre', personnages:'personnages', lieux:'lieux', temps:'temps',
-      mots:'mots', intrigue:'intrigue', ecrire:'ecrire', carnet:'carnet', pdf:'pdf'
-    };
-    var targetTab = secMap[activeSection] || 'personnages';
-    // Also check active tab if vert-nav gives nothing
-    if (!activeVn) {
-      var activeTab = document.querySelector('#tabs .tab.active');
-      if (activeTab && activeTab.getAttribute('onclick')) {
-        var m = activeTab.getAttribute('onclick').match(/'(\w+)'/);
-        if (m) targetTab = m[1];
-      }
-    }
-    // Fire the appropriate NI section
-    var niEl = null;
-    var niIdMap = {
-      livre:'ni-livre', personnages:'ni-personnages', lieux:'ni-lieux',
-      temps:'ni-temps', mots:'ni-analyse', intrigue:'ni-i3',
-      ecrire:'ni-diss', carnet:'ni-carnet'
-    };
-    var niId = niIdMap[targetTab] || 'ni-personnages';
-    niEl = document.getElementById(niId);
-    document.querySelectorAll('.ni-mi').forEach(function(m){m.classList.remove('act');});
-    if (niEl) niEl.classList.add('act');
-    if (targetTab === 'intrigue') {
-      var schema = (LIVRE_ACTIF && LIVRE_ACTIF.schemaType) || 'aristote';
-      if (NI_I_DATA && NI_I_DATA[schema]) {
-        _niISchema = schema;
-        document.body.classList.add('ni-sec-intrigue');
-        if (typeof niIRender === 'function') niIRender();
-      } else {
-        document.body.classList.add('ni-sec-personnages');
-        niPRender();
-      }
-    } else if (targetTab === 'livre') {
-      document.body.classList.add('ni-sec-livre');
-      if (typeof niLVLoad === 'function') niLVLoad();
-    } else if (targetTab === 'lieux') {
-      document.body.classList.add('ni-sec-lieux');
-      if (typeof niLRender === 'function') niLRender();
-    } else if (targetTab === 'temps') {
-      document.body.classList.add('ni-sec-temps');
-      if (typeof niTLoad === 'function') niTLoad();
-    } else if (targetTab === 'mots') {
-      document.body.classList.add('ni-sec-mots');
-      if (typeof niMLoad === 'function') niMLoad();
-    } else {
-      // personnages, ecrire, carnet, pdf — personnages par défaut pour panels non-NI
-      document.body.classList.add('ni-sec-personnages');
-      niPRender();
-    }
-  } else {
-    var cls = document.body.className.split(' ').filter(function(c){return c.indexOf('ni-sec-')<0;}).join(' ');
-    document.body.className = cls;
-  }
-};
+// NI toujours active — le hook de surcharge n'est plus nécessaire
+// (conservé vide pour ne pas casser d'éventuels appels externes)
 
 // niGoIntrigue: NI → panel dédié ; classique → showTab
 var _niISchema = 'aristote';
