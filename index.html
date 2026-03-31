@@ -1832,10 +1832,103 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 .fp-del:hover{background:#FFEBEE;color:#c0392b;}
 /* Bouton SVG plein écran — centrage */
 .btn-hdr-util svg{display:block;}
+
+/* ══════════════════════════════════════════
+   AUTH — ÉCRAN DE CONNEXION
+══════════════════════════════════════════ */
+#auth-overlay{
+  position:fixed;inset:0;z-index:99999;
+  background:linear-gradient(135deg,#1a2a4a 0%,#2E5FA3 50%,#1a3a6a 100%);
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;
+}
+#auth-overlay.hidden{display:none;}
+#auth-box{
+  background:#fff;border-radius:20px;padding:36px 28px 28px;
+  width:100%;max-width:380px;
+  box-shadow:0 20px 60px rgba(0,0,0,.35);
+  animation:authSlideIn .35s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes authSlideIn{
+  from{opacity:0;transform:translateY(30px) scale(.95);}
+  to{opacity:1;transform:translateY(0) scale(1);}
+}
+#auth-box .auth-logo{
+  text-align:center;margin-bottom:24px;
+}
+#auth-box .auth-logo .auth-icon{
+  font-size:3rem;line-height:1;display:block;margin-bottom:6px;
+}
+#auth-box .auth-logo h2{
+  font-size:1.25rem;font-weight:900;color:var(--bleu);margin-bottom:2px;
+}
+#auth-box .auth-logo p{
+  font-size:.78rem;color:#94A3B8;font-weight:500;
+}
+#auth-email,#auth-password{
+  width:100%;border:2px solid var(--gris2);border-radius:11px;
+  padding:12px 14px;font-size:.9rem;font-family:inherit;
+  color:var(--texte);margin-bottom:10px;transition:border-color .15s;
+  -webkit-appearance:none;
+}
+#auth-email:focus,#auth-password:focus{
+  border-color:var(--bleu);outline:none;
+}
+#auth-submit{
+  width:100%;padding:14px;background:var(--bleu);color:#fff;
+  border:none;border-radius:11px;font-family:inherit;
+  font-size:.95rem;font-weight:800;cursor:pointer;
+  margin-top:4px;transition:background .15s,transform .1s;
+}
+#auth-submit:hover{background:#234d8e;transform:translateY(-1px);}
+#auth-submit:active{transform:translateY(0);}
+#auth-error{
+  font-size:.78rem;color:var(--rouge);font-weight:700;
+  text-align:center;margin-top:8px;min-height:1.2em;
+}
+/* Badge utilisateur dans le header */
+#user-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.72rem;font-weight:800;
+  padding:4px 10px;border-radius:20px;
+  background:rgba(255,255,255,.22);color:#fff;
+  cursor:default;white-space:nowrap;max-width:130px;overflow:hidden;text-overflow:ellipsis;
+}
+#user-badge .ub-role{
+  font-size:.6rem;opacity:.75;font-weight:600;
+}
+#btn-deconnexion{
+  background:rgba(255,255,255,.15);color:#fff;border:none;
+  border-radius:8px;padding:5px 9px;font-size:.72rem;font-weight:800;
+  font-family:inherit;cursor:pointer;white-space:nowrap;
+  transition:background .15s;flex-shrink:0;
+}
+#btn-deconnexion:hover{background:rgba(255,255,255,.3);}
+/* Éléments masqués selon le rôle */
+.auth-hide{display:none!important;}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 </head>
 <body>
+
+<!-- ══════════════════════════════════════════
+     ÉCRAN DE CONNEXION
+══════════════════════════════════════════ -->
+<div id="auth-overlay">
+  <div id="auth-box">
+    <div class="auth-logo">
+      <span class="auth-icon">📚</span>
+      <h2>Guide de Lecture</h2>
+      <p>Axel &amp; Élise · Jean</p>
+    </div>
+    <input type="email" id="auth-email" placeholder="Adresse e-mail" autocomplete="email" autocapitalize="none">
+    <input type="password" id="auth-password" placeholder="Mot de passe" autocomplete="current-password"
+      onkeydown="if(event.key==='Enter')authConnexion()">
+    <button id="auth-submit" onclick="authConnexion()">Se connecter</button>
+    <div id="auth-error"></div>
+  </div>
+</div>
+
 <nav id="ni-sidebar">
   <div class="ni-pdf-row">
     <button class="ni-pdf-btn" onclick="showTab('pdf',null)">🖨️ PDF</button>
@@ -1879,6 +1972,8 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
       <button id="sync-badge" class="idle" onclick="ouvrirModalSync()">
         <span class="sb-dot"></span><span id="sync-label">☁️ Sync</span>
       </button>
+      <span id="user-badge" title="Utilisateur connecté">👤 <span id="ub-nom">…</span> <span class="ub-role" id="ub-role"></span></span>
+      <button id="btn-deconnexion" onclick="authDeconnexion()" title="Se déconnecter">⏻</button>
       <button id="mode-badge-biblio" class="axel" onclick="ouvrirModalMode()">👤</button>
       <button class="btn-hdr-util" onclick="ouvrirParams()" title="Paramètres d'accessibilité">⚙️</button>
       <button class="btn-hdr-util" id="btn-fs-biblio" onclick="toggleFullscreen()" title="Plein écran">⛶</button>
@@ -1889,7 +1984,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
     <div id="biblio-vide" style="text-align:center;padding:40px 20px;color:#94A3B8;font-size:.9rem;font-weight:600;display:none;">
       Aucun livre pour le moment.
     </div>
-    <button class="btn-nouveau-grid" onclick="ouvrirModalNouveauLivre()">＋ Nouveau livre</button>
+    <button id="btn-nouveau-livre" class="btn-nouveau-grid" onclick="ouvrirModalNouveauLivre()">＋ Nouveau livre</button>
     <div style="margin-top:10px;text-align:center;">
       <label style="cursor:pointer;">
         <input type="file" id="import-biblio" accept=".txt" style="display:none" onchange="importTxtBiblio(this)">
@@ -1910,6 +2005,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
       <div id="header-date"></div>
     </div>
     <button id="mode-badge-guide" class="axel" onclick="ouvrirModalMode()">👤</button>
+    <span id="user-badge-guide" style="font-size:.65rem;font-weight:800;color:rgba(255,255,255,.7);white-space:nowrap;padding:0 2px;" title="Utilisateur connecté"></span>
     <button class="btn-hdr-util" id="btn-save-global" onclick="sauvegarderBiblio();showToast('✅ Bibliothèque enregistrée','ok')" title="Forcer l'enregistrement et la synchronisation de toute la bibliothèque" style="padding:4px 7px;">
       <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18" style="display:block;"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm3-10H7V5h8v4z"/></svg>
     </button>
@@ -3234,6 +3330,36 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 
 <script>
 // ════════════════════════════════════════════════════════
+// FIREBASE AUTH — chargement dynamique (contrainte 4 paires <script>)
+// ════════════════════════════════════════════════════════
+(function loadFirebaseAuth() {
+  var s = document.createElement('script');
+  s.src = 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js';
+  document.head.appendChild(s);
+})();
+
+// ════════════════════════════════════════════════════════
+// ÉTAT AUTHENTIFICATION (global)
+// ════════════════════════════════════════════════════════
+var AUTH_USER    = null;   // objet Firebase User
+var AUTH_ROLE    = null;   // 'admin' | 'eleve' | 'testeur'
+var AUTH_NOM     = null;   // prénom affiché
+var AUTH_UID     = null;   // UID Firebase
+var _appDemarree = false;  // démarrage différé — déclenché après authentification
+
+// Retourne true si l'utilisateur peut créer un livre
+function canCreate() {
+  return AUTH_ROLE === 'admin' || AUTH_ROLE === 'eleve';
+}
+// Retourne true si l'utilisateur peut modifier/supprimer un livre donné
+function canEdit(livre) {
+  if (!livre) return false;
+  if (AUTH_ROLE === 'admin') return true;
+  if (AUTH_ROLE === 'eleve' && livre.ownerId === AUTH_UID) return true;
+  return false;
+}
+
+// ════════════════════════════════════════════════════════
 // STRUCTURE DES DONNÉES
 // ════════════════════════════════════════════════════════
 // localStorage['axel_biblio'] = {
@@ -4241,7 +4367,7 @@ function renderBiblio() {
       '</div>' +
       '<span class="lc-badge ' + badgeCls + '">' + badgeTxt + '</span>' +
       '<div class="lc-actions">' +
-        '<button class="lc-del btn-del" title="Supprimer">' + _SVG_DEL_STR + '</button>' +
+        (canEdit(livre) ? '<button class="lc-del btn-del" title="Supprimer">' + _SVG_DEL_STR + '</button>' : '') +
       '</div>';
     div.addEventListener('click', function(e){
       if (e.target.classList.contains('lc-del')) {
@@ -4275,6 +4401,7 @@ function creerNouveauLivreObj(titre, auteur, genre) {
   const dateStr = now.toLocaleDateString('fr-FR', {day:'2-digit',month:'2-digit',year:'numeric'});
   return {
     id:            'liv_' + Date.now().toString(36) + Math.random().toString(36).slice(2,5),
+    ownerId:       AUTH_UID || 'unknown',   // UID Firebase du créateur
     titre:         titre  || '',
     auteur:        auteur || '',
     genre:         genre  || '',
@@ -4309,6 +4436,7 @@ function creerNouveauLivreObj(titre, auteur, genre) {
 }
 
 function ouvrirModalNouveauLivre() {
+  if (!canCreate()) { showToast('❌ Tu n\'as pas le droit de créer un livre', 'warn'); return; }
   document.getElementById('nl-titre').value  = '';
   document.getElementById('nl-auteur').value = '';
   document.getElementById('nl-genre').value  = '';
@@ -4378,6 +4506,39 @@ function ouvrirLivre(id) {
   // Matrice & graphe des relations
   renderMatrice();
 
+  // ── Contrôle d'accès visuel ──────────────────────────────────────────────
+  // Si l'utilisateur n'a pas les droits d'édition, on passe tous les champs
+  // en lecture seule et on masque les boutons d'action destructifs.
+  (function appliquerDroitsGuide() {
+    var ro = !canEdit(livre);
+    // Champs texte et textarea dans l'écran guide
+    document.querySelectorAll(
+      '#screen-guide textarea, #screen-guide input[type="text"], #screen-guide input[type="number"]'
+    ).forEach(function(el) {
+      el.readOnly = ro;
+      el.style.background = ro ? '#f4f6f9' : '';
+      el.style.color      = ro ? '#6b7080' : '';
+      el.style.cursor     = ro ? 'default'  : '';
+    });
+    // Bouton "Forcer l'enregistrement"
+    var btnSave = document.getElementById('btn-save-global');
+    if (btnSave) btnSave.style.display = ro ? 'none' : '';
+    // Bouton IA (tri carnet) — autorisé en lecture seule (IA ne modifie que si on confirme)
+    // Les boutons Ajouter entité / Ajouter lieu restent visibles mais seront bloqués par les save guards
+    // Bannière lecture seule dans le header
+    var banEx = document.getElementById('ro-banner');
+    if (ro && !banEx) {
+      var ban = document.createElement('div');
+      ban.id = 'ro-banner';
+      ban.style.cssText = 'background:#FFF3E0;color:#E65100;font-size:.72rem;font-weight:800;text-align:center;padding:5px 12px;flex-shrink:0;';
+      ban.textContent = '👁️ Lecture seule — tu peux lire ce livre mais pas le modifier';
+      var gh = document.getElementById('guide-header');
+      if (gh && gh.nextSibling) gh.parentNode.insertBefore(ban, gh.nextSibling);
+    } else if (!ro && banEx) {
+      banEx.remove();
+    }
+  })();
+
   // Basculer écrans
   document.getElementById('screen-biblio').style.display = 'none';
   document.getElementById('screen-guide').style.display  = 'flex';
@@ -4418,6 +4579,7 @@ function retourBiblio() {
 // ════════════════════════════════════════════════════════
 function saveLivre() {
   if (!LIVRE_ACTIF) return;
+  if (!canEdit(LIVRE_ACTIF)) return; // contrôle d'accès
   LIVRE_ACTIF.titre  = document.getElementById('livre-titre').value;
   LIVRE_ACTIF.auteur = document.getElementById('livre-auteur').value;
   LIVRE_ACTIF.genre  = document.getElementById('livre-genre').value;
@@ -4430,6 +4592,7 @@ function saveLivre() {
 }
 function saveLivreContexte() {
   if (!LIVRE_ACTIF) return;
+  if (!canEdit(LIVRE_ACTIF)) return; // contrôle d'accès
   LIVRE_ACTIF.contexte    = document.getElementById('livre-contexte').value;
   LIVRE_ACTIF.auteurVie   = document.getElementById('livre-auteur-vie').value;
   LIVRE_ACTIF.trajectoire = document.getElementById('livre-trajectoire').value;
@@ -4437,6 +4600,7 @@ function saveLivreContexte() {
 }
 function saveTexte(champ) {
   if (!LIVRE_ACTIF) return;
+  if (!canEdit(LIVRE_ACTIF)) return; // contrôle d'accès
   const ids = { temps:'temps-text', mots:'mots-zone', comprehension:'compre-text' };
   LIVRE_ACTIF[champ] = document.getElementById(ids[champ]).value;
   sauvegarderBiblio();
@@ -4470,6 +4634,7 @@ function loadMots(livre) {
 }
 function saveDiss() {
   if (!LIVRE_ACTIF) return;
+  if (!canEdit(LIVRE_ACTIF)) return; // contrôle d'accès
   if (!LIVRE_ACTIF.dissertation) LIVRE_ACTIF.dissertation = {};
   LIVRE_ACTIF.dissertation.sujet  = document.getElementById('diss-sujet').value;
   LIVRE_ACTIF.dissertation.intro  = document.getElementById('diss-intro').value;
@@ -4552,6 +4717,7 @@ function showEcrirePanel(panel, btnEl) {
 // ════════════════════════════════════════════════════════
 function addEntity(type) {
   if (!LIVRE_ACTIF) return;
+  if (!canEdit(LIVRE_ACTIF)) { showToast('❌ Lecture seule — tu ne peux pas modifier ce livre', 'warn'); return; }
   const inputId = type === 'personnages' ? 'perso-input' : 'lieu-input';
   const inp = document.getElementById(inputId);
   const nom = inp.value.trim();
@@ -4614,6 +4780,7 @@ function updateNotes(type, id, val) {
   if (e) { e.notes = val; sauvegarderBiblio(); }
 }
 function deleteEntity(type, id) {
+  if (!canEdit(LIVRE_ACTIF)) { showToast('❌ Lecture seule — tu ne peux pas modifier ce livre', 'warn'); return; }
   if (!confirm('Supprimer cette fiche ?')) return;
   LIVRE_ACTIF[type] = LIVRE_ACTIF[type].filter(x => x.id !== id);
   document.getElementById('entity-' + id)?.remove();
@@ -4915,6 +5082,7 @@ function importTxtBiblio(input) {
 
 function supprimerLivre(id) {
   const livre = BIBLIO.livres.find(l => l.id === id);
+  if (!canEdit(livre)) { showToast('❌ Tu ne peux pas supprimer ce livre', 'warn'); return; }
   const titre = livre ? (livre.titre || 'ce livre') : 'ce livre';
   if (!confirm('Supprimer ce livre et toutes ses notes ?')) return;
   BIBLIO.livres = BIBLIO.livres.filter(l => l.id !== id);
@@ -6014,6 +6182,7 @@ function setTypeRedac(type) {
 
 function saveRedac(key, val) {
   if (!LIVRE_ACTIF) return;
+  if (!canEdit(LIVRE_ACTIF)) return; // contrôle d'accès
   if (!LIVRE_ACTIF.redac) LIVRE_ACTIF.redac = {};
   LIVRE_ACTIF.redac[key] = val;
   sauvegarderBiblio();
@@ -6490,6 +6659,7 @@ function togglePhase(key) {
 
 function saveNarration(key, val) {
   if (!LIVRE_ACTIF) return;
+  if (!canEdit(LIVRE_ACTIF)) return; // contrôle d'accès
   if (!LIVRE_ACTIF.narration) LIVRE_ACTIF.narration = {};
   LIVRE_ACTIF.narration[key] = val;
   sauvegarderBiblio();
@@ -6503,6 +6673,145 @@ function loadIntrigue() {
   const activeBtn = document.getElementById('sbtn-' + type);
   if (activeBtn) activeBtn.classList.add('active');
   renderSchemaPhases();
+}
+
+// ════════════════════════════════════════════════════════
+// AUTHENTIFICATION FIREBASE
+// ════════════════════════════════════════════════════════
+
+var _fbAuth = null;  // instance firebase.auth()
+
+// Initialise firebase.auth() dès que le SDK Auth est disponible
+function _initAuthInstance(cfg) {
+  var app = _fbApp || firebase.initializeApp(cfg, 'auth-app-' + Date.now());
+  // On utilise l'app Firebase principale si déjà créée
+  try {
+    _fbAuth = firebase.auth(_fbApp || app);
+  } catch(e) {
+    _fbAuth = firebase.auth();
+  }
+  _fbAuth.onAuthStateChanged(function(user) {
+    if (user) {
+      AUTH_USER = user;
+      AUTH_UID  = user.uid;
+      // Charger le rôle depuis Firestore collection 'users'
+      _chargerProfil(user.uid);
+    } else {
+      // Non connecté → afficher l'écran de login
+      AUTH_USER = null; AUTH_UID = null; AUTH_ROLE = null; AUTH_NOM = null;
+      _afficherLogin();
+    }
+  });
+}
+
+// Charge le document Firestore users/{uid} pour récupérer rôle et nom
+function _chargerProfil(uid) {
+  if (!_fbDb) {
+    // Firestore pas encore init → réessayer dans 500ms
+    setTimeout(function(){ _chargerProfil(uid); }, 500);
+    return;
+  }
+  _fbDb.collection('users').doc(uid).get()
+    .then(function(snap) {
+      if (snap.exists) {
+        var data = snap.data();
+        AUTH_ROLE = data.role  || 'testeur';
+        AUTH_NOM  = data.nom   || AUTH_USER.email.split('@')[0];
+      } else {
+        AUTH_ROLE = 'testeur';
+        AUTH_NOM  = AUTH_USER.email.split('@')[0];
+      }
+      _apresConnexion();
+    })
+    .catch(function(err) {
+      console.error('Chargement profil:', err);
+      AUTH_ROLE = 'testeur';
+      AUTH_NOM  = AUTH_USER ? AUTH_USER.email.split('@')[0] : '?';
+      _apresConnexion();
+    });
+}
+
+// Appelé après récupération du profil : affiche l'app
+function _apresConnexion() {
+  // Masquer l'overlay de login
+  var ov = document.getElementById('auth-overlay');
+  if (ov) ov.classList.add('hidden');
+
+  // Mettre à jour les badges utilisateur
+  _mettreAJourBadgeUser();
+
+  // Afficher/masquer le bouton "Nouveau livre" selon le rôle
+  var btnNv = document.getElementById('btn-nouveau-livre');
+  if (btnNv) btnNv.style.display = canCreate() ? '' : 'none';
+
+  // Lancer l'application si pas encore démarrée
+  if (!_appDemarree) {
+    _appDemarree = true;
+    chargerBiblio();
+    renderBiblio();
+    initRedacZones();
+    renderSchemaPhases();
+    chargerMode();
+  } else {
+    // Re-render biblio pour appliquer les droits du nouvel utilisateur
+    renderBiblio();
+  }
+}
+
+function _mettreAJourBadgeUser() {
+  var roleLabels = { admin:'Admin', eleve:'Élève', testeur:'Lecture' };
+  var nom  = AUTH_NOM || '?';
+  var role = roleLabels[AUTH_ROLE] || AUTH_ROLE || '';
+  var el = document.getElementById('ub-nom');
+  var elR = document.getElementById('ub-role');
+  if (el)  el.textContent  = nom;
+  if (elR) elR.textContent = '· ' + role;
+  var elG = document.getElementById('user-badge-guide');
+  if (elG) elG.textContent = nom + ' · ' + role;
+}
+
+function _afficherLogin() {
+  var ov = document.getElementById('auth-overlay');
+  if (ov) ov.classList.remove('hidden');
+  var err = document.getElementById('auth-error');
+  if (err) err.textContent = '';
+}
+
+// Connexion email/password
+function authConnexion() {
+  var email = (document.getElementById('auth-email').value || '').trim();
+  var pass  = (document.getElementById('auth-password').value || '');
+  var err   = document.getElementById('auth-error');
+  var btn   = document.getElementById('auth-submit');
+  if (!email || !pass) { err.textContent = 'Remplis les deux champs.'; return; }
+  btn.textContent = 'Connexion…'; btn.disabled = true;
+  if (!_fbAuth) {
+    err.textContent = 'Service d\'auth non disponible, patiente 3s et réessaie.';
+    btn.textContent = 'Se connecter'; btn.disabled = false; return;
+  }
+  _fbAuth.signInWithEmailAndPassword(email, pass)
+    .then(function() {
+      btn.textContent = '✅'; // onAuthStateChanged prend le relais
+    })
+    .catch(function(e) {
+      var msgs = {
+        'auth/user-not-found':   'Adresse inconnue.',
+        'auth/wrong-password':   'Mot de passe incorrect.',
+        'auth/invalid-email':    'Adresse e-mail invalide.',
+        'auth/invalid-credential': 'Identifiants incorrects.',
+        'auth/too-many-requests':'Trop de tentatives. Réessaie plus tard.'
+      };
+      err.textContent = msgs[e.code] || ('Erreur : ' + e.message);
+      btn.textContent = 'Se connecter'; btn.disabled = false;
+    });
+}
+
+// Déconnexion
+function authDeconnexion() {
+  if (!_fbAuth) return;
+  if (!confirm('Se déconnecter ?')) return;
+  _fbAuth.signOut();
+  // onAuthStateChanged appellera _afficherLogin()
 }
 
 // ════════════════════════════════════════════════════════
@@ -6555,6 +6864,20 @@ function fbInit(code, cfg) {
 
     _fbApp  = firebase.initializeApp(cfg, 'axel-sync-' + Date.now());
     _fbDb   = firebase.firestore(_fbApp);
+
+    // Initialiser Firebase Auth sur cette même app
+    if (!_fbAuth && typeof firebase.auth !== 'undefined') {
+      _fbAuth = firebase.auth(_fbApp);
+      _fbAuth.onAuthStateChanged(function(user) {
+        if (user) {
+          AUTH_USER = user; AUTH_UID = user.uid;
+          _chargerProfil(user.uid);
+        } else {
+          AUTH_USER = null; AUTH_UID = null; AUTH_ROLE = null; AUTH_NOM = null;
+          _afficherLogin();
+        }
+      });
+    }
 
     // Persistence offline : Firestore fonctionne sans réseau et sync automatiquement à la reconnexion
     _fbDb.enablePersistence({ synchronizeTabs: true })
@@ -6801,8 +7124,8 @@ function deconnecterFB() {
 
 // ── Auto-init au démarrage — attend que le SDK Firebase soit chargé ──
 (function autoInitFB() {
-  if (typeof firebase === 'undefined') {
-    setTimeout(autoInitFB, 300); // SDK pas encore prêt, on réessaie
+  if (typeof firebase === 'undefined' || typeof firebase.auth === 'undefined') {
+    setTimeout(autoInitFB, 300); // SDK (app + auth) pas encore prêt, on réessaie
     return;
   }
   const saved = fbLoadConfig();
@@ -6858,6 +7181,7 @@ function fermerModalMode() {
 
 function saveLivreElise() {
   if (!LIVRE_ACTIF) return;
+  if (!canEdit(LIVRE_ACTIF)) return; // contrôle d'accès
   LIVRE_ACTIF.courant = document.getElementById('livre-courant')?.value || '';
   LIVRE_ACTIF.style   = document.getElementById('livre-style')?.value   || '';
   sauvegarderBiblio();
@@ -6865,6 +7189,7 @@ function saveLivreElise() {
 
 function saveTemps2() {
   if (!LIVRE_ACTIF) return;
+  if (!canEdit(LIVRE_ACTIF)) return; // contrôle d'accès
   if (!LIVRE_ACTIF.temps2) LIVRE_ACTIF.temps2 = {};
   LIVRE_ACTIF.temps2.ordre     = document.getElementById('temps2-ordre')?.value     || '';
   LIVRE_ACTIF.temps2.duree     = document.getElementById('temps2-duree')?.value     || '';
@@ -6875,6 +7200,7 @@ function saveTemps2() {
 
 function saveDiss2() {
   if (!LIVRE_ACTIF) return;
+  if (!canEdit(LIVRE_ACTIF)) return; // contrôle d'accès
   if (!LIVRE_ACTIF.dissertation2) LIVRE_ACTIF.dissertation2 = {};
   const d = LIVRE_ACTIF.dissertation2;
   const g = id => document.getElementById(id)?.value || '';
@@ -6973,6 +7299,7 @@ function getCitationsArray() {
 
 function addCitation() {
   if (!LIVRE_ACTIF) return;
+  if (!canEdit(LIVRE_ACTIF)) { showToast('❌ Lecture seule', 'warn'); return; }
   if (!Array.isArray(LIVRE_ACTIF.citations)) LIVRE_ACTIF.citations = [];
   const id = 'cit_' + Date.now().toString(36);
   LIVRE_ACTIF.citations.push({id, texte:'', ref:'', theme:'—', procede:'—', interpretation:'', importance:0});
@@ -6983,6 +7310,7 @@ function addCitation() {
 
 function deleteCitation(id) {
   if (!LIVRE_ACTIF || !Array.isArray(LIVRE_ACTIF.citations)) return;
+  if (!canEdit(LIVRE_ACTIF)) { showToast('❌ Lecture seule', 'warn'); return; }
   LIVRE_ACTIF.citations = LIVRE_ACTIF.citations.filter(c => c.id !== id);
   sauvegarderBiblio();
   renderCitations();
@@ -6990,6 +7318,7 @@ function deleteCitation(id) {
 
 function updateCitation(id, field, val) {
   if (!LIVRE_ACTIF || !Array.isArray(LIVRE_ACTIF.citations)) return;
+  if (!canEdit(LIVRE_ACTIF)) return;
   const cit = LIVRE_ACTIF.citations.find(c => c.id === id);
   if (cit) { cit[field] = val; sauvegarderBiblio(); }
 }
@@ -7206,6 +7535,7 @@ function getCarnet() {
 
 function ajouterNoteCarnet(texte) {
   if (!LIVRE_ACTIF) { showToast('Ouvre un livre d\'abord', 'warn'); return; }
+  if (!canEdit(LIVRE_ACTIF)) { showToast('❌ Lecture seule', 'warn'); return; }
   const inp = document.getElementById('carnet-input');
   const t = texte || (inp ? inp.value.trim() : '');
   if (!t) return;
@@ -7218,6 +7548,7 @@ function ajouterNoteCarnet(texte) {
 
 function supprimerNote(id) {
   if (!LIVRE_ACTIF) return;
+  if (!canEdit(LIVRE_ACTIF)) { showToast('❌ Lecture seule', 'warn'); return; }
   LIVRE_ACTIF.carnet = getCarnet().filter(n => n.id !== id);
   sauvegarderBiblio();
   renderCarnet();
@@ -7225,6 +7556,7 @@ function supprimerNote(id) {
 
 function viderCarnetTrie() {
   if (!LIVRE_ACTIF || !confirm('Supprimer toutes les notes déjà triées ?')) return;
+  if (!canEdit(LIVRE_ACTIF)) { showToast('❌ Lecture seule', 'warn'); return; }
   LIVRE_ACTIF.carnet = getCarnet().filter(n => !n.sorted);
   sauvegarderBiblio();
   renderCarnet();
@@ -7917,13 +8249,6 @@ var _SVG_SAVE   = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H5
 var _SVG_CLEAR  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><line x1="8" y1="8" x2="16" y2="16"/><line x1="16" y1="8" x2="8" y2="16"/></svg>';
 var _SVG_MIC    = '🎤';
 var _TOOLBAR_CTR = 0;
-
-chargerBiblio();
-renderBiblio();
-initRedacZones();
-renderSchemaPhases();
-// chargerMode doit attendre que les modals soient dans le DOM
-window.addEventListener('DOMContentLoaded', chargerMode);
 
 // ── Fix Chrome : resize:vertical ne pousse pas les frères dans overflow:auto ──
 // Quand une textarea.field est redimensionnée manuellement (poignée bas-droite),
