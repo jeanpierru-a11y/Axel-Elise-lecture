@@ -1886,17 +1886,19 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
   font-size:.78rem;color:var(--rouge);font-weight:700;
   text-align:center;margin-top:8px;min-height:1.2em;
 }
-/* Badge utilisateur dans le header */
+/* Badge utilisateur fusionné dans le header */
 #user-badge{
-  display:inline-flex;align-items:center;gap:6px;
-  font-size:.72rem;font-weight:800;
-  padding:4px 10px;border-radius:20px;
-  background:rgba(255,255,255,.22);color:#fff;
-  cursor:default;white-space:nowrap;max-width:130px;overflow:hidden;text-overflow:ellipsis;
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:.65rem;font-weight:800;
+  padding:3px 9px;border-radius:20px;cursor:pointer;
+  border:none;font-family:inherit;
+  background:rgba(255,255,255,.2);color:#fff;
+  white-space:nowrap;max-width:200px;overflow:hidden;text-overflow:ellipsis;
+  transition:background .15s;
 }
-#user-badge .ub-role{
-  font-size:.6rem;opacity:.75;font-weight:600;
-}
+#user-badge:hover{background:rgba(255,255,255,.32);}
+#user-badge .ub-role{opacity:.78;font-weight:600;}
+#user-badge #ub-mode{opacity:.85;}
 #btn-deconnexion{
   background:rgba(255,255,255,.15);color:#fff;border:none;
   border-radius:8px;padding:5px 9px;font-size:.72rem;font-weight:800;
@@ -1972,9 +1974,10 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
       <button id="sync-badge" class="idle" onclick="ouvrirModalSync()">
         <span class="sb-dot"></span><span id="sync-label">☁️ Sync</span>
       </button>
-      <span id="user-badge" title="Utilisateur connecté">👤 <span id="ub-nom">…</span> <span class="ub-role" id="ub-role"></span></span>
+      <button id="user-badge" onclick="ouvrirModalMode()" title="Changer le mode d'affichage">
+        👤 <span id="ub-nom">…</span><span class="ub-role" id="ub-role"></span><span id="ub-mode"></span>
+      </button>
       <button id="btn-deconnexion" onclick="authDeconnexion()" title="Se déconnecter">⏻</button>
-      <button id="mode-badge-biblio" class="axel" onclick="ouvrirModalMode()">👤</button>
       <button class="btn-hdr-util" onclick="ouvrirParams()" title="Paramètres d'accessibilité">⚙️</button>
       <button class="btn-hdr-util" id="btn-fs-biblio" onclick="toggleFullscreen()" title="Plein écran">⛶</button>
     </div>
@@ -2004,8 +2007,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
       <div id="header-titre">—</div>
       <div id="header-date"></div>
     </div>
-    <button id="mode-badge-guide" class="axel" onclick="ouvrirModalMode()">👤</button>
-    <span id="user-badge-guide" style="font-size:.65rem;font-weight:800;color:rgba(255,255,255,.7);white-space:nowrap;padding:0 2px;" title="Utilisateur connecté"></span>
+    <button id="mode-badge-guide" class="axel" onclick="ouvrirModalMode()" title="Changer le mode d'affichage" style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">👤</button>
     <button class="btn-hdr-util" id="btn-save-global" onclick="sauvegarderBiblio();showToast('✅ Bibliothèque enregistrée','ok')" title="Forcer l'enregistrement et la synchronisation de toute la bibliothèque" style="padding:4px 7px;">
       <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18" style="display:block;"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm3-10H7V5h8v4z"/></svg>
     </button>
@@ -6109,6 +6111,7 @@ function ajouterAxeCommentaire() {
 
 function supprimerAxeCommentaire(i) {
   if (!LIVRE_ACTIF?.commentaire?.axes) return;
+  if (!canEdit(LIVRE_ACTIF)) { showToast('❌ Lecture seule', 'warn'); return; }
   LIVRE_ACTIF.commentaire.axes.splice(i, 1);
   sauvegarderBiblio();
   renderAxesCommentaire();
@@ -6163,6 +6166,7 @@ function ajouterMouvement() {
 
 function supprimerMouvement(i) {
   if (!LIVRE_ACTIF?.lineaire?.mvts) return;
+  if (!canEdit(LIVRE_ACTIF)) { showToast('❌ Lecture seule', 'warn'); return; }
   LIVRE_ACTIF.lineaire.mvts.splice(i, 1);
   sauvegarderBiblio();
   renderMouvements();
@@ -6765,9 +6769,9 @@ function _mettreAJourBadgeUser() {
   var el = document.getElementById('ub-nom');
   var elR = document.getElementById('ub-role');
   if (el)  el.textContent  = nom;
-  if (elR) elR.textContent = '· ' + role;
-  var elG = document.getElementById('user-badge-guide');
-  if (elG) elG.textContent = nom + ' · ' + role;
+  if (elR) elR.textContent = ' · ' + role;
+  // Le mode courant sera mis à jour par appliquerMode() — on lit le label actuel
+  _syncModeBadge();
 }
 
 function _afficherLogin() {
@@ -7161,14 +7165,24 @@ function setMode(mode) {
 function appliquerMode(mode, withToast) {
   document.body.classList.remove('mode-axel', 'mode-elise');
   document.body.classList.add('mode-' + mode);
-  const label = mode === 'elise' ? '📘 Élise · 2nde' : '🎒 Axel · 6ème';
-  ['mode-badge-biblio','mode-badge-guide'].forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.textContent = label;
-    el.className = mode;
-  });
+  var modeLabel = mode === 'elise' ? '· 📘 2nde' : '· 🎒 6ème';
+  var modeClass = mode; // 'axel' ou 'elise'
+  // Badge fusionné biblio
+  var ubMode = document.getElementById('ub-mode');
+  if (ubMode) ubMode.textContent = ' ' + modeLabel;
+  // Badge guide (conserve son style propre)
+  var guideLabel = mode === 'elise' ? '📘 Élise · 2nde' : '🎒 Axel · 6ème';
+  var bg = document.getElementById('mode-badge-guide');
+  if (bg) { bg.textContent = guideLabel; bg.className = modeClass; }
   if (withToast) showToast('Mode ' + (mode === 'elise' ? 'Élise (2nde)' : 'Axel (6ème)') + ' activé ✓', 'ok');
+}
+
+// Synchronise le span #ub-mode avec le mode actuellement actif
+function _syncModeBadge() {
+  var mode = document.body.classList.contains('mode-elise') ? 'elise' : 'axel';
+  var modeLabel = mode === 'elise' ? '· 📘 2nde' : '· 🎒 6ème';
+  var ubMode = document.getElementById('ub-mode');
+  if (ubMode) ubMode.textContent = ' ' + modeLabel;
 }
 
 function ouvrirModalMode() {
@@ -8496,6 +8510,7 @@ function niPClose() {
 // Sauvegarde directe depuis la textarea éditable
 function niPSaveDirect() {
   if (!_niSelP || !LIVRE_ACTIF) return;
+  if (!canEdit(LIVRE_ACTIF)) return; // contrôle d'accès
   var ta = document.getElementById('ni-det-body');
   var val = ta ? ta.value : '';
   var p = (LIVRE_ACTIF.personnages||[]).find(function(x){return x.id===_niSelP;});
@@ -8516,6 +8531,7 @@ function niPSave() { niPSaveDirect(); }
 // Supprimer le personnage sélectionné (irréversible)
 function niPDelete() {
   if (!_niSelP || !LIVRE_ACTIF) return;
+  if (!canEdit(LIVRE_ACTIF)) { showToast('❌ Lecture seule — tu ne peux pas modifier ce livre', 'warn'); return; }
   var p = (LIVRE_ACTIF.personnages||[]).find(function(x){ return x.id===_niSelP; });
   var nom = p ? p.nom : 'ce personnage';
   if (!confirm('Supprimer « ' + nom + ' » ? Cette action est irréversible.')) return;
@@ -9286,6 +9302,7 @@ function niLClose() {
 
 function niLSave() {
   if (!LIVRE_ACTIF || !_niSelL) return;
+  if (!canEdit(LIVRE_ACTIF)) return; // contrôle d'accès
   var l = (LIVRE_ACTIF.lieux || []).find(function(x){ return x.id === _niSelL; });
   if (!l) return;
   var ta = document.getElementById('ni-l-det-ta');
@@ -9300,6 +9317,7 @@ function niLSave() {
 
 function niLDelete() {
   if (!LIVRE_ACTIF || !_niSelL) return;
+  if (!canEdit(LIVRE_ACTIF)) { showToast('❌ Lecture seule — tu ne peux pas modifier ce livre', 'warn'); return; }
   var l = (LIVRE_ACTIF.lieux||[]).find(function(x){ return x.id===_niSelL; });
   var nom = l ? l.nom : 'ce lieu';
   if (!confirm('Supprimer « ' + nom + ' » ? Cette action est irréversible.')) return;
@@ -9457,12 +9475,14 @@ function niMAddCit() {
 
 function niMDelCit(id) {
   if (!LIVRE_ACTIF) return;
+  if (!canEdit(LIVRE_ACTIF)) { showToast('❌ Lecture seule', 'warn'); return; }
   LIVRE_ACTIF.citations = (LIVRE_ACTIF.citations || []).filter(function(c){ return c.id !== id; });
   sauvegarderBiblio(); niMRenderCit();
 }
 
 function niMUpdateCit(id, field, val) {
   if (!LIVRE_ACTIF) return;
+  if (!canEdit(LIVRE_ACTIF)) return; // contrôle d'accès
   var cit = (LIVRE_ACTIF.citations || []).find(function(c){ return c.id === id; });
   if (cit) { cit[field] = val; sauvegarderBiblio(); }
 }
