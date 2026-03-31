@@ -2228,7 +2228,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
               <div style="font-size:1rem;flex-shrink:0;">📍</div>
               <div id="ni-l-det-name">—</div>
               <button class="btn-hdr btn-mic" id="ni-l-det-mic" onclick="niMicStart('ni-l-det-ta','ni-l-det-mic')" title="Dicter">🎤</button>
-              <button class="btn-hdr btn-clear" onclick="niLClear()" title="Vider la zone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><line x1="8" y1="8" x2="16" y2="16"/><line x1="16" y1="8" x2="8" y2="16"/></svg></button>
+              <button class="btn-hdr btn-clear" id="ni-l-det-clear" onclick="niLClear()" title="Vider la zone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><line x1="8" y1="8" x2="16" y2="16"/><line x1="16" y1="8" x2="8" y2="16"/></svg></button>
               <button class="btn-hdr btn-del" id="ni-l-det-del" onclick="niLDelete()" title="Supprimer ce lieu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
               <button id="ni-l-det-cls" onclick="niLClose()" title="Fermer">✕</button>
             </div>
@@ -4513,6 +4513,8 @@ function ouvrirLivre(id) {
   // en lecture seule et on masque les boutons d'action destructifs.
   (function appliquerDroitsGuide() {
     var ro = !canEdit(livre);
+    var vis = ro ? 'none' : '';
+
     // Champs texte et textarea dans l'écran guide
     document.querySelectorAll(
       '#screen-guide textarea, #screen-guide input[type="text"], #screen-guide input[type="number"]'
@@ -4522,12 +4524,43 @@ function ouvrirLivre(id) {
       el.style.color      = ro ? '#6b7080' : '';
       el.style.cursor     = ro ? 'default'  : '';
     });
-    // Bouton "Forcer l'enregistrement"
+
+    // ── Boutons globaux ──────────────────────────────────────
+    // Forcer l'enregistrement
     var btnSave = document.getElementById('btn-save-global');
-    if (btnSave) btnSave.style.display = ro ? 'none' : '';
-    // Bouton IA (tri carnet) — autorisé en lecture seule (IA ne modifie que si on confirme)
-    // Les boutons Ajouter entité / Ajouter lieu restent visibles mais seront bloqués par les save guards
-    // Bannière lecture seule dans le header
+    if (btnSave) btnSave.style.display = vis;
+
+    // ── Zone "Nouveau personnage" (section classique) ─────────
+    var btnAddPerso = document.querySelector('#sec-personnages .add-bar .btn');
+    if (btnAddPerso) btnAddPerso.style.display = vis;
+
+    // ── Zone "Nouveau lieu" (section classique) ───────────────
+    var btnAddLieu = document.querySelector('#sec-lieux .add-bar .btn');
+    if (btnAddLieu) btnAddLieu.style.display = vis;
+
+    // ── Panneau NI Lieux — bouton ＋ et 🎤 "Nouveau lieu" ────
+    var btnNiLAdd = document.querySelector('#ni-lieux-panel .ni-fb-add');
+    if (btnNiLAdd) btnNiLAdd.style.display = vis;
+    var btnNiLMic = document.getElementById('ni-l-mic');
+    if (btnNiLMic) btnNiLMic.style.display = vis;
+
+    // ── Micros dans le panneau Livre (courant, style, etc.) ──
+    ['lv-mic-courant','lv-mic-style','lv-mic-contexte','lv-mic-auteurVie','lv-mic-trajectoire'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.style.display = vis;
+    });
+
+    // ── Tous les boutons .btn-mic dans #screen-guide ──────────
+    // (couvre les toolbars de textareas, micros inline, etc.)
+    document.querySelectorAll('#screen-guide .btn-mic').forEach(function(el) {
+      el.style.display = vis;
+    });
+
+    // ── Bouton ⊗ (vider notes) panneau NI personnage ─────────
+    var btnPClear = document.getElementById('ni-det-clear');
+    if (btnPClear) btnPClear.style.display = vis;
+
+    // ── Bannière lecture seule ────────────────────────────────
     var banEx = document.getElementById('ro-banner');
     if (ro && !banEx) {
       var ban = document.createElement('div');
@@ -9318,6 +9351,9 @@ function niLSelect(id) {
   // Bouton supprimer : visible seulement si l'utilisateur peut modifier
   var btnDel = document.getElementById('ni-l-det-del');
   if (btnDel) btnDel.style.display = canEdit(LIVRE_ACTIF) ? '' : 'none';
+  // Bouton vider (⊗) : visible seulement si l'utilisateur peut modifier
+  var btnClear = document.getElementById('ni-l-det-clear');
+  if (btnClear) btnClear.style.display = canEdit(LIVRE_ACTIF) ? '' : 'none';
   // Bouton micro : visible seulement si l'utilisateur peut modifier
   var btnMic = document.getElementById('ni-l-det-mic');
   if (btnMic) btnMic.style.display = canEdit(LIVRE_ACTIF) ? '' : 'none';
