@@ -353,6 +353,11 @@ body.mode-elise .ni-mi.only-elise{display:flex;}
 .phase-chv{font-size:.6rem;transition:transform .2s;color:rgba(255,255,255,.8)!important;}
 .phase-body{display:none;padding:10px 13px;border-top:1px solid var(--gris2);}
 .phase-body.open{display:block;}
+/* Micro dans phase-header (auto stop-propagation) */
+.phase-mic{width:26px;height:26px;font-size:.8rem;background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.5);color:#fff;margin-right:4px;}
+.phase-mic.rec{background:rgba(255,255,255,.9);color:#E53935;border-color:#E53935;}
+/* Séparateur visuel entre actions neutres et destructives dans les headers */
+.btn-hdr.btn-del{margin-left:4px;border-left:1px solid rgba(255,255,255,.25);padding-left:4px;}
 .phase-ta{width:100%;font-family:inherit;font-size:.9rem;font-weight:500;border:2px solid var(--gris2);border-radius:8px;padding:8px 11px;outline:none;color:var(--texte);background:#fff;resize:vertical;min-height:70px;line-height:1.6;}
 .phase-ta:focus{border-color:var(--bleu);}
 .phase-hint{font-size:.7rem;color:#999;font-style:italic;margin-bottom:6px;line-height:1.4;}
@@ -426,6 +431,7 @@ body.ni-on #guide-content-wrap{margin-left:0;}
 }
 .livre-card:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(0,0,0,.12);}
 .livre-card:active{transform:scale(.97);}
+.livre-card{position:relative;}
 .lc-icon{font-size:2rem;line-height:1;}
 .lc-titre{font-weight:900;font-size:.95rem;color:var(--bleu);margin:0;}
 .lc-auteur{font-size:.76rem;color:#666;font-style:italic;margin:0;}
@@ -435,9 +441,9 @@ body.ni-on #guide-content-wrap{margin-left:0;}
 .lc-badge.axel{background:#E3F2FD;color:var(--bleu);}
 .lc-badge.elise{background:#F3E5F5;color:#6A1B9A;}
 .lc-badge.both{background:#E8F5E9;color:#2E7D32;}
-.lc-actions{display:flex;justify-content:flex-end;margin-top:4px;}
-.lc-del{background:none;border:none;color:#ccc;font-size:.85rem;padding:2px 4px;cursor:pointer;}
-.lc-del:hover{color:#c0392b;}
+.lc-actions{position:absolute;bottom:12px;right:12px;}
+.lc-del{background:#fff;border:2px solid #EF9A9A;color:#c0392b;border-radius:8px;width:34px;height:34px;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .12s;}
+.lc-del:hover,.lc-del:active{background:#FFEBEE;}
 .btn-nouveau-grid{
   display:flex;align-items:center;justify-content:center;gap:8px;
   width:100%;padding:14px;border-radius:14px;
@@ -512,18 +518,9 @@ body.ni-on.ni-sec-personnages #guide-content-wrap > #content{display:none !impor
 .ni-fb-add:active{background:var(--bleu);}
 #ni-l-focus .ni-fb-add{background:#2E7D32;}
 #ni-l-focus .ni-fb-add:active{background:#1B5E20;}
-.ni-fb-mic{
-  border:1.5px solid #F9A825;background:#fff;color:#E65100;
-  border-radius:8px;font-size:.88rem;
-  padding:0 8px;cursor:pointer;flex:1;
-  display:flex;align-items:center;justify-content:center;
-  min-height:26px;transition:background .15s;
-}
-.ni-fb-mic:active,.ni-fb-mic.rec{background:#FFF3E0;}
-.ni-fb-mic.rec{border-color:#E53935;color:#E53935;animation:niblink .6s infinite;}
-#ni-l-focus .ni-fb-mic{border-color:#66BB6A;color:#2E7D32;}
-#ni-l-focus .ni-fb-mic:active,#ni-l-focus .ni-fb-mic.rec{background:#E8F5E9;}
-#ni-l-focus .ni-fb-mic.rec{border-color:#E53935;color:#E53935;}
+/* .ni-fb-mic hérite de .btn-mic — surcharges contextuelles conservées */
+#ni-l-focus .btn-mic{border-color:#66BB6A;color:#2E7D32;}
+#ni-l-focus .btn-mic:active,#ni-l-focus .btn-mic.rec{background:#E8F5E9;}
 
 /* 2-column zone: list | detail */
 #ni-listdet{
@@ -581,6 +578,28 @@ body.ni-on.ni-sec-personnages #guide-content-wrap > #content{display:none !impor
 .btn-save{background:#fff;color:#1a1a2e;border:2px solid #888;border-radius:8px;width:36px;height:36px;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .12s,border-color .12s;}
 .btn-save:active,.btn-save:focus{background:#e8e8e8;border-color:#444;outline:none;}
 .btn-save svg{width:20px;height:20px;pointer-events:none;}
+/* ── Boutons outils normalisés ── */
+/* Micro : orange, s'enflamme en rouge quand actif */
+.btn-mic{background:#fff;color:#E65100;border:2px solid #F9A825;border-radius:8px;width:36px;height:36px;padding:0;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .12s,border-color .12s;}
+.btn-mic:active,.btn-mic.rec{background:#FFF3E0;border-color:#E65100;}
+.btn-mic.rec{border-color:#E53935;color:#E53935;animation:niblink .6s infinite;}
+/* Effacer zone (× cerclé) : gris neutre, n'efface QUE le contenu de la zone */
+.btn-clear{background:#fff;color:#666;border:2px solid #bbb;border-radius:8px;width:36px;height:36px;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .12s,border-color .12s;}
+.btn-clear:active,.btn-clear:focus{background:#f0f0f0;border-color:#888;outline:none;}
+.btn-clear svg{width:18px;height:18px;pointer-events:none;}
+/* Supprimer item (corbeille) : rouge, action irréversible sur la fiche entière */
+.btn-del{background:#fff;color:#c0392b;border:2px solid #EF9A9A;border-radius:8px;width:36px;height:36px;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .12s,border-color .12s;}
+.btn-del:active,.btn-del:focus{background:#FFEBEE;border-color:#c0392b;outline:none;}
+.btn-del svg{width:18px;height:18px;pointer-events:none;}
+/* Barre d'outils sous une textarea (micro + effacer) */
+.ta-toolbar{display:flex;justify-content:flex-end;gap:5px;padding:4px 0 2px;}
+.ta-toolbar .btn-mic,.ta-toolbar .btn-clear{width:30px;height:30px;font-size:.85rem;}
+.ta-toolbar .btn-mic svg,.ta-toolbar .btn-clear svg{width:15px;height:15px;}
+/* Version compacte pour headers colorés (personnages, lieux) */
+.btn-hdr{background:rgba(255,255,255,.18);border:1.5px solid rgba(255,255,255,.4);color:#fff;border-radius:7px;width:30px;height:30px;padding:0;font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .12s;}
+.btn-hdr:active{background:rgba(255,255,255,.35);}
+.btn-hdr.rec{border-color:#E53935;color:#E53935;animation:niblink .6s infinite;background:rgba(255,255,255,.9);}
+.btn-hdr svg{width:16px;height:16px;pointer-events:none;}
 
 /* PDF zone */
 #ni-pdf-row{padding:8px 12px;background:#fff;border-top:1px solid #D4DCF0;flex-shrink:0;}
@@ -791,7 +810,9 @@ body.ni-on.ni-sec-mots #guide-content-wrap>#content{display:none !important;}
 /* Axel : textarea unique — hauteur initiale généreuse, resize libre vers le bas */
 .only-axel.ni-t-sec{flex:0 0 auto;}
 .only-axel.ni-t-sec .ni-t-ta{height:320px;min-height:120px;}
+/* Bandeau Temps : flex avec micro à droite */
 .ni-t-lbl{font-size:.63rem;font-weight:900;text-transform:uppercase;letter-spacing:.4px;padding:5px 10px;border-radius:7px 7px 0 0;display:flex;align-items:center;gap:5px;flex-shrink:0;}
+.ni-t-lbl .btn-mic{width:26px;height:26px;font-size:.8rem;margin-left:auto;flex-shrink:0;}
 .ni-t-ta{width:100%;border:1.5px solid #CFD8DC;border-top:none;border-radius:0 0 7px 7px;padding:8px 10px;font-size:.78rem;font-family:inherit;resize:vertical;outline:none;background:#FAFBFC;line-height:1.6;min-height:110px;height:160px;box-sizing:border-box;}
 .ni-t-ta:focus{border-color:#E65100;box-shadow:0 0 0 2px rgba(230,81,0,.1);}
 
@@ -1910,7 +1931,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
             onkeydown="if(event.ctrlKey&&event.key==='Enter')niPAjouter()"></textarea>
           <div class="ni-focus-btns">
             <button class="ni-fb-add" onclick="niPAjouter()" title="Ajouter (Ctrl+Entrée)">＋</button>
-            <button class="ni-fb-mic" id="ni-focus-mic" onclick="niMicStart('ni-focus-ta','ni-focus-mic')" title="Dicter">🎤</button>
+            <button class="btn-mic ni-fb-mic" id="ni-focus-mic" onclick="niMicStart('ni-focus-ta','ni-focus-mic')" title="Dicter">🎤</button>
           </div>
         </div>
       </div>
@@ -1933,10 +1954,13 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
               <div id="ni-det-av"></div>
               <div id="ni-det-name">—</div>
               <div id="ni-det-tag"></div>
-              <button class="btn-save" id="ni-det-save" onclick="niPSaveDirect()" title="Enregistrer (Ctrl+S)"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm3-10H7V5h8v4z"/></svg></button>
-              <button id="ni-det-cls" onclick="niPClose()">✕</button>
+              <button class="btn-hdr btn-mic" id="ni-det-mic" onclick="niMicStart('ni-det-body','ni-det-mic')" title="Dicter">🎤</button>
+              <button class="btn-hdr btn-save" id="ni-det-save" onclick="niPSaveDirect()" title="Enregistrer (Ctrl+S)"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm3-10H7V5h8v4z"/></svg></button>
+              <button class="btn-hdr btn-clear" id="ni-det-clear" onclick="niPClear()" title="Vider la zone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><line x1="8" y1="8" x2="16" y2="16"/><line x1="16" y1="8" x2="8" y2="16"/></svg></button>
+              <button class="btn-hdr btn-del" id="ni-det-del" onclick="niPDelete()" title="Supprimer ce personnage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+              <button id="ni-det-cls" onclick="niPClose()" title="Fermer">✕</button>
             </div>
-            <textarea id="ni-det-body" oninput="niPSaveDirect()" placeholder="Notes sur ce personnage…&#10;Rôle, caractère, relations, citations…&#10;&#10;Modifie directement ici ou dicte avec le micro 🎤"></textarea>
+            <textarea id="ni-det-body" oninput="niPSaveDirect()" placeholder="Notes sur ce personnage…&#10;Rôle, caractère, relations, citations…&#10;&#10;Dicte avec le micro 🎤"></textarea>
           </div>
         </div>
       </div>
@@ -2001,13 +2025,17 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
       <!-- Petites zones Courant + Style -->
       <div id="ni-lv-small">
         <div class="ni-lv-small-zone">
-          <div class="ni-lv-small-lbl" style="color:#00838F">📚 Courant littéraire</div>
+          <div class="ni-lv-small-lbl" style="color:#00838F;display:flex;align-items:center;gap:4px;">📚 Courant littéraire
+            <button class="btn-mic" id="lv-mic-courant" onclick="niMicStart('ni-lv-courant','lv-mic-courant')" title="Dicter" style="width:22px;height:22px;font-size:.75rem;margin-left:auto;">🎤</button>
+          </div>
           <textarea id="ni-lv-courant" class="ni-lv-small-ta" rows="2"
             placeholder="Réalisme, Romantisme…"
             oninput="niLVSave('courant',this.value)"></textarea>
         </div>
         <div class="ni-lv-small-zone">
-          <div class="ni-lv-small-lbl" style="color:#AD1457">🖋️ Style</div>
+          <div class="ni-lv-small-lbl" style="color:#AD1457;display:flex;align-items:center;gap:4px;">🖋️ Style
+            <button class="btn-mic" id="lv-mic-style" onclick="niMicStart('ni-lv-style','lv-mic-style')" title="Dicter" style="width:22px;height:22px;font-size:.75rem;margin-left:auto;">🎤</button>
+          </div>
           <textarea id="ni-lv-style" class="ni-lv-small-ta" rows="2"
             placeholder="Lexique, syntaxe, figures récurrentes…"
             oninput="niLVSave('style',this.value)">
@@ -2038,7 +2066,9 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
     <div id="ni-lv-right">
 
       <div class="ni-lv-zone">
-        <div class="ni-lv-zone-hdr" style="color:var(--orange)">🌍 Époque &amp; contexte historique</div>
+        <div class="ni-lv-zone-hdr" style="color:var(--orange)">🌍 Époque &amp; contexte historique
+          <button class="btn-mic" id="lv-mic-contexte" onclick="niMicStart('ni-lv-contexte','lv-mic-contexte')" title="Dicter" style="width:26px;height:26px;font-size:.85rem;margin-left:auto;">🎤</button>
+        </div>
         <div class="ni-lv-zone-hint">Que se passait-il dans le monde quand ce livre a été écrit ? (politique, guerres, société, culture…)</div>
         <textarea id="ni-lv-contexte" class="ni-lv-ta"
           placeholder="Ex. : L'Angleterre victorienne (1837-1901) est une époque de révolution industrielle…"
@@ -2046,7 +2076,9 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
       </div>
 
       <div class="ni-lv-zone">
-        <div class="ni-lv-zone-hdr" style="color:var(--violet)">✍️ L'auteur·e au moment de l'écriture</div>
+        <div class="ni-lv-zone-hdr" style="color:var(--violet)">✍️ L'auteur·e au moment de l'écriture
+          <button class="btn-mic" id="lv-mic-auteurVie" onclick="niMicStart('ni-lv-auteurVie','lv-mic-auteurVie')" title="Dicter" style="width:26px;height:26px;font-size:.85rem;margin-left:auto;">🎤</button>
+        </div>
         <div class="ni-lv-zone-hint">Quel âge avait-il/elle ? Sa vie à cette époque (santé, famille, rencontres importantes…)</div>
         <textarea id="ni-lv-auteurVie" class="ni-lv-ta"
           placeholder="Ex. : Quand il écrit ce livre, l'auteur a 38 ans. Il vient de traverser une période difficile…"
@@ -2054,7 +2086,9 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
       </div>
 
       <div class="ni-lv-zone">
-        <div class="ni-lv-zone-hdr" style="color:var(--vert)">📖 Place dans la trajectoire de l'auteur·e</div>
+        <div class="ni-lv-zone-hdr" style="color:var(--vert)">📖 Place dans la trajectoire de l'auteur·e
+          <button class="btn-mic" id="lv-mic-trajectoire" onclick="niMicStart('ni-lv-trajectoire','lv-mic-trajectoire')" title="Dicter" style="width:26px;height:26px;font-size:.85rem;margin-left:auto;">🎤</button>
+        </div>
         <div class="ni-lv-zone-hint">Est-ce son premier livre ? Une rupture dans son style ? Ce que ce livre représente dans sa carrière.</div>
         <textarea id="ni-lv-trajectoire" class="ni-lv-ta"
           placeholder="Ex. : Ce roman est son œuvre majeure. Il marque un tournant car… Avant, il avait publié… Après, il écrira…"
@@ -2074,7 +2108,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
             onkeydown="if(event.ctrlKey&&event.key==='Enter')niLAjouter()"></textarea>
           <div class="ni-focus-btns">
             <button class="ni-fb-add" onclick="niLAjouter()" title="Ajouter (Ctrl+Entrée)">＋</button>
-            <button class="ni-fb-mic" id="ni-l-mic" onclick="niMicStart('ni-l-inp','ni-l-mic')" title="Dicter">🎤</button>
+            <button class="btn-mic ni-fb-mic" id="ni-l-mic" onclick="niMicStart('ni-l-inp','ni-l-mic')" title="Dicter">🎤</button>
           </div>
         </div>
       </div>
@@ -2092,15 +2126,15 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
             <div id="ni-l-det-hdr">
               <div style="font-size:1rem;flex-shrink:0;">📍</div>
               <div id="ni-l-det-name">—</div>
-              <button id="ni-l-det-cls" onclick="niLClose()">✕</button>
+              <button class="btn-hdr btn-mic" id="ni-l-det-mic" onclick="niMicStart('ni-l-det-ta','ni-l-det-mic')" title="Dicter">🎤</button>
+              <button class="btn-hdr btn-save" onclick="niLSave()" title="Enregistrer"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm3-10H7V5h8v4z"/></svg></button>
+              <button class="btn-hdr btn-clear" onclick="niLClear()" title="Vider la zone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><line x1="8" y1="8" x2="16" y2="16"/><line x1="16" y1="8" x2="8" y2="16"/></svg></button>
+              <button class="btn-hdr btn-del" onclick="niLDelete()" title="Supprimer ce lieu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+              <button id="ni-l-det-cls" onclick="niLClose()" title="Fermer">✕</button>
             </div>
             <div id="ni-l-det-body">
               <textarea id="ni-l-det-ta" rows="8"
-                placeholder="Notes sur ce lieu : description, atmosphère, symbolique…&#10;&#10;Quel personnage y va ? Pourquoi ?&#10;Espace ouvert ou fermé ?"></textarea>
-            </div>
-            <div id="ni-l-det-foot">
-              <button class="ni-l-sv btn-save" onclick="niLSave()" title="Enregistrer"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm3-10H7V5h8v4z"/></svg></button>
-              <button class="ni-l-dl" onclick="niLDelete()">🗑️ Supprimer</button>
+                placeholder="Notes sur ce lieu : description, atmosphère, symbolique…&#10;&#10;Quel personnage y va ? Pourquoi ?&#10;Espace ouvert ou fermé ?&#10;&#10;Dicte avec le micro 🎤"></textarea>
             </div>
           </div>
         </div>
@@ -2128,35 +2162,40 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
     <div id="ni-t-left">
       <!-- AXEL : textarea simple -->
       <div class="only-axel ni-t-sec">
-        <div class="ni-t-lbl" style="background:#FFF3E0;color:#E65100;">⏳ Époque &amp; Chronologie</div>
+        <div class="ni-t-lbl" style="background:#FFF3E0;color:#E65100;">⏳ Époque &amp; Chronologie<button class="btn-save" title="Enregistrer" style="width:26px;height:26px;margin-left:4px;" onclick="niTSaveSimple()"><svg viewBox="0 0 24 24" fill="currentColor" style="width:14px;height:14px;"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm3-10H7V5h8v4z"/></svg></button><button class="btn-mic" id="tmic-simple" onclick="niMicStart('ni-t-simple','tmic-simple')" title="Dicter">🎤</button></div>
         <textarea id="ni-t-simple" class="ni-t-ta"
           placeholder="L'époque, les dates importantes, l'ordre des événements…"
           oninput="niTSaveSimple()"></textarea>
+        
       </div>
       <!-- ÉLISE : 4 zones structurées -->
       <div class="only-elise ni-t-sec">
-        <div class="ni-t-lbl" style="background:#FFF3E0;color:#E65100;">📐 Ordre narratif</div>
+        <div class="ni-t-lbl" style="background:#FFF3E0;color:#E65100;">📐 Ordre narratif<button class="btn-save" title="Enregistrer" style="width:26px;height:26px;margin-left:4px;" onclick="niTSave()"><svg viewBox="0 0 24 24" fill="currentColor" style="width:14px;height:14px;"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm3-10H7V5h8v4z"/></svg></button><button class="btn-mic" id="tmic-ordre" onclick="niMicStart('ni-t-ordre','tmic-ordre')" title="Dicter">🎤</button></div>
         <textarea id="ni-t-ordre" class="ni-t-ta" rows="5"
           placeholder="L'histoire est-elle dans l'ordre ? Flashbacks (analepse) ? Anticipations (prolepse) ? → Effets"
           oninput="niTSave()"></textarea>
+        
       </div>
       <div class="only-elise ni-t-sec">
-        <div class="ni-t-lbl" style="background:#FFF3E0;color:#BF360C;">⏱️ Durée &amp; Rythme</div>
+        <div class="ni-t-lbl" style="background:#FFF3E0;color:#BF360C;">⏱️ Durée &amp; Rythme<button class="btn-save" title="Enregistrer" style="width:26px;height:26px;margin-left:4px;" onclick="niTSave()"><svg viewBox="0 0 24 24" fill="currentColor" style="width:14px;height:14px;"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm3-10H7V5h8v4z"/></svg></button><button class="btn-mic" id="tmic-duree" onclick="niMicStart('ni-t-duree','tmic-duree')" title="Dicter">🎤</button></div>
         <textarea id="ni-t-duree" class="ni-t-ta" rows="5"
           placeholder="Quels moments sont dilatés (lents) ? Accélérés ? Ellipses ? Pourquoi ?"
           oninput="niTSave()"></textarea>
+        
       </div>
       <div class="only-elise ni-t-sec">
-        <div class="ni-t-lbl" style="background:#FFF3E0;color:#BF360C;">🔁 Fréquence</div>
+        <div class="ni-t-lbl" style="background:#FFF3E0;color:#BF360C;">🔁 Fréquence<button class="btn-save" title="Enregistrer" style="width:26px;height:26px;margin-left:4px;" onclick="niTSave()"><svg viewBox="0 0 24 24" fill="currentColor" style="width:14px;height:14px;"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm3-10H7V5h8v4z"/></svg></button><button class="btn-mic" id="tmic-frequence" onclick="niMicStart('ni-t-frequence','tmic-frequence')" title="Dicter">🎤</button></div>
         <textarea id="ni-t-frequence" class="ni-t-ta" rows="5"
           placeholder="Singulatif · Itératif (habitude) · Répétitif (obsession). Certains événements reviennent-ils ?"
           oninput="niTSave()"></textarea>
+        
       </div>
       <div class="only-elise ni-t-sec">
-        <div class="ni-t-lbl" style="background:#E8F5E9;color:#2E7D32;">🗺️ Organisation de l'espace</div>
+        <div class="ni-t-lbl" style="background:#E8F5E9;color:#2E7D32;">🗺️ Organisation de l'espace<button class="btn-save" title="Enregistrer" style="width:26px;height:26px;margin-left:4px;" onclick="niTSave()"><svg viewBox="0 0 24 24" fill="currentColor" style="width:14px;height:14px;"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm3-10H7V5h8v4z"/></svg></button><button class="btn-mic" id="tmic-espace" onclick="niMicStart('ni-t-espace','tmic-espace')" title="Dicter">🎤</button></div>
         <textarea id="ni-t-espace" class="ni-t-ta" rows="5"
           placeholder="Espaces réels vs symboliques · Ouverts vs fermés · Mouvements des personnages…"
           oninput="niTSave()"></textarea>
+        
       </div>
     </div>
     <div id="ni-t-right">
@@ -2173,7 +2212,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 
     <!-- Q1 : VOCABULAIRE (haut-gauche) -->
     <div class="ni-q" id="ni-q-vocab">
-      <div class="ni-q-hdr" style="background:#EDE7F6;color:#4A148C;"><span class="ni-q-hdr-lbl">📖 Vocabulaire</span><button class="ni-q-sv btn-save" onclick="niQSave('Vocabulaire')" title="Enregistrer"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm3-10H7V5h8v4z"/></svg></button><button class="ni-q-mic" id="qmic-vocab" onclick="niMicStart('ni-m-mots-ta','qmic-vocab')" title="Dicter">🎤</button></div>
+      <div class="ni-q-hdr" style="background:#EDE7F6;color:#4A148C;"><span class="ni-q-hdr-lbl">📖 Vocabulaire</span><button class="ni-q-sv btn-save" onclick="niQSave('Vocabulaire')" title="Enregistrer"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm3-10H7V5h8v4z"/></svg></button><button class="btn-mic ni-q-mic" id="qmic-vocab" onclick="niMicStart('ni-m-mots-ta','qmic-vocab')" title="Dicter">🎤</button></div>
       <div class="ni-q-body">
         <div class="ni-q-hint">Un mot difficile par bloc, avec sa définition ou son contexte.</div>
         <textarea id="ni-m-mots-ta" class="ni-q-ta"
@@ -2196,18 +2235,18 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
     <div class="ni-q" id="ni-q-themes">
       <div class="ni-q-hdr" style="background:#FFF3E0;color:#E65100;"><span class="ni-q-hdr-lbl">🎯 Thèmes</span><button class="ni-q-sv btn-save" onclick="niQSave('Thèmes')" title="Enregistrer"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm3-10H7V5h8v4z"/></svg></button></div>
       <div class="ni-q-body">
-        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#AD1457">❤️ Amour</div><textarea id="ni-m-th-amour"    class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('amour',this.value)"></textarea><button class="ni-m-th-mic" id="thmic-amour"    onclick="niMicStart('ni-m-th-amour','thmic-amour')"    title="Dicter">🎤</button></div>
-        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#c0392b">⚡ Pouvoir</div><textarea id="ni-m-th-pouvoir"  class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('pouvoir',this.value)"></textarea><button class="ni-m-th-mic" id="thmic-pouvoir"  onclick="niMicStart('ni-m-th-pouvoir','thmic-pouvoir')"  title="Dicter">🎤</button></div>
-        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#2E5FA3">🕊️ Liberté</div><textarea id="ni-m-th-liberte"  class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('liberte',this.value)"></textarea><button class="ni-m-th-mic" id="thmic-liberte"  onclick="niMicStart('ni-m-th-liberte','thmic-liberte')"  title="Dicter">🎤</button></div>
-        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#6A1B9A">🔍 Identité</div><textarea id="ni-m-th-identite" class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('identite',this.value)"></textarea><button class="ni-m-th-mic" id="thmic-identite" onclick="niMicStart('ni-m-th-identite','thmic-identite')" title="Dicter">🎤</button></div>
-        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#E65100">🏛️ Société</div><textarea id="ni-m-th-societe"  class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('societe',this.value)"></textarea><button class="ni-m-th-mic" id="thmic-societe"  onclick="niMicStart('ni-m-th-societe','thmic-societe')"  title="Dicter">🎤</button></div>
-        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#2E7D32">🌿 Nature</div><textarea id="ni-m-th-nature"   class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('nature',this.value)"></textarea><button class="ni-m-th-mic" id="thmic-nature"   onclick="niMicStart('ni-m-th-nature','thmic-nature')"    title="Dicter">🎤</button></div>
+        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#AD1457">❤️ Amour</div><textarea id="ni-m-th-amour"    class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('amour',this.value)"></textarea><button class="btn-mic ni-m-th-mic" id="thmic-amour"    onclick="niMicStart('ni-m-th-amour','thmic-amour')"    title="Dicter">🎤</button></div>
+        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#c0392b">⚡ Pouvoir</div><textarea id="ni-m-th-pouvoir"  class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('pouvoir',this.value)"></textarea><button class="btn-mic ni-m-th-mic" id="thmic-pouvoir"  onclick="niMicStart('ni-m-th-pouvoir','thmic-pouvoir')"  title="Dicter">🎤</button></div>
+        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#2E5FA3">🕊️ Liberté</div><textarea id="ni-m-th-liberte"  class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('liberte',this.value)"></textarea><button class="btn-mic ni-m-th-mic" id="thmic-liberte"  onclick="niMicStart('ni-m-th-liberte','thmic-liberte')"  title="Dicter">🎤</button></div>
+        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#6A1B9A">🔍 Identité</div><textarea id="ni-m-th-identite" class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('identite',this.value)"></textarea><button class="btn-mic ni-m-th-mic" id="thmic-identite" onclick="niMicStart('ni-m-th-identite','thmic-identite')" title="Dicter">🎤</button></div>
+        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#E65100">🏛️ Société</div><textarea id="ni-m-th-societe"  class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('societe',this.value)"></textarea><button class="btn-mic ni-m-th-mic" id="thmic-societe"  onclick="niMicStart('ni-m-th-societe','thmic-societe')"  title="Dicter">🎤</button></div>
+        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#2E7D32">🌿 Nature</div><textarea id="ni-m-th-nature"   class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('nature',this.value)"></textarea><button class="btn-mic ni-m-th-mic" id="thmic-nature"   onclick="niMicStart('ni-m-th-nature','thmic-nature')"    title="Dicter">🎤</button></div>
       </div>
     </div>
 
     <!-- Q4 : AVIS (bas-droite) -->
     <div class="ni-q" id="ni-q-avis">
-      <div class="ni-q-hdr" style="background:#E3F2FD;color:#0D47A1;"><span class="ni-q-hdr-lbl">💭 Avis &amp; Compréhension</span><button class="ni-q-sv btn-save" onclick="niQSave('Avis')" title="Enregistrer"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm3-10H7V5h8v4z"/></svg></button><button class="ni-q-mic" id="qmic-avis" onclick="niMicStart('ni-m-avis-ta','qmic-avis')" title="Dicter">🎤</button></div>
+      <div class="ni-q-hdr" style="background:#E3F2FD;color:#0D47A1;"><span class="ni-q-hdr-lbl">💭 Avis &amp; Compréhension</span><button class="ni-q-sv btn-save" onclick="niQSave('Avis')" title="Enregistrer"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm3-10H7V5h8v4z"/></svg></button><button class="btn-mic ni-q-mic" id="qmic-avis" onclick="niMicStart('ni-m-avis-ta','qmic-avis')" title="Dicter">🎤</button></div>
       <div class="ni-q-body">
         <div class="ni-q-hint">Ce que tu as compris, aimé, les passages marquants…</div>
         <textarea id="ni-m-avis-ta" class="ni-q-ta"
@@ -2247,7 +2286,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
           <textarea id="ni-i-rc-ta" placeholder=""></textarea>
           <div id="ni-i-rc-foot">
             <button class="ni-i-sv btn-save" onclick="niIModerneSave()" title="Enregistrer"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm3-10H7V5h8v4z"/></svg></button>
-            <button class="ni-i-mic-btn" id="ni-i-rc-mic" onclick="niMicStart('ni-i-rc-ta','ni-i-rc-mic')" title="Dicter">🎤</button>
+            <button class="btn-mic ni-i-mic-btn" id="ni-i-rc-mic" onclick="niMicStart('ni-i-rc-ta','ni-i-rc-mic')" title="Dicter">🎤</button>
             <span id="ni-i-rc-saved" style="font-size:.62rem;color:#00897B;opacity:0;transition:opacity .4s;margin-left:4px;">✓ Enregistré</span>
           </div>
         </div>
@@ -3071,14 +3110,15 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
       <div class="card">
         <div class="card-title" style="color:var(--violet)">📓 Carnet de lecture</div>
         <p style="font-size:.73rem;color:#888;margin-bottom:8px;line-height:1.5;">Dicte ou écris librement, puis laisse l'IA distribuer tes notes dans les bonnes zones.</p>
-        <textarea id="carnet-input" class="field" rows="4" style="margin-bottom:10px;resize:vertical;min-height:80px;" placeholder="p.47 — Nemo apparaît, inquiétant et mystérieux&#10;p.52 — mot inconnu : nautilus&#10;p.60 — citation intéressante…"></textarea>
+        <textarea id="carnet-input" class="field" rows="4" style="margin-bottom:6px;resize:vertical;min-height:80px;" placeholder="p.47 — Nemo apparaît, inquiétant et mystérieux&#10;p.52 — mot inconnu : nautilus&#10;p.60 — citation intéressante…"></textarea>
+        <div class="ta-toolbar" style="margin-bottom:6px;"><button class="btn-mic" id="carnet-mic" onclick="niMicStart('carnet-input','carnet-mic')" title="Dicter">🎤</button></div>
         <div style="display:flex;gap:8px;margin-bottom:6px;flex-wrap:wrap;align-items:center;">
           <button class="btn btn-violet" style="flex:1;font-weight:900;" onclick="saisirEtTrier()">🤖 Enregistrer et trier avec l'IA</button>
           <button class="btn btn-gris btn-sm" onclick="ajouterNoteCarnet()" title="Enregistrer sans trier">＋</button>
         </div>
         <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;">
           <span id="ia-key-badge" style="font-size:.68rem;color:#aaa;cursor:pointer;" onclick="ouvrirModalSync();setTimeout(()=>showSyncTab('ia'),100)"></span>
-          <button class="btn btn-gris btn-sm" style="margin-left:auto;" onclick="viderCarnetTrie()">🗑️ Effacer triées</button>
+          <button class="btn btn-gris btn-sm" style="margin-left:auto;" onclick="viderCarnetTrie()" title="Effacer les notes déjà triées">🗑️ Effacer triées</button>
         </div>
       </div>
 
@@ -4198,7 +4238,7 @@ function renderBiblio() {
       '</div>' +
       '<span class="lc-badge ' + badgeCls + '">' + badgeTxt + '</span>' +
       '<div class="lc-actions">' +
-        '<button class="lc-del" title="Supprimer">🗑️</button>' +
+        '<button class="lc-del btn-del" title="Supprimer">' + _SVG_DEL_STR + '</button>' +
       '</div>';
     div.addEventListener('click', function(e){
       if (e.target.classList.contains('lc-del')) {
@@ -4497,8 +4537,11 @@ function showEcrirePanel(panel, btnEl) {
   // Mettre à jour les onglets actifs
   document.querySelectorAll('#ecrire-tabs .mots-subtab').forEach(b => b.classList.remove('active'));
   document.getElementById('etab-' + panel)?.classList.add('active');
-  // Ajuster les hauteurs de toutes les textareas du panneau affiché
-  requestAnimationFrame(autoResizeEcrire);
+  // Ajuster les hauteurs + toolbars du panneau affiché
+  requestAnimationFrame(function() {
+    initEcrireToolbars();
+    autoResizeEcrire();
+  });
 }
 
 // ════════════════════════════════════════════════════════
@@ -4537,7 +4580,7 @@ function renderEntity(type, entity) {
       '<span class="entity-name">' + esc(entity.nom) + '</span>' +
       '<div class="entity-acts" onclick="event.stopPropagation()">' +
         '<button class="btn btn-gris btn-xs" onclick="editEntityName(\'' + type + '\',\'' + entity.id + '\')">✏️</button>' +
-        '<button class="btn btn-rouge btn-xs" onclick="deleteEntity(\'' + type + '\',\'' + entity.id + '\')">🗑️</button>' +
+        '<button class="btn-del" onclick="deleteEntity(\'' + type + '\',\'' + entity.id + '\')" title="Supprimer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>' +
       '</div>' +
       '<span class="entity-chv">▼</span>' +
     '</div>' +
@@ -5824,17 +5867,25 @@ function showToast(msg, type) {
 // RÉDACTION
 // ════════════════════════════════════════════════════════
 function initRedacZones() {
+  var uid = 0;
   document.querySelectorAll('.redac-zone').forEach(zone => {
     const label = zone.dataset.label;
     const hint  = zone.dataset.hint;
     const key   = zone.dataset.key;
+    uid++;
+    const taId  = 'redac-ta-' + key.replace(/[^a-z0-9]/gi,'');
     zone.innerHTML =
       '<div class="redac-label">' + label + '</div>' +
       '<div class="redac-hint">' + hint + '</div>' +
-      '<textarea class="redac-ta" rows="4" placeholder="Dicte ou écris ta ' + label.toLowerCase() + '…" ' +
+      '<textarea id="' + taId + '" class="redac-ta" rows="4" placeholder="Dicte ou écris ta ' + label.toLowerCase() + '…" ' +
         'oninput="saveRedac(\'' + key + '\',this.value)">' +
       '</textarea>';
+    // Greffer la toolbar (micro + clear)
+    const ta = zone.querySelector('textarea');
+    if (ta) _mkToolbar(ta);
   });
+  // Toolbar sur les zones déjà présentes dans les autres sections
+  initEcrireToolbars();
 }
 
 // ── Commentaire littéraire ──────────────────────────────
@@ -5867,7 +5918,7 @@ function renderAxesCommentaire() {
         <input class="field" style="flex:1;padding:4px 8px;font-size:.75rem;" placeholder="Titre de l\'axe (ex: La mise en scène du désespoir)"
           value="${esc(axe.titre||'')}"
           oninput="if(LIVRE_ACTIF?.commentaire?.axes?.[${i}]!=null){LIVRE_ACTIF.commentaire.axes[${i}].titre=this.value;sauvegarderBiblio();}">
-        <button class="btn btn-rouge btn-xs" onclick="supprimerAxeCommentaire(${i})">🗑️</button>
+        <button class="btn-del" onclick="supprimerAxeCommentaire(${i})" title="Supprimer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
       </div>
       <textarea class="field" rows="5" style="resize:vertical;font-size:.78rem;" placeholder="Idée directrice / Procédé → Citation → Interprétation / Transition vers l\'axe suivant"
         oninput="if(LIVRE_ACTIF?.commentaire?.axes?.[${i}]!=null){LIVRE_ACTIF.commentaire.axes[${i}].texte=this.value;sauvegarderBiblio();}"
@@ -5921,7 +5972,7 @@ function renderMouvements() {
         <input class="field" style="flex:1;padding:4px 8px;font-size:.75rem;" placeholder="Titre + lignes (ex: La montée de la tension, l.5-12)"
           value="${esc(mvt.titre||'')}"
           oninput="if(LIVRE_ACTIF&&LIVRE_ACTIF.lineaire&&LIVRE_ACTIF.lineaire.mvts[${i}]){LIVRE_ACTIF.lineaire.mvts[${i}].titre=this.value;sauvegarderBiblio();}">
-        <button class="btn btn-rouge btn-xs" onclick="supprimerMouvement(${i})">🗑️</button>
+        <button class="btn-del" onclick="supprimerMouvement(${i})" title="Supprimer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
       </div>
       <textarea class="field" rows="4" style="resize:vertical;font-size:.78rem;" placeholder="Citation → Procédé → Interprétation&#10;Ex: &#34;le loup bondit&#34; (l.8) → champ lexical de la violence → montre l'animalité du personnage"
         oninput="if(LIVRE_ACTIF&&LIVRE_ACTIF.lineaire&&LIVRE_ACTIF.lineaire.mvts[${i}]){LIVRE_ACTIF.lineaire.mvts[${i}].texte=this.value;sauvegarderBiblio();}"
@@ -6400,6 +6451,8 @@ function renderSchemaPhases() {
   schema.phases.forEach(ph => {
     const col     = schema.couleur;
     const colLite = col + '18';
+    const taId    = 'phase-ta-' + ph.key;
+    const micId   = 'phase-mic-' + ph.key;
     const div = document.createElement('div');
     div.className = 'phase-card';
     div.id = 'phase-' + ph.key;
@@ -6411,11 +6464,13 @@ function renderSchemaPhases() {
           `<div class="phase-nom">${ph.nom}</div>` +
           `<div class="phase-def">${ph.def}</div>` +
         `</div>` +
+        `<button class="btn-hdr btn-mic phase-mic" id="${micId}" title="Dicter" ` +
+          `onclick="event.stopPropagation();niMicStart('${taId}','${micId}')">🎤</button>` +
         `<span class="phase-chv">▼</span>` +
       `</div>` +
       `<div class="phase-body" id="phasebody-${ph.key}">` +
         `<div class="phase-hint">${ph.hint}</div>` +
-        `<textarea class="phase-ta" rows="3" placeholder="Écris ou dicte ce qui se passe dans cette phase…" ` +
+        `<textarea id="${taId}" class="phase-ta" rows="3" placeholder="Écris ou dicte ce qui se passe dans cette phase…" ` +
           `oninput="saveNarration('${ph.key}',this.value)">${esc(narr[ph.key] || '')}</textarea>` +
       `</div>`;
     phases.appendChild(div);
@@ -6970,7 +7025,7 @@ function renderCitations() {
       <div class="cit-card-header">
         <span class="cit-card-num">Citation ${idx+1}</span>
         <div class="cit-card-stars">${stars}</div>
-        <button class="btn btn-rouge btn-xs" onclick="deleteCitation('${cit.id}')">🗑️</button>
+        <button class="btn-del" onclick="deleteCitation('${cit.id}')" title="Supprimer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
       </div>
       <div class="cit-card-body">
         <div>
@@ -7196,7 +7251,7 @@ function renderCarnet() {
       <div class="carnet-entry-meta">${meta}${note.sorted ? ' ✓ triée' : ''}</div>
       <div class="carnet-entry-text">${esc(note.texte)}</div>
       <div style="text-align:right;margin-top:6px;">
-        <button class="btn btn-rouge btn-xs" onclick="supprimerNote('${note.id}')">🗑️</button>
+        <button class="btn-del" onclick="supprimerNote('${note.id}')" title="Supprimer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
       </div>`;
     list.appendChild(div);
   });
@@ -7853,6 +7908,13 @@ function fermerExempleDiss() {
 }
 
 
+// ── Constantes SVG globales (doivent être définies avant chargerBiblio) ──
+var _SVG_DEL_STR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>';
+var _SVG_SAVE   = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm3-10H7V5h8v4z"/></svg>';
+var _SVG_CLEAR  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><line x1="8" y1="8" x2="16" y2="16"/><line x1="16" y1="8" x2="8" y2="16"/></svg>';
+var _SVG_MIC    = '🎤';
+var _TOOLBAR_CTR = 0;
+
 chargerBiblio();
 renderBiblio();
 initRedacZones();
@@ -7868,6 +7930,57 @@ window.addEventListener('DOMContentLoaded', chargerMode);
 // ── Auto-hauteur des textareas ÉCRIRE ────────────────────
 // Redimensionne une textarea à la hauteur exacte de son contenu.
 // Minimum : 3 lignes (calculé à partir du line-height et du padding).
+// ── Toolbars micro + clear pour toutes les textareas ÉCRIRE ─────────────
+// SVGs réutilisés
+// (constantes SVG déplacées avant chargerBiblio)
+
+function _mkToolbar(ta) {
+  // Ne pas ajouter deux fois
+  if (ta._toolbarAdded) return;
+  ta._toolbarAdded = true;
+  var bar = document.createElement('div');
+  bar.className = 'ta-toolbar';
+  var uid = ++_TOOLBAR_CTR;
+  var micId = 'ec-mic-' + uid;
+  // Micro
+  var mic = document.createElement('button');
+  mic.className = 'btn-mic';
+  mic.id = micId;
+  mic.title = 'Dicter';
+  mic.textContent = '🎤';
+  mic.type = 'button';
+  mic.addEventListener('click', function() { niMicStart(ta.id || (ta.id='ec-ta-'+uid), micId); });
+  // Effacer zone
+  var clr = document.createElement('button');
+  clr.className = 'btn-clear';
+  clr.title = 'Effacer le contenu de cette zone';
+  clr.type = 'button';
+  clr.innerHTML = _SVG_CLEAR;
+  clr.addEventListener('click', function() {
+    if (!ta.value) return;
+    if (confirm('Effacer le contenu de cette zone ?')) {
+      ta.value = '';
+      ta.dispatchEvent(new Event('input', { bubbles: true }));
+      autoResizeTA(ta);
+    }
+  });
+  bar.appendChild(mic);
+  bar.appendChild(clr);
+  ta.parentNode.insertBefore(bar, ta.nextSibling);
+}
+
+// Attache les toolbars à toutes les textareas des 4 panneaux ÉCRIRE
+function initEcrireToolbars() {
+  ['sec-dissertation','sec-redaction','sec-lineaire','sec-commentaire'].forEach(function(id) {
+    var sec = document.getElementById(id);
+    if (!sec) return;
+    sec.querySelectorAll('textarea').forEach(function(ta) {
+      if (!ta.id) ta.id = 'ec-ta-' + (++_TOOLBAR_CTR);
+      _mkToolbar(ta);
+    });
+  });
+}
+
 function autoResizeTA(ta) {
   var style = window.getComputedStyle(ta);
   var lineH = parseFloat(style.lineHeight) || parseFloat(style.fontSize) * 1.4;
@@ -8082,8 +8195,29 @@ function niPSaveDirect() {
 // Ancienne niPSave — redirige vers la nouvelle logique (compatibilité)
 function niPSave() { niPSaveDirect(); }
 
-// ── Micro / speech recognition ──────────────────────────
-// Note : SpeechRecognition gère sa propre permission nativement dans Chrome/Edge.
+// Supprimer le personnage sélectionné (irréversible)
+function niPDelete() {
+  if (!_niSelP || !LIVRE_ACTIF) return;
+  var p = (LIVRE_ACTIF.personnages||[]).find(function(x){ return x.id===_niSelP; });
+  var nom = p ? p.nom : 'ce personnage';
+  if (!confirm('Supprimer « ' + nom + ' » ? Cette action est irréversible.')) return;
+  LIVRE_ACTIF.personnages = (LIVRE_ACTIF.personnages||[]).filter(function(x){ return x.id!==_niSelP; });
+  sauvegarderBiblio();
+  niPClose(); niPRender();
+  if (_niRelOn) { niRenderMatrix(); niRenderGraph(); }
+  showToast('Personnage supprimé', 'warn');
+}
+
+// Vider le contenu de la zone de notes (sans supprimer le personnage)
+function niPClear() {
+  if (!_niSelP || !LIVRE_ACTIF) return;
+  if (!confirm('Effacer toutes les notes de ce personnage ?')) return;
+  var ta = document.getElementById('ni-det-body');
+  if (ta) ta.value = '';
+  niPSaveDirect();
+}
+
+
 // Ne pas appeler getUserMedia séparément — cela provoquerait une seconde demande.
 var _niMicRec = null;
 
@@ -8840,11 +8974,22 @@ function niLSave() {
 
 function niLDelete() {
   if (!LIVRE_ACTIF || !_niSelL) return;
-  if (!confirm('Supprimer ce lieu ?')) return;
+  var l = (LIVRE_ACTIF.lieux||[]).find(function(x){ return x.id===_niSelL; });
+  var nom = l ? l.nom : 'ce lieu';
+  if (!confirm('Supprimer « ' + nom + ' » ? Cette action est irréversible.')) return;
   LIVRE_ACTIF.lieux = (LIVRE_ACTIF.lieux || []).filter(function(x){ return x.id !== _niSelL; });
   sauvegarderBiblio();
   niLClose(); niLRender();
   showToast('Lieu supprimé', 'warn');
+}
+
+// Vider le contenu des notes (sans supprimer le lieu)
+function niLClear() {
+  if (!_niSelL || !LIVRE_ACTIF) return;
+  if (!confirm('Effacer toutes les notes de ce lieu ?')) return;
+  var ta = document.getElementById('ni-l-det-ta');
+  if (ta) ta.value = '';
+  niLSave();
 }
 
 function niLAjouter() {
@@ -9009,7 +9154,7 @@ function niMRenderCit() {
     var d = document.createElement('div');
     d.className = 'ni-m-cit-card';
     d.innerHTML =
-      '<button class="ni-m-cit-del" onclick="niMDelCit(\'' + c.id + '\')" title="Supprimer">🗑️</button>' +
+      '<button class="ni-m-cit-del btn-del" onclick="niMDelCit(\'' + c.id + '\')" title="Supprimer">' + _SVG_DEL_STR + '</button>' +
       '<textarea class="ni-m-cit-ta" id="' + taId + '" placeholder="Citation exacte…" ' +
         'oninput="niMUpdateCit(\'' + c.id + '\',\'texte\',this.value)"></textarea>' +
       '<div class="ni-m-cit-side">' +
@@ -10333,7 +10478,9 @@ function toggleParamsHelp(){
 <div id="modal-carnet-quick">
   <div id="modal-carnet-box">
     <div id="carnet-quick-saisie">
-      <div style="font-weight:800;color:var(--violet);margin-bottom:6px;">📓 Note rapide</div>
+      <div style="font-weight:800;color:var(--violet);margin-bottom:6px;display:flex;align-items:center;gap:8px;">📓 Note rapide
+        <button class="btn-mic" id="qmic-note" onclick="niMicStart('carnet-quick-input','qmic-note')" title="Dicter" style="margin-left:auto;">🎤</button>
+      </div>
       <p style="font-size:.72rem;color:#888;margin-bottom:8px;line-height:1.5;">Dicte ou écris librement. Exemple : <b>p.47 — Nemo apparaît, inquiétant et mystérieux</b><br>Tu pourras trier ces notes avec l'IA plus tard.</p>
       <textarea id="carnet-quick-input" class="field" rows="6" placeholder="p.47 — ce que tu veux noter…" style="margin-bottom:10px;resize:vertical;min-height:100px;max-height:60vh;"></textarea>
       <div style="display:flex;gap:8px;">
