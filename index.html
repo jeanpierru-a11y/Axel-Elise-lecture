@@ -1987,13 +1987,13 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 
     <!-- Panel bac à sable invité -->
     <div id="panel-invite" style="display:none">
-      <div class="inv-hint">Choisis un pseudo et un code PIN à 4 chiffres.<br>
+      <div class="inv-hint">Choisis un pseudo et un code PIN d'au moins 6 chiffres.<br>
       Retiens-les : ils te serviront à retrouver ton bac à sable.</div>
       <input type="text" id="inv-pseudo" placeholder="Ton prénom ou pseudo" maxlength="40"
         autocomplete="off" autocapitalize="words"
         onkeydown="if(event.key==='Enter')document.getElementById('inv-pin').focus()">
-      <input type="tel" id="inv-pin" inputmode="numeric" placeholder="Code PIN (4 chiffres)"
-        maxlength="4" autocomplete="off"
+      <input type="tel" id="inv-pin" inputmode="numeric" placeholder="Code PIN (6 chiffres min.)"
+        maxlength="12" autocomplete="off"
         onkeydown="if(event.key==='Enter')authInvite()">
       <button id="inv-submit" onclick="authInvite()">Explorer →</button>
       <div id="inv-error"></div>
@@ -6930,7 +6930,7 @@ function authInvite() {
 
   var norm = _normaliserPseudo(pseudo);
   if (!norm) { err.textContent = 'Saisis un prénom ou pseudo.'; return; }
-  if (!/^\d{4}$/.test(pin)) { err.textContent = 'Le code PIN doit faire exactement 4 chiffres.'; return; }
+  if (!/^\d{6,}$/.test(pin)) { err.textContent = 'Le code PIN doit faire au moins 6 chiffres.'; return; }
 
   var email = norm + '@sandbox.guide-lecture.fr';
   err.textContent = '';
