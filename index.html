@@ -1918,6 +1918,10 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 #screen-guide.ro .lc-del,
 #screen-guide.ro .ni-fb-add,
 #screen-guide.ro .ni-fb-mic,
+#screen-guide.ro .ni-m-add-cit,
+#screen-guide.ro .ni-m-cit-mic,
+#screen-guide.ro .ni-m-cit-del,
+#screen-guide.ro #btn-add-citation,
 #screen-guide.ro .add-bar .btn,
 #screen-guide.ro .ta-toolbar,
 #screen-guide.ro #btn-save-global,
@@ -2719,7 +2723,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
         <div class="mots-panel" id="mpanel-citations">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
             <span style="font-size:.72rem;color:#888;">Ajoute une fiche par citation importante.</span>
-            <button class="btn btn-orange btn-sm" onclick="addCitation()">＋ Citation</button>
+            <button id="btn-add-citation" class="btn btn-orange btn-sm" onclick="addCitation()">＋ Citation</button>
           </div>
           <div id="cit-cards-list"></div>
           <div id="cit-cards-vide" style="text-align:center;padding:24px 10px;color:#bbb;font-size:.82rem;">
@@ -6109,7 +6113,7 @@ function renderAxesCommentaire() {
         <input class="field" style="flex:1;padding:4px 8px;font-size:.75rem;" placeholder="Titre de l\'axe (ex: La mise en scène du désespoir)"
           value="${esc(axe.titre||'')}"
           oninput="if(LIVRE_ACTIF?.commentaire?.axes?.[${i}]!=null){LIVRE_ACTIF.commentaire.axes[${i}].titre=this.value;sauvegarderBiblio();}">
-        <button class="btn-del" onclick="supprimerAxeCommentaire(${i})" title="Supprimer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+        ${canEdit(LIVRE_ACTIF) ? `<button class="btn-del" onclick="supprimerAxeCommentaire(${i})" title="Supprimer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>` : ''}
       </div>
       <textarea class="field" rows="5" style="resize:vertical;font-size:.78rem;" placeholder="Idée directrice / Procédé → Citation → Interprétation / Transition vers l\'axe suivant"
         oninput="if(LIVRE_ACTIF?.commentaire?.axes?.[${i}]!=null){LIVRE_ACTIF.commentaire.axes[${i}].texte=this.value;sauvegarderBiblio();}"
@@ -6164,7 +6168,7 @@ function renderMouvements() {
         <input class="field" style="flex:1;padding:4px 8px;font-size:.75rem;" placeholder="Titre + lignes (ex: La montée de la tension, l.5-12)"
           value="${esc(mvt.titre||'')}"
           oninput="if(LIVRE_ACTIF&&LIVRE_ACTIF.lineaire&&LIVRE_ACTIF.lineaire.mvts[${i}]){LIVRE_ACTIF.lineaire.mvts[${i}].titre=this.value;sauvegarderBiblio();}">
-        <button class="btn-del" onclick="supprimerMouvement(${i})" title="Supprimer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+        ${canEdit(LIVRE_ACTIF) ? `<button class="btn-del" onclick="supprimerMouvement(${i})" title="Supprimer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>` : ''}
       </div>
       <textarea class="field" rows="4" style="resize:vertical;font-size:.78rem;" placeholder="Citation → Procédé → Interprétation&#10;Ex: &#34;le loup bondit&#34; (l.8) → champ lexical de la violence → montre l'animalité du personnage"
         oninput="if(LIVRE_ACTIF&&LIVRE_ACTIF.lineaire&&LIVRE_ACTIF.lineaire.mvts[${i}]){LIVRE_ACTIF.lineaire.mvts[${i}].texte=this.value;sauvegarderBiblio();}"
@@ -6658,8 +6662,8 @@ function renderSchemaPhases() {
           `<div class="phase-nom">${ph.nom}</div>` +
           `<div class="phase-def">${ph.def}</div>` +
         `</div>` +
-        `<button class="btn-hdr btn-mic phase-mic" id="${micId}" title="Dicter" ` +
-          `onclick="event.stopPropagation();niMicStart('${taId}','${micId}')">🎤</button>` +
+        (canEdit(LIVRE_ACTIF) ? `<button class="btn-hdr btn-mic phase-mic" id="${micId}" title="Dicter" ` +
+          `onclick="event.stopPropagation();niMicStart('${taId}','${micId}')">🎤</button>` + '' : '') +
         `<span class="phase-chv">▼</span>` +
       `</div>` +
       `<div class="phase-body" id="phasebody-${ph.key}">` +
@@ -7402,7 +7406,7 @@ function renderCitations() {
       <div class="cit-card-header">
         <span class="cit-card-num">Citation ${idx+1}</span>
         <div class="cit-card-stars">${stars}</div>
-        <button class="btn-del" onclick="deleteCitation('${cit.id}')" title="Supprimer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+        ${canEdit(LIVRE_ACTIF) ? `<button class="btn-del" onclick="deleteCitation('${cit.id}')" title="Supprimer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>` : ''}
       </div>
       <div class="cit-card-body">
         <div>
@@ -7733,8 +7737,12 @@ function renderHistorique() {
 // ── Modal saisie rapide ───────────────────────────────────
 function ouvrirCarnetQuick() {
   if (!LIVRE_ACTIF) { showToast('Ouvre un livre d\'abord', 'warn'); return; }
+  if (!canEdit(LIVRE_ACTIF)) { showToast('❌ Lecture seule — tu ne peux pas ajouter de notes', 'warn'); return; }
   const ta = document.getElementById('carnet-quick-input');
   if (ta) ta.style.height = '';
+  // Afficher/masquer le micro selon les droits
+  var qmic = document.getElementById('qmic-note');
+  if (qmic) qmic.style.display = canEdit(LIVRE_ACTIF) ? '' : 'none';
   document.getElementById('modal-carnet-quick')?.classList.add('open');
   setTimeout(() => ta?.focus(), 80);
 }
@@ -8310,6 +8318,8 @@ var _TOOLBAR_CTR = 0;
 function _mkToolbar(ta) {
   // Ne pas ajouter deux fois
   if (ta._toolbarAdded) return;
+  // Ne pas ajouter si lecture seule
+  if (LIVRE_ACTIF && !canEdit(LIVRE_ACTIF)) return;
   ta._toolbarAdded = true;
   var uid = ++_TOOLBAR_CTR;
   var micId = 'ec-mic-' + uid;
@@ -8327,6 +8337,7 @@ function _mkToolbar(ta) {
 
   // Rangée insérée juste avant la textarea — 4 px de marge basse
   var bar = document.createElement('div');
+  bar.className = 'ta-toolbar'; // classe CSS pour ciblage .ro
   bar.style.cssText = 'display:flex;justify-content:flex-end;gap:4px;margin-bottom:4px;';
   bar.appendChild(mic);
   ta.parentNode.insertBefore(bar, ta);
@@ -9513,6 +9524,7 @@ function niMSaveTheme(axe, val) {
 
 function niMAddCit() {
   if (!LIVRE_ACTIF) return;
+  if (!canEdit(LIVRE_ACTIF)) { showToast('❌ Lecture seule', 'warn'); return; }
   var id = 'cit_ni_' + Date.now();
   if (!Array.isArray(LIVRE_ACTIF.citations)) LIVRE_ACTIF.citations = [];
   LIVRE_ACTIF.citations.push({id: id, texte: '', ref: '', theme: '—', procede: '—', interpretation: '', importance: 0});
@@ -9547,13 +9559,13 @@ function niMRenderCit() {
     var d = document.createElement('div');
     d.className = 'ni-m-cit-card';
     d.innerHTML =
-      '<button class="ni-m-cit-del btn-del" onclick="niMDelCit(\'' + c.id + '\')" title="Supprimer">' + _SVG_DEL_STR + '</button>' +
+      (canEdit(LIVRE_ACTIF) ? '<button class="ni-m-cit-del btn-del" onclick="niMDelCit(\'' + c.id + '\')" title="Supprimer">' + _SVG_DEL_STR + '</button>' : '') +
       '<textarea class="ni-m-cit-ta" id="' + taId + '" placeholder="Citation exacte…" ' +
         'oninput="niMUpdateCit(\'' + c.id + '\',\'texte\',this.value)"></textarea>' +
       '<div class="ni-m-cit-side">' +
         '<input class="ni-m-cit-inp" placeholder="p. 12…" value="' + esc(c.ref) + '" ' +
           'oninput="niMUpdateCit(\'' + c.id + '\',\'ref\',this.value)">' +
-        '<button class="ni-m-cit-mic" id="' + micId + '" title="Dicter">🎤</button>' +
+        (canEdit(LIVRE_ACTIF) ? '<button class="ni-m-cit-mic" id="' + micId + '" title="Dicter">🎤</button>' : '') +
       '</div>';
     list.appendChild(d);
     // Set textarea value (avoids XSS via innerHTML)
