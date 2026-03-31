@@ -1865,26 +1865,50 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 #auth-box .auth-logo p{
   font-size:.78rem;color:#94A3B8;font-weight:500;
 }
-#auth-email,#auth-password{
+#auth-email,#auth-password,#inv-pseudo,#inv-pin {
   width:100%;border:2px solid var(--gris2);border-radius:11px;
   padding:12px 14px;font-size:.9rem;font-family:inherit;
   color:var(--texte);margin-bottom:10px;transition:border-color .15s;
   -webkit-appearance:none;
 }
-#auth-email:focus,#auth-password:focus{
+#auth-email:focus,#auth-password:focus,#inv-pseudo:focus,#inv-pin:focus {
   border-color:var(--bleu);outline:none;
 }
-#auth-submit{
+#auth-submit,#inv-submit {
   width:100%;padding:14px;background:var(--bleu);color:#fff;
   border:none;border-radius:11px;font-family:inherit;
   font-size:.95rem;font-weight:800;cursor:pointer;
   margin-top:4px;transition:background .15s,transform .1s;
 }
-#auth-submit:hover{background:#234d8e;transform:translateY(-1px);}
-#auth-submit:active{transform:translateY(0);}
-#auth-error{
+#auth-submit:hover,#inv-submit:hover{background:#234d8e;transform:translateY(-1px);}
+#auth-submit:active,#inv-submit:active{transform:translateY(0);}
+#auth-error,#inv-error {
   font-size:.78rem;color:var(--rouge);font-weight:700;
   text-align:center;margin-top:8px;min-height:1.2em;
+}
+.auth-divider {
+  display:flex;align-items:center;gap:10px;margin:14px 0 10px;
+}
+.auth-divider::before,.auth-divider::after {
+  content:'';flex:1;height:1px;background:var(--gris2);
+}
+.auth-divider span { font-size:.75rem;color:#94A3B8;font-weight:600; }
+.btn-invite-toggle {
+  width:100%;padding:11px;background:var(--vertC);color:var(--vert);
+  border:2px solid var(--vert);border-radius:11px;font-family:inherit;
+  font-size:.88rem;font-weight:800;cursor:pointer;
+  transition:background .15s,transform .1s;
+}
+.btn-invite-toggle:hover{background:#c8e6c9;transform:translateY(-1px);}
+.btn-invite-back {
+  background:transparent;color:#94A3B8;border-color:var(--gris2);
+  font-size:.78rem;margin-top:10px;
+}
+.btn-invite-back:hover{background:var(--gris);color:var(--texte);}
+.inv-hint {
+  font-size:.78rem;color:#64748B;background:#F8FAFC;
+  border:1px solid var(--gris2);border-radius:9px;
+  padding:10px 12px;margin-bottom:14px;line-height:1.5;text-align:center;
 }
 /* Badge utilisateur fusionné dans le header */
 #user-badge{
@@ -1949,11 +1973,32 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
       <h2>Guide de Lecture</h2>
       <p>Axel &amp; Élise · Jean</p>
     </div>
-    <input type="email" id="auth-email" placeholder="Adresse e-mail" autocomplete="email" autocapitalize="none">
-    <input type="password" id="auth-password" placeholder="Mot de passe" autocomplete="current-password"
-      onkeydown="if(event.key==='Enter')authConnexion()">
-    <button id="auth-submit" onclick="authConnexion()">Se connecter</button>
-    <div id="auth-error"></div>
+
+    <!-- Panel email / mot de passe (comptes réels) -->
+    <div id="panel-email">
+      <input type="email" id="auth-email" placeholder="Adresse e-mail" autocomplete="email" autocapitalize="none">
+      <input type="password" id="auth-password" placeholder="Mot de passe" autocomplete="current-password"
+        onkeydown="if(event.key==='Enter')authConnexion()">
+      <button id="auth-submit" onclick="authConnexion()">Se connecter</button>
+      <div id="auth-error"></div>
+      <div class="auth-divider"><span>ou</span></div>
+      <button class="btn-invite-toggle" onclick="_togglePanelInvite(true)">🎒 Explorer en invité</button>
+    </div>
+
+    <!-- Panel bac à sable invité -->
+    <div id="panel-invite" style="display:none">
+      <div class="inv-hint">Choisis un pseudo et un code PIN à 4 chiffres.<br>
+      Retiens-les : ils te serviront à retrouver ton bac à sable.</div>
+      <input type="text" id="inv-pseudo" placeholder="Ton prénom ou pseudo" maxlength="40"
+        autocomplete="off" autocapitalize="words"
+        onkeydown="if(event.key==='Enter')document.getElementById('inv-pin').focus()">
+      <input type="tel" id="inv-pin" inputmode="numeric" placeholder="Code PIN (4 chiffres)"
+        maxlength="4" autocomplete="off"
+        onkeydown="if(event.key==='Enter')authInvite()">
+      <button id="inv-submit" onclick="authInvite()">Explorer →</button>
+      <div id="inv-error"></div>
+      <button class="btn-invite-toggle btn-invite-back" onclick="_togglePanelInvite(false)">← Connexion avec un compte</button>
+    </div>
   </div>
 </div>
 
@@ -3369,21 +3414,28 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 // ════════════════════════════════════════════════════════
 // ÉTAT AUTHENTIFICATION (global)
 // ════════════════════════════════════════════════════════
-var AUTH_USER    = null;   // objet Firebase User
-var AUTH_ROLE    = null;   // 'admin' | 'eleve' | 'testeur'
-var AUTH_NOM     = null;   // prénom affiché
-var AUTH_UID     = null;   // UID Firebase
-var _appDemarree = false;  // démarrage différé — déclenché après authentification
+var AUTH_USER      = null;   // objet Firebase User
+var AUTH_ROLE      = null;   // 'admin' | 'eleve' | 'testeur' | 'invite'
+var AUTH_NOM       = null;   // prénom affiché
+var AUTH_UID       = null;   // UID Firebase
+var AUTH_IS_INVITE = false;  // true = bac à sable invité
+var _appDemarree   = false;  // démarrage différé — déclenché après authentification
+
+// Clé localStorage : personnelle pour les invités, commune pour les comptes réels
+function _biblioKey() {
+  return AUTH_IS_INVITE ? 'axel_biblio_inv_' + AUTH_UID : 'axel_biblio';
+}
 
 // Retourne true si l'utilisateur peut créer un livre
 function canCreate() {
-  return AUTH_ROLE === 'admin' || AUTH_ROLE === 'eleve';
+  return AUTH_ROLE === 'admin' || AUTH_ROLE === 'eleve' || AUTH_ROLE === 'invite';
 }
 // Retourne true si l'utilisateur peut modifier/supprimer un livre donné
 function canEdit(livre) {
   if (!livre) return false;
   if (AUTH_ROLE === 'admin') return true;
-  if (AUTH_ROLE === 'eleve' && livre.ownerId === AUTH_UID) return true;
+  if (AUTH_ROLE === 'eleve')  return true;  // bibliothèque partagée Axel & Élise
+  if (AUTH_ROLE === 'invite') return true;  // bac à sable : droits complets
   return false;
 }
 
@@ -3419,7 +3471,7 @@ let couleurIdx  = 0;
 // PERSISTENCE
 // ════════════════════════════════════════════════════════
 function sauvegarderBiblio() {
-  try { localStorage.setItem('axel_biblio', JSON.stringify(BIBLIO)); } catch(e){}
+  try { localStorage.setItem(_biblioKey(), JSON.stringify(BIBLIO)); } catch(e){}
   fbPush(); // sync Firebase si configuré
 }
 
@@ -4231,7 +4283,7 @@ const LIVRES_DEMO = [
 
 function chargerBiblio() {
   try {
-    const raw = localStorage.getItem('axel_biblio');
+    const raw = localStorage.getItem(_biblioKey());
     if (raw) {
       BIBLIO = JSON.parse(raw);
       // ── Mise à jour des livres démo si version ancienne ──
@@ -4244,13 +4296,21 @@ function chargerBiblio() {
       }
     } else {
       // Premier lancement
-      const oldData = localStorage.getItem('axel_guide_v5');
-      if (oldData) {
-        migrerAncienFormat(JSON.parse(oldData));
-      } else {
+      if (AUTH_IS_INVITE) {
+        // Bac à sable invité : copie fraîche des démos, push vers Firestore sandbox
         BIBLIO.livres = JSON.parse(JSON.stringify(LIVRES_DEMO));
         BIBLIO.demoVersion = DEMO_VERSION;
         sauvegarderBiblio();
+        showToast('🎒 Bac à sable initialisé avec les livres démo !', 'ok');
+      } else {
+        const oldData = localStorage.getItem('axel_guide_v5');
+        if (oldData) {
+          migrerAncienFormat(JSON.parse(oldData));
+        } else {
+          BIBLIO.livres = JSON.parse(JSON.stringify(LIVRES_DEMO));
+          BIBLIO.demoVersion = DEMO_VERSION;
+          sauvegarderBiblio();
+        }
       }
     }
   } catch(e) { console.error(e); }
@@ -6720,6 +6780,7 @@ function _initAuthInstance(cfg) {
     if (user) {
       AUTH_USER = user;
       AUTH_UID  = user.uid;
+      AUTH_IS_INVITE = false; // sera mis à true par _chargerProfil si invité
       // Charger le rôle depuis Firestore collection 'users'
       _chargerProfil(user.uid);
     } else {
@@ -6733,7 +6794,6 @@ function _initAuthInstance(cfg) {
 // Charge le document Firestore users/{uid} pour récupérer rôle et nom
 function _chargerProfil(uid) {
   if (!_fbDb) {
-    // Firestore pas encore init → réessayer dans 500ms
     setTimeout(function(){ _chargerProfil(uid); }, 500);
     return;
   }
@@ -6741,18 +6801,41 @@ function _chargerProfil(uid) {
     .then(function(snap) {
       if (snap.exists) {
         var data = snap.data();
-        AUTH_ROLE = data.role  || 'testeur';
-        AUTH_NOM  = data.nom   || AUTH_USER.email.split('@')[0];
+        AUTH_ROLE      = data.role || 'testeur';
+        AUTH_NOM       = data.nom  || AUTH_USER.email.split('@')[0];
+        AUTH_IS_INVITE = false;
+        _apresConnexion();
       } else {
-        AUTH_ROLE = 'testeur';
-        AUTH_NOM  = AUTH_USER.email.split('@')[0];
+        // Pas dans users/ → chercher dans sandboxes/ (compte invité)
+        _fbDb.collection('sandboxes').doc(uid).get()
+          .then(function(snapSb) {
+            if (snapSb.exists) {
+              var sb = snapSb.data();
+              AUTH_ROLE      = 'invite';
+              AUTH_NOM       = sb.pseudo || '?';
+              AUTH_IS_INVITE = true;
+              // Mettre à jour lastSeen
+              _fbDb.collection('sandboxes').doc(uid).update({ lastSeen: Date.now() }).catch(function(){});
+            } else {
+              // Compte inconnu (ne devrait pas arriver)
+              AUTH_ROLE      = 'testeur';
+              AUTH_NOM       = AUTH_USER ? AUTH_USER.email.split('@')[0] : '?';
+              AUTH_IS_INVITE = false;
+            }
+            _apresConnexion();
+          })
+          .catch(function(err) {
+            console.error('Chargement sandbox:', err);
+            AUTH_ROLE = 'testeur'; AUTH_NOM = '?'; AUTH_IS_INVITE = false;
+            _apresConnexion();
+          });
       }
-      _apresConnexion();
     })
     .catch(function(err) {
       console.error('Chargement profil:', err);
       AUTH_ROLE = 'testeur';
       AUTH_NOM  = AUTH_USER ? AUTH_USER.email.split('@')[0] : '?';
+      AUTH_IS_INVITE = false;
       _apresConnexion();
     });
 }
@@ -6762,6 +6845,29 @@ function _apresConnexion() {
   // Masquer l'overlay de login
   var ov = document.getElementById('auth-overlay');
   if (ov) ov.classList.add('hidden');
+
+  // Pour les invités : basculer le listener Firestore sur leur sandbox perso
+  if (AUTH_IS_INVITE && AUTH_UID) {
+    _fbCode = 'sandbox_' + AUTH_UID;
+    // Réabonner le listener temps réel sur le bon document sandbox
+    if (_fbListener) { _fbListener(); _fbListener = null; }
+    var sandboxRef = _fbDb.collection('familles').doc(_fbCode);
+    _fbListener = sandboxRef.onSnapshot(function(snap) {
+      if (!snap.exists || _fbIgnoreNext) { _fbIgnoreNext = false; return; }
+      var remote = snap.data();
+      if (!remote || !remote.livres) return;
+      var tsRemote = remote.tsMaj || 0;
+      var tsLocal  = BIBLIO.tsMaj  || 0;
+      if (tsRemote > tsLocal) {
+        BIBLIO = { livres: remote.livres, demoVersion: remote.demoVersion || BIBLIO.demoVersion, tsMaj: tsRemote };
+        if ((BIBLIO.demoVersion || 0) < DEMO_VERSION) { mettreAJourLivresDemo(); BIBLIO.demoVersion = DEMO_VERSION; }
+        try { localStorage.setItem(_biblioKey(), JSON.stringify(BIBLIO)); } catch(e){}
+        renderBiblio();
+        showToast('☁️ Données mises à jour depuis le cloud', 'info');
+      }
+    }, function(err) { console.warn('sandbox listener:', err); });
+    setSyncBadge('ok', '☁️ Bac à sable');
+  }
 
   // Mettre à jour les badges utilisateur
   _mettreAJourBadgeUser();
@@ -6785,7 +6891,7 @@ function _apresConnexion() {
 }
 
 function _mettreAJourBadgeUser() {
-  var roleLabels = { admin:'Admin', eleve:'Élève', testeur:'Lecture' };
+  var roleLabels = { admin:'Admin', eleve:'Élève', testeur:'Lecture', invite:'Invité 🎒' };
   var nom  = AUTH_NOM || '?';
   var role = roleLabels[AUTH_ROLE] || AUTH_ROLE || '';
   var el = document.getElementById('ub-nom');
@@ -6801,6 +6907,86 @@ function _afficherLogin() {
   if (ov) ov.classList.remove('hidden');
   var err = document.getElementById('auth-error');
   if (err) err.textContent = '';
+}
+
+
+// ── Bac à sable invité ──────────────────────────────────
+
+// Normalise un pseudo : minuscules, sans accents, espaces→_, 30 chars max
+function _normaliserPseudo(pseudo) {
+  return pseudo.trim().toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // supprimer accents
+    .replace(/\s+/g, '_')
+    .replace(/[^a-z0-9_]/g, '')
+    .slice(0, 30);
+}
+
+// Connexion/inscription invité (pseudo + PIN 4 chiffres)
+function authInvite() {
+  var pseudo = (document.getElementById('inv-pseudo').value || '').trim();
+  var pin    = (document.getElementById('inv-pin').value || '').trim();
+  var err    = document.getElementById('inv-error');
+  var btn    = document.getElementById('inv-submit');
+
+  var norm = _normaliserPseudo(pseudo);
+  if (!norm) { err.textContent = 'Saisis un prénom ou pseudo.'; return; }
+  if (!/^\d{4}$/.test(pin)) { err.textContent = 'Le code PIN doit faire exactement 4 chiffres.'; return; }
+
+  var email = norm + '@sandbox.guide-lecture.fr';
+  err.textContent = '';
+  btn.textContent = 'Connexion…'; btn.disabled = true;
+
+  if (!_fbAuth) {
+    err.textContent = 'Service non disponible, patiente 3s et réessaie.';
+    btn.textContent = 'Explorer →'; btn.disabled = false; return;
+  }
+
+  // Tentative d'inscription (premier accès)
+  _fbAuth.createUserWithEmailAndPassword(email, pin)
+    .then(function(cred) {
+      // Nouveau bac à sable : créer le profil Firestore
+      return _creerSandboxProfil(cred.user.uid, pseudo.trim());
+    })
+    .then(function() {
+      // onAuthStateChanged prend le relais
+    })
+    .catch(function(e) {
+      if (e.code === 'auth/email-already-in-use') {
+        // Compte existant → connexion
+        _fbAuth.signInWithEmailAndPassword(email, pin)
+          .then(function() { /* onAuthStateChanged prend le relais */ })
+          .catch(function(e2) {
+            var msg = e2.code === 'auth/wrong-password'
+              ? '❌ Code PIN incorrect pour ce pseudo.'
+              : '❌ Erreur : ' + e2.message;
+            err.textContent = msg;
+            btn.textContent = 'Explorer →'; btn.disabled = false;
+          });
+      } else {
+        err.textContent = '❌ Erreur : ' + e.message;
+        btn.textContent = 'Explorer →'; btn.disabled = false;
+      }
+    });
+}
+
+// Crée le document sandboxes/{uid} dans Firestore
+function _creerSandboxProfil(uid, pseudoBrut) {
+  if (!_fbDb) return Promise.resolve();
+  return _fbDb.collection('sandboxes').doc(uid).set({
+    pseudo:    pseudoBrut,
+    createdAt: Date.now(),
+    lastSeen:  Date.now()
+  });
+}
+
+// Bascule l'affichage entre le panel email/mdp et le panel invité
+function _togglePanelInvite(showInvite) {
+  document.getElementById('panel-email').style.display  = showInvite ? 'none'  : 'block';
+  document.getElementById('panel-invite').style.display = showInvite ? 'block' : 'none';
+  var err = document.getElementById('auth-error');
+  if (err) err.textContent = '';
+  var errI = document.getElementById('inv-error');
+  if (errI) errI.textContent = '';
 }
 
 // Connexion email/password
@@ -6938,7 +7124,7 @@ function fbInit(code, cfg) {
           mettreAJourLivresDemo();
           BIBLIO.demoVersion = DEMO_VERSION;
         }
-        try { localStorage.setItem('axel_biblio', JSON.stringify(BIBLIO)); } catch(e){}
+        try { localStorage.setItem(_biblioKey(), JSON.stringify(BIBLIO)); } catch(e){}
         renderBiblio();
         // Si un livre est ouvert, le rafraîchir si besoin
         if (LIVRE_ACTIF) {
@@ -6969,7 +7155,7 @@ function fbPush(force) {
     try {
       setSyncBadge('busy', '☁️ Envoi…');
       BIBLIO.tsMaj = Date.now();
-      localStorage.setItem('axel_biblio', JSON.stringify(BIBLIO));
+      localStorage.setItem(_biblioKey(), JSON.stringify(BIBLIO));
       _fbIgnoreNext = true;
       await _fbDb.collection('familles').doc(_fbCode).set({
         livres:      BIBLIO.livres,
@@ -7010,7 +7196,7 @@ async function fbPull(force) {
         mettreAJourLivresDemo();
         BIBLIO.demoVersion = DEMO_VERSION;
       }
-      try { localStorage.setItem('axel_biblio', JSON.stringify(BIBLIO)); } catch(e){}
+      try { localStorage.setItem(_biblioKey(), JSON.stringify(BIBLIO)); } catch(e){}
       renderBiblio();
       setSyncBadge('ok', '☁️ Synchro ✓');
       if (force) showToast('☁️ Données reçues du cloud !', 'ok');
@@ -7167,8 +7353,12 @@ function deconnecterFB() {
 // ════════════════════════════════════════════════════════
 var _modeDefini = false;
 
+function _modeKey() {
+  return 'axel_mode_' + (AUTH_UID || 'anon');
+}
+
 function chargerMode() {
-  const m = localStorage.getItem('axel_mode') || null;
+  const m = localStorage.getItem(_modeKey()) || null;
   if (m === 'axel' || m === 'elise') {
     appliquerMode(m, false);
     _modeDefini = true;
@@ -7178,7 +7368,7 @@ function chargerMode() {
 }
 
 function setMode(mode) {
-  localStorage.setItem('axel_mode', mode);
+  localStorage.setItem(_modeKey(), mode);
   _modeDefini = true;
   appliquerMode(mode, true);
   fermerModalMode();
