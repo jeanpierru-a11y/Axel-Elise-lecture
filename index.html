@@ -2,11 +2,20 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta http-equiv="Permissions-Policy" content="microphone=*">
+<!-- PWA — mode standalone iOS & Android -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Guide Lecture">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#2E5FA3">
+<link rel="manifest" href="manifest.json">
+<!-- Icône pour l'écran d'accueil iOS (utilise le favicon existant ou un carré bleu) -->
+<link rel="apple-touch-icon" href="icon-192.png">
 <title>Guide de Lecture — Axel & Élise</title>
 <!-- Firebase SDK (compat) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -23,7 +32,12 @@
   --blanc:#ffffff; --ombre:0 3px 16px rgba(0,0,0,0.14); --r:14px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;overflow:hidden;}
+html,body{height:100%;overflow:hidden;overscroll-behavior:none;}
+/* Fullscreen CSS pour iOS — sans requestFullscreen qui n'empêche pas le swipe système */
+html.fs-css,html.fs-css body{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  overflow:hidden;
+}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gris);color:var(--texte);display:flex;flex-direction:column;}
 
 /* ── ONGLET MOTS — 3 SOUS-ZONES ── */
@@ -214,6 +228,11 @@ body.mode-elise .ni-mi.only-elise{display:flex;}
 
 /* ── CHAMPS ── */
 .field{width:100%;font-family:inherit;font-size:.93rem;font-weight:600;border:2px solid var(--gris2);border-radius:10px;padding:9px 12px;outline:none;color:var(--texte);background:var(--blanc);resize:vertical;}
+/* Auto-hauteur dans les sections ÉCRIRE : overflow:hidden requis pour scrollHeight exact */
+#sec-dissertation textarea,
+#sec-redaction textarea,
+#sec-lineaire textarea,
+#sec-commentaire textarea{overflow-y:hidden;}
 .field:focus{border-color:var(--bleu);}
 .field::placeholder{color:#b0b8c4;font-weight:400;font-style:italic;}
 .field::-webkit-input-placeholder{color:#b0b8c4;font-weight:400;font-style:italic;}
@@ -766,11 +785,14 @@ body.ni-on.ni-sec-mots #guide-content-wrap>#content{display:none !important;}
 .ni-l-dl{background:#fff;border:1.5px solid #EF9A9A;color:#C62828;border-radius:8px;padding:0 10px;height:34px;font-size:.72rem;font-weight:800;font-family:inherit;cursor:pointer;margin-left:auto;}
 
 /* ── TEMPS ── */
-#ni-t-left{flex:0 0 67%;display:flex;flex-direction:column;border-right:2px solid #C9D4E8;overflow:hidden;background:#fff;padding:14px;gap:11px;-webkit-overflow-scrolling:touch;}
+#ni-t-left{flex:0 0 67%;display:flex;flex-direction:column;border-right:2px solid #C9D4E8;overflow-y:auto;overflow-x:hidden;background:#fff;padding:14px;gap:11px;-webkit-overflow-scrolling:touch;}
 #ni-t-right{flex:1;display:flex;flex-direction:column;overflow-y:auto;background:#EEF2F8;padding:12px;gap:10px;-webkit-overflow-scrolling:touch;}
-.ni-t-sec{display:flex;flex-direction:column;flex:1;min-height:0;}
+.ni-t-sec{display:flex;flex-direction:column;flex:0 0 auto;}
+/* Axel : textarea unique — hauteur initiale généreuse, resize libre vers le bas */
+.only-axel.ni-t-sec{flex:0 0 auto;}
+.only-axel.ni-t-sec .ni-t-ta{height:320px;min-height:120px;}
 .ni-t-lbl{font-size:.63rem;font-weight:900;text-transform:uppercase;letter-spacing:.4px;padding:5px 10px;border-radius:7px 7px 0 0;display:flex;align-items:center;gap:5px;flex-shrink:0;}
-.ni-t-ta{flex:1;width:100%;border:1.5px solid #CFD8DC;border-top:none;border-radius:0 0 7px 7px;padding:8px 10px;font-size:.78rem;font-family:inherit;resize:vertical;outline:none;background:#FAFBFC;line-height:1.6;min-height:78px;box-sizing:border-box;}
+.ni-t-ta{width:100%;border:1.5px solid #CFD8DC;border-top:none;border-radius:0 0 7px 7px;padding:8px 10px;font-size:.78rem;font-family:inherit;resize:vertical;outline:none;background:#FAFBFC;line-height:1.6;min-height:110px;height:160px;box-sizing:border-box;}
 .ni-t-ta:focus{border-color:#E65100;box-shadow:0 0 0 2px rgba(230,81,0,.1);}
 
 
@@ -2476,35 +2498,37 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
           Quelle est l'époque du récit ? La narration suit-elle l'ordre des événements ? Quels moments sont les plus longs à lire, et pourquoi ?</div>
       </div>
 
-      <div class="card">
+      <!-- AXEL : carte unique, grande textarea -->
+      <div class="card only-axel">
         <div class="card-title" style="color:var(--orange)">⏳ Époque &amp; Chronologie</div>
-        <textarea id="temps-text" class="field only-axel" rows="14"
+        <textarea id="temps-text" class="field" rows="14"
           placeholder="L'époque, les dates importantes, l'ordre des événements…"
           oninput="saveTexte('temps')"></textarea>
+      </div>
 
-        <!-- VERSION STRUCTURÉE ÉLISE -->
-        <div class="only-elise">
-          <div class="struct-zone">
-            <div class="struct-zone-title">📐 Ordre narratif</div>
-            <div class="struct-zone-hint">L'histoire est-elle racontée dans l'ordre ? Y a-t-il des flashbacks (analepse) ou anticipations (prolepse) ? → Effets : suspense, révélation, surprise.</div>
-            <textarea id="temps2-ordre" class="field" rows="3" placeholder="Ex. : Le roman commence in medias res — Thérèse sort du tribunal. Puis long flashback dans le train. La narration est donc anachronique (analepse principale)…" oninput="saveTemps2()"></textarea>
-          </div>
-          <div class="struct-zone">
-            <div class="struct-zone-title">⏱️ Durée &amp; Rythme</div>
-            <div class="struct-zone-hint">Quels moments sont dilatés (racontés lentement) ? Quels moments sont résumés ou ellipsés ? Pourquoi ?</div>
-            <textarea id="temps2-duree" class="field" rows="3" placeholder="Ex. : La scène de l'aveu intérieur est très dilatée (plusieurs pages pour quelques minutes). Les années du mariage sont résumées en quelques lignes (ellipse). Le trajet en train occupe tout le roman…" oninput="saveTemps2()"></textarea>
-          </div>
-          <div class="struct-zone">
-            <div class="struct-zone-title">🔁 Fréquence</div>
-            <div class="struct-zone-hint">Certains événements sont-ils racontés une seule fois (singulatif), résumés (itératif : « il faisait souvent »), ou répétés plusieurs fois (répétitif) ?</div>
-            <textarea id="temps2-frequence" class="field" rows="3" placeholder="Ex. : Les saisons des Landes reviennent de manière itérative — l'été étouffant est évoqué chaque année comme un leitmotiv…" oninput="saveTemps2()"></textarea>
-          </div>
-          <div class="struct-zone" style="background:var(--vertC)">
-            <div class="struct-zone-title" style="color:var(--vert)">🗺️ Organisation de l'espace</div>
-            <div class="struct-zone-hint">Espaces réels vs symboliques · Ouverts vs fermés · Mouvements des personnages · Géographie symbolique (ville/campagne, haut/bas…)</div>
-            <textarea id="temps2-espace" class="field" rows="4" placeholder="Ex. : Les Landes = espace fermé, prison symbolique. Paris = espace ouvert, liberté rêvée. Argelouse = isolement total, punition. Les déplacements de Thérèse sont toujours contraints — elle ne choisit jamais sa destination…" oninput="saveTemps2()"></textarea>
-          </div>
-        </div>
+      <!-- ÉLISE : une carte par zone — même pattern que la dissertation -->
+      <div class="card only-elise" style="border-top:4px solid var(--orange)">
+        <div class="card-title" style="color:var(--orange)">📐 Ordre narratif</div>
+        <div class="struct-zone-hint">L'histoire est-elle racontée dans l'ordre ? Y a-t-il des flashbacks (analepse) ou anticipations (prolepse) ? → Effets : suspense, révélation, surprise.</div>
+        <textarea id="temps2-ordre" class="field" rows="3" placeholder="Ex. : Le roman commence in medias res — Thérèse sort du tribunal. Puis long flashback dans le train. La narration est donc anachronique (analepse principale)…" oninput="saveTemps2()"></textarea>
+      </div>
+
+      <div class="card only-elise" style="border-top:4px solid var(--bleu)">
+        <div class="card-title" style="color:var(--bleu)">⏱️ Durée &amp; Rythme</div>
+        <div class="struct-zone-hint">Quels moments sont dilatés (racontés lentement) ? Quels moments sont résumés ou ellipsés ? Pourquoi ?</div>
+        <textarea id="temps2-duree" class="field" rows="3" placeholder="Ex. : La scène de l'aveu intérieur est très dilatée (plusieurs pages pour quelques minutes). Les années du mariage sont résumées en quelques lignes (ellipse). Le trajet en train occupe tout le roman…" oninput="saveTemps2()"></textarea>
+      </div>
+
+      <div class="card only-elise" style="border-top:4px solid var(--violet)">
+        <div class="card-title" style="color:var(--violet)">🔁 Fréquence</div>
+        <div class="struct-zone-hint">Certains événements sont-ils racontés une seule fois (singulatif), résumés (itératif : « il faisait souvent »), ou répétés plusieurs fois (répétitif) ?</div>
+        <textarea id="temps2-frequence" class="field" rows="3" placeholder="Ex. : Les saisons des Landes reviennent de manière itérative — l'été étouffant est évoqué chaque année comme un leitmotiv…" oninput="saveTemps2()"></textarea>
+      </div>
+
+      <div class="card only-elise" style="border-top:4px solid var(--vert)">
+        <div class="card-title" style="color:var(--vert)">🗺️ Organisation de l'espace</div>
+        <div class="struct-zone-hint">Espaces réels vs symboliques · Ouverts vs fermés · Mouvements des personnages · Géographie symbolique (ville/campagne, haut/bas…)</div>
+        <textarea id="temps2-espace" class="field" rows="4" placeholder="Ex. : Les Landes = espace fermé, prison symbolique. Paris = espace ouvert, liberté rêvée. Argelouse = isolement total, punition. Les déplacements de Thérèse sont toujours contraints — elle ne choisit jamais sa destination…" oninput="saveTemps2()"></textarea>
       </div>
     </div>
 
@@ -4293,6 +4317,8 @@ function ouvrirLivre(id) {
   document.getElementById('diss-arg2').value   = diss.arg2   || '';
   document.getElementById('diss-arg3').value   = diss.arg3   || '';
   document.getElementById('diss-conclu').value = diss.conclu || '';
+  // Auto-hauteur après chargement (délai pour que le panel soit visible)
+  setTimeout(autoResizeEcrire, 0);
 
   // Header
   document.getElementById('header-titre').textContent =
@@ -4471,6 +4497,8 @@ function showEcrirePanel(panel, btnEl) {
   // Mettre à jour les onglets actifs
   document.querySelectorAll('#ecrire-tabs .mots-subtab').forEach(b => b.classList.remove('active'));
   document.getElementById('etab-' + panel)?.classList.add('active');
+  // Ajuster les hauteurs de toutes les textareas du panneau affiché
+  requestAnimationFrame(autoResizeEcrire);
 }
 
 // ════════════════════════════════════════════════════════
@@ -7837,37 +7865,90 @@ window.addEventListener('DOMContentLoaded', chargerMode);
 // Chrome ne recalcule pas toujours le layout des éléments suivants dans un
 // container flex/overflow. Forcer un layout flush via offsetHeight sur la
 // chaîne parente règle le problème sans effet visuel.
+// ── Auto-hauteur des textareas ÉCRIRE ────────────────────
+// Redimensionne une textarea à la hauteur exacte de son contenu.
+// Minimum : 3 lignes (calculé à partir du line-height et du padding).
+function autoResizeTA(ta) {
+  var style = window.getComputedStyle(ta);
+  var lineH = parseFloat(style.lineHeight) || parseFloat(style.fontSize) * 1.4;
+  var padV  = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
+  var minH  = Math.ceil(lineH * 3 + padV);
+  ta.style.height = 'auto';           // libère la contrainte pour lire scrollHeight
+  ta.style.height = Math.max(ta.scrollHeight, minH) + 'px';
+}
+
+// Redimensionne toutes les textareas du panneau ÉCRIRE visible.
+function autoResizeEcrire() {
+  ['sec-dissertation','sec-redaction','sec-lineaire','sec-commentaire'].forEach(function(id) {
+    var sec = document.getElementById(id);
+    if (!sec || sec.style.display === 'none') return;
+    sec.querySelectorAll('textarea').forEach(autoResizeTA);
+  });
+}
+
+// Délégation sur #content : chaque frappe dans une textarea ÉCRIRE la redimensionne
+(function() {
+  var _ecSecs = ['sec-dissertation','sec-redaction','sec-lineaire','sec-commentaire'];
+  document.addEventListener('input', function(e) {
+    var ta = e.target;
+    if (!ta || ta.tagName !== 'TEXTAREA') return;
+    for (var i = 0; i < _ecSecs.length; i++) {
+      var sec = document.getElementById(_ecSecs[i]);
+      if (sec && sec.contains(ta)) { autoResizeTA(ta); return; }
+    }
+  });
+})();
+
 function initResizeFix() {
   var content = document.getElementById('content');
   if (!content) return;
   function flushLayout() {
-    // Assigner scrollTop force Chrome à recalculer la géométrie du conteneur scroll
-    // (les éléments suivants se repositionnent correctement après un resize).
     content.scrollTop = content.scrollTop;
     void content.scrollHeight;
   }
   if (window.ResizeObserver) {
-    // ResizeObserver se déclenche APRÈS que Chrome a commité la hauteur dans le layout
     var ro = new ResizeObserver(flushLayout);
     function attachRO() {
       document.querySelectorAll('textarea.field, textarea.redac-ta, textarea.phase-ta')
         .forEach(function(ta) { try { ro.observe(ta); } catch(err) {} });
     }
     attachRO();
-    // Ré-attacher après changement d'onglet (nouveaux éléments dans le DOM)
     document.addEventListener('click', function(e) {
       if (e.target && e.target.closest && e.target.closest('[onclick*="showTab"]')) {
         setTimeout(attachRO, 150);
       }
     });
   } else {
-    // Fallback : double-raf pour laisser Chrome finir le commit avant le flush
     document.addEventListener('mouseup', function(e) {
       var ta = e.target;
       if (!ta || ta.tagName !== 'TEXTAREA') return;
       requestAnimationFrame(function() { requestAnimationFrame(flushLayout); });
     });
   }
+  // Marquer les .ni-t-ta redimensionnées manuellement
+  var _niTResizeStart = {};
+  document.addEventListener('mousedown', function(e) {
+    var ta = e.target;
+    if (!ta || ta.tagName !== 'TEXTAREA' || !ta.classList.contains('ni-t-ta')) return;
+    _niTResizeStart[ta.id] = ta.offsetHeight;
+  });
+  document.addEventListener('mouseup', function(e) {
+    var ta = e.target;
+    if (!ta || ta.tagName !== 'TEXTAREA' || !ta.classList.contains('ni-t-ta')) return;
+    if (_niTResizeStart[ta.id] !== undefined && ta.offsetHeight !== _niTResizeStart[ta.id]) {
+      ta._userResized = true;
+    }
+    delete _niTResizeStart[ta.id];
+  });
+  // Recalculer les zones Temps au resize de fenêtre
+  var _niTResizeTimer;
+  window.addEventListener('resize', function() {
+    clearTimeout(_niTResizeTimer);
+    _niTResizeTimer = setTimeout(function() {
+      document.querySelectorAll('.ni-t-ta').forEach(function(ta) { ta._userResized = false; });
+      if (document.body.classList.contains('ni-sec-temps')) niTFitZones();
+    }, 200);
+  });
 }
 initResizeFix();
 
@@ -8782,6 +8863,36 @@ function niLAjouter() {
 }
 
 // ════ NI TEMPS — fonctions ════
+// ── Ajuste les hauteurs des zones Temps pour tenir dans l'écran ──
+// Appelé à l'affichage du panel et au resize de la fenêtre.
+// On mesure la hauteur disponible de #ni-t-left et on distribue
+// équitablement entre les textareas visibles, en soustrayant
+// les labels et les gaps.
+function niTFitZones() {
+  requestAnimationFrame(function() {
+    var left = document.getElementById('ni-t-left');
+    if (!left) return;
+    var available = left.clientHeight;
+    if (!available) return;
+    // Padding top+bottom : 14+14 = 28px
+    var pad = 28;
+    // Récupérer les sections visibles (display != none)
+    var secs = Array.prototype.slice.call(left.querySelectorAll('.ni-t-sec'))
+      .filter(function(s) { return s.offsetParent !== null; });
+    var n = secs.length;
+    if (!n) return;
+    // Hauteur d'un label : ~28px. Gap entre sections : 11px.
+    var lblH = 28;
+    var gapTotal = 11 * (n - 1);
+    var taH = Math.floor((available - pad - lblH * n - gapTotal) / n);
+    taH = Math.max(taH, 80); // plancher 80px
+    secs.forEach(function(sec) {
+      var ta = sec.querySelector('.ni-t-ta');
+      if (ta && !ta._userResized) ta.style.height = taH + 'px';
+    });
+  });
+}
+
 function niTLoad() {
   if (!LIVRE_ACTIF) return;
   var s = document.getElementById('ni-t-simple');
@@ -8792,6 +8903,7 @@ function niTLoad() {
   sv('ni-t-duree',     t2.duree);
   sv('ni-t-frequence', t2.frequence);
   sv('ni-t-espace',    t2.espace);
+  niTFitZones();
 }
 
 function niTSaveSimple() {
@@ -9210,30 +9322,79 @@ function niEcToggleMobile() {
 }
 
 // ════════════════════════════════════════════════════════
-// PLEIN ÉCRAN
+// PLEIN ÉCRAN — avec protection iPad contre exit accidentel
 // ════════════════════════════════════════════════════════
 // SVG : coins L vers l'extérieur = agrandir ; vers l'intérieur = réduire
 var _FS_SVG_ENTER = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5,1 1,1 1,5"/><polyline points="9,1 13,1 13,5"/><polyline points="13,9 13,13 9,13"/><polyline points="1,9 1,13 5,13"/></svg>';
 var _FS_SVG_EXIT  = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 5,5 5,1"/><polyline points="13,5 9,5 9,1"/><polyline points="13,9 9,9 9,13"/><polyline points="1,9 5,9 5,13"/></svg>';
 
-function toggleFullscreen() {
-  var el = document.documentElement;
-  var isFs = !!(document.fullscreenElement || document.webkitFullscreenElement
+var _fsIntentionalExit = false; // true quand c'est le bouton qui demande l'exit
+
+// ════════════════════════════════════════════════════════
+// PLEIN ÉCRAN
+// ════════════════════════════════════════════════════════
+// Sur iOS Safari, requestFullscreen n'empêche pas le swipe-down système.
+// On utilise donc deux stratégies :
+//   - iOS : fullscreen CSS (position:fixed 100vw×100vh, scroll trick)
+//   - Autres : API requestFullscreen standard
+// SVG : coins L vers l'extérieur = agrandir ; vers l'intérieur = réduire
+var _FS_SVG_ENTER = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5,1 1,1 1,5"/><polyline points="9,1 13,1 13,5"/><polyline points="13,9 13,13 9,13"/><polyline points="1,9 1,13 5,13"/></svg>';
+var _FS_SVG_EXIT  = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 5,5 5,1"/><polyline points="13,5 9,5 9,1"/><polyline points="13,9 9,9 9,13"/><polyline points="1,9 5,9 5,13"/></svg>';
+
+var _fsIntentionalExit = false;
+var _fsWasOn = false;
+
+// Détection iOS (iPhone + iPad, y compris iPadOS 13+ qui se présente comme macOS)
+var _isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+  || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+function _isFsCSSOn() {
+  return document.documentElement.classList.contains('fs-css');
+}
+
+function _isFsAPIOn() {
+  return !!(document.fullscreenElement || document.webkitFullscreenElement
     || document.mozFullScreenElement || document.msFullscreenElement);
-  if (!isFs) {
-    var req = el.requestFullscreen || el.webkitRequestFullscreen
-      || el.mozRequestFullScreen || el.msRequestFullscreen;
-    if (req) req.call(el).catch(function(){});
+}
+
+function _isFullscreen() {
+  return _isIOS ? _isFsCSSOn() : _isFsAPIOn();
+}
+
+function toggleFullscreen() {
+  if (_isFullscreen()) {
+    // --- Quitter ---
+    _fsIntentionalExit = true;
+    setTimeout(function(){ _fsIntentionalExit = false; }, 3000);
+    if (_isIOS) {
+      document.documentElement.classList.remove('fs-css');
+      _updateFsButtons();
+    } else {
+      var ex = document.exitFullscreen || document.webkitExitFullscreen
+        || document.mozCancelFullScreen || document.msExitFullscreen;
+      if (ex) ex.call(document);
+    }
   } else {
-    var ex = document.exitFullscreen || document.webkitExitFullscreen
-      || document.mozCancelFullScreen || document.msExitFullscreen;
-    if (ex) ex.call(document);
+    // --- Entrer ---
+    if (_isIOS) {
+      document.documentElement.classList.add('fs-css');
+      // Masquer la barre d'adresse Safari : scroll d'1px puis retour
+      setTimeout(function(){
+        window.scrollTo(0, 1);
+        setTimeout(function(){ window.scrollTo(0, 0); }, 50);
+      }, 50);
+      _updateFsButtons();
+    } else {
+      var el = document.documentElement;
+      var req = el.requestFullscreen || el.webkitRequestFullscreen
+        || el.mozRequestFullScreen || el.msRequestFullscreen;
+      if (req) req.call(el).catch(function(){});
+    }
   }
 }
 
 function _updateFsButtons() {
-  var isFs = !!(document.fullscreenElement || document.webkitFullscreenElement
-    || document.mozFullScreenElement || document.msFullscreenElement);
+  var isFs = _isFullscreen();
   var svg   = isFs ? _FS_SVG_EXIT  : _FS_SVG_ENTER;
   var title = isFs ? 'Quitter le plein écran' : 'Plein écran';
   ['btn-fs-biblio','btn-fs-guide'].forEach(function(id){
@@ -9241,10 +9402,51 @@ function _updateFsButtons() {
     if (b){ b.innerHTML = svg; b.title = title; }
   });
 }
+
+// Événements API (non-iOS uniquement)
 document.addEventListener('fullscreenchange',       _updateFsButtons);
 document.addEventListener('webkitfullscreenchange', _updateFsButtons);
 document.addEventListener('mozfullscreenchange',    _updateFsButtons);
 document.addEventListener('MSFullscreenChange',     _updateFsButtons);
+
+// ── Bannière "Ajouter à l'écran d'accueil" sur iPad ──────────────────────
+// En mode standalone (PWA), l'app tourne hors Safari : plus aucun geste
+// système ne peut interférer. C'est la solution plein écran vraiment stable.
+(function() {
+  var isStandalone = window.navigator.standalone;
+  var alreadyDismissed = localStorage.getItem('pwa-hint-dismissed');
+  if (!_isIOS || isStandalone || alreadyDismissed) return;
+  var banner = document.createElement('div');
+  banner.id = 'pwa-hint';
+  banner.style.cssText = [
+    'position:fixed;bottom:18px;left:50%;transform:translateX(-50%);',
+    'background:rgba(30,30,40,.93);color:#fff;',
+    'border-radius:14px;padding:10px 14px 10px 14px;',
+    'font-size:.75rem;line-height:1.55;',
+    'display:flex;align-items:center;gap:10px;',
+    'box-shadow:0 4px 24px rgba(0,0,0,.4);',
+    'z-index:99999;max-width:320px;backdrop-filter:blur(8px);'
+  ].join('');
+  banner.innerHTML = [
+    '<span style="font-size:1.3rem">📲</span>',
+    '<span><b>Plein écran stable sur iPad</b><br>',
+    'Appuie sur <b>Partager ↑</b> puis<br><b>Sur l\'écran d\'accueil</b></span>',
+    '<button onclick="localStorage.setItem(\'pwa-hint-dismissed\',\'1\');',
+    'document.getElementById(\'pwa-hint\').remove();" ',
+    'style="background:none;border:none;color:#fff;font-size:1.2rem;',
+    'cursor:pointer;flex-shrink:0;line-height:1;padding:0 2px;">✕</button>'
+  ].join('');
+  setTimeout(function() {
+    document.body.appendChild(banner);
+    setTimeout(function() {
+      if (banner.parentNode) {
+        banner.style.transition = 'opacity .5s';
+        banner.style.opacity = '0';
+        setTimeout(function() { if (banner.parentNode) banner.remove(); }, 600);
+      }
+    }, 14000);
+  }, 2500);
+})();
 
 // Init icônes dès le chargement
 (function(){ _updateFsButtons(); })();
