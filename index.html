@@ -556,12 +556,12 @@ body.ni-on.ni-sec-personnages #guide-content-wrap > #content{display:none !impor
 #ni-det-name{font-weight:900;font-size:.82rem;flex:1;}
 #ni-det-tag{font-size:.61rem;font-weight:800;background:rgba(255,255,255,.2);padding:2px 8px;border-radius:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;}
 #ni-det-cls{background:rgba(255,255,255,.15);border:none;color:#fff;width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:.78rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-#ni-det-body{flex:1;overflow-y:auto;padding:9px 11px;font-size:.76rem;color:#37474F;line-height:1.7;white-space:pre-line;-webkit-overflow-scrolling:touch;}
-#ni-det-enrich{display:flex;gap:5px;padding:7px 10px;background:#fff;border-top:1px solid #D4DCF0;flex-shrink:0;}
-#ni-det-inp{flex:1;border:1.5px solid #CFD8DC;border-radius:8px;padding:6px 9px;font-size:.75rem;font-family:inherit;resize:none;outline:none;background:#FAFBFC;min-height:36px;}
-#ni-det-inp:focus{border-color:var(--bleu);}
-#ni-det-save{background:#2E7D32;color:#fff;border:none;border-radius:8px;padding:0 11px;height:36px;font-size:.72rem;font-weight:800;font-family:inherit;cursor:pointer;flex-shrink:0;}
-#ni-det-save:active{background:#1B5E20;}
+/* Zone détail personnage — textarea éditable directement */
+#ni-det-body{flex:1;overflow-y:auto;padding:9px 11px;font-size:.76rem;color:#37474F;line-height:1.7;white-space:pre-wrap;-webkit-overflow-scrolling:touch;border:none;resize:none;outline:none;font-family:inherit;background:transparent;width:100%;min-height:60px;}
+/* ── Bouton Enregistrer — disquette N&B, taille uniforme ── */
+.btn-save{background:#fff;color:#1a1a2e;border:2px solid #888;border-radius:8px;width:36px;height:36px;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .12s,border-color .12s;}
+.btn-save:active,.btn-save:focus{background:#e8e8e8;border-color:#444;outline:none;}
+.btn-save svg{width:20px;height:20px;pointer-events:none;}
 
 /* PDF zone */
 #ni-pdf-row{padding:8px 12px;background:#fff;border-top:1px solid #D4DCF0;flex-shrink:0;}
@@ -728,11 +728,8 @@ body.ni-on.ni-sec-mots #guide-content-wrap>#content{display:none !important;}
 #ni-i-rc-hint{display:none;}
 #ni-i-rc-ta{display:none;}
 #ni-i-rc-foot{display:none;}
-.ni-i-sv{
-  background:#00695C;color:#fff;border:none;border-radius:7px;
-  padding:5px 13px;font-size:.7rem;font-weight:800;font-family:inherit;cursor:pointer;
-}
-.ni-i-sv:active{background:#004D40;}
+.ni-i-sv{background:#fff;color:#1a1a2e;border:2px solid #888;border-radius:8px;width:36px;height:36px;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .12s,border-color .12s;}
+.ni-i-sv:active{background:#e8e8e8;border-color:#444;}
 .ni-i-mic-btn{
   border:1.5px solid #80CBC4;background:#fff;color:#00695C;
   border-radius:7px;font-size:.82rem;padding:0 9px;height:28px;
@@ -764,8 +761,8 @@ body.ni-on.ni-sec-mots #guide-content-wrap>#content{display:none !important;}
 #ni-l-det-ta{width:100%;border:1.5px solid #CFD8DC;border-radius:8px;padding:7px 9px;font-size:.76rem;font-family:inherit;resize:none;outline:none;background:#FAFBFC;line-height:1.7;min-height:100px;box-sizing:border-box;}
 #ni-l-det-ta:focus{border-color:#2E7D32;}
 #ni-l-det-foot{display:flex;gap:5px;padding:7px 10px;background:#fff;border-top:1px solid #D4DCF0;flex-shrink:0;}
-.ni-l-sv{background:#2E7D32;color:#fff;border:none;border-radius:8px;padding:0 12px;height:34px;font-size:.72rem;font-weight:800;font-family:inherit;cursor:pointer;}
-.ni-l-sv:active{background:#1B5E20;}
+.ni-l-sv{background:#fff;color:#1a1a2e;border:2px solid #888;border-radius:8px;width:36px;height:36px;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .12s,border-color .12s;}
+.ni-l-sv:active{background:#e8e8e8;border-color:#444;}
 .ni-l-dl{background:#fff;border:1.5px solid #EF9A9A;color:#C62828;border-radius:8px;padding:0 10px;height:34px;font-size:.72rem;font-weight:800;font-family:inherit;cursor:pointer;margin-left:auto;}
 
 /* ── TEMPS ── */
@@ -1019,14 +1016,8 @@ body.ni-on.ni-sec-mots #ni-mots-panel{display:grid;}
   flex-shrink:0;margin-left:4px;
 }
 .ni-q-mic.rec{border-color:#E53935;color:#E53935;animation:niblink .6s infinite;}
-.ni-q-sv{
-  font-size:.58rem;font-weight:800;border:1.5px solid rgba(0,0,0,.14);
-  background:rgba(255,255,255,.7);border-radius:6px;
-  padding:1px 6px;height:22px;cursor:pointer;
-  display:flex;align-items:center;gap:2px;
-  flex-shrink:0;margin-left:4px;font-family:inherit;color:inherit;
-}
-.ni-q-sv:active{background:rgba(0,0,0,.08);}
+.ni-q-sv{background:#fff;color:#1a1a2e;border:2px solid #888;border-radius:7px;width:34px;height:34px;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:4px;transition:background .12s,border-color .12s;}
+.ni-q-sv:active{background:#e8e8e8;border-color:#444;}
 /* Theme row mic */
 .ni-m-th-mic{
   width:22px;height:22px;border-radius:50%;
@@ -1342,7 +1333,6 @@ body,
 .ni-lv-zone,
 .ni-i-zone,
 .ni-q-body,
-#ni-det-enrich,
 #ni-l-det-foot,
 #ni-i-curve-wrap,
 .mots-subtab-bar{
@@ -1360,7 +1350,6 @@ body,
 .ni-t-ta,
 .ni-lv-ta,
 .ni-i-ta,
-#ni-det-inp,
 #ni-l-det-ta,
 .ni-m-th-ta,
 input[type="text"],
@@ -1922,13 +1911,10 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
               <div id="ni-det-av"></div>
               <div id="ni-det-name">—</div>
               <div id="ni-det-tag"></div>
+              <button class="btn-save" id="ni-det-save" onclick="niPSaveDirect()" title="Enregistrer (Ctrl+S)"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm3-10H7V5h8v4z"/></svg></button>
               <button id="ni-det-cls" onclick="niPClose()">✕</button>
             </div>
-            <div id="ni-det-body"></div>
-            <div id="ni-det-enrich">
-              <textarea id="ni-det-inp" rows="2" placeholder="Enrichis ce personnage…"></textarea>
-              <button id="ni-det-save" onclick="niPSave()">💾</button>
-            </div>
+            <textarea id="ni-det-body" oninput="niPSaveDirect()" placeholder="Notes sur ce personnage…&#10;Rôle, caractère, relations, citations…&#10;&#10;Modifie directement ici ou dicte avec le micro 🎤"></textarea>
           </div>
         </div>
       </div>
@@ -2091,7 +2077,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
                 placeholder="Notes sur ce lieu : description, atmosphère, symbolique…&#10;&#10;Quel personnage y va ? Pourquoi ?&#10;Espace ouvert ou fermé ?"></textarea>
             </div>
             <div id="ni-l-det-foot">
-              <button class="ni-l-sv" onclick="niLSave()">💾 Enregistrer</button>
+              <button class="ni-l-sv btn-save" onclick="niLSave()" title="Enregistrer"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm3-10H7V5h8v4z"/></svg></button>
               <button class="ni-l-dl" onclick="niLDelete()">🗑️ Supprimer</button>
             </div>
           </div>
@@ -2165,7 +2151,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 
     <!-- Q1 : VOCABULAIRE (haut-gauche) -->
     <div class="ni-q" id="ni-q-vocab">
-      <div class="ni-q-hdr" style="background:#EDE7F6;color:#4A148C;"><span class="ni-q-hdr-lbl">📖 Vocabulaire</span><button class="ni-q-sv" onclick="niQSave('Vocabulaire')" title="Enregistrer">💾</button><button class="ni-q-mic" id="qmic-vocab" onclick="niMicStart('ni-m-mots-ta','qmic-vocab')" title="Dicter">🎤</button></div>
+      <div class="ni-q-hdr" style="background:#EDE7F6;color:#4A148C;"><span class="ni-q-hdr-lbl">📖 Vocabulaire</span><button class="ni-q-sv btn-save" onclick="niQSave('Vocabulaire')" title="Enregistrer"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm3-10H7V5h8v4z"/></svg></button><button class="ni-q-mic" id="qmic-vocab" onclick="niMicStart('ni-m-mots-ta','qmic-vocab')" title="Dicter">🎤</button></div>
       <div class="ni-q-body">
         <div class="ni-q-hint">Un mot difficile par bloc, avec sa définition ou son contexte.</div>
         <textarea id="ni-m-mots-ta" class="ni-q-ta"
@@ -2176,7 +2162,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 
     <!-- Q2 : CITATIONS (haut-droite) -->
     <div class="ni-q" id="ni-q-cit">
-      <div class="ni-q-hdr" style="background:#FBE9E7;color:#BF360C;"><span class="ni-q-hdr-lbl">« Citations</span><button class="ni-q-sv" onclick="niQSave('Citations')" title="Enregistrer">💾</button></div>
+      <div class="ni-q-hdr" style="background:#FBE9E7;color:#BF360C;"><span class="ni-q-hdr-lbl">« Citations</span><button class="ni-q-sv btn-save" onclick="niQSave('Citations')" title="Enregistrer"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm3-10H7V5h8v4z"/></svg></button></div>
       <div class="ni-q-body">
         <button class="ni-m-add-cit" onclick="niMAddCit()">＋ Nouvelle citation</button>
         <div id="ni-m-cit-list" style="margin-top:6px;display:flex;flex-direction:column;gap:6px;"></div>
@@ -2186,7 +2172,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 
     <!-- Q3 : THÈMES (bas-gauche) -->
     <div class="ni-q" id="ni-q-themes">
-      <div class="ni-q-hdr" style="background:#FFF3E0;color:#E65100;"><span class="ni-q-hdr-lbl">🎯 Thèmes</span><button class="ni-q-sv" onclick="niQSave('Thèmes')" title="Enregistrer">💾</button></div>
+      <div class="ni-q-hdr" style="background:#FFF3E0;color:#E65100;"><span class="ni-q-hdr-lbl">🎯 Thèmes</span><button class="ni-q-sv btn-save" onclick="niQSave('Thèmes')" title="Enregistrer"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm3-10H7V5h8v4z"/></svg></button></div>
       <div class="ni-q-body">
         <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#AD1457">❤️ Amour</div><textarea id="ni-m-th-amour"    class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('amour',this.value)"></textarea><button class="ni-m-th-mic" id="thmic-amour"    onclick="niMicStart('ni-m-th-amour','thmic-amour')"    title="Dicter">🎤</button></div>
         <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#c0392b">⚡ Pouvoir</div><textarea id="ni-m-th-pouvoir"  class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('pouvoir',this.value)"></textarea><button class="ni-m-th-mic" id="thmic-pouvoir"  onclick="niMicStart('ni-m-th-pouvoir','thmic-pouvoir')"  title="Dicter">🎤</button></div>
@@ -2199,7 +2185,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 
     <!-- Q4 : AVIS (bas-droite) -->
     <div class="ni-q" id="ni-q-avis">
-      <div class="ni-q-hdr" style="background:#E3F2FD;color:#0D47A1;"><span class="ni-q-hdr-lbl">💭 Avis &amp; Compréhension</span><button class="ni-q-sv" onclick="niQSave('Avis')" title="Enregistrer">💾</button><button class="ni-q-mic" id="qmic-avis" onclick="niMicStart('ni-m-avis-ta','qmic-avis')" title="Dicter">🎤</button></div>
+      <div class="ni-q-hdr" style="background:#E3F2FD;color:#0D47A1;"><span class="ni-q-hdr-lbl">💭 Avis &amp; Compréhension</span><button class="ni-q-sv btn-save" onclick="niQSave('Avis')" title="Enregistrer"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm3-10H7V5h8v4z"/></svg></button><button class="ni-q-mic" id="qmic-avis" onclick="niMicStart('ni-m-avis-ta','qmic-avis')" title="Dicter">🎤</button></div>
       <div class="ni-q-body">
         <div class="ni-q-hint">Ce que tu as compris, aimé, les passages marquants…</div>
         <textarea id="ni-m-avis-ta" class="ni-q-ta"
@@ -2238,7 +2224,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
           <div id="ni-i-rc-hint"></div>
           <textarea id="ni-i-rc-ta" placeholder=""></textarea>
           <div id="ni-i-rc-foot">
-            <button class="ni-i-sv" onclick="niIModerneSave()">💾 Enregistrer</button>
+            <button class="ni-i-sv btn-save" onclick="niIModerneSave()" title="Enregistrer"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm3-10H7V5h8v4z"/></svg></button>
             <button class="ni-i-mic-btn" id="ni-i-rc-mic" onclick="niMicStart('ni-i-rc-ta','ni-i-rc-mic')" title="Dicter">🎤</button>
             <span id="ni-i-rc-saved" style="font-size:.62rem;color:#00897B;opacity:0;transition:opacity .4s;margin-left:4px;">✓ Enregistré</span>
           </div>
@@ -7846,6 +7832,45 @@ renderSchemaPhases();
 // chargerMode doit attendre que les modals soient dans le DOM
 window.addEventListener('DOMContentLoaded', chargerMode);
 
+// ── Fix Chrome : resize:vertical ne pousse pas les frères dans overflow:auto ──
+// Quand une textarea.field est redimensionnée manuellement (poignée bas-droite),
+// Chrome ne recalcule pas toujours le layout des éléments suivants dans un
+// container flex/overflow. Forcer un layout flush via offsetHeight sur la
+// chaîne parente règle le problème sans effet visuel.
+function initResizeFix() {
+  var content = document.getElementById('content');
+  if (!content) return;
+  function flushLayout() {
+    // Assigner scrollTop force Chrome à recalculer la géométrie du conteneur scroll
+    // (les éléments suivants se repositionnent correctement après un resize).
+    content.scrollTop = content.scrollTop;
+    void content.scrollHeight;
+  }
+  if (window.ResizeObserver) {
+    // ResizeObserver se déclenche APRÈS que Chrome a commité la hauteur dans le layout
+    var ro = new ResizeObserver(flushLayout);
+    function attachRO() {
+      document.querySelectorAll('textarea.field, textarea.redac-ta, textarea.phase-ta')
+        .forEach(function(ta) { try { ro.observe(ta); } catch(err) {} });
+    }
+    attachRO();
+    // Ré-attacher après changement d'onglet (nouveaux éléments dans le DOM)
+    document.addEventListener('click', function(e) {
+      if (e.target && e.target.closest && e.target.closest('[onclick*="showTab"]')) {
+        setTimeout(attachRO, 150);
+      }
+    });
+  } else {
+    // Fallback : double-raf pour laisser Chrome finir le commit avant le flush
+    document.addEventListener('mouseup', function(e) {
+      var ta = e.target;
+      if (!ta || ta.tagName !== 'TEXTAREA') return;
+      requestAnimationFrame(function() { requestAnimationFrame(flushLayout); });
+    });
+  }
+}
+initResizeFix();
+
 
 // ════ MENU VERTICAL CLASSIQUE ════
 function vnGo(tabId, el) {
@@ -7941,7 +7966,13 @@ function niPSelect(id) {
   document.getElementById('ni-det-av').textContent = ini;
   document.getElementById('ni-det-name').textContent = p.nom;
   document.getElementById('ni-det-tag').textContent = (p.notes||'').split('\n')[0].substring(0,35);
-  document.getElementById('ni-det-body').textContent = p.notes || '';
+  var ta = document.getElementById('ni-det-body');
+  ta.value = p.notes || '';
+  ta.style.color = '#37474F';
+  // Ctrl+S pour enregistrer dans la textarea
+  ta.onkeydown = function(e){
+    if (e.ctrlKey && e.key==='s'){ e.preventDefault(); niPSaveDirect(); }
+  };
 }
 
 function niPClose() {
@@ -7950,20 +7981,73 @@ function niPClose() {
   document.getElementById('ni-det-empty').style.display = '';
 }
 
-function niPSave() {
-  var inp = document.getElementById('ni-det-inp'), val = inp.value.trim();
-  if (!val || !_niSelP || !LIVRE_ACTIF) return;
+// Sauvegarde directe depuis la textarea éditable
+function niPSaveDirect() {
+  if (!_niSelP || !LIVRE_ACTIF) return;
+  var ta = document.getElementById('ni-det-body');
+  var val = ta ? ta.value : '';
   var p = (LIVRE_ACTIF.personnages||[]).find(function(x){return x.id===_niSelP;});
-  if (p) { p.notes=(p.notes||'')+'\n\n✏️ '+val; inp.value=''; sauvegarderBiblio(); niPSelect(_niSelP); }
+  if (!p) return;
+  p.notes = val;
+  // Mettre à jour le tag résumé sans re-render complet
+  var tag = document.getElementById('ni-det-tag');
+  if (tag) tag.textContent = val.split('\n')[0].substring(0,35);
+  // Mettre à jour le sous-titre dans la liste
+  var sel = document.querySelector('.ni-pi.sel .ni-pi-choc');
+  if (sel) sel.textContent = val.split('\n')[0].substring(0,45);
+  sauvegarderBiblio();
 }
 
+// Ancienne niPSave — redirige vers la nouvelle logique (compatibilité)
+function niPSave() { niPSaveDirect(); }
+
 // ── Micro / speech recognition ──────────────────────────
+// Note : SpeechRecognition gère sa propre permission nativement dans Chrome/Edge.
+// Ne pas appeler getUserMedia séparément — cela provoquerait une seconde demande.
 var _niMicRec = null;
+
+// Correction des fausses majuscules dues aux pauses Windows+H :
+// Quand le moteur considère une pause comme fin de phrase, il capitalise
+// le fragment suivant. On annule cette majuscule si le texte précédent
+// ne se termine pas par une vraie ponctuation de fin (. ? ! …).
+// Conversion des commandes vocales de ponctuation en symboles.
+// La Web Speech API transmet "virgule", "point" etc. comme texte brut.
+// Ordre : formes composées AVANT les simples pour éviter les captures partielles.
+function niApplyPunctuation(text) {
+  return text
+    .replace(/\bpoint[\s-]d['']interrogation\b/gi, '\u202f?')
+    .replace(/\bpoint[\s-]d['']exclamation\b/gi, '\u202f!')
+    .replace(/\bpoints?\s+de\s+suspension\b/gi, '\u2026')
+    .replace(/\bpoint[\s-]virgule\b/gi, '\u202f;')
+    .replace(/\bdeux[\s-]points\b/gi, '\u202f:')
+    .replace(/\bvirgule\b/gi, ',')
+    .replace(/\bpoint\b/gi, '.')
+    .replace(/\b(?:\xe0 la ligne|nouvelle ligne|saut de ligne)\b/gi, '\n')
+    .replace(/\b(?:nouveau paragraphe|paragraphe)\b/gi, '\n\n')
+    .replace(/\btiret\b/gi, ' \u2014 ')
+    .replace(/\b(?:ouvr(?:ez|ir|ons)?|ouvrants?)\s+(?:les\s+)?guillemets?\b/gi, '\u00ab\u00a0')
+    .replace(/\b(?:ferm(?:ez|er|ons)?|fermants?)\s+(?:les\s+)?guillemets?\b/gi, '\u00a0\u00bb')
+    .replace(/\bouvr(?:ez|ir)?\s+(?:la\s+|une\s+)?parenth\xe8se\b/gi, '(')
+    .replace(/\bferm(?:ez|er)?\s+(?:la\s+|une\s+)?parenth\xe8se\b/gi, ')')
+    .replace(/ ([,.])/g, '$1');
+}
+
+function niNormalizeCaps(prev, text) {
+  if (!prev) return text;
+  var prevTrim = prev.trimEnd();
+  if (!prevTrim) return text;
+  var lastChar = prevTrim[prevTrim.length - 1];
+  if (!/[.!?…]/.test(lastChar)) {
+    text = text.charAt(0).toLowerCase() + text.slice(1);
+  }
+  return text;
+}
+
 function niMicStart(taId, btnId) {
   var SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRec) { showToast('Micro non disponible sur ce navigateur', 'warn'); return; }
   var btn = document.getElementById(btnId);
-  // If already recording, stop
+  // Si déjà en cours d'enregistrement → arrêter
   if (_niMicRec) {
     _niMicRec.stop();
     _niMicRec = null;
@@ -7972,22 +8056,39 @@ function niMicStart(taId, btnId) {
   }
   var rec = new SpeechRec();
   rec.lang = document.documentElement.lang || 'fr-FR';
-  rec.continuous = false;
-  rec.interimResults = false;
+  rec.continuous = true;       // ne s'arrête pas à la première pause
+  rec.interimResults = true;   // transcription au fil de l'eau
   _niMicRec = rec;
   if (btn) btn.classList.add('rec');
+
+  var _baseText = '';
+  var ta = document.getElementById(taId);
+  _baseText = (ta && ta.value) ? ta.value : '';
+
   rec.onresult = function(e) {
-    var transcript = e.results[0][0].transcript;
-    var ta = document.getElementById(taId);
+    var interimText = '';
+    for (var i = e.resultIndex; i < e.results.length; i++) {
+      var transcript = e.results[i][0].transcript;
+      if (e.results[i].isFinal) {
+        var corrected = niNormalizeCaps(_baseText, niApplyPunctuation(transcript));
+        _baseText = (_baseText ? _baseText + ' ' : '') + corrected;
+      } else {
+        interimText += transcript;
+      }
+    }
     if (ta) {
-      ta.value = (ta.value ? ta.value + ' ' : '') + transcript;
-      ta.focus();
+      ta.value = _baseText + (interimText ? ' ' + interimText : '');
+      ta.scrollTop = ta.scrollHeight;
     }
   };
-  rec.onerror = function() { showToast('Erreur micro', 'warn'); };
+
+  rec.onerror = function(e) {
+    if (e.error !== 'no-speech') showToast('Erreur micro : ' + e.error, 'warn');
+  };
   rec.onend = function() {
     _niMicRec = null;
     if (btn) btn.classList.remove('rec');
+    if (ta && _baseText) ta.value = _baseText;
   };
   rec.start();
 }
