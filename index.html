@@ -1908,6 +1908,28 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 #btn-deconnexion:hover{background:rgba(255,255,255,.3);}
 /* Éléments masqués selon le rôle */
 .auth-hide{display:none!important;}
+
+/* ── Mode lecture seule : masquer tous les boutons d'action ── */
+/* Appliqué via la classe .ro sur #screen-guide — fonctionne
+   même sur les éléments rendus dynamiquement après ouvrirLivre() */
+#screen-guide.ro .btn-mic,
+#screen-guide.ro .btn-clear,
+#screen-guide.ro .btn-del,
+#screen-guide.ro .lc-del,
+#screen-guide.ro .ni-fb-add,
+#screen-guide.ro .ni-fb-mic,
+#screen-guide.ro .add-bar .btn,
+#screen-guide.ro .ta-toolbar,
+#screen-guide.ro #btn-save-global,
+#screen-guide.ro #btn-nouveau-livre { display:none !important; }
+/* Champs en lecture seule : fond grisé */
+#screen-guide.ro textarea,
+#screen-guide.ro input[type="text"],
+#screen-guide.ro input[type="number"] {
+  background:#f4f6f9 !important;
+  color:#6b7080 !important;
+  cursor:default !important;
+}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 </head>
@@ -4513,54 +4535,13 @@ function ouvrirLivre(id) {
   // en lecture seule et on masque les boutons d'action destructifs.
   (function appliquerDroitsGuide() {
     var ro = !canEdit(livre);
-    var vis = ro ? 'none' : '';
+    var sg = document.getElementById('screen-guide');
 
-    // Champs texte et textarea dans l'écran guide
-    document.querySelectorAll(
-      '#screen-guide textarea, #screen-guide input[type="text"], #screen-guide input[type="number"]'
-    ).forEach(function(el) {
-      el.readOnly = ro;
-      el.style.background = ro ? '#f4f6f9' : '';
-      el.style.color      = ro ? '#6b7080' : '';
-      el.style.cursor     = ro ? 'default'  : '';
-    });
+    // La classe .ro masque tous les boutons d'action via CSS (y compris
+    // les éléments rendus dynamiquement après ouvrirLivre).
+    if (sg) sg.classList.toggle('ro', ro);
 
-    // ── Boutons globaux ──────────────────────────────────────
-    // Forcer l'enregistrement
-    var btnSave = document.getElementById('btn-save-global');
-    if (btnSave) btnSave.style.display = vis;
-
-    // ── Zone "Nouveau personnage" (section classique) ─────────
-    var btnAddPerso = document.querySelector('#sec-personnages .add-bar .btn');
-    if (btnAddPerso) btnAddPerso.style.display = vis;
-
-    // ── Zone "Nouveau lieu" (section classique) ───────────────
-    var btnAddLieu = document.querySelector('#sec-lieux .add-bar .btn');
-    if (btnAddLieu) btnAddLieu.style.display = vis;
-
-    // ── Panneau NI Lieux — bouton ＋ et 🎤 "Nouveau lieu" ────
-    var btnNiLAdd = document.querySelector('#ni-lieux-panel .ni-fb-add');
-    if (btnNiLAdd) btnNiLAdd.style.display = vis;
-    var btnNiLMic = document.getElementById('ni-l-mic');
-    if (btnNiLMic) btnNiLMic.style.display = vis;
-
-    // ── Micros dans le panneau Livre (courant, style, etc.) ──
-    ['lv-mic-courant','lv-mic-style','lv-mic-contexte','lv-mic-auteurVie','lv-mic-trajectoire'].forEach(function(id) {
-      var el = document.getElementById(id);
-      if (el) el.style.display = vis;
-    });
-
-    // ── Tous les boutons .btn-mic dans #screen-guide ──────────
-    // (couvre les toolbars de textareas, micros inline, etc.)
-    document.querySelectorAll('#screen-guide .btn-mic').forEach(function(el) {
-      el.style.display = vis;
-    });
-
-    // ── Bouton ⊗ (vider notes) panneau NI personnage ─────────
-    var btnPClear = document.getElementById('ni-det-clear');
-    if (btnPClear) btnPClear.style.display = vis;
-
-    // ── Bannière lecture seule ────────────────────────────────
+    // Bannière lecture seule
     var banEx = document.getElementById('ro-banner');
     if (ro && !banEx) {
       var ban = document.createElement('div');
