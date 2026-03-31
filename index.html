@@ -6956,7 +6956,8 @@ function authInvite() {
         _fbAuth.signInWithEmailAndPassword(email, pin)
           .then(function() { /* onAuthStateChanged prend le relais */ })
           .catch(function(e2) {
-            var msg = e2.code === 'auth/wrong-password'
+            var badPin = e2.code === 'auth/wrong-password' || e2.code === 'auth/invalid-credential';
+            var msg = badPin
               ? '❌ Code PIN incorrect pour ce pseudo.'
               : '❌ Erreur : ' + e2.message;
             err.textContent = msg;
