@@ -1967,13 +1967,13 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 .ni-q-hdr-icon{background:none;border:none;cursor:pointer;font-size:.82rem;padding:0 3px;line-height:1;opacity:.8;}
 .ni-q-hdr-icon:hover{opacity:1;}
 #ni-q-th-haslex{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;}
-#ni-q-th-haslex svg{width:100%;max-width:220px;overflow:visible;}
+#ni-q-th-haslex svg{width:100%;max-width:220px;}
 #ni-q-th-nolex{text-align:center;padding:10px 0;}
 /* Fenêtre flottante */
 #lex-floatwin{display:none;position:fixed;z-index:9997;background:#fff;border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.22);border:1px solid #ddd;min-width:420px;min-height:340px;width:700px;height:min(560px,calc(100vh - 70px));top:55px;left:50%;transform:translateX(-50%);}
 .lex-fw-hdr{padding:7px 12px;background:#F5F0FF;border-radius:10px 10px 0 0;display:flex;align-items:center;cursor:move;border-bottom:1px solid #E0D7F5;user-select:none;flex-shrink:0;}
 .lex-fw-ttl{flex:1;font-size:.76rem;font-weight:700;color:#4A148C;pointer-events:none;}
-#lex-fw-body{overflow:auto;padding:10px 12px;height:calc(100% - 36px);box-sizing:border-box;}
+#lex-fw-body{overflow:hidden;padding:10px 12px;height:calc(100% - 36px);box-sizing:border-box;display:flex;flex-direction:column;gap:7px;}
 /* 8 resize handles */
 .rsz{position:absolute;z-index:10;}
 .rsz-n{top:0;left:12px;right:12px;height:5px;cursor:n-resize;}
@@ -2458,7 +2458,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 
         <!-- Zone lexique — radar max-size -->
         <div id="ni-q-th-haslex" style="display:none;">
-          <svg id="ni-lex-radar-q3" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;"></svg>
+          <svg id="ni-lex-radar-q3" viewBox="-40 -5 300 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:220px;display:block;"></svg>
         </div>
 
         <!-- Pas de lexique -->
@@ -3470,24 +3470,26 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
   </div>
   <div id="lex-fw-body">
     <!-- Rangée principale : cartes compactes gauche + radar droite -->
-    <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;">
+    <div style="display:flex;gap:10px;align-items:flex-start;flex-shrink:0;">
       <!-- Colonne gauche : 6 score cards compactes -->
       <div id="lex-fw-scores" style="display:flex;flex-direction:column;gap:4px;width:128px;flex-shrink:0;padding-top:4px;"></div>
       <!-- Colonne droite : radar -->
       <div style="flex:1;min-width:0;text-align:center;">
-        <svg id="lex-fw-radar" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:280px;display:inline-block;"></svg>
+        <svg id="lex-fw-radar" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:230px;display:inline-block;"></svg>
       </div>
     </div>
-    <!-- Champ lexical (mots + occurrences pour le thème sélectionné) -->
-    <div id="lex-fw-champ">
+    <!-- Champ lexical -->
+    <div id="lex-fw-champ" style="flex-shrink:0;">
       <div class="lex-champ-ttl" id="lex-champ-ttl" style="color:#888;">Cliquer sur un axe ou une carte pour voir le champ lexical</div>
     </div>
-    <!-- Scatter -->
-    <div style="font-size:.6rem;font-weight:900;color:#4A148C;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Scatter thématique par pages</div>
-    <div style="overflow-x:auto;">
-      <svg id="lex-fw-scatter" xmlns="http://www.w3.org/2000/svg" style="display:block;min-width:460px;width:100%;"></svg>
+    <!-- Scatter (flex:1 — remplit l'espace restant) -->
+    <div style="flex:1;display:flex;flex-direction:column;min-height:130px;">
+      <div style="font-size:.6rem;font-weight:900;color:#4A148C;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;flex-shrink:0;">Scatter thématique par pages</div>
+      <div style="flex:1;overflow-x:auto;min-height:0;">
+        <svg id="lex-fw-scatter" xmlns="http://www.w3.org/2000/svg" style="display:block;min-width:460px;width:100%;height:100%;"></svg>
+      </div>
+      <div class="lex-scatter-leg" id="lex-fw-leg" style="flex-shrink:0;margin-top:4px;"></div>
     </div>
-    <div class="lex-scatter-leg" id="lex-fw-leg"></div>
   </div>
 </div>
 
@@ -11305,7 +11307,7 @@ function updateQ3LexViz() {
   if(detBtn) detBtn.style.display=ok?'inline':'none';
   if(ok){
     var svg=document.getElementById('ni-lex-radar-q3');
-    if(svg){svg.innerHTML=_buildLexRadarInner(lex.tranches,220);_attachLexRadarClick('ni-lex-radar-q3','tip');}
+    if(svg){svg.innerHTML=_buildLexRadarInner(lex.tranches,220);svg.setAttribute('viewBox','-40 -5 300 260');_attachLexRadarClick('ni-lex-radar-q3','tip');}
   }
 }
 
@@ -11448,7 +11450,7 @@ function _renderLexScatterFW(lex) {
   });
   s+='<rect x="'+ML+'" y="'+MT+'" width="'+CW+'" height="'+CH+'" fill="none" stroke="#ccc" stroke-width="0.8"/>';
   var svgEl=document.getElementById('lex-fw-scatter');
-  if(svgEl){svgEl.setAttribute('viewBox','0 0 '+W+' '+H);svgEl.innerHTML=s;}
+  if(svgEl){svgEl.setAttribute('viewBox','0 0 '+W+' '+H);svgEl.setAttribute('preserveAspectRatio','none');svgEl.innerHTML=s;}
   var legEl=document.getElementById('lex-fw-leg');
   if(legEl) legEl.innerHTML=LEX_KEYS.map(function(k){return '<span class="lex-leg-i"><span class="lex-leg-d" style="background:'+LEX_COLORS[k]+'"></span>'+LEX_LABELS[k]+'</span>';}).join('');
 }
