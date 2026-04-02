@@ -11707,6 +11707,114 @@ function saveLexiqueImport(){
   document.addEventListener('mouseup',function(){_drag=null;_rsz=null;});
 })();
 
+// ══════════════════════════════════════════════════════════════
+// LEXIQUE — Fenêtre Justification thème
+// ══════════════════════════════════════════════════════════════
+var LEX_EXPL_DEFAULT = {
+  amour: {
+    intro: "Le thème Amour regroupe les mots qui activent les relations affectives dans l'œuvre : désir, tendresse, haine, indifférence. L'amour ici n'est pas romantique — il est souvent absent, empêché, ou défiguré. Les personnages et leurs prénoms (Bernard, Anne) sont retenus car ce sont les vecteurs de l'affect dans le roman.",
+    mots: {Bernard:"Prénom le plus fréquent : vecteur de l'échec affectif. Bernard est le mari dont Thérèse ne peut ni aimer ni haïr franchement — il incarne l'amour impossible.",Anne:"La seule relation d'amour véritable, peut-être. Anne apparaît comme l'objet d'un désir non formulé de Thérèse. Sa fréquence trahit l'importance de ce lien.",coeur:"Terme générique de l'affectivité intérieure. Mauriac l'emploie dans des contextes d'introspection.",tendresse:"Antonyme implicite de la violence du crime. Sa présence révèle que Thérèse est capable d'affect — mais à rebours de ses actes.",haine:"Oppose amour : Thérèse ne peut définir ce qu'elle ressent pour Bernard, oscillant entre haine et indifférence.",larmes:"Marqueur corporel de l'affect. Rare dans le roman, les larmes sont d'autant plus significatives.",indifférence:"Terme clé de la psychologie mauriacienne : l'indifférence est plus terrible que la haine car elle nie l'autre.",désir:"Présent de façon cryptée — Mauriac ne le nomme qu'en creux, ce qui en renforce la charge thématique."}
+  },
+  pouvoir: {
+    intro: "Le thème Pouvoir regroupe les mots qui activent domination, autorité et contrainte. 'Famille' et 'mariage' sont des institutions sociales qui exercent un pouvoir sur Thérèse — ils sont des antonymes de liberté individuelle.",
+    mots: {famille:"Institution par excellence dans Mauriac. La famille n'est pas un refuge mais un appareil de contrôle.",mariage:"Le mariage est la forme légale du pouvoir de Bernard sur Thérèse.",honneur:"Concept social qui donne au pouvoir sa justification morale. L'honneur de la famille prime sur la vérité de Thérèse.",Bernard:"Ici sous l'angle de l'autorité : Bernard représente le pouvoir du mari, légitimé socialement.",honte:"L'envers de l'honneur — outil de contrôle émotionnel exercé sur Thérèse.",convention:"Les conventions sont supérieures aux individus dans ce monde.",punition:"Thérèse est punie non pour son crime mais pour avoir menacé l'honneur familial.",autorité:"Terme abstrait désignant la force institutionnelle.",obéir:"Antonyme de révolte. Thérèse obéit et en même temps résiste."}
+  },
+  liberte: {
+    intro: "Le thème Liberté est le plus riche en antonymes : la liberté se définit ici par ce qu'elle n'est pas. 'Prison' et 'cage' désignent l'enfermement, ce qui convoque la liberté comme horizon manquant. Méthode : nommer l'enfermement, c'est activer le thème liberté par opposition constitutive.",
+    mots: {prison:"Antonyme structural de liberté. Argelouse est une prison naturelle, le mariage une prison légale.",Paris:"Le seul espace de liberté possible. Paris = anonymat = existence hors du regard.",enfermement:"Terme abstrait qui synthétise la condition de Thérèse.",libre:"Paradoxalement rare — sa rareté le rend d'autant plus frappant.",contrainte:"Désigne explicitement le système qui pèse sur Thérèse.",fuite:"Mouvement vers la liberté, toujours avorté sauf à la fin.",destin:"Mot de la fatalité — la liberté est limitée par un destin qu'elle ne peut refuser.",échapper:"Verbe du désir de liberté — sa fréquence trahit l'aspiration centrale.",cage:"Métaphore animale de l'enfermement — plus crue que 'prison'."}
+  },
+  identite: {
+    intro: "Le thème Identité regroupe les mots qui activent la quête de soi, la conscience et le mystère intérieur. 'Pourquoi' est le mot central du roman : Thérèse ne comprend pas son propre acte. Les mots choisis sont souvent des termes de l'interrogation intérieure — la quête sans réponse est le moteur du roman.",
+    mots: {pourquoi:"Le mot le plus important du roman. Thérèse passe 200 pages à chercher la réponse à cette question sur son propre acte.",silence:"L'identité de Thérèse est constituée de silences — ce qu'elle ne dit pas, ce qu'elle ne comprend pas.",comprendre:"Verbe de la quête identitaire : comprendre pourquoi elle a agi. L'échec de cette compréhension est la tragédie.",solitude:"Condition existentielle — elle est seule même entourée.",âme:"Terme religieux (Mauriac est catholique) pour désigner l'identité profonde.",moi:"Pronom de l'identité — sa fréquence dans un roman à la 3e personne est significative.",conscience:"Thérèse observe ses propres actions avec une distance clinique troublante.",vérité:"Ce que Thérèse cherche sur elle-même — une vérité qu'elle ne trouvera pas.",mystère:"L'identité de Thérèse reste un mystère — pour elle-même, pour le lecteur, pour Mauriac."}
+  },
+  societe: {
+    intro: "Le thème Société regroupe les mots qui activent la critique sociale et les structures institutionnelles. Le monde de Mauriac est celui de la bourgeoisie catholique landaise — il en montre les mécanismes de contrôle. 'Scandale' et 'apparences' sont les mots-clés de cette critique.",
+    mots: {famille:"Unité de base de la société mauriacienne.",monde:"Terme désignant la société telle qu'elle se perçoit elle-même.",scandale:"Ce que la famille cherche à éviter à tout prix. Le scandale est l'ennemi de la société des apparences.",réputation:"La réputation prime sur la vérité dans ce monde.",apparences:"Mot clé — la société fonctionne sur l'apparence, non sur la réalité.",tribunal:"Dans ce roman, le vrai tribunal est la famille, pas le judiciaire.",Laroque:"Porter ce nom, c'est appartenir à un ordre social qui s'impose.",bourgeois:"Mauriac critique la bourgeoisie de l'intérieur.",Saint_Clair:"Le village — espace du regard social, de la rumeur, du contrôle communautaire."}
+  },
+  nature: {
+    intro: "Le thème Nature regroupe les mots du paysage landais et ses fonctions symboliques. Chez Mauriac, la nature n'est pas un décor — elle est une projection de l'âme de Thérèse. 'Lande', 'pins', 'résine', 'bruyère' forment un champ lexical cohérent dont la densité est anormalement élevée. Choix validé par la méthode : densité lexicale > 3× la moyenne d'un roman contemporain.",
+    mots: {lande:"Le mot le plus symbolique. La lande est à la fois belle et étouffante — comme Thérèse. Elle est la métaphore centrale.",pins:"Les pins sont les barreaux de la prison naturelle d'Argelouse.",nuit:"La nuit à Argelouse est oppressante — c'est le temps de la conscience de Thérèse.",résine:"Odeur spécifique — Mauriac ancre son roman dans une sensorialité très précise.",ombre:"L'ombre des pins, l'ombre sur l'âme de Thérèse — terme à double registre.",odeur:"Le roman de Mauriac est un roman des sens — les odeurs créent une atmosphère étouffante.",bruyère:"Plante symbole de résistance et de sécheresse.",forêt:"Terme générique pour l'espace landais.",pluie:"La pluie à Argelouse coupe Thérèse du monde extérieur."}
+  }
+};
+
+function _q3OpenExpl() {
+  var btn=document.getElementById('ni-q-expl-btn');
+  var key=btn?btn.getAttribute('data-key'):null;
+  if(!key) return;
+  openLexExpl(key);
+}
+
+function openLexExpl(key) {
+  var win=document.getElementById('lex-expl-win');
+  if(!win) return;
+  var L=LIVRE_ACTIF,lex=L&&L.lexique,col=LEX_COLORS[key];
+  win.style.display='block';win.style.transform='none';
+  win.style.left=(Math.max(20,window.innerWidth/2-260))+'px';win.style.top='80px';
+  var hdr=document.getElementById('lex-expl-hdr');
+  if(hdr) hdr.style.background=LEX_BG[key];
+  var ttl=document.getElementById('lex-expl-ttl');
+  if(ttl){ttl.textContent='💡 Justification — '+LEX_LABELS[key];ttl.style.color=col;}
+  var body=document.getElementById('lex-expl-body');if(!body) return;
+  var cl=lex&&lex.champLexical&&lex.champLexical[key];
+  var justif=cl&&!Array.isArray(cl)?cl.justification:null;
+  var words=_getLexChamp(key);
+  var def=LEX_EXPL_DEFAULT[key]||{intro:'',mots:{}};
+  var intro=justif||(def.intro||'Aucune justification disponible pour ce thème dans ce livre.');
+  var r=parseInt(col.slice(1,3),16),g=parseInt(col.slice(3,5),16),b=parseInt(col.slice(5,7),16);
+  var html='<h4 style="color:'+col+'">Introduction</h4><p>'+intro+'</p>';
+  if(words.length){
+    html+='<h4 style="color:'+col+'">Justification mot par mot</h4>';
+    var maxN=words[0].n;
+    words.forEach(function(w){
+      var ratio=maxN>1?(w.n-1)/(maxN-1):1;
+      var motKey=w.mot.replace(/[-\s]/g,'_');
+      var raison=(def.mots&&(def.mots[w.mot]||def.mots[motKey]))||'Fréquence significative dans ce thème ('+w.n+' occurrence'+(w.n>1?'s':'')+').';
+      var bgA=(0.1+ratio*0.35).toFixed(2);
+      html+='<div class="lex-expl-word-row">'+
+        '<span class="lex-expl-word-pill" style="background:rgba('+r+','+g+','+b+','+bgA+');color:'+col+';">'+w.mot+' <sup>'+w.n+'</sup></span>'+
+        '<span style="flex:1;font-size:.73rem;color:#444;line-height:1.5;">'+raison+'</span></div>';
+    });
+  }
+  body.innerHTML=html;
+  _initExplDrag();
+}
+function closeLexExpl(){var w=document.getElementById('lex-expl-win');if(w)w.style.display='none';}
+function openLexHelp(){var w=document.getElementById('lex-help-win');if(w){w.style.display='block';w.style.transform='none';w.style.left=(window.innerWidth/2-240)+'px';w.style.top='80px';}}
+function closeLexHelp(){var w=document.getElementById('lex-help-win');if(w)w.style.display='none';}
+
+var _explDrag=null,_explRsz=null;
+function _initExplDrag(){
+  var win=document.getElementById('lex-expl-win');
+  var hdr=document.getElementById('lex-expl-hdr');
+  if(!win||!hdr||win._dragInit) return;
+  win._dragInit=true;
+  hdr.addEventListener('mousedown',function(e){
+    if(e.target.closest&&e.target.closest('button')) return;
+    var r=win.getBoundingClientRect();
+    _explDrag={sx:e.clientX,sy:e.clientY,sl:r.left,st:r.top};e.preventDefault();
+  });
+  win.addEventListener('mousedown',function(e){
+    if(e.target&&e.target.classList&&e.target.classList.contains('rsz2')){
+      var r=win.getBoundingClientRect();
+      _explRsz={dir:e.target.dataset.dir2,sx:e.clientX,sy:e.clientY,sw:r.width,sh:r.height,sl:r.left,st:r.top};
+      e.preventDefault();e.stopPropagation();
+    }
+  });
+  document.addEventListener('mousemove',function(e){
+    if(_explDrag){win.style.left=(_explDrag.sl+e.clientX-_explDrag.sx)+'px';win.style.top=(_explDrag.st+e.clientY-_explDrag.sy)+'px';}
+    if(_explRsz){
+      var d=_explRsz.dir,dx=e.clientX-_explRsz.sx,dy=e.clientY-_explRsz.sy;
+      var nw=_explRsz.sw,nh=_explRsz.sh,nl=_explRsz.sl,nt=_explRsz.st;
+      if(d.indexOf('e')>=0) nw=Math.max(300,_explRsz.sw+dx);
+      if(d.indexOf('w')>=0){nw=Math.max(300,_explRsz.sw-dx);nl=_explRsz.sl+(_explRsz.sw-nw);}
+      if(d.indexOf('s')>=0) nh=Math.max(200,_explRsz.sh+dy);
+      if(d.indexOf('n')>=0){nh=Math.max(200,_explRsz.sh-dy);nt=_explRsz.st+(_explRsz.sh-nh);}
+      win.style.width=nw+'px';win.style.height=nh+'px';win.style.left=nl+'px';win.style.top=nt+'px';
+    }
+  });
+  document.addEventListener('mouseup',function(){_explDrag=null;_explRsz=null;});
+}
+
 </script>
 
 <!-- ── BOUTON FLOTTANT CARNET ── -->
