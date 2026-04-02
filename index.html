@@ -1962,6 +1962,50 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
   color:#6b7080 !important;
   cursor:default !important;
 }
+
+/* ── Lexique Q3 compact ── */
+.ni-q-hdr-icon{background:none;border:none;cursor:pointer;font-size:.82rem;padding:0 3px;line-height:1;opacity:.8;}
+.ni-q-hdr-icon:hover{opacity:1;}
+#ni-q-th-haslex{height:100%;display:flex;flex-direction:column;}
+#ni-q-th-haslex svg{flex:1;width:100%;}
+#ni-q-th-nolex{text-align:center;padding:10px 0;}
+/* Fenêtre flottante */
+#lex-floatwin{display:none;position:fixed;z-index:9997;background:#fff;border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.22);border:1px solid #ddd;min-width:420px;min-height:340px;width:700px;height:560px;top:55px;left:50%;transform:translateX(-50%);}
+.lex-fw-hdr{padding:7px 12px;background:#F5F0FF;border-radius:10px 10px 0 0;display:flex;align-items:center;cursor:move;border-bottom:1px solid #E0D7F5;user-select:none;flex-shrink:0;}
+.lex-fw-ttl{flex:1;font-size:.76rem;font-weight:700;color:#4A148C;pointer-events:none;}
+#lex-fw-body{overflow:auto;padding:10px 12px;height:calc(100% - 36px);box-sizing:border-box;}
+/* 8 resize handles */
+.rsz{position:absolute;z-index:10;}
+.rsz-n{top:0;left:12px;right:12px;height:5px;cursor:n-resize;}
+.rsz-s{bottom:0;left:12px;right:12px;height:5px;cursor:s-resize;}
+.rsz-e{right:0;top:12px;bottom:12px;width:5px;cursor:e-resize;}
+.rsz-w{left:0;top:12px;bottom:12px;width:5px;cursor:w-resize;}
+.rsz-ne{top:0;right:0;width:12px;height:12px;cursor:ne-resize;}
+.rsz-nw{top:0;left:0;width:12px;height:12px;cursor:nw-resize;}
+.rsz-se{bottom:0;right:0;width:12px;height:12px;cursor:se-resize;}
+.rsz-sw{bottom:0;left:0;width:12px;height:12px;cursor:sw-resize;}
+/* Score cards compactes (colonne gauche) */
+.lex-sc-v{border-radius:5px;padding:4px 8px;border-width:1.5px;border-style:solid;cursor:pointer;transition:box-shadow .12s;}
+.lex-sc-v:hover{box-shadow:0 1px 6px rgba(0,0,0,.1);}
+.lex-sc-v.sel{border-width:2.5px;box-shadow:0 2px 8px rgba(0,0,0,.15);}
+.lex-sc-v .sc-top{display:flex;justify-content:space-between;align-items:center;}
+.lex-sc-v .sc-lbl{font-size:9px;font-weight:700;}
+.lex-sc-v .sc-num{font-size:14px;font-weight:800;}
+.lex-sc-v .sc-bar-bg{height:2px;background:#eee;border-radius:1px;margin-top:3px;}
+.lex-sc-v .sc-bar{height:2px;border-radius:1px;}
+/* Champ lexical (word pills) */
+#lex-fw-champ{min-height:34px;padding:6px 9px;background:#F9F8FF;border-radius:7px;border:1px solid #E8E0F7;margin-bottom:7px;}
+.lex-champ-ttl{font-size:.68rem;font-weight:700;margin-bottom:4px;}
+.lex-champ-pills{display:flex;flex-wrap:wrap;gap:3px 4px;}
+.lex-pill{font-size:10px;padding:2px 7px;border-radius:12px;border-width:1px;border-style:solid;font-weight:500;white-space:nowrap;display:inline-flex;align-items:center;gap:2px;}
+/* Legend scatter */
+.lex-scatter-leg{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:5px;}
+.lex-leg-i{display:flex;align-items:center;gap:3px;font-size:10px;color:#666;}
+.lex-leg-d{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+/* Theme tip */
+#lex-th-tip{display:none;position:fixed;z-index:10000;background:#fff;border:1px solid #E0D7F5;border-radius:8px;padding:9px 11px;max-width:230px;box-shadow:0 4px 16px rgba(0,0,0,.15);}
+/* Import overlay */
+#lex-import-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center;}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 </head>
@@ -2406,16 +2450,36 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
       </div>
     </div>
 
-    <!-- Q3 : THÈMES (bas-gauche) -->
+    <!-- Q3 : TOILE THÉMATIQUE (bas-gauche) -->
     <div class="ni-q" id="ni-q-themes">
-      <div class="ni-q-hdr" style="background:#FFF3E0;color:#E65100;"><span class="ni-q-hdr-lbl">🎯 Thèmes</span></div>
-      <div class="ni-q-body">
-        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#AD1457">❤️ Amour</div><textarea id="ni-m-th-amour"    class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('amour',this.value)"></textarea><button class="btn-mic ni-m-th-mic" id="thmic-amour"    onclick="niMicStart('ni-m-th-amour','thmic-amour')"    title="Dicter">🎤</button></div>
-        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#c0392b">⚡ Pouvoir</div><textarea id="ni-m-th-pouvoir"  class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('pouvoir',this.value)"></textarea><button class="btn-mic ni-m-th-mic" id="thmic-pouvoir"  onclick="niMicStart('ni-m-th-pouvoir','thmic-pouvoir')"  title="Dicter">🎤</button></div>
-        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#2E5FA3">🕊️ Liberté</div><textarea id="ni-m-th-liberte"  class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('liberte',this.value)"></textarea><button class="btn-mic ni-m-th-mic" id="thmic-liberte"  onclick="niMicStart('ni-m-th-liberte','thmic-liberte')"  title="Dicter">🎤</button></div>
-        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#6A1B9A">🔍 Identité</div><textarea id="ni-m-th-identite" class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('identite',this.value)"></textarea><button class="btn-mic ni-m-th-mic" id="thmic-identite" onclick="niMicStart('ni-m-th-identite','thmic-identite')" title="Dicter">🎤</button></div>
-        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#E65100">🏛️ Société</div><textarea id="ni-m-th-societe"  class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('societe',this.value)"></textarea><button class="btn-mic ni-m-th-mic" id="thmic-societe"  onclick="niMicStart('ni-m-th-societe','thmic-societe')"  title="Dicter">🎤</button></div>
-        <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#2E7D32">🌿 Nature</div><textarea id="ni-m-th-nature"   class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('nature',this.value)"></textarea><button class="btn-mic ni-m-th-mic" id="thmic-nature"   onclick="niMicStart('ni-m-th-nature','thmic-nature')"    title="Dicter">🎤</button></div>
+      <div class="ni-q-hdr" style="background:#EDE7F6;color:#4A148C;">
+        <span class="ni-q-hdr-lbl">🕸️ Toile thématique</span>
+        <button class="ni-q-hdr-icon" id="ni-th-det-btn" onclick="openLexDetail()" title="Voir le détail" style="display:none;">📊</button>
+        <button class="ni-q-hdr-icon" onclick="openLexiqueImport()" title="Importer analyse lexicale">📋</button>
+      </div>
+      <div class="ni-q-body" style="padding:6px 8px;">
+
+        <!-- Zone lexique — radar max-size -->
+        <div id="ni-q-th-haslex" style="display:none;">
+          <svg id="ni-lex-radar-q3" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;"></svg>
+        </div>
+
+        <!-- Pas de lexique -->
+        <div id="ni-q-th-nolex">
+          <div style="font-size:.72rem;color:#bbb;margin-bottom:6px;">Pas encore d'analyse lexicale</div>
+          <button class="btn btn-violet btn-sm" style="width:100%;" onclick="openLexiqueImport()">📋 Importer</button>
+        </div>
+
+        <!-- Textareas masquées (données conservées) -->
+        <div id="ni-q-th-ta" style="display:none;">
+          <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#AD1457">❤️ Amour</div><textarea id="ni-m-th-amour"    class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('amour',this.value)"></textarea><button class="btn-mic ni-m-th-mic" id="thmic-amour"    onclick="niMicStart('ni-m-th-amour','thmic-amour')"    title="Dicter">🎤</button></div>
+          <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#c0392b">⚡ Pouvoir</div><textarea id="ni-m-th-pouvoir"  class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('pouvoir',this.value)"></textarea><button class="btn-mic ni-m-th-mic" id="thmic-pouvoir"  onclick="niMicStart('ni-m-th-pouvoir','thmic-pouvoir')"  title="Dicter">🎤</button></div>
+          <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#2E5FA3">🕊️ Liberté</div><textarea id="ni-m-th-liberte"  class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('liberte',this.value)"></textarea><button class="btn-mic ni-m-th-mic" id="thmic-liberte"  onclick="niMicStart('ni-m-th-liberte','thmic-liberte')"  title="Dicter">🎤</button></div>
+          <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#6A1B9A">🔍 Identité</div><textarea id="ni-m-th-identite" class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('identite',this.value)"></textarea><button class="btn-mic ni-m-th-mic" id="thmic-identite" onclick="niMicStart('ni-m-th-identite','thmic-identite')" title="Dicter">🎤</button></div>
+          <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#E65100">🏛️ Société</div><textarea id="ni-m-th-societe"  class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('societe',this.value)"></textarea><button class="btn-mic ni-m-th-mic" id="thmic-societe"  onclick="niMicStart('ni-m-th-societe','thmic-societe')"  title="Dicter">🎤</button></div>
+          <div class="ni-m-th-row"><div class="ni-m-th-lbl" style="color:#2E7D32">🌿 Nature</div><textarea id="ni-m-th-nature"   class="ni-m-th-ta" placeholder="Mots, p. …" oninput="niMSaveTheme('nature',this.value)"></textarea><button class="btn-mic ni-m-th-mic" id="thmic-nature"   onclick="niMicStart('ni-m-th-nature','thmic-nature')"    title="Dicter">🎤</button></div>
+        </div>
+
       </div>
     </div>
 
@@ -3392,6 +3456,71 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 </div>
 
 <!-- ══ MODAL ÉDITION NOM ══ -->
+
+<!-- ── LEXIQUE FENÊTRE FLOTTANTE ── -->
+<div id="lex-floatwin">
+  <div class="rsz rsz-n" data-dir="n"></div>
+  <div class="rsz rsz-s" data-dir="s"></div>
+  <div class="rsz rsz-e" data-dir="e"></div>
+  <div class="rsz rsz-w" data-dir="w"></div>
+  <div class="rsz rsz-ne" data-dir="ne"></div>
+  <div class="rsz rsz-nw" data-dir="nw"></div>
+  <div class="rsz rsz-se" data-dir="se"></div>
+  <div class="rsz rsz-sw" data-dir="sw"></div>
+  <div class="lex-fw-hdr" id="lex-fw-hdr">
+    <span class="lex-fw-ttl" id="lex-fw-ttl">📊 Toile thématique</span>
+    <button class="btn btn-gris btn-sm" onclick="closeLexDetail()">✕</button>
+  </div>
+  <div id="lex-fw-body">
+    <!-- Rangée principale : cartes compactes gauche + radar droite -->
+    <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;">
+      <!-- Colonne gauche : 6 score cards compactes -->
+      <div id="lex-fw-scores" style="display:flex;flex-direction:column;gap:4px;width:128px;flex-shrink:0;padding-top:4px;"></div>
+      <!-- Colonne droite : radar -->
+      <div style="flex:1;min-width:0;text-align:center;">
+        <svg id="lex-fw-radar" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:280px;display:inline-block;"></svg>
+      </div>
+    </div>
+    <!-- Champ lexical (mots + occurrences pour le thème sélectionné) -->
+    <div id="lex-fw-champ">
+      <div class="lex-champ-ttl" id="lex-champ-ttl" style="color:#888;">Cliquer sur un axe ou une carte pour voir le champ lexical</div>
+    </div>
+    <!-- Scatter -->
+    <div style="font-size:.6rem;font-weight:900;color:#4A148C;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Scatter thématique par pages</div>
+    <div style="overflow-x:auto;">
+      <svg id="lex-fw-scatter" xmlns="http://www.w3.org/2000/svg" style="display:block;min-width:460px;width:100%;"></svg>
+    </div>
+    <div class="lex-scatter-leg" id="lex-fw-leg"></div>
+  </div>
+</div>
+
+<!-- ── LEXIQUE IMPORT ── -->
+<div id="lex-import-overlay">
+  <div style="background:#fff;border-radius:12px;padding:20px;max-width:520px;width:90%;box-shadow:0 4px 24px rgba(0,0,0,.25);">
+    <div style="font-size:.9rem;font-weight:700;color:var(--violet);margin-bottom:6px;">📋 Import — Analyse lexicale</div>
+    <div style="font-size:.75rem;color:#888;margin-bottom:10px;">
+      Colle le JSON du Prompt B.<br>
+      <b>Optionnel :</b> ajoute <code>champLexical</code> pour les mots-clés avec comptage d'occurrences :<br>
+      <code style="font-size:.68rem;">"champLexical":{"identite":[{"mot":"loup","n":23},...],...}</code>
+    </div>
+    <textarea id="lex-import-json" style="width:100%;height:140px;font-family:monospace;font-size:.7rem;border:1px solid #ddd;border-radius:6px;padding:8px;resize:vertical;box-sizing:border-box;" placeholder='{"phases":[...],"tranches":[...]}'></textarea>
+    <div id="lex-import-err" style="color:#c00;font-size:.72rem;margin-top:4px;display:none;"></div>
+    <div style="display:flex;gap:8px;margin-top:10px;justify-content:flex-end;">
+      <button class="btn btn-gris btn-sm" onclick="closeLexiqueImport()">Annuler</button>
+      <button class="btn btn-violet btn-sm" onclick="saveLexiqueImport()">✅ Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── LEXIQUE THEME TIP (Q3 tooltip) ── -->
+<div id="lex-th-tip">
+  <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;">
+    <span id="lex-th-tip-lbl" style="font-size:.78rem;font-weight:700;flex:1;"></span>
+    <button onclick="hideLexThemeTip()" style="background:none;border:none;cursor:pointer;font-size:.8rem;color:#aaa;padding:0;">✕</button>
+  </div>
+  <div id="lex-th-tip-txt" style="font-size:.74rem;color:#555;white-space:pre-wrap;max-height:180px;overflow-y:auto;line-height:1.5;"></div>
+</div>
+
 <div id="modal-overlay" onclick="closeModal(event)">
   <div id="modal">
     <h3 id="modal-title">Modifier le nom</h3>
@@ -4523,7 +4652,8 @@ function creerNouveauLivreObj(titre, auteur, genre) {
     courant:       '',
     style:         '',
     temps2:        {},
-    dissertation2: {}
+    dissertation2: {},
+    lexique:       null
   };
 }
 
@@ -5412,15 +5542,23 @@ function _buildPdfHtml(style) {
     // Mots difficiles
     L.mots ? sec('💬 Mots difficiles', P.violet, `<div style="font-size:12px;line-height:1.7;white-space:pre-wrap;color:#333;">${br(L.mots)}</div>`) : '',
 
-    // Thèmes + radar
+    // Toile thématique
     (() => {
+      if (L.lexique && L.lexique.tranches && L.lexique.tranches.length) {
+        const radarSvg = _buildLexRadarSVG(L.lexique.tranches, 280);
+        const nt = L.lexique.tranches.length;
+        const mp = L.lexique.tranches[nt-1].pageFin || L.lexique.tranches[nt-1].pageDebut;
+        return sec('🕸️ Toile thématique — Analyse lexicale', P.violet,
+          '<div style="text-align:center;margin-bottom:8px;">' + radarSvg + '</div>' +
+          '<div style="font-size:11px;color:#888;text-align:center;">Scores moyens · ' + nt + ' tranches · ' + mp + ' pages</div>');
+      }
       if (!L.themes || !Object.values(L.themes).some(v=>v)) return '';
       const radarSvg = _buildRadarSVG(L.themes, 280);
       const liste = Object.entries({amour:'❤️ Amour',pouvoir:'⚡ Pouvoir',liberte:'🕊️ Liberté',identite:'🔍 Identité',societe:'🏛️ Société',nature:'🌿 Nature'})
         .filter(([k])=>L.themes[k]).map(([k,label])=>
           `<div style="display:flex;gap:8px;margin-bottom:5px;font-size:12px;"><b style="white-space:nowrap;min-width:90px;">${label}</b><span style="color:#444;">${br(L.themes[k])}</span></div>`
         ).join('');
-      return sec('🎯 Toile thématique', P.violet,
+      return sec('🕸️ Toile thématique', P.violet,
         '<div style="text-align:center;margin-bottom:12px;">' + radarSvg + '</div>' + liste);
     })(),
 
@@ -5800,14 +5938,23 @@ function genererPDF_selection() {
     parts.push(sec('💬 Mots difficiles', P.violet,
       `<div style="font-size:12px;line-height:1.7;white-space:pre-wrap;color:#333;">${br(L.mots)}</div>`));
   }
-  if (_ck('themes') && L.themes && Object.values(L.themes).some(v=>v)) {
-    const radarSvg = _buildRadarSVG(L.themes, 280);
-    const liste = Object.entries({amour:'❤️ Amour',pouvoir:'⚡ Pouvoir',liberte:'🕊️ Liberté',identite:'🔍 Identité',societe:'🏛️ Société',nature:'🌿 Nature'})
-      .filter(([k])=>L.themes[k]).map(([k,label])=>
-        '<div style="display:flex;gap:8px;margin-bottom:5px;font-size:12px;"><b style="white-space:nowrap;min-width:90px;">'+label+'</b><span style="color:#444;">'+br(L.themes[k])+'</span></div>'
-      ).join('');
-    parts.push(sec('🎯 Toile thématique', P.violet,
-      '<div style="text-align:center;margin-bottom:12px;">' + radarSvg + '</div>' + liste));
+  if (_ck('themes')) {
+    if (L.lexique && L.lexique.tranches && L.lexique.tranches.length) {
+      const radarSvg = _buildLexRadarSVG(L.lexique.tranches, 280);
+      const nt = L.lexique.tranches.length;
+      const mp = L.lexique.tranches[nt-1].pageFin || L.lexique.tranches[nt-1].pageDebut;
+      parts.push(sec('🕸️ Toile thématique — Analyse lexicale', P.violet,
+        '<div style="text-align:center;margin-bottom:8px;">' + radarSvg + '</div>' +
+        '<div style="font-size:11px;color:#888;text-align:center;">Scores moyens · ' + nt + ' tranches · ' + mp + ' pages</div>'));
+    } else if (L.themes && Object.values(L.themes).some(v=>v)) {
+      const radarSvg = _buildRadarSVG(L.themes, 280);
+      const liste = Object.entries({amour:'❤️ Amour',pouvoir:'⚡ Pouvoir',liberte:'🕊️ Liberté',identite:'🔍 Identité',societe:'🏛️ Société',nature:'🌿 Nature'})
+        .filter(([k])=>L.themes[k]).map(([k,label])=>
+          '<div style="display:flex;gap:8px;margin-bottom:5px;font-size:12px;"><b style="white-space:nowrap;min-width:90px;">'+label+'</b><span style="color:#444;">'+br(L.themes[k])+'</span></div>'
+        ).join('');
+      parts.push(sec('🕸️ Toile thématique', P.violet,
+        '<div style="text-align:center;margin-bottom:12px;">' + radarSvg + '</div>' + liste));
+    }
   }
   if (_ck('citations')) {
     const s = citsSection();
@@ -9699,6 +9846,7 @@ function niMLoad() {
     if (el) el.value = th[k] || '';
   });
   niMRenderCit();
+  setTimeout(updateQ3LexViz, 40);
 }
 
 function niQSave(zone) {
@@ -11081,6 +11229,317 @@ function toggleParamsHelp(){
   if (btn)  btn.classList.toggle('open');
   if (body) body.classList.toggle('open');
 }
+
+// ══════════════════════════════════════════════════════════════
+// LEXIQUE — Toile thématique
+// ══════════════════════════════════════════════════════════════
+const LEX_KEYS   = ['amour','pouvoir','liberte','identite','societe','nature'];
+const LEX_LABELS = {amour:'Amour',pouvoir:'Pouvoir',liberte:'Liberté',identite:'Identité',societe:'Société',nature:'Nature'};
+const LEX_COLORS = {amour:'#AD1457',pouvoir:'#C62828',liberte:'#1565C0',identite:'#6A1B9A',societe:'#E65100',nature:'#2E7D32'};
+const LEX_BG     = {amour:'#FCE4EC',pouvoir:'#FFEBEE',liberte:'#E3F2FD',identite:'#F3E5F5',societe:'#FBE9E7',nature:'#E8F5E9'};
+const LEX_PH_BG  = ['rgba(21,101,192,.07)','rgba(245,127,23,.08)','rgba(106,27,154,.06)','rgba(198,40,40,.08)','rgba(46,125,50,.07)'];
+const LEX_PH_LC  = ['#1565C0','#E65100','#6A1B9A','#C62828','#2E7D32'];
+
+function _lexAvg(tranches, key) {
+  if (!tranches||!tranches.length) return 0;
+  return tranches.reduce(function(s,t){return s+(t[key]||0);},0)/tranches.length;
+}
+
+// ── Radar SVG (axes & points avec data-lk) ───────────────────────────────────
+function _buildLexRadarInner(tranches, size) {
+  var cx=size/2,cy=size/2,R=size*0.30,n=6,PI=Math.PI;
+  var avgs=LEX_KEYS.map(function(k){return _lexAvg(tranches,k);});
+  function pt(i,r){var a=i*(2*PI/n)-PI/2;return[cx+r*Math.cos(a),cy+r*Math.sin(a)];}
+  var h='';
+  [0.33,0.66,1].forEach(function(lv){
+    var r=R*lv,pts=LEX_KEYS.map(function(_,i){return pt(i,r).join(',');}).join(' ');
+    h+='<polygon points="'+pts+'" fill="none" stroke="'+(lv===1?'#bbb':'#ddd')+'" stroke-width="'+(lv===1?1.5:0.7)+'"/>';
+  });
+  LEX_KEYS.forEach(function(_,i){
+    var ep=pt(i,R);
+    h+='<line x1="'+cx+'" y1="'+cy+'" x2="'+ep[0].toFixed(1)+'" y2="'+ep[1].toFixed(1)+'" stroke="#ccc" stroke-width="0.8"/>';
+  });
+  var dpts=LEX_KEYS.map(function(_,i){return pt(i,R*avgs[i]/100).join(',');}).join(' ');
+  h+='<polygon points="'+dpts+'" fill="rgba(106,27,154,0.14)" stroke="#6A1B9A" stroke-width="2" stroke-linejoin="round"/>';
+  // Points (data-lk)
+  LEX_KEYS.forEach(function(k,i){
+    if(avgs[i]>0){
+      var p=pt(i,R*avgs[i]/100);
+      h+='<circle data-lk="'+k+'" cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="4.5" fill="'+LEX_COLORS[k]+'" stroke="#fff" stroke-width="1.5" style="cursor:pointer"/>';
+    }
+  });
+  // Labels + scores (data-lk)
+  var lR=size<200?R+16:R+22;
+  LEX_KEYS.forEach(function(k,i){
+    var lp=pt(i,lR),ta=(i===0||i===3)?'middle':i<3?'start':'end',dy=i===3?12:2,bold=avgs[i]>60;
+    h+='<text data-lk="'+k+'" x="'+lp[0].toFixed(1)+'" y="'+(lp[1]+dy).toFixed(1)+'" text-anchor="'+ta+'" font-family="Arial,sans-serif" font-size="11" font-weight="'+(bold?700:500)+'" fill="'+(bold?LEX_COLORS[k]:'#666')+'" style="cursor:pointer">'+LEX_LABELS[k]+'</text>';
+    h+='<text data-lk="'+k+'" x="'+lp[0].toFixed(1)+'" y="'+(lp[1]+dy+13).toFixed(1)+'" text-anchor="'+ta+'" font-family="Arial,sans-serif" font-size="10" font-weight="800" fill="'+LEX_COLORS[k]+'" style="cursor:pointer">'+Math.round(avgs[i])+'</text>';
+  });
+  return h;
+}
+
+function _buildLexRadarSVG(tranches, size) {
+  size=size||280;
+  return '<svg viewBox="0 0 '+size+' '+size+'" xmlns="http://www.w3.org/2000/svg" style="max-width:280px;width:100%;display:block;margin:0 auto;">'+_buildLexRadarInner(tranches,size)+'</svg>';
+}
+
+// Attache la délégation de click sur un SVG radar
+function _attachLexRadarClick(svgId, mode) {
+  var svg=document.getElementById(svgId);
+  if(!svg) return;
+  svg.addEventListener('click',function(e){
+    var lk=e.target.getAttribute('data-lk');
+    if(!lk&&e.target.parentElement) lk=e.target.parentElement.getAttribute('data-lk');
+    if(!lk) return;
+    if(mode==='fw') _lexFwSelect(lk);
+    else showLexThemeTip(e,lk);
+  });
+}
+
+// ── Q3 compact ────────────────────────────────────────────────────────────────
+function updateQ3LexViz() {
+  var L=LIVRE_ACTIF,lex=L&&L.lexique;
+  var ok=lex&&Array.isArray(lex.tranches)&&lex.tranches.length>0;
+  var hasEl=document.getElementById('ni-q-th-haslex');
+  var noEl=document.getElementById('ni-q-th-nolex');
+  var detBtn=document.getElementById('ni-th-det-btn');
+  if(hasEl) hasEl.style.display=ok?'block':'none';
+  if(noEl)  noEl.style.display=ok?'none':'block';
+  if(detBtn) detBtn.style.display=ok?'inline':'none';
+  if(ok){
+    var svg=document.getElementById('ni-lex-radar-q3');
+    if(svg){svg.innerHTML=_buildLexRadarInner(lex.tranches,220);_attachLexRadarClick('ni-lex-radar-q3','tip');}
+  }
+}
+
+// ── Fenêtre flottante ─────────────────────────────────────────────────────────
+function openLexDetail() {
+  var L=LIVRE_ACTIF,lex=L&&L.lexique;
+  if(!lex||!lex.tranches||!lex.tranches.length) return;
+  var win=document.getElementById('lex-floatwin');
+  if(!win) return;
+  win.style.cssText='display:block;position:fixed;z-index:9997;background:#fff;border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.22);border:1px solid #ddd;min-width:420px;min-height:340px;width:700px;height:560px;top:55px;left:50%;transform:translateX(-50%);';
+  var ttl=document.getElementById('lex-fw-ttl');
+  if(ttl) ttl.textContent='📊 Toile thématique — '+(L.titre||'');
+  // Radar
+  var rsvg=document.getElementById('lex-fw-radar');
+  if(rsvg){rsvg.innerHTML=_buildLexRadarInner(lex.tranches,300);_attachLexRadarClick('lex-fw-radar','fw');}
+  // Score cards compactes (colonne gauche, triées par score décroissant)
+  var scEl=document.getElementById('lex-fw-scores');
+  if(scEl){
+    var sorted=LEX_KEYS.slice().sort(function(a,b){return _lexAvg(lex.tranches,b)-_lexAvg(lex.tranches,a);});
+    var html='';
+    sorted.forEach(function(k){
+      var v=Math.round(_lexAvg(lex.tranches,k)),col=LEX_COLORS[k],bg=LEX_BG[k];
+      html+='<div class="lex-sc-v" id="lex-sc-'+k+'" style="border-color:'+col+';background:'+bg+'" onclick="_lexFwSelect(\''+k+'\')">'+
+        '<div class="sc-top"><span class="sc-lbl" style="color:'+col+'">'+LEX_LABELS[k]+'</span><span class="sc-num" style="color:'+col+'">'+v+'</span></div>'+
+        '<div class="sc-bar-bg"><div class="sc-bar" style="width:'+v+'%;background:'+col+'"></div></div>'+
+        '</div>';
+    });
+    scEl.innerHTML=html;
+  }
+  // Scatter
+  _renderLexScatterFW(lex);
+  // Sélectionner le thème dominant
+  var dominant=LEX_KEYS.reduce(function(best,k){return _lexAvg(lex.tranches,k)>_lexAvg(lex.tranches,best)?k:best;},LEX_KEYS[0]);
+  _lexFwSelect(dominant);
+}
+
+function closeLexDetail() {
+  var win=document.getElementById('lex-floatwin');
+  if(win) win.style.display='none';
+  hideLexThemeTip();
+}
+
+// Sélection d'un thème dans la fenêtre flottante
+function _lexFwSelect(key) {
+  // Highlight carte
+  document.querySelectorAll('#lex-fw-scores .lex-sc-v').forEach(function(c){c.classList.remove('sel');});
+  var card=document.getElementById('lex-sc-'+key);
+  if(card) card.classList.add('sel');
+  // Champ lexical
+  _renderLexChamp(key);
+}
+
+// ── Champ lexical (word pills) ───────────────────────────────────────────────
+function _getLexChamp(key) {
+  var L=LIVRE_ACTIF,lex=L&&L.lexique;
+  // Données structurées (champLexical dans le JSON)
+  if(lex&&lex.champLexical&&lex.champLexical[key]&&lex.champLexical[key].length) {
+    return lex.champLexical[key].slice().sort(function(a,b){return b.n-a.n;});
+  }
+  // Fallback : parser le texte des textareas
+  var txt=(L&&L.themes&&L.themes[key])||'';
+  if(!txt) return [];
+  // Séparer par · ou retour à la ligne, extraire les mots (avant la parenthèse de page)
+  var entries=txt.split(/[·\n]+/).map(function(s){
+    return s.replace(/\([^)]*\)/g,'').replace(/p\.\s*\d+/g,'').replace(/ch\.\s*\d+/g,'').trim();
+  }).filter(function(s){return s.length>0;});
+  // Dédoublonner et compter les occurrences
+  var counts={};
+  entries.forEach(function(e){counts[e]=(counts[e]||0)+1;});
+  return Object.keys(counts).map(function(m){return{mot:m,n:counts[m]};}).sort(function(a,b){return b.n-a.n;});
+}
+
+function _renderLexChamp(key) {
+  var el=document.getElementById('lex-fw-champ');
+  var ttlEl=document.getElementById('lex-champ-ttl');
+  if(!el) return;
+  var words=_getLexChamp(key);
+  var col=LEX_COLORS[key];
+  var totalN=words.reduce(function(s,w){return s+w.n;},0);
+  var maxN=words.length?words[0].n:1;
+  // Titre
+  var ttlTxt=LEX_LABELS[key]+' — champ lexical ('+words.length+' mots, '+totalN+' occurrence'+(totalN>1?'s':'')+')';
+  if(ttlEl){ttlEl.textContent=ttlTxt;ttlEl.style.color=col;}
+  if(!words.length){
+    el.innerHTML='<div class="lex-champ-ttl" id="lex-champ-ttl" style="color:'+col+'">'+ttlTxt+'</div><div style="font-size:.72rem;color:#bbb;">(aucun mot saisi pour ce thème)</div>';
+    return;
+  }
+  var pillsHtml='<div class="lex-champ-ttl" id="lex-champ-ttl" style="color:'+col+'">'+ttlTxt+'</div><div class="lex-champ-pills">';
+  words.forEach(function(w){
+    var ratio=maxN>1?(w.n-1)/(maxN-1):1;
+    var bgA=(0.08+ratio*0.62).toFixed(2);
+    var brA=(0.3+ratio*0.7).toFixed(2);
+    var isDark=ratio>0.55;
+    // Convertir hex couleur en rgb pour rgba
+    var r=parseInt(col.slice(1,3),16),g=parseInt(col.slice(3,5),16),b=parseInt(col.slice(5,7),16);
+    var bg='rgba('+r+','+g+','+b+','+bgA+')';
+    var border='rgba('+r+','+g+','+b+','+brA+')';
+    var tc=isDark?'#fff':col;
+    var fs=Math.round(9+ratio*3);
+    pillsHtml+='<span class="lex-pill" style="font-size:'+fs+'px;background:'+bg+';border-color:'+border+';color:'+tc+';font-weight:'+(ratio>0.5?700:500)+'">'+
+      w.mot+(w.n>1?'<sup style="font-size:.7em;margin-left:2px">'+w.n+'</sup>':'')+'</span>';
+  });
+  pillsHtml+='</div>';
+  el.innerHTML=pillsHtml;
+}
+
+// ── Scatter (points uniquement) ───────────────────────────────────────────────
+function _renderLexScatterFW(lex) {
+  var tranches=lex.tranches||[],phases=lex.phases||[];
+  if(!tranches.length) return;
+  var MP=tranches[tranches.length-1].pageFin||tranches[tranches.length-1].pageDebut;
+  var ML=48,MR=12,MT=30,MB=28,W=560,H=210,CW=W-ML-MR,CH=H-MT-MB;
+  function xp(p){return ML+(p/MP)*CW;}
+  function yv(v){return MT+(1-v/100)*CH;}
+  function xtr(tr){return xp(((tr.pageDebut||0)+(tr.pageFin||tr.pageDebut||0))/2);}
+  var s='';
+  phases.forEach(function(ph,i){
+    var p2=phases[i+1]?phases[i+1].pageDebut-1:MP;
+    var x1=xp((ph.pageDebut||1)-0.5),x2=xp(p2+0.5);
+    s+='<rect x="'+x1.toFixed(1)+'" y="'+MT+'" width="'+(x2-x1).toFixed(1)+'" height="'+CH+'" fill="'+LEX_PH_BG[i%LEX_PH_BG.length]+'"/>';
+    s+='<text x="'+((x1+x2)/2).toFixed(1)+'" y="'+(MT-8)+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" font-weight="bold" fill="'+LEX_PH_LC[i%LEX_PH_LC.length]+'">'+ph.nom+'</text>';
+    if(i>0) s+='<line x1="'+x1.toFixed(1)+'" y1="'+MT+'" x2="'+x1.toFixed(1)+'" y2="'+(MT+CH)+'" stroke="#ccc" stroke-width="0.8" stroke-dasharray="3,2"/>';
+  });
+  [0,25,50,75,100].forEach(function(v){
+    var y=yv(v);
+    s+='<line x1="'+ML+'" y1="'+y.toFixed(1)+'" x2="'+(ML+CW)+'" y2="'+y.toFixed(1)+'" stroke="#eee" stroke-width="0.8"/>';
+    s+='<text x="'+(ML-5)+'" y="'+(y+4).toFixed(1)+'" text-anchor="end" font-family="Arial,sans-serif" font-size="9" fill="#999">'+v+'</text>';
+  });
+  // Points uniquement
+  LEX_KEYS.forEach(function(k){
+    var col=LEX_COLORS[k];
+    tranches.forEach(function(tr){
+      s+='<circle cx="'+xtr(tr).toFixed(1)+'" cy="'+yv(tr[k]||0).toFixed(1)+'" r="5" fill="'+col+'" stroke="#fff" stroke-width="1.5" opacity="0.82"/>';
+    });
+  });
+  tranches.forEach(function(tr,i){
+    if(i%2===0) s+='<text x="'+xtr(tr).toFixed(1)+'" y="'+(MT+CH+13)+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#999">p.'+(tr.pageDebut||'')+'</text>';
+  });
+  s+='<rect x="'+ML+'" y="'+MT+'" width="'+CW+'" height="'+CH+'" fill="none" stroke="#ccc" stroke-width="0.8"/>';
+  var svgEl=document.getElementById('lex-fw-scatter');
+  if(svgEl){svgEl.setAttribute('viewBox','0 0 '+W+' '+H);svgEl.innerHTML=s;}
+  var legEl=document.getElementById('lex-fw-leg');
+  if(legEl) legEl.innerHTML=LEX_KEYS.map(function(k){return '<span class="lex-leg-i"><span class="lex-leg-d" style="background:'+LEX_COLORS[k]+'"></span>'+LEX_LABELS[k]+'</span>';}).join('');
+}
+
+// ── Tooltip thème (Q3) ────────────────────────────────────────────────────────
+function showLexThemeTip(evt, key) {
+  var tip=document.getElementById('lex-th-tip');
+  if(!tip) return;
+  var notes=(LIVRE_ACTIF&&LIVRE_ACTIF.themes&&LIVRE_ACTIF.themes[key])||'';
+  var lbl=document.getElementById('lex-th-tip-lbl'),txt=document.getElementById('lex-th-tip-txt');
+  if(lbl){lbl.textContent=LEX_LABELS[key];lbl.style.color=LEX_COLORS[key];}
+  if(txt) txt.textContent=notes||'(aucune note)';
+  var vw=window.innerWidth,vh=window.innerHeight,lx=evt.clientX+12,lt=evt.clientY+12;
+  if(lx+250>vw) lx=evt.clientX-262;
+  if(lt+210>vh) lt=evt.clientY-212;
+  tip.style.left=lx+'px';tip.style.top=lt+'px';tip.style.display='block';
+}
+function hideLexThemeTip(){var t=document.getElementById('lex-th-tip');if(t)t.style.display='none';}
+
+// ── Import ────────────────────────────────────────────────────────────────────
+function openLexiqueImport(){
+  var ov=document.getElementById('lex-import-overlay');if(!ov)return;
+  ov.style.display='flex';
+  document.getElementById('lex-import-json').value='';
+  document.getElementById('lex-import-err').style.display='none';
+}
+function closeLexiqueImport(){var ov=document.getElementById('lex-import-overlay');if(ov)ov.style.display='none';}
+function saveLexiqueImport(){
+  if(!LIVRE_ACTIF)return;
+  if(!canEdit(LIVRE_ACTIF)){showToast('\u274C Acc\u00e8s refus\u00e9','warn');return;}
+  var raw=document.getElementById('lex-import-json').value.trim();
+  var errEl=document.getElementById('lex-import-err');
+  // Auto-wrapper si l'utilisateur colle un fragment sans accolades racines
+  if(raw&&raw[0]!=='{') raw='{'+raw+'}';
+  try{
+    var data=JSON.parse(raw);
+    // Fusion avec les données existantes si le fragment n'a que champLexical
+    if(!data.tranches&&LIVRE_ACTIF&&LIVRE_ACTIF.lexique&&LIVRE_ACTIF.lexique.tranches){
+      LIVRE_ACTIF.lexique=Object.assign({},LIVRE_ACTIF.lexique,data);
+      sauvegarderBiblio();closeLexiqueImport();updateQ3LexViz();
+      showToast('\u2705 Champ lexical ajouté','ok');return;
+    }
+    if(!data.tranches||!Array.isArray(data.tranches)||!data.tranches.length) throw new Error('Champ "tranches" manquant ou vide');
+    LIVRE_ACTIF.lexique=data;
+    sauvegarderBiblio();
+    closeLexiqueImport();
+    updateQ3LexViz();
+    showToast('\u2705 Analyse lexicale enregistr\u00e9e','ok');
+  }catch(e){errEl.textContent='JSON invalide : '+e.message;errEl.style.display='block';}
+}
+
+// ── Drag & resize fenêtre ─────────────────────────────────────────────────────
+(function(){
+  var _drag=null,_rsz=null;
+  document.addEventListener('click',function(e){
+    var tip=document.getElementById('lex-th-tip');
+    if(tip&&tip.style.display!=='none'&&!tip.contains(e.target)) hideLexThemeTip();
+  },true);
+  document.addEventListener('mousedown',function(e){
+    var hdr=document.getElementById('lex-fw-hdr');
+    if(hdr&&hdr.contains(e.target)&&!e.target.closest('button')){
+      var win=document.getElementById('lex-floatwin');if(!win)return;
+      var r=win.getBoundingClientRect();
+      win.style.transform='none';win.style.left=r.left+'px';win.style.top=r.top+'px';
+      _drag={sx:e.clientX,sy:e.clientY,sl:r.left,st:r.top};e.preventDefault();return;
+    }
+    if(e.target&&e.target.classList&&e.target.classList.contains('rsz')){
+      var win2=document.getElementById('lex-floatwin');if(!win2)return;
+      var r2=win2.getBoundingClientRect();
+      win2.style.transform='none';win2.style.left=r2.left+'px';win2.style.top=r2.top+'px';
+      _rsz={dir:e.target.dataset.dir,sx:e.clientX,sy:e.clientY,sw:r2.width,sh:r2.height,sl:r2.left,st:r2.top};
+      e.preventDefault();e.stopPropagation();
+    }
+  });
+  document.addEventListener('mousemove',function(e){
+    var win=document.getElementById('lex-floatwin');if(!win)return;
+    if(_drag){win.style.left=(_drag.sl+e.clientX-_drag.sx)+'px';win.style.top=(_drag.st+e.clientY-_drag.sy)+'px';}
+    if(_rsz){
+      var dir=_rsz.dir,dx=e.clientX-_rsz.sx,dy=e.clientY-_rsz.sy;
+      var nw=_rsz.sw,nh=_rsz.sh,nl=_rsz.sl,nt=_rsz.st;
+      if(dir.indexOf('e')>=0) nw=Math.max(420,_rsz.sw+dx);
+      if(dir.indexOf('w')>=0){nw=Math.max(420,_rsz.sw-dx);nl=_rsz.sl+(_rsz.sw-nw);}
+      if(dir.indexOf('s')>=0) nh=Math.max(340,_rsz.sh+dy);
+      if(dir.indexOf('n')>=0){nh=Math.max(340,_rsz.sh-dy);nt=_rsz.st+(_rsz.sh-nh);}
+      win.style.width=nw+'px';win.style.height=nh+'px';win.style.left=nl+'px';win.style.top=nt+'px';
+    }
+  });
+  document.addEventListener('mouseup',function(){_drag=null;_rsz=null;});
+})();
+
 </script>
 
 <!-- ── BOUTON FLOTTANT CARNET ── -->
