@@ -11330,19 +11330,18 @@ function openLexDetail() {
   // Radar
   var rsvg=document.getElementById('lex-fw-radar');
   if(rsvg){rsvg.innerHTML=_buildLexRadarInner(lex.tranches,300);_attachLexRadarClick('lex-fw-radar','fw');}
-  // Score cards compactes (colonne gauche, triées par score décroissant)
-  var scEl=document.getElementById('lex-fw-scores');
-  if(scEl){
+  // Légende col2 (triée par score décroissant)
+  var lgEl=document.getElementById('lex-fw-legend');
+  if(lgEl){
     var sorted=LEX_KEYS.slice().sort(function(a,b){return _lexAvg(lex.tranches,b)-_lexAvg(lex.tranches,a);});
-    var html='';
-    sorted.forEach(function(k){
-      var v=Math.round(_lexAvg(lex.tranches,k)),col=LEX_COLORS[k],bg=LEX_BG[k];
-      html+='<div class="lex-sc-v" id="lex-sc-'+k+'" style="border-color:'+col+'" onclick="_lexFwSelect(\''+k+'\')">'+
-        '<span class="sc-lbl" style="color:'+col+'">'+LEX_LABELS[k]+'</span>'+
-        '<span class="sc-num" style="color:'+col+'">'+v+'</span>'+
+    lgEl.innerHTML=sorted.map(function(k){
+      var v=Math.round(_lexAvg(lex.tranches,k)),col=LEX_COLORS[k];
+      return '<div id="lex-lg-'+k+'" onclick="_lexFwSelect(\''+k+'\')" style="display:flex;align-items:center;gap:5px;padding:3px 5px;border-radius:4px;cursor:pointer;transition:background .12s;">'+
+        '<span style="width:8px;height:8px;border-radius:50%;background:'+col+';flex-shrink:0;display:inline-block;"></span>'+
+        '<span style="font-size:10px;font-weight:600;color:'+col+';flex:1;">'+LEX_LABELS[k]+'</span>'+
+        '<span style="font-size:12px;font-weight:800;color:'+col+';">'+v+'</span>'+
         '</div>';
-    });
-    scEl.innerHTML=html;
+    }).join('');
   }
   // Interrupteurs de thèmes (scatter)
   _lexActiveThemes=LEX_KEYS.slice();
