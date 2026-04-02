@@ -11369,6 +11369,12 @@ function updateQ3LexViz() {
   // Sélectionner thème dominant
   var dom=LEX_KEYS.reduce(function(b,k){return _lexAvg(lex.tranches,k)>_lexAvg(lex.tranches,b)?k:b;},LEX_KEYS[0]);
   _q3ThemeSelect(dom);
+  // Aligner col2 sur le 1er mot de col3 (mesure après rendu du titre)
+  setTimeout(function(){
+    var ttl=document.getElementById('ni-q-th-words-ttl');
+    var lg=document.getElementById('ni-q-th-legend');
+    if(ttl&&lg) lg.style.paddingTop=(ttl.offsetHeight+3)+'px';
+  },30);
 }
 
 function _q3ThemeSelect(key) {
