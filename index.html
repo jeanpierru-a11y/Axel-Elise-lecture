@@ -2517,11 +2517,11 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 
     <!-- Q3 : TOILE THÉMATIQUE (bas-gauche) -->
     <div class="ni-q" id="ni-q-themes">
-      <div class="ni-q-hdr" style="background:#EDE7F6;color:#4A148C;">
+      <div class="ni-q-hdr" style="background:#EDE7F6;color:#4A148C;gap:4px;">
         <span class="ni-q-hdr-lbl">🕸️ Toile thématique</span>
         <button class="ni-q-hdr-icon" id="ni-th-det-btn" onclick="openLexDetail()" title="Voir le détail" style="display:none;">📊</button>
         <button class="ni-q-hdr-icon" onclick="openLexiqueImport()" title="Importer analyse lexicale">📋</button>
-        <button class="ni-q-hdr-icon" id="ni-th-help-btn" onclick="openLexHelp()" title="Méthodologie" style="display:none;font-size:.65rem;">?</button>
+        <button class="ni-q-hdr-icon" id="ni-th-help-btn" onclick="openLexHelp()" title="Méthodologie" style="display:none;">?</button>
       </div>
       <div class="ni-q-body" style="padding:4px 6px;display:flex;flex-direction:column;overflow:hidden;">
 
@@ -9546,6 +9546,7 @@ var NI_I_DATA = {
 };
 
 function niGoIntrigue(schema, el) {
+  _closeAllFloatWins();
   document.querySelectorAll('.ni-mi').forEach(function(m){m.classList.remove('act');});
   if (el) el.classList.add('act');
   document.body.className = document.body.className.split(' ').filter(function(c){return c.indexOf('ni-sec-')<0;}).join(' ');
@@ -11737,7 +11738,7 @@ function openLexDetail() {
 
 function closeLexDetail() {
   var win=document.getElementById('lex-floatwin');
-  if(win) win.style.display='none';
+  if(win) win.style.cssText=''; // reset total → le CSS display:none reprend le dessus
   hideLexThemeTip();
 }
 
