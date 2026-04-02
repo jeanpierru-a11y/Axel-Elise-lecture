@@ -11438,13 +11438,16 @@ function _renderQ3Scatter(lex) {
   });
   s+='<rect x="'+ML+'" y="'+MT+'" width="'+CW+'" height="'+CH+'" fill="none" stroke="#ccc" stroke-width="0.6"/>';
   svgEl.setAttribute('viewBox','0 0 '+W+' '+H);
-  svgEl.setAttribute('preserveAspectRatio','none');
+  svgEl.removeAttribute('preserveAspectRatio');
+  svgEl.style.width='100%';
+  svgEl.style.height='auto';
+  svgEl.style.aspectRatio=W+' / '+H;
   svgEl.innerHTML=s;
-  // Tooltip phases
+  var cont=svgEl.parentElement;
   svgEl.onmousemove=function(e){
     var t=e.target,pn=t&&t.getAttribute?t.getAttribute('data-pname'):null;
-    var tip=document.getElementById('ni-q-th-ph-tip');if(!tip)return;
-    if(pn){tip.textContent=pn;tip.style.display='block';}else{tip.style.display='none';}
+    var tip=document.getElementById('ni-q-th-ph-tip');if(!tip||!cont)return;
+    if(pn){var cr=cont.getBoundingClientRect();tip.textContent=pn;tip.style.display='block';tip.style.left=(e.clientX-cr.left)+'px';tip.style.top=Math.max(2,e.clientY-cr.top-26)+'px';tip.style.transform='translateX(-50%)';}else{tip.style.display='none';}
   };
   svgEl.onmouseleave=function(){
     var tip=document.getElementById('ni-q-th-ph-tip');if(tip)tip.style.display='none';
