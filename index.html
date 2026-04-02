@@ -3764,7 +3764,7 @@ function sauvegarderBiblio() {
 // ════════════════════════════════════════════════════════
 // VERSION — incrémenter à chaque mise à jour des livres démo
 // ════════════════════════════════════════════════════════
-const DEMO_VERSION = 15; // v15 : lexique Carrère L'Adversaire (5 tranches · 8 phases · champLexical 6 thèmes)
+const DEMO_VERSION = 16; // v16 : lexique Thérèse Desqueyroux (5 tranches · 5 phases Freytag · champLexical 6 thèmes)
 const LIVRES_DEMO = [
   {
     id: 'liv_petit_prince_001',
@@ -4408,6 +4408,30 @@ const LIVRES_DEMO = [
       ],
       bilan: "Dès les premières pages, Mauriac construit un dispositif littéraire fondé sur la compassion : dédicace directe, style indirect libre, paysage-état d'âme. Ces procédés placent le lecteur à l'intérieur de la conscience de Thérèse et l'empêchent de juger depuis l'extérieur. Ce faisant, Mauriac ne réhabilite pas le crime — il déplace la question : ce n'est plus 'Thérèse est-elle coupable ?' mais 'quelle société produit une Thérèse ?'",
       ouverture: "On pourrait prolonger ce commentaire en lisant Le Deuxième Sexe de Simone de Beauvoir (1949) — pour mesurer à quel point Mauriac avait intuitivement compris, vingt-deux ans plus tôt, l'enfermement systémique de la femme dans la société bourgeoise. On peut aussi relier Thérèse à Madame Bovary (Flaubert, 1857) : deux femmes intelligentes, deux enfermements, deux destructions — mais Flaubert condamne là où Mauriac défend."
+    },
+    lexique: {
+      phases: [
+        {pageDebut:1,   nom:"Exposition — Le procès (in medias res)"},
+        {pageDebut:45,  nom:"Action montante — Flash-back mariage"},
+        {pageDebut:90,  nom:"Climax — L'empoisonnement"},
+        {pageDebut:135, nom:"Action descendante — Argelouse"},
+        {pageDebut:180, nom:"Dénouement — Paris, la liberté"}
+      ],
+      tranches: [
+        {pageDebut:1,   pageFin:44,  amour:80, pouvoir:38, liberte:60, identite:82, societe:35, nature:38},
+        {pageDebut:45,  pageFin:89,  amour:88, pouvoir:42, liberte:52, identite:88, societe:40, nature:42},
+        {pageDebut:90,  pageFin:134, amour:85, pouvoir:45, liberte:50, identite:82, societe:36, nature:45},
+        {pageDebut:135, pageFin:179, amour:78, pouvoir:42, liberte:55, identite:90, societe:38, nature:42},
+        {pageDebut:180, pageFin:224, amour:84, pouvoir:38, liberte:58, identite:88, societe:36, nature:33}
+      ],
+      champLexical: {
+        amour:    [{mot:"Bernard",n:42},{mot:"Anne",n:28},{mot:"mariage",n:22},{mot:"coeur",n:15},{mot:"indifférence",n:12},{mot:"tendresse",n:8},{mot:"haine",n:8}],
+        pouvoir:  [{mot:"famille",n:35},{mot:"honneur",n:22},{mot:"père",n:18},{mot:"mariage",n:15},{mot:"tribunal",n:15},{mot:"autorité",n:12},{mot:"obéir",n:8}],
+        liberte:  [{mot:"Paris",n:28},{mot:"fuir",n:22},{mot:"train",n:18},{mot:"prison",n:15},{mot:"contrainte",n:12},{mot:"échapper",n:10},{mot:"cigarette",n:8}],
+        identite: [{mot:"Thérèse",n:85},{mot:"pourquoi",n:45},{mot:"silence",n:32},{mot:"comprendre",n:25},{mot:"âme",n:20},{mot:"conscience",n:18},{mot:"moi",n:15},{mot:"vérité",n:12}],
+        societe:  [{mot:"famille",n:35},{mot:"Argelouse",n:22},{mot:"apparences",n:18},{mot:"scandale",n:15},{mot:"réputation",n:12},{mot:"Saint-Clair",n:10},{mot:"convention",n:8}],
+        nature:   [{mot:"lande",n:28},{mot:"pins",n:22},{mot:"forêt",n:20},{mot:"nuit",n:18},{mot:"résine",n:15},{mot:"ombre",n:12},{mot:"bruyère",n:10}]
+      }
     }
   },
 
@@ -11536,6 +11560,9 @@ function _q3ThemeSelect(key) {
   document.querySelectorAll('#ni-q-th-legend > div').forEach(function(c){c.style.background='transparent';});
   var lg=document.getElementById('ni-q-lg-'+key);
   if(lg) lg.style.background=LEX_BG[key]||'rgba(106,27,154,.07)';
+  // Mémoriser le thème sélectionné sur le bouton Justification
+  var explBtn=document.getElementById('ni-q-expl-btn');
+  if(explBtn) explBtn.setAttribute('data-key',key);
   // Col3 : mots
   var words=_getLexChamp(key);
   var maxN=words.length?words[0].n:1;
@@ -11592,7 +11619,7 @@ function _renderQ3ScatterDraw(svgEl,lex,W,H) {
     var p2=phases[i+1]?phases[i+1].pageDebut-1:MP;
     var x1=xp((ph.pageDebut||1)-0.5),x2=xp(p2+0.5),mx=(x1+x2)/2;
     s+='<rect x="'+x1.toFixed(1)+'" y="'+MT+'" width="'+(x2-x1).toFixed(1)+'" height="'+CH+'" fill="'+LEX_PH_BG[i%LEX_PH_BG.length]+'"/>';
-    var cr=Math.round(Math.min(9,MT*0.45));
+    var cr=Math.round(Math.min(6,MT*0.38));
     s+='<circle cx="'+mx.toFixed(1)+'" cy="'+(MT/2)+'" r="'+cr+'" fill="'+LEX_PH_LC[i%LEX_PH_LC.length]+'" data-pname="'+ph.nom+'" style="cursor:pointer"/>';
     s+='<text x="'+mx.toFixed(1)+'" y="'+(MT/2+cr*0.38)+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="'+Math.round(cr*1.3)+'" font-weight="900" fill="#fff" pointer-events="none">'+(i+1)+'</text>';
     if(i>0) s+='<line x1="'+x1.toFixed(1)+'" y1="'+MT+'" x2="'+x1.toFixed(1)+'" y2="'+(MT+CH)+'" stroke="#ccc" stroke-width="0.6" stroke-dasharray="2,2"/>';
@@ -11603,8 +11630,8 @@ function _renderQ3ScatterDraw(svgEl,lex,W,H) {
     s+='<line x1="'+ML+'" y1="'+y.toFixed(1)+'" x2="'+(ML+CW)+'" y2="'+y.toFixed(1)+'" stroke="#eee" stroke-width="0.6"/>';
     s+='<text x="'+(ML-4)+'" y="'+(y+3)+'" text-anchor="end" font-family="Arial,sans-serif" font-size="'+(Math.round(H/12))+'" fill="#555">'+v+'</text>';
   });
-  // Points — r proportionnel à la taille
-  var pr=Math.max(3,Math.round(H/20));
+  // Points — r réduit pour lisibilité en espace compact
+  var pr=Math.max(2,Math.round(H/42));
   LEX_KEYS.forEach(function(k){
     tranches.forEach(function(tr){
       s+='<circle cx="'+xtr(tr).toFixed(1)+'" cy="'+yv(tr[k]||0).toFixed(1)+'" r="'+pr+'" fill="'+LEX_COLORS[k]+'" stroke="#fff" stroke-width="1" opacity="0.85"/>';
