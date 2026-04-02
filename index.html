@@ -3764,7 +3764,7 @@ function sauvegarderBiblio() {
 // ════════════════════════════════════════════════════════
 // VERSION — incrémenter à chaque mise à jour des livres démo
 // ════════════════════════════════════════════════════════
-const DEMO_VERSION = 18; // v18 : force recalcul lexique Thérèse (scatter phases correctes)
+const DEMO_VERSION = 19; // v19 : lexique Thérèse — phases alignées sur schéma moderne 8 parties
 const LIVRES_DEMO = [
   {
     id: 'liv_petit_prince_001',
@@ -4411,11 +4411,14 @@ const LIVRES_DEMO = [
     },
     lexique: {
       phases: [
-        {pageDebut:1,   nom:"Exposition — Le procès (in medias res)"},
-        {pageDebut:45,  nom:"Action montante — Flash-back mariage"},
-        {pageDebut:90,  nom:"Climax — L'empoisonnement"},
-        {pageDebut:135, nom:"Action descendante — Argelouse"},
-        {pageDebut:180, nom:"Dénouement — Paris, la liberté"}
+        {pageDebut:1,   nom:"Exposition — Thérèse dans les Landes"},
+        {pageDebut:29,  nom:"Déclencheur — Le train, l'acquittement"},
+        {pageDebut:57,  nom:"Péripéties — Flash-back : mariage & Anne"},
+        {pageDebut:85,  nom:"Crise — L'empoisonnement"},
+        {pageDebut:113, nom:"Climax — Argelouse, l'enfermement"},
+        {pageDebut:141, nom:"Action descendante — L'isolement total"},
+        {pageDebut:169, nom:"Dénouement — La libération"},
+        {pageDebut:197, nom:"Situation finale — Paris, la liberté"}
       ],
       tranches: [
         {pageDebut:1,   pageFin:44,  amour:80, pouvoir:38, liberte:60, identite:82, societe:35, nature:38},
