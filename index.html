@@ -3764,7 +3764,7 @@ function sauvegarderBiblio() {
 // ════════════════════════════════════════════════════════
 // VERSION — incrémenter à chaque mise à jour des livres démo
 // ════════════════════════════════════════════════════════
-const DEMO_VERSION = 16; // v16 : lexique Thérèse Desqueyroux (5 tranches · 5 phases Freytag · champLexical 6 thèmes)
+const DEMO_VERSION = 18; // v18 : force recalcul lexique Thérèse (scatter phases correctes)
 const LIVRES_DEMO = [
   {
     id: 'liv_petit_prince_001',
@@ -4743,6 +4743,12 @@ function mettreAJourLivresDemo() {
       if (aContenuLineaire(existant.lineaire))       majour.lineaire     = existant.lineaire;
       if (aContenuCommentaire(existant.commentaire)) majour.commentaire  = existant.commentaire;
 
+      // Lexique : le démo prime toujours s'il en fournit un (justifications à jour).
+      // On préserve l'import utilisateur seulement si le démo n'a pas de lexique.
+      const lexU = existant.lexique;
+      const lexD = demo.lexique;
+      if (!lexD && lexU && lexU.tranches && lexU.tranches.length) majour.lexique = lexU;
+
       // Personnages : garder les démo (déjà dans majour) + ajouter ceux créés par l'utilisateur
       const idsDemo = demo.personnages.map(p => p.id);
       const persosSaisis = (existant.personnages || []).filter(p => !idsDemo.includes(p.id));
@@ -5010,6 +5016,7 @@ function ouvrirLivre(id) {
 }
 
 function retourBiblio() {
+  _closeAllFloatWins();
   niToggle(false);
   document.body.className = document.body.className.replace(/\bni-sec-\S+/g,'').trim();
   document.getElementById('screen-guide').style.display  = 'none';
@@ -9041,6 +9048,7 @@ function vnGo(tabId, el) {
 // Sync vertical nav highlight when tab changes via showTab
 var _origShowTab = showTab;
 showTab = function(id, tabEl) {
+  _closeAllFloatWins();
   _origShowTab(id, tabEl);
   document.querySelectorAll('.vn-item').forEach(function(v){ v.classList.remove('act'); });
   var vn = document.getElementById('vn-' + id);
@@ -9767,6 +9775,7 @@ function niGoEcrire(panel, el, subtype) {
 // Hook niGo — gère personnages + lieux + temps + mots en mode NI
 var _origNiGo2 = niGo;
 niGo = function(tabId, el) {
+  _closeAllFloatWins();
   document.body.className = document.body.className.replace(/\bni-sec-\S+/g,'').trim();
   document.querySelectorAll('.ni-mi').forEach(function(m){m.classList.remove('act');});
   if (el) el.classList.add('act');
@@ -11654,7 +11663,7 @@ function _renderQ3ScatterDraw(svgEl,lex,W,H) {
   [0,50,100].forEach(function(v){
     var y=yv(v);
     s+='<line x1="'+ML+'" y1="'+y.toFixed(1)+'" x2="'+(ML+CW)+'" y2="'+y.toFixed(1)+'" stroke="#eee" stroke-width="0.6"/>';
-    s+='<text x="'+(ML-4)+'" y="'+(y+3)+'" text-anchor="end" font-family="Arial,sans-serif" font-size="'+(Math.round(H/12))+'" fill="#555">'+v+'</text>';
+    s+='<text x="'+(ML-4)+'" y="'+(y+3)+'" text-anchor="end" font-family="Arial,sans-serif" font-size="'+(Math.round(H/18))+'" fill="#555">'+v+'</text>';
   });
   // Points — r réduit pour lisibilité en espace compact
   var pr=Math.max(2,Math.round(H/42));
@@ -11665,7 +11674,7 @@ function _renderQ3ScatterDraw(svgEl,lex,W,H) {
   });
   // Labels X (alternés)
   tranches.forEach(function(tr,i){
-    if(i%2===0) s+='<text x="'+xtr(tr).toFixed(1)+'" y="'+(MT+CH+Math.round(MB*0.75))+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="'+(Math.round(H/12))+'" fill="#555">p.'+(tr.pageDebut||'')+'</text>';
+    if(i%2===0) s+='<text x="'+xtr(tr).toFixed(1)+'" y="'+(MT+CH+Math.round(MB*0.75))+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="'+(Math.round(H/18))+'" fill="#555">p.'+(tr.pageDebut||'')+'</text>';
   });
   s+='<rect x="'+ML+'" y="'+MT+'" width="'+CW+'" height="'+CH+'" fill="none" stroke="#ccc" stroke-width="0.6"/>';
   // SVG dimensionné exactement → viewBox=dimensions → pas de distorsion
@@ -12134,6 +12143,20 @@ async function niLVPromptA() {
     console.error('niLVPromptA:', err.message);
   }
   if (btn) { btn.disabled = false; btn.innerHTML = '🤖 Remplir les zones avec l\'IA'; }
+}
+
+// ── Fermeture de toutes les fenêtres flottantes lors d'un changement de vue ──
+function _closeAllFloatWins() {
+  // Aide contextuelle (Écrire)
+  niAideClose();
+  // Justification thème
+  closeLexExpl();
+  // Méthodologie
+  closeLexHelp();
+  // Toile thématique (fenêtre détail)
+  closeLexDetail();
+  // Tooltip thème Q3
+  hideLexThemeTip();
 }
 
 </script>
