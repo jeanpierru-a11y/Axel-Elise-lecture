@@ -1973,7 +1973,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 #lex-floatwin{display:none;position:fixed;z-index:9997;background:#fff;border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.22);border:1px solid #ddd;min-width:420px;min-height:340px;width:700px;height:min(560px,calc(100vh - 70px));top:55px;left:50%;transform:translateX(-50%);}
 .lex-fw-hdr{padding:7px 12px;background:#F5F0FF;border-radius:10px 10px 0 0;display:flex;align-items:center;cursor:move;border-bottom:1px solid #E0D7F5;user-select:none;flex-shrink:0;}
 .lex-fw-ttl{flex:1;font-size:.76rem;font-weight:700;color:#4A148C;pointer-events:none;}
-#lex-fw-body{overflow:hidden;padding:10px 12px;height:calc(100% - 36px);box-sizing:border-box;display:flex;flex-direction:column;gap:7px;}
+#lex-fw-body{overflow:hidden;padding:6px 10px;height:calc(100% - 36px);box-sizing:border-box;display:flex;flex-direction:column;gap:5px;}
 /* 8 resize handles */
 .rsz{position:absolute;z-index:10;}
 .rsz-n{top:0;left:12px;right:12px;height:5px;cursor:n-resize;}
@@ -1994,6 +1994,9 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 #lex-fw-champ{min-height:34px;padding:6px 9px;background:#F9F8FF;border-radius:7px;border:1px solid #E8E0F7;margin-bottom:7px;}
 .lex-champ-ttl{font-size:.68rem;font-weight:700;margin-bottom:4px;}
 .lex-champ-pills{display:flex;flex-wrap:wrap;gap:3px 4px;}
+.lex-tg{padding:2px 9px;border-radius:12px;border:1.5px solid;cursor:pointer;font-size:10px;font-weight:600;background:transparent;transition:opacity .15s,background .15s;white-space:nowrap;}
+.lex-tg.act{color:#fff !important;}
+.lex-tg:not(.act){opacity:.3;}
 .lex-pill{font-size:10px;padding:2px 7px;border-radius:12px;border-width:1px;border-style:solid;font-weight:500;white-space:nowrap;display:inline-flex;align-items:center;gap:2px;}
 /* Legend scatter */
 .lex-scatter-leg{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:5px;}
@@ -3484,7 +3487,10 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
     </div>
     <!-- Scatter (flex:1 — remplit l'espace restant) -->
     <div style="flex:1;display:flex;flex-direction:column;min-height:130px;">
-      <div style="font-size:.6rem;font-weight:900;color:#4A148C;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;flex-shrink:0;">Scatter thématique par pages</div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;flex-shrink:0;flex-wrap:wrap;">
+        <span style="font-size:.6rem;font-weight:900;color:#4A148C;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;">Scatter thématique</span>
+        <div id="lex-fw-toggles" style="display:flex;flex-wrap:wrap;gap:3px;"></div>
+      </div>
       <div style="flex:1;overflow-x:auto;min-height:0;">
         <svg id="lex-fw-scatter" xmlns="http://www.w3.org/2000/svg" style="display:block;min-width:460px;width:100%;height:100%;"></svg>
       </div>
@@ -11238,6 +11244,7 @@ const LEX_COLORS = {amour:'#AD1457',pouvoir:'#C62828',liberte:'#1565C0',identite
 const LEX_BG     = {amour:'#FCE4EC',pouvoir:'#FFEBEE',liberte:'#E3F2FD',identite:'#F3E5F5',societe:'#FBE9E7',nature:'#E8F5E9'};
 const LEX_PH_BG  = ['rgba(21,101,192,.07)','rgba(245,127,23,.08)','rgba(106,27,154,.06)','rgba(198,40,40,.08)','rgba(46,125,50,.07)'];
 const LEX_PH_LC  = ['#1565C0','#E65100','#6A1B9A','#C62828','#2E7D32'];
+var _lexActiveThemes = [];
 
 function _lexAvg(tranches, key) {
   if (!tranches||!tranches.length) return 0;
@@ -11337,7 +11344,18 @@ function openLexDetail() {
     });
     scEl.innerHTML=html;
   }
-  // Scatter
+  // Interrupteurs de thèmes (scatter)
+  _lexActiveThemes=LEX_KEYS.slice();
+  var tgEl=document.getElementById('lex-fw-toggles');
+  if(tgEl){
+    tgEl.innerHTML=LEX_KEYS.map(function(k){
+      return '<button class="lex-tg act" id="lex-tg-'+k+'" data-tk="'+k+'" style="border-color:'+LEX_COLORS[k]+';background:'+LEX_COLORS[k]+'">'+LEX_LABELS[k]+'</button>';
+    }).join('');
+    tgEl.onclick=function(e){
+      var b=e.target.closest?e.target.closest('.lex-tg'):e.target;
+      if(b&&b.dataset&&b.dataset.tk) _lexToggle(b.dataset.tk);
+    };
+  }
   _renderLexScatterFW(lex);
   // Sélectionner le thème dominant
   var dominant=LEX_KEYS.reduce(function(best,k){return _lexAvg(lex.tranches,k)>_lexAvg(lex.tranches,best)?k:best;},LEX_KEYS[0]);
@@ -11416,16 +11434,35 @@ function _renderLexChamp(key) {
   el.innerHTML=pillsHtml;
 }
 
-// ── Scatter (points uniquement) ───────────────────────────────────────────────
+// ── _lexToggle — interrupteur de thème ───────────────────────────────────────
+function _lexToggle(key) {
+  var idx=_lexActiveThemes.indexOf(key);
+  var btn=document.getElementById('lex-tg-'+key);
+  if(idx>=0){
+    if(_lexActiveThemes.length<=1) return;
+    _lexActiveThemes.splice(idx,1);
+    if(btn){btn.classList.remove('act');btn.style.background='transparent';btn.style.color=LEX_COLORS[key];}
+  } else {
+    _lexActiveThemes.push(key);
+    if(btn){btn.classList.add('act');btn.style.background=LEX_COLORS[key];btn.style.color='#fff';}
+  }
+  var lex=LIVRE_ACTIF&&LIVRE_ACTIF.lexique;
+  if(lex) _renderLexScatterFW(lex);
+}
+
+// ── Scatter (points + trajectoires si ≤2 thèmes actifs) ──────────────────────
 function _renderLexScatterFW(lex) {
   var tranches=lex.tranches||[],phases=lex.phases||[];
   if(!tranches.length) return;
+  var active=_lexActiveThemes.length?_lexActiveThemes:LEX_KEYS;
+  var traj=active.length<=2; // trajectoires si 1-2 thèmes
   var MP=tranches[tranches.length-1].pageFin||tranches[tranches.length-1].pageDebut;
   var ML=48,MR=12,MT=30,MB=28,W=560,H=210,CW=W-ML-MR,CH=H-MT-MB;
   function xp(p){return ML+(p/MP)*CW;}
   function yv(v){return MT+(1-v/100)*CH;}
   function xtr(tr){return xp(((tr.pageDebut||0)+(tr.pageFin||tr.pageDebut||0))/2);}
   var s='';
+  // Fonds de phases
   phases.forEach(function(ph,i){
     var p2=phases[i+1]?phases[i+1].pageDebut-1:MP;
     var x1=xp((ph.pageDebut||1)-0.5),x2=xp(p2+0.5);
@@ -11433,26 +11470,42 @@ function _renderLexScatterFW(lex) {
     s+='<text x="'+((x1+x2)/2).toFixed(1)+'" y="'+(MT-8)+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" font-weight="bold" fill="'+LEX_PH_LC[i%LEX_PH_LC.length]+'">'+ph.nom+'</text>';
     if(i>0) s+='<line x1="'+x1.toFixed(1)+'" y1="'+MT+'" x2="'+x1.toFixed(1)+'" y2="'+(MT+CH)+'" stroke="#ccc" stroke-width="0.8" stroke-dasharray="3,2"/>';
   });
+  // Grille Y
   [0,25,50,75,100].forEach(function(v){
     var y=yv(v);
     s+='<line x1="'+ML+'" y1="'+y.toFixed(1)+'" x2="'+(ML+CW)+'" y2="'+y.toFixed(1)+'" stroke="#eee" stroke-width="0.8"/>';
     s+='<text x="'+(ML-5)+'" y="'+(y+4).toFixed(1)+'" text-anchor="end" font-family="Arial,sans-serif" font-size="9" fill="#999">'+v+'</text>';
   });
-  // Points uniquement
+  // Thèmes inactifs (grisés, en dessous)
   LEX_KEYS.forEach(function(k){
-    var col=LEX_COLORS[k];
+    if(active.indexOf(k)>=0) return;
     tranches.forEach(function(tr){
-      s+='<circle cx="'+xtr(tr).toFixed(1)+'" cy="'+yv(tr[k]||0).toFixed(1)+'" r="5" fill="'+col+'" stroke="#fff" stroke-width="1.5" opacity="0.82"/>';
+      s+='<circle cx="'+xtr(tr).toFixed(1)+'" cy="'+yv(tr[k]||0).toFixed(1)+'" r="3.5" fill="#ddd" stroke="#fff" stroke-width="1" opacity="0.5"/>';
     });
   });
+  // Thèmes actifs : trajectoire si ≤2, puis points
+  active.forEach(function(k){
+    var col=LEX_COLORS[k];
+    // Ligne de trajectoire (si 1-2 thèmes actifs)
+    if(traj){
+      var pts=tranches.map(function(tr){return xtr(tr).toFixed(1)+','+yv(tr[k]||0).toFixed(1);}).join(' ');
+      s+='<polyline points="'+pts+'" fill="none" stroke="'+col+'" stroke-width="2" opacity="0.5" stroke-linejoin="round" stroke-linecap="round"/>';
+    }
+    // Points
+    tranches.forEach(function(tr){
+      s+='<circle cx="'+xtr(tr).toFixed(1)+'" cy="'+yv(tr[k]||0).toFixed(1)+'" r="5.5" fill="'+col+'" stroke="#fff" stroke-width="1.5" opacity="'+(traj?'1':'0.82')+'"/>';
+    });
+  });
+  // Labels X
   tranches.forEach(function(tr,i){
     if(i%2===0) s+='<text x="'+xtr(tr).toFixed(1)+'" y="'+(MT+CH+13)+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#999">p.'+(tr.pageDebut||'')+'</text>';
   });
   s+='<rect x="'+ML+'" y="'+MT+'" width="'+CW+'" height="'+CH+'" fill="none" stroke="#ccc" stroke-width="0.8"/>';
   var svgEl=document.getElementById('lex-fw-scatter');
   if(svgEl){svgEl.setAttribute('viewBox','0 0 '+W+' '+H);svgEl.setAttribute('preserveAspectRatio','none');svgEl.innerHTML=s;}
+  // Légende (thèmes actifs seulement)
   var legEl=document.getElementById('lex-fw-leg');
-  if(legEl) legEl.innerHTML=LEX_KEYS.map(function(k){return '<span class="lex-leg-i"><span class="lex-leg-d" style="background:'+LEX_COLORS[k]+'"></span>'+LEX_LABELS[k]+'</span>';}).join('');
+  if(legEl) legEl.innerHTML=active.map(function(k){return '<span class="lex-leg-i"><span class="lex-leg-d" style="background:'+LEX_COLORS[k]+'"></span>'+LEX_LABELS[k]+'</span>';}).join('');
 }
 
 // ── Tooltip thème (Q3) ────────────────────────────────────────────────────────
