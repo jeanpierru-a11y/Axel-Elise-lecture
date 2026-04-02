@@ -1966,11 +1966,11 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 /* ── Lexique Q3 compact ── */
 .ni-q-hdr-icon{background:none;border:none;cursor:pointer;font-size:.82rem;padding:0 3px;line-height:1;opacity:.8;}
 .ni-q-hdr-icon:hover{opacity:1;}
-#ni-q-th-haslex{height:100%;display:flex;flex-direction:column;}
-#ni-q-th-haslex svg{flex:1;width:100%;}
+#ni-q-th-haslex{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;}
+#ni-q-th-haslex svg{width:100%;max-width:220px;overflow:visible;}
 #ni-q-th-nolex{text-align:center;padding:10px 0;}
 /* Fenêtre flottante */
-#lex-floatwin{display:none;position:fixed;z-index:9997;background:#fff;border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.22);border:1px solid #ddd;min-width:420px;min-height:340px;width:700px;height:560px;top:55px;left:50%;transform:translateX(-50%);}
+#lex-floatwin{display:none;position:fixed;z-index:9997;background:#fff;border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.22);border:1px solid #ddd;min-width:420px;min-height:340px;width:700px;height:min(560px,calc(100vh - 70px));top:55px;left:50%;transform:translateX(-50%);}
 .lex-fw-hdr{padding:7px 12px;background:#F5F0FF;border-radius:10px 10px 0 0;display:flex;align-items:center;cursor:move;border-bottom:1px solid #E0D7F5;user-select:none;flex-shrink:0;}
 .lex-fw-ttl{flex:1;font-size:.76rem;font-weight:700;color:#4A148C;pointer-events:none;}
 #lex-fw-body{overflow:auto;padding:10px 12px;height:calc(100% - 36px);box-sizing:border-box;}
@@ -1985,14 +1985,11 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 .rsz-se{bottom:0;right:0;width:12px;height:12px;cursor:se-resize;}
 .rsz-sw{bottom:0;left:0;width:12px;height:12px;cursor:sw-resize;}
 /* Score cards compactes (colonne gauche) */
-.lex-sc-v{border-radius:5px;padding:4px 8px;border-width:1.5px;border-style:solid;cursor:pointer;transition:box-shadow .12s;}
-.lex-sc-v:hover{box-shadow:0 1px 6px rgba(0,0,0,.1);}
-.lex-sc-v.sel{border-width:2.5px;box-shadow:0 2px 8px rgba(0,0,0,.15);}
-.lex-sc-v .sc-top{display:flex;justify-content:space-between;align-items:center;}
-.lex-sc-v .sc-lbl{font-size:9px;font-weight:700;}
-.lex-sc-v .sc-num{font-size:14px;font-weight:800;}
-.lex-sc-v .sc-bar-bg{height:2px;background:#eee;border-radius:1px;margin-top:3px;}
-.lex-sc-v .sc-bar{height:2px;border-radius:1px;}
+.lex-sc-v{border-left:3px solid;border-right:none;border-top:none;border-bottom:none;border-radius:0 4px 4px 0;padding:3px 8px 3px 7px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;background:transparent;transition:background .12s;}
+.lex-sc-v:hover{background:rgba(0,0,0,.04);}
+.lex-sc-v.sel{background:var(--bg-sel,rgba(106,27,154,.08));}
+.lex-sc-v .sc-lbl{font-size:10px;font-weight:600;}
+.lex-sc-v .sc-num{font-size:13px;font-weight:800;}
 /* Champ lexical (word pills) */
 #lex-fw-champ{min-height:34px;padding:6px 9px;background:#F9F8FF;border-radius:7px;border:1px solid #E8E0F7;margin-bottom:7px;}
 .lex-champ-ttl{font-size:.68rem;font-weight:700;margin-bottom:4px;}
@@ -11318,7 +11315,7 @@ function openLexDetail() {
   if(!lex||!lex.tranches||!lex.tranches.length) return;
   var win=document.getElementById('lex-floatwin');
   if(!win) return;
-  win.style.cssText='display:block;position:fixed;z-index:9997;background:#fff;border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.22);border:1px solid #ddd;min-width:420px;min-height:340px;width:700px;height:560px;top:55px;left:50%;transform:translateX(-50%);';
+  win.style.cssText='display:block;position:fixed;z-index:9997;background:#fff;border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.22);border:1px solid #ddd;min-width:420px;min-height:340px;width:700px;height:min(560px,calc(100vh - 70px));top:55px;left:50%;transform:translateX(-50%);';
   var ttl=document.getElementById('lex-fw-ttl');
   if(ttl) ttl.textContent='📊 Toile thématique — '+(L.titre||'');
   // Radar
@@ -11331,9 +11328,9 @@ function openLexDetail() {
     var html='';
     sorted.forEach(function(k){
       var v=Math.round(_lexAvg(lex.tranches,k)),col=LEX_COLORS[k],bg=LEX_BG[k];
-      html+='<div class="lex-sc-v" id="lex-sc-'+k+'" style="border-color:'+col+';background:'+bg+'" onclick="_lexFwSelect(\''+k+'\')">'+
-        '<div class="sc-top"><span class="sc-lbl" style="color:'+col+'">'+LEX_LABELS[k]+'</span><span class="sc-num" style="color:'+col+'">'+v+'</span></div>'+
-        '<div class="sc-bar-bg"><div class="sc-bar" style="width:'+v+'%;background:'+col+'"></div></div>'+
+      html+='<div class="lex-sc-v" id="lex-sc-'+k+'" style="border-color:'+col+'" onclick="_lexFwSelect(\''+k+'\')">'+
+        '<span class="sc-lbl" style="color:'+col+'">'+LEX_LABELS[k]+'</span>'+
+        '<span class="sc-num" style="color:'+col+'">'+v+'</span>'+
         '</div>';
     });
     scEl.innerHTML=html;
@@ -11354,7 +11351,9 @@ function closeLexDetail() {
 // Sélection d'un thème dans la fenêtre flottante
 function _lexFwSelect(key) {
   // Highlight carte
-  document.querySelectorAll('#lex-fw-scores .lex-sc-v').forEach(function(c){c.classList.remove('sel');});
+  document.querySelectorAll('#lex-fw-scores .lex-sc-v').forEach(function(c){c.classList.remove('sel');c.style.background='transparent';});
+  var card=document.getElementById('lex-sc-'+key);
+  if(card){card.classList.add('sel');card.style.background=LEX_BG[key]||'rgba(106,27,154,.08)';}
   var card=document.getElementById('lex-sc-'+key);
   if(card) card.classList.add('sel');
   // Champ lexical
