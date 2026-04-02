@@ -919,6 +919,21 @@ body.ni-on.ni-sec-livre #guide-content-wrap>#content{display:none !important;}
   line-height:1.65;min-height:80px;
 }
 .ni-lv-ta:focus{border-color:var(--bleu);box-shadow:0 0 0 2px rgba(21,101,192,.1);}
+/* Prompt A — banderole sticky */
+#ni-lv-promptA-strip{
+  position:sticky;top:0;z-index:5;
+  background:linear-gradient(135deg,#4A148C 0%,#7B1FA2 100%);
+  padding:6px 12px;display:flex;align-items:center;gap:8px;flex-shrink:0;
+}
+#ni-lv-promptA-btn{
+  flex:1;border:none;background:rgba(255,255,255,.18);color:#fff;
+  border-radius:8px;padding:6px 10px;font-family:inherit;font-size:.75rem;
+  font-weight:900;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;gap:5px;transition:background .15s;
+}
+#ni-lv-promptA-btn:hover{background:rgba(255,255,255,.32);}
+#ni-lv-promptA-btn:disabled{opacity:.5;cursor:wait;}
+#ni-lv-promptA-status{font-size:.64rem;color:rgba(255,255,255,.85);text-align:right;flex-shrink:0;max-width:120px;line-height:1.3;}
 /* Aide narrateurs inline */
 #ni-lv-narrdetails{
   flex-shrink:0;background:#E0F2F1;border-radius:8px;
@@ -2008,6 +2023,46 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 #lex-th-tip{display:none;position:fixed;z-index:10000;background:#fff;border:1px solid #E0D7F5;border-radius:8px;padding:9px 11px;max-width:230px;box-shadow:0 4px 16px rgba(0,0,0,.15);}
 /* Import overlay */
 #lex-import-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center;}
+/* ── FENÊTRES JUSTIFICATION & MÉTHODOLOGIE ── */
+#lex-expl-win,#lex-help-win{
+  position:fixed;z-index:9900;background:#fff;border-radius:12px;
+  box-shadow:0 8px 40px rgba(0,0,0,.28),0 2px 8px rgba(0,0,0,.12);
+  display:none;flex-direction:column;overflow:hidden;
+  min-width:320px;min-height:240px;width:520px;
+}
+#lex-expl-hdr{
+  display:flex;align-items:center;gap:8px;padding:9px 13px;flex-shrink:0;
+  cursor:grab;user-select:none;background:#F3E5F5;
+}
+#lex-help-hdr{
+  display:flex;align-items:center;gap:8px;padding:9px 13px;flex-shrink:0;
+  cursor:grab;user-select:none;background:linear-gradient(135deg,#4A148C,#7B1FA2);
+}
+#lex-expl-hdr:active,#lex-help-hdr:active{cursor:grabbing;}
+#lex-expl-ttl{flex:1;font-size:.82rem;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#lex-help-ttl{flex:1;font-size:.82rem;font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#lex-expl-body,#lex-help-body{
+  flex:1;overflow-y:auto;padding:12px 14px;min-height:0;
+  -webkit-overflow-scrolling:touch;
+}
+#lex-expl-body h4,#lex-help-body h4{font-size:.79rem;font-weight:900;margin:10px 0 5px;}
+#lex-expl-body h4:first-child,#lex-help-body h4:first-child{margin-top:0;}
+#lex-expl-body p,#lex-help-body p{font-size:.74rem;color:#444;line-height:1.6;margin-bottom:8px;}
+.lex-expl-word-row{display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid #F0EAF8;}
+.lex-expl-word-row:last-child{border-bottom:none;}
+.lex-expl-word-pill{flex-shrink:0;font-size:.72rem;font-weight:800;border-radius:12px;padding:2px 8px;white-space:nowrap;}
+.lex-win-cls{background:rgba(255,255,255,.22);color:#fff;border:none;border-radius:8px;padding:5px 9px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px;flex-shrink:0;font-size:.72rem;font-weight:700;transition:background .15s;}
+.lex-win-cls:hover{background:rgba(255,255,255,.45);}
+/* Handles resize fenêtres Justification & Méthodologie */
+.rsz2{position:absolute;z-index:10;user-select:none;}
+.rsz2.rsz-n2{top:0;left:12px;right:12px;height:5px;cursor:n-resize;}
+.rsz2.rsz-s2{bottom:0;left:12px;right:12px;height:5px;cursor:s-resize;}
+.rsz2.rsz-e2{right:0;top:12px;bottom:12px;width:5px;cursor:e-resize;}
+.rsz2.rsz-w2{left:0;top:12px;bottom:12px;width:5px;cursor:w-resize;}
+.rsz2.rsz-ne2{top:0;right:0;width:12px;height:12px;cursor:ne-resize;}
+.rsz2.rsz-nw2{top:0;left:0;width:12px;height:12px;cursor:nw-resize;}
+.rsz2.rsz-se2{bottom:0;right:0;width:12px;height:12px;cursor:se-resize;}
+.rsz2.rsz-sw2{bottom:0;left:0;width:12px;height:12px;cursor:sw-resize;}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 </head>
@@ -2287,6 +2342,14 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
     <!-- Colonne droite : 5 zones scrollables -->
     <div id="ni-lv-right">
 
+      <!-- ── Prompt A : remplissage IA des 5 zones auteur ── -->
+      <div id="ni-lv-promptA-strip">
+        <button id="ni-lv-promptA-btn" onclick="niLVPromptA()" title="Demander à l'IA de remplir les 5 zones à partir du titre et de l'auteur">
+          🤖 Remplir les zones avec l'IA
+        </button>
+        <div id="ni-lv-promptA-status"></div>
+      </div>
+
       <div class="ni-lv-zone">
         <div class="ni-lv-zone-hdr" style="color:var(--orange)">🌍 Époque &amp; contexte historique
           <button class="btn-mic" id="lv-mic-contexte" onclick="niMicStart('ni-lv-contexte','lv-mic-contexte')" title="Dicter" style="width:26px;height:26px;font-size:.85rem;margin-left:auto;">🎤</button>
@@ -2476,7 +2539,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 
             <!-- Col 1 : Radar -->
             <div style="display:flex;align-items:flex-start;justify-content:center;overflow:hidden;padding:2px;">
-              <svg id="ni-lex-radar-q3" viewBox="-18 20 236 188" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;"></svg>
+              <svg id="ni-lex-radar-q3" viewBox="-18 8 236 210" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;"></svg>
             </div>
 
             <!-- Col 2 : Légende -->
@@ -3561,6 +3624,56 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
   <div id="lex-th-tip-txt" style="font-size:.74rem;color:#555;white-space:pre-wrap;max-height:180px;overflow-y:auto;line-height:1.5;"></div>
 </div>
 
+<!-- ── FENÊTRE JUSTIFICATION THÈME ── -->
+<div id="lex-expl-win">
+  <div class="rsz2 rsz-n2" data-dir2="n"></div>
+  <div class="rsz2 rsz-s2" data-dir2="s"></div>
+  <div class="rsz2 rsz-e2" data-dir2="e"></div>
+  <div class="rsz2 rsz-w2" data-dir2="w"></div>
+  <div class="rsz2 rsz-ne2" data-dir2="ne"></div>
+  <div class="rsz2 rsz-nw2" data-dir2="nw"></div>
+  <div class="rsz2 rsz-se2" data-dir2="se"></div>
+  <div class="rsz2 rsz-sw2" data-dir2="sw"></div>
+  <div id="lex-expl-hdr">
+    <span id="lex-expl-ttl">💡 Justification</span>
+    <button class="lex-win-cls" style="color:#4A148C;background:rgba(106,27,154,.12);" onmouseenter="this.style.background='rgba(106,27,154,.22)'" onmouseleave="this.style.background='rgba(106,27,154,.12)'" onclick="closeLexExpl()">✕ Fermer</button>
+  </div>
+  <div id="lex-expl-body"></div>
+</div>
+
+<!-- ── FENÊTRE MÉTHODOLOGIE ── -->
+<div id="lex-help-win">
+  <div class="rsz2 rsz-n2" data-dir2="n"></div>
+  <div class="rsz2 rsz-s2" data-dir2="s"></div>
+  <div class="rsz2 rsz-e2" data-dir2="e"></div>
+  <div class="rsz2 rsz-w2" data-dir2="w"></div>
+  <div class="rsz2 rsz-ne2" data-dir2="ne"></div>
+  <div class="rsz2 rsz-nw2" data-dir2="nw"></div>
+  <div class="rsz2 rsz-se2" data-dir2="se"></div>
+  <div class="rsz2 rsz-sw2" data-dir2="sw"></div>
+  <div id="lex-help-hdr">
+    <span id="lex-help-ttl">📐 Méthodologie — Analyse lexicale</span>
+    <button class="lex-win-cls" onclick="closeLexHelp()">✕ Fermer</button>
+  </div>
+  <div id="lex-help-body">
+    <h4 style="color:#4A148C">📐 Principe général</h4>
+    <p>L'analyse lexicale repose sur un <b>comptage des occurrences thématiques</b> dans l'œuvre entière, organisé en <b>5 tranches de pages égales</b>. Pour chaque thème, on recense tous les mots, syntagmes et noms propres qui « activent » ce champ sémantique dans le texte.</p>
+    <h4 style="color:#1565C0">🔍 Sélection des mots</h4>
+    <p>Un mot entre dans un thème s'il satisfait l'un de ces trois critères :<br>
+    ① <b>Appartenance directe</b> : le mot relève du champ lexical du thème (<i>ex. tendresse → Amour</i>)<br>
+    ② <b>Antonyme constitutif</b> : le mot active le thème par opposition (<i>ex. haine → Amour, car le thème se définit aussi par ce qu'il nie</i>)<br>
+    ③ <b>Vecteur narratif</b> : nom propre, lieu ou objet symbolique associé au thème (<i>ex. Bernard → Amour dans Thérèse Desqueyroux</i>)</p>
+    <h4 style="color:#C62828">📊 Score et radar</h4>
+    <p>Le <b>score d'un thème</b> = somme de toutes ses occurrences rapportée au nombre de pages × 100. Le <b>radar</b> compare les 6 thèmes sur une échelle normalisée (0–100). L'axe dominant révèle le thème central de l'œuvre.</p>
+    <h4 style="color:#E65100">📈 Scatter thématique</h4>
+    <p>Chaque cercle représente la densité d'un thème dans une tranche de pages. La <b>taille</b> du cercle = nombre d'occurrences. Un pic en début d'œuvre indique un thème d'exposition ; un pic en fin, un thème de résolution ou de bascule.</p>
+    <h4 style="color:#2E7D32">💡 Bouton Justification</h4>
+    <p>Le bouton <b>💡 Justification</b> dans la colonne Légende explique, thème par thème, <b>pourquoi chaque mot a été retenu</b> et ce qu'il révèle de l'œuvre. C'est la trace critique et argumentée de la méthode — indispensable pour une dissertation ou un commentaire composé.</p>
+    <h4 style="color:#6A1B9A">📋 Import JSON</h4>
+    <p>Pour importer une analyse existante, utilise le bouton <b>📋 Importer</b> : colle le JSON du Prompt B (champ <code>phases</code> + <code>tranches</code>). Tu peux y ajouter un champ <code>champLexical</code> pour les mots avec leurs occurrences et leurs justifications personnalisées.</p>
+  </div>
+</div>
+
 <div id="modal-overlay" onclick="closeModal(event)">
   <div id="modal">
     <h3 id="modal-title">Modifier le nom</h3>
@@ -3651,7 +3764,7 @@ function sauvegarderBiblio() {
 // ════════════════════════════════════════════════════════
 // VERSION — incrémenter à chaque mise à jour des livres démo
 // ════════════════════════════════════════════════════════
-const DEMO_VERSION = 14; // v14 : dissertation2 + lineaire + commentaire pour les 3 livres Axel (contenu Élise)
+const DEMO_VERSION = 15; // v15 : lexique Carrère L'Adversaire (5 tranches · 8 phases · champLexical 6 thèmes)
 const LIVRES_DEMO = [
   {
     id: 'liv_petit_prince_001',
@@ -4450,6 +4563,33 @@ const LIVRES_DEMO = [
       ],
       bilan: "Carrère construit dans L'Adversaire un récit qui fait de la sobriété stylistique, de la modalisation et de l'irruption du narrateur les outils d'une éthique littéraire inédite. En refusant de dramatiser, en disant ce qu'il ne sait pas, en s'exposant lui-même, il ne fait pas de Romand un monstre littéraire — il en fait un miroir déformant tendu à la société du paraître. Ce faisant, il répond à notre problématique : le style factuel n'est pas un effacement de la littérature — c'est sa forme la plus exigeante.",
       ouverture: "On pourrait prolonger ce commentaire en lisant D'autres vies que la mienne (Carrère, 2009), où il applique la même méthode à des deuils ordinaires — confirmant que L'Adversaire n'est pas un livre sur un monstre mais la fondation d'une poétique du réel. On peut aussi l'associer aux Années d'Annie Ernaux (2008), autre grande entreprise de la littérature française contemporaine : faire du réel un matériau littéraire à part entière, avec la même exigence éthique sur ce que l'écrivain doit à ceux dont il s'empare."
+    },
+    lexique: {
+      phases: [
+        {pageDebut:1,   nom:"Exposition — Le fait brut"},
+        {pageDebut:28,  nom:"Le mensonge originel (1975)"},
+        {pageDebut:55,  nom:"Dix-huit ans de vide"},
+        {pageDebut:95,  nom:"Les fissures du mensonge"},
+        {pageDebut:118, nom:"Le 9 janvier 1993"},
+        {pageDebut:133, nom:"L'enquête"},
+        {pageDebut:155, nom:"Le procès (1996)"},
+        {pageDebut:190, nom:"Carrère écrit"}
+      ],
+      tranches: [
+        {pageDebut:1,   pageFin:44,  amour:58, pouvoir:65, liberte:35, identite:82, societe:78, nature:12},
+        {pageDebut:45,  pageFin:88,  amour:45, pouvoir:70, liberte:52, identite:86, societe:72, nature:18},
+        {pageDebut:89,  pageFin:132, amour:48, pouvoir:62, liberte:45, identite:90, societe:68, nature:10},
+        {pageDebut:133, pageFin:175, amour:65, pouvoir:68, liberte:38, identite:85, societe:80, nature:15},
+        {pageDebut:176, pageFin:218, amour:42, pouvoir:55, liberte:58, identite:92, societe:75, nature:12}
+      ],
+      champLexical: {
+        amour:    [{mot:"famille",n:28},{mot:"enfants",n:22},{mot:"Florence",n:20},{mot:"amour",n:18},{mot:"épouse",n:12},{mot:"tendresse",n:6},{mot:"larmes",n:5}],
+        pouvoir:  [{mot:"mensonge",n:45},{mot:"médecin",n:32},{mot:"OMS",n:28},{mot:"argent",n:18},{mot:"statut",n:14},{mot:"diplôme",n:10},{mot:"autorité",n:8}],
+        liberte:  [{mot:"voiture",n:35},{mot:"autoroute",n:30},{mot:"aire",n:22},{mot:"fuite",n:18},{mot:"prison",n:14},{mot:"libre",n:8},{mot:"échapper",n:7}],
+        identite: [{mot:"Romand",n:85},{mot:"vide",n:48},{mot:"pourquoi",n:42},{mot:"peut-être",n:38},{mot:"silence",n:25},{mot:"comprendre",n:22},{mot:"moi",n:18},{mot:"existence",n:15},{mot:"mystère",n:12}],
+        societe:  [{mot:"paraître",n:32},{mot:"monde",n:28},{mot:"procès",n:25},{mot:"réputation",n:20},{mot:"scandale",n:16},{mot:"famille",n:15},{mot:"honneur",n:12},{mot:"apparences",n:10}],
+        nature:   [{mot:"maison",n:18},{mot:"nuit",n:12},{mot:"jardin",n:8},{mot:"pluie",n:5},{mot:"forêt",n:4}]
+      }
     }
   }
 ];
@@ -11353,7 +11493,7 @@ function updateQ3LexViz() {
   var svg=document.getElementById('ni-lex-radar-q3');
   if(svg){
     svg.innerHTML=_buildLexRadarInner(lex.tranches,200);
-    svg.setAttribute('viewBox','-18 20 236 188');
+    svg.setAttribute('viewBox','-18 8 236 210');
     svg.setAttribute('preserveAspectRatio','xMidYMid meet');
     _attachLexRadarClick('ni-lex-radar-q3','q3');
   }
@@ -11380,12 +11520,14 @@ function updateQ3LexViz() {
   // Sélectionner thème dominant
   var dom=LEX_KEYS.reduce(function(b,k){return _lexAvg(lex.tranches,k)>_lexAvg(lex.tranches,b)?k:b;},LEX_KEYS[0]);
   _q3ThemeSelect(dom);
-  // Aligner col2 sur le 1er mot de col3 (mesure après rendu du titre)
-  setTimeout(function(){
-    var ttl=document.getElementById('ni-q-th-words-ttl');
-    var lg=document.getElementById('ni-q-th-legend');
-    if(ttl&&lg) lg.style.paddingTop=(ttl.offsetHeight+3)+'px';
-  },30);
+  // Aligner col2 sur le 1er mot de col3 (double rAF : attend le layout réel)
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      var ttl=document.getElementById('ni-q-th-words-ttl');
+      var lg=document.getElementById('ni-q-th-legend');
+      if(ttl&&lg) lg.style.paddingTop=Math.max(0,Math.round(ttl.getBoundingClientRect().height)+3)+'px';
+    });
+  });
 }
 
 function _q3ThemeSelect(key) {
@@ -11422,12 +11564,15 @@ function _renderQ3Scatter(lex) {
   if(!svgEl||!lex||!lex.tranches||!lex.tranches.length) return;
   svgEl.style.width='100%';
   svgEl.style.height='100%';
-  // Attendre que le DOM soit rendu pour connaître les dimensions réelles
+  // Double rAF : 1er frame prépare, 2e frame mesure les dimensions réelles → cercles ronds garantis
   requestAnimationFrame(function(){
-    var cont=svgEl.parentElement;
-    var W=cont?Math.max(300,cont.clientWidth):480;
-    var H=cont?Math.max(80,cont.clientHeight):120;
-    _renderQ3ScatterDraw(svgEl,lex,W,H);
+    requestAnimationFrame(function(){
+      var cont=svgEl.parentElement;
+      var rect=cont?cont.getBoundingClientRect():null;
+      var W=rect&&rect.width>10?Math.round(rect.width):Math.max(60,cont?cont.clientWidth:300);
+      var H=rect&&rect.height>10?Math.round(rect.height):Math.max(60,cont?cont.clientHeight:100);
+      _renderQ3ScatterDraw(svgEl,lex,W,H);
+    });
   });
 }
 
@@ -11782,7 +11927,7 @@ function openLexExpl(key) {
   var win=document.getElementById('lex-expl-win');
   if(!win) return;
   var L=LIVRE_ACTIF,lex=L&&L.lexique,col=LEX_COLORS[key];
-  win.style.display='block';win.style.transform='none';
+  win.style.display='flex';win.style.transform='none';
   win.style.left=(Math.max(20,window.innerWidth/2-260))+'px';win.style.top='80px';
   var hdr=document.getElementById('lex-expl-hdr');
   if(hdr) hdr.style.background=LEX_BG[key];
@@ -11813,8 +11958,41 @@ function openLexExpl(key) {
   _initExplDrag();
 }
 function closeLexExpl(){var w=document.getElementById('lex-expl-win');if(w)w.style.display='none';}
-function openLexHelp(){var w=document.getElementById('lex-help-win');if(w){w.style.display='block';w.style.transform='none';w.style.left=(window.innerWidth/2-240)+'px';w.style.top='80px';}}
+function openLexHelp(){var w=document.getElementById('lex-help-win');if(w){w.style.display='flex';w.style.transform='none';w.style.left=(window.innerWidth/2-260)+'px';w.style.top='80px';_initHelpDrag();}}
 function closeLexHelp(){var w=document.getElementById('lex-help-win');if(w)w.style.display='none';}
+
+var _helpDrag=null,_helpRsz=null;
+function _initHelpDrag(){
+  var win=document.getElementById('lex-help-win');
+  var hdr=document.getElementById('lex-help-hdr');
+  if(!win||!hdr||win._dragInit) return;
+  win._dragInit=true;
+  hdr.addEventListener('mousedown',function(e){
+    if(e.target.closest&&e.target.closest('button')) return;
+    var r=win.getBoundingClientRect();
+    _helpDrag={sx:e.clientX,sy:e.clientY,sl:r.left,st:r.top};e.preventDefault();
+  });
+  win.addEventListener('mousedown',function(e){
+    if(e.target&&e.target.classList&&e.target.classList.contains('rsz2')){
+      var r=win.getBoundingClientRect();
+      _helpRsz={dir:e.target.dataset.dir2,sx:e.clientX,sy:e.clientY,sw:r.width,sh:r.height,sl:r.left,st:r.top};
+      e.preventDefault();e.stopPropagation();
+    }
+  });
+  document.addEventListener('mousemove',function(e){
+    if(_helpDrag){win.style.left=(_helpDrag.sl+e.clientX-_helpDrag.sx)+'px';win.style.top=(_helpDrag.st+e.clientY-_helpDrag.sy)+'px';}
+    if(_helpRsz){
+      var d=_helpRsz.dir,dx=e.clientX-_helpRsz.sx,dy=e.clientY-_helpRsz.sy;
+      var nw=_helpRsz.sw,nh=_helpRsz.sh,nl=_helpRsz.sl,nt=_helpRsz.st;
+      if(d.indexOf('e')>=0) nw=Math.max(320,_helpRsz.sw+dx);
+      if(d.indexOf('w')>=0){nw=Math.max(320,_helpRsz.sw-dx);nl=_helpRsz.sl+(_helpRsz.sw-nw);}
+      if(d.indexOf('s')>=0) nh=Math.max(240,_helpRsz.sh+dy);
+      if(d.indexOf('n')>=0){nh=Math.max(240,_helpRsz.sh-dy);nt=_helpRsz.st+(_helpRsz.sh-nh);}
+      win.style.width=nw+'px';win.style.height=nh+'px';win.style.left=nl+'px';win.style.top=nt+'px';
+    }
+  });
+  document.addEventListener('mouseup',function(){_helpDrag=null;_helpRsz=null;});
+}
 
 var _explDrag=null,_explRsz=null;
 function _initExplDrag(){
@@ -11847,6 +12025,59 @@ function _initExplDrag(){
     }
   });
   document.addEventListener('mouseup',function(){_explDrag=null;_explRsz=null;});
+}
+
+// ── Prompt A : remplissage IA des 5 zones auteur ─────────────────────────────
+async function niLVPromptA() {
+  var L = LIVRE_ACTIF;
+  if (!L) return;
+  var btn    = document.getElementById('ni-lv-promptA-btn');
+  var status = document.getElementById('ni-lv-promptA-status');
+  var cleIA  = getCleIA();
+  if (!cleIA) {
+    if (status) status.innerHTML = '❌ Clé manquante';
+    if (btn) btn.innerHTML = '🔑 Configurer la clé →';
+    setTimeout(function(){ ouvrirModalSync(); setTimeout(function(){ if(typeof showSyncTab==='function') showSyncTab('ia'); },120); },100);
+    return;
+  }
+  if (btn)    { btn.disabled = true; btn.innerHTML = '⏳ Analyse…'; }
+  if (status) { status.textContent = ''; }
+
+  var infos = 'Livre : '+(L.titre||'Titre inconnu')+'\nAuteur : '+(L.auteur||'Auteur inconnu')+'\nGenre : '+(L.genre||'—')+'\nÉpoque : '+(L.annee||'—');
+  var prompt = infos + '\n\nTu es professeur de littérature française au lycée. Pour ce livre, rédige le contenu pédagogique de ces 5 zones d\'analyse, en prose naturelle, au niveau lycée (élève de 2nde). Réponds UNIQUEMENT en JSON valide, sans texte avant ni après.\nFormat attendu (toutes les valeurs en texte simple, sans markdown) :\n{"contexte":"...","auteurVie":"...","trajectoire":"...","courant":"...","style":"..."}';
+
+  try {
+    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': cleIA,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 3000,
+        system: 'Tu es un assistant pédagogique. Réponds UNIQUEMENT en JSON valide, sans texte avant ou après, sans blocs markdown.',
+        messages: [{role:'user', content: prompt}]
+      })
+    });
+    var data = await resp.json();
+    if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
+    var raw  = ((data.content||[]).find(function(b){return b.type==='text';})||{}).text || '{}';
+    var s    = raw.indexOf('{'), e = raw.lastIndexOf('}');
+    if (s === -1 || e === -1) throw new Error('Réponse non JSON');
+    var obj  = JSON.parse(raw.slice(s, e + 1));
+    var fields = ['contexte','auteurVie','trajectoire','courant','style'];
+    var filled = 0;
+    fields.forEach(function(f){ if (obj[f]) { niLVSave(f, obj[f]); filled++; } });
+    niLVLoad(); // recharge l'affichage
+    if (status) status.textContent = '✅ '+filled+'/5';
+  } catch(err) {
+    if (status) status.textContent = '❌ Err';
+    console.error('niLVPromptA:', err.message);
+  }
+  if (btn) { btn.disabled = false; btn.innerHTML = '🤖 Remplir les zones avec l\'IA'; }
 }
 
 </script>
