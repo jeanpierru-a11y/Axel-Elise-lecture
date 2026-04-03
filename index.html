@@ -1019,16 +1019,22 @@ body.ni-on.ni-sec-intrigue #guide-content-wrap>#content{display:none !important;
 #ni-mots-panel{
   display:none;
   background:#EEF2F8;height:100%;
-  grid-template-columns:1fr 1fr;
-  grid-template-rows:1fr 1fr;
   gap:0;
 }
-body.ni-on.ni-sec-mots #ni-mots-panel{display:grid;}
+body.ni-on.ni-sec-mots #ni-mots-panel{display:flex;}
 .ni-q{display:flex;flex-direction:column;overflow:hidden;border:1px solid #D4DCF0;}
-#ni-q-vocab {border-right-width:2px;border-bottom-width:2px;}
-#ni-q-cit   {border-left-width:0;border-bottom-width:2px;}
-#ni-q-themes{border-right-width:2px;border-top-width:0;}
-#ni-q-avis  {border-left-width:0;border-top-width:0;}
+/* Nouveau layout 2 colonnes : Q3 large à gauche, col droite en 3 zones */
+#ni-q-themes{
+  flex:0 0 62%;min-width:380px;
+  border-right:2px solid #D4DCF0;border-bottom-width:1px;border-top-width:1px;
+}
+#ni-q-right-col{
+  flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;
+}
+#ni-q-cit   {flex:0 0 50%;min-height:0;border-left-width:0;border-bottom:1px solid #D4DCF0;}
+#ni-q-bot-row{flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;}
+#ni-q-vocab {flex:1;min-height:0;border-left-width:0;border-bottom:1px solid #D4DCF0;border-top-width:0;}
+#ni-q-avis  {flex:1;min-height:0;border-left-width:0;border-top-width:0;}
 .ni-q-hdr{
   padding:5px 11px;font-size:.65rem;font-weight:900;
   letter-spacing:.3px;text-transform:uppercase;
@@ -2494,32 +2500,10 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
   <!-- ══ NI ANALYSE PANEL (Vocabulaire · Citations · Thèmes · Avis) ══ -->
   <div id="ni-mots-panel">
 
-    <!-- Q1 : VOCABULAIRE (haut-gauche) -->
-    <div class="ni-q" id="ni-q-vocab">
-      <div class="ni-q-hdr" style="background:#EDE7F6;color:#4A148C;"><span class="ni-q-hdr-lbl">📖 Vocabulaire</span><button class="btn-mic ni-q-mic" id="qmic-vocab" onclick="niMicStart('ni-m-mots-ta','qmic-vocab')" title="Dicter">🎤</button></div>
-      <div class="ni-q-body">
-        <div class="ni-q-hint">Un mot difficile par bloc, avec sa définition ou son contexte.</div>
-        <textarea id="ni-m-mots-ta" class="ni-q-ta"
-          placeholder="── Mot inconnu ──&#10;In medias res : commencer au cœur de l'action.&#10;&#10;── Mot inconnu ──&#10;Analepse : retour en arrière (flashback)."
-          oninput="niMSaveMots()"></textarea>
-      </div>
-    </div>
-
-    <!-- Q2 : CITATIONS (haut-droite) -->
-    <div class="ni-q" id="ni-q-cit">
-      <div class="ni-q-hdr" style="background:#FBE9E7;color:#BF360C;"><span class="ni-q-hdr-lbl">« Citations</span></div>
-      <div class="ni-q-body">
-        <button class="ni-m-add-cit" onclick="niMAddCit()">＋ Nouvelle citation</button>
-        <div id="ni-m-cit-list" style="margin-top:6px;display:flex;flex-direction:column;gap:6px;"></div>
-        <div class="ni-m-empty" id="ni-m-cit-empty">Appuie sur <b>＋</b> pour commencer</div>
-      </div>
-    </div>
-
-    <!-- Q3 : TOILE THÉMATIQUE (bas-gauche) -->
+    <!-- COL 1 : TOILE THÉMATIQUE (pleine hauteur, large) -->
     <div class="ni-q" id="ni-q-themes">
       <div class="ni-q-hdr" style="background:#EDE7F6;color:#4A148C;gap:4px;">
         <span class="ni-q-hdr-lbl">🕸️ Toile thématique</span>
-        <button class="ni-q-hdr-icon" id="ni-th-det-btn" onclick="openLexDetail()" title="Voir le détail" style="display:none;">📊</button>
         <button class="ni-q-hdr-icon" onclick="openLexiqueImport()" title="Importer analyse lexicale">📋</button>
         <button class="ni-q-hdr-icon" id="ni-th-help-btn" onclick="openLexHelp()" title="Méthodologie" style="display:none;">?</button>
       </div>
@@ -2534,7 +2518,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
         <!-- Grille 3×2 (visible quand lexique disponible) -->
         <div id="ni-q-th-haslex" style="display:none;flex:1;flex-direction:column;min-height:0;">
 
-          <!-- Ligne 1 : 3 colonnes, 65% -->
+          <!-- Ligne 1 : 3 colonnes, 50% hauteur -->
           <div style="flex:0 0 50%;display:grid;grid-template-columns:50% 20% 30%;min-height:0;overflow:hidden;">
 
             <!-- Col 1 : Radar -->
@@ -2553,7 +2537,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 
           </div>
 
-          <!-- Ligne 2 : Scatter compact pleine largeur -->
+          <!-- Ligne 2 : Scatter pleine largeur -->
           <div style="flex:1;min-height:0;border-top:1px solid #ede7f6;padding-top:2px;overflow:hidden;position:relative;">
             <svg id="ni-q-th-scatter" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;"></svg>
             <div id="ni-q-th-ph-tip" style="display:none;position:absolute;background:#333;color:#fff;font-size:9px;font-weight:600;padding:2px 7px;border-radius:4px;pointer-events:none;white-space:nowrap;z-index:10;top:2px;left:50%;transform:translateX(-50%);"></div>
@@ -2572,18 +2556,49 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
         </div>
 
       </div>
-    </div>
+    </div><!-- /ni-q-themes -->
 
-    <!-- Q4 : AVIS (bas-droite) -->
-    <div class="ni-q" id="ni-q-avis">
-      <div class="ni-q-hdr" style="background:#E3F2FD;color:#0D47A1;"><span class="ni-q-hdr-lbl">💭 Avis &amp; Compréhension</span><button class="btn-mic ni-q-mic" id="qmic-avis" onclick="niMicStart('ni-m-avis-ta','qmic-avis')" title="Dicter">🎤</button></div>
-      <div class="ni-q-body">
-        <div class="ni-q-hint">Ce que tu as compris, aimé, les passages marquants…</div>
-        <textarea id="ni-m-avis-ta" class="ni-q-ta"
-          placeholder="Mon avis sur ce livre…&#10;&#10;Les passages qui m'ont marqué…&#10;&#10;Ce que j'ai compris…"
-          oninput="niMSaveAvis()"></textarea>
+    <!-- COL 2 : Citations (haut) + Vocab & Avis (bas) -->
+    <div id="ni-q-right-col">
+
+      <!-- Citations -->
+      <div class="ni-q" id="ni-q-cit">
+        <div class="ni-q-hdr" style="background:#FBE9E7;color:#BF360C;"><span class="ni-q-hdr-lbl">« Citations</span></div>
+        <div class="ni-q-body">
+          <button class="ni-m-add-cit" onclick="niMAddCit()">＋ Nouvelle citation</button>
+          <div id="ni-m-cit-list" style="margin-top:6px;display:flex;flex-direction:column;gap:6px;"></div>
+          <div class="ni-m-empty" id="ni-m-cit-empty">Appuie sur <b>＋</b> pour commencer</div>
+        </div>
       </div>
-    </div>
+
+      <!-- Vocab + Avis empilés -->
+      <div id="ni-q-bot-row">
+
+        <!-- Vocabulaire -->
+        <div class="ni-q" id="ni-q-vocab">
+          <div class="ni-q-hdr" style="background:#EDE7F6;color:#4A148C;"><span class="ni-q-hdr-lbl">📖 Vocabulaire</span><button class="btn-mic ni-q-mic" id="qmic-vocab" onclick="niMicStart('ni-m-mots-ta','qmic-vocab')" title="Dicter">🎤</button></div>
+          <div class="ni-q-body">
+            <div class="ni-q-hint">Un mot difficile par bloc, avec sa définition ou son contexte.</div>
+            <textarea id="ni-m-mots-ta" class="ni-q-ta"
+              placeholder="── Mot inconnu ──&#10;In medias res : commencer au cœur de l'action.&#10;&#10;── Mot inconnu ──&#10;Analepse : retour en arrière (flashback)."
+              oninput="niMSaveMots()"></textarea>
+          </div>
+        </div>
+
+        <!-- Avis & Compréhension -->
+        <div class="ni-q" id="ni-q-avis">
+          <div class="ni-q-hdr" style="background:#E3F2FD;color:#0D47A1;"><span class="ni-q-hdr-lbl">💭 Avis &amp; Compréhension</span><button class="btn-mic ni-q-mic" id="qmic-avis" onclick="niMicStart('ni-m-avis-ta','qmic-avis')" title="Dicter">🎤</button></div>
+          <div class="ni-q-body">
+            <div class="ni-q-hint">Ce que tu as compris, aimé, les passages marquants…</div>
+            <textarea id="ni-m-avis-ta" class="ni-q-ta"
+              placeholder="Mon avis sur ce livre…&#10;&#10;Les passages qui m'ont marqué…&#10;&#10;Ce que j'ai compris…"
+              oninput="niMSaveAvis()"></textarea>
+          </div>
+        </div>
+
+      </div><!-- /ni-q-bot-row -->
+
+    </div><!-- /ni-q-right-col -->
 
   </div>
 
@@ -11553,10 +11568,8 @@ function updateQ3LexViz() {
   var ok=lex&&Array.isArray(lex.tranches)&&lex.tranches.length>0;
   var hasEl=document.getElementById('ni-q-th-haslex');
   var noEl=document.getElementById('ni-q-th-nolex');
-  var detBtn=document.getElementById('ni-th-det-btn');
   if(hasEl){hasEl.style.display=ok?'flex':'none';}
   if(noEl)  noEl.style.display=ok?'none':'block';
-  if(detBtn) detBtn.style.display=ok?'inline':'none';
   if(!ok) return;
   // Col1 : radar
   var svg=document.getElementById('ni-lex-radar-q3');
