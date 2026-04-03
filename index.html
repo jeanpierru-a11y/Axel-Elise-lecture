@@ -3780,7 +3780,7 @@ function sauvegarderBiblio() {
 // ════════════════════════════════════════════════════════
 // VERSION — incrémenter à chaque mise à jour des livres démo
 // ════════════════════════════════════════════════════════
-const DEMO_VERSION = 22; // v22 : amplitudes dramatiques — arcs inverses Pouvoir/Liberté (Adversaire) et Nature/Liberté (Thérèse)
+const DEMO_VERSION = 23; // v23 : justifications champLexical Thérèse Desqueyroux
 const LIVRES_DEMO = [
   {
     id: 'liv_petit_prince_001',
@@ -4453,6 +4453,32 @@ const LIVRES_DEMO = [
         identite: [{mot:"Thérèse",n:85},{mot:"pourquoi",n:45},{mot:"silence",n:32},{mot:"comprendre",n:25},{mot:"âme",n:20},{mot:"conscience",n:18},{mot:"moi",n:15},{mot:"vérité",n:12}],
         societe:  [{mot:"famille",n:35},{mot:"Argelouse",n:22},{mot:"apparences",n:18},{mot:"scandale",n:15},{mot:"réputation",n:12},{mot:"Saint-Clair",n:10},{mot:"convention",n:8}],
         nature:   [{mot:"lande",n:28},{mot:"pins",n:22},{mot:"forêt",n:20},{mot:"nuit",n:18},{mot:"résine",n:15},{mot:"ombre",n:12},{mot:"bruyère",n:10}]
+      },
+      justifications: {
+        amour: {
+          intro: "Le thème Amour dans Thérèse Desqueyroux regroupe les mots qui activent le réseau affectif de Thérèse — un réseau fondé sur l'absence et l'échec. 'Bernard' domine car il est le centre de sa vie conjugale subie. Méthode : les noms propres des personnes aimées ou censées l'être sont retenus comme vecteurs narratifs du thème, y compris quand ils désignent un amour refusé.",
+          mots: {"Bernard":"Mari de Thérèse, qu'elle n'a pas choisi. Sa présence répétée dit l'enfermement conjugal : c'est l'amour impossible, le lien qu'on ne ressent pas mais qui structure toute une vie.","Anne":"Demi-sœur de Bernard, amie d'enfance de Thérèse. Son amour spontané pour Jean Azévédo révèle par contraste ce que Thérèse n'a jamais vécu.","mariage":"Mot qui active le thème Amour par son absence de contenu sentimental. Le mariage de Thérèse est une union dynastique, pas affective.","coeur":"Mot rare dans le roman — sa rareté en fait un marqueur d'intensité. Quand il apparaît, il désigne ce que Thérèse n'a pas ou ne peut pas exprimer.","indifférence":"Antonyme constitutif : l'indifférence de Thérèse pour Bernard définit par opposition ce qu'est l'amour absent. C'est le thème Amour vu en creux.","tendresse":"Quasi absente dans le roman — sa rareté est significative. Thérèse n'en reçoit pas et n'en donne pas. Signal de la sécheresse affective du mariage bourgeois.","haine":"Antonyme constitutif : la haine que Thérèse éprouve parfois pour Bernard active le thème Amour par son contraire radical. Haine et amour partagent le même champ sémantique."}
+        },
+        pouvoir: {
+          intro: "Le thème Pouvoir regroupe les mots qui désignent les mécanismes de domination familiale et sociale qui écrasent Thérèse. 'Famille' y est central car la famille est l'institution du contrôle. Méthode : sont retenus les mots qui désignent soit une autorité exercée, soit une soumission imposée.",
+          mots: {"famille":"Institution centrale du roman. La famille Desqueyroux n'est pas un foyer affectif : c'est une structure de pouvoir qui préserve son honneur et ses pins. Thérèse y est prisonnière.","honneur":"Valeur suprême de la bourgeoisie catholique landaise. C'est pour préserver l'honneur familial que Thérèse est acquittée — et non pour être protégée elle-même.","père":"Le père de Thérèse, M. Larroque, incarne le pouvoir patriarcal républicain. Il préfère l'acquittement au scandale. Il choisit l'apparence sur la justice.","mariage":"Ici dans le thème Pouvoir : le mariage est aussi un acte d'alliance dynastique entre deux familles de propriétaires de pins. C'est un contrat de pouvoir autant qu'une union.","tribunal":"Espace du pouvoir judiciaire où Thérèse comparaît. L'acquittement est une décision de la famille, pas de la justice. Le tribunal est instrumentalisé par le pouvoir social.","autorité":"Mot générique du réseau : désigne l'ensemble des forces qui s'exercent sur Thérèse — maritale, parentale, sociale, religieuse.","obéir":"Verbe de la soumission. Thérèse n'obéit pas — et c'est précisément pour cela que son histoire est tragique dans ce monde qui exige l'obéissance des femmes."}
+        },
+        liberte: {
+          intro: "Le thème Liberté dans Thérèse Desqueyroux se définit presque entièrement par son absence et son désir impossible. 'Paris' est le mot-horizon : la capitale représente l'espace de la liberté féminine que Thérèse n'atteindra peut-être jamais vraiment. Méthode : sont retenus les mots d'évasion, de mouvement, d'aspiration ou de contrainte comme antonymes constitutifs.",
+          mots: {"Paris":"Espace de la liberté possible. À la fin du roman, Bernard laisse Thérèse à Paris — libération ambiguë. Paris représente la modernité, l'anonymat, l'échappée hors de la lande et de la famille.","fuir":"Verbe central de l'aspiration de Thérèse. Elle veut fuir — sans savoir vers quoi. La fuite est moins une direction qu'un refus de rester. Antonyme du mariage et d'Argelouse.","train":"Espace de transition et de pensée. Dans le train qui la ramène après l'acquittement, Thérèse reconstruit mentalement toute l'histoire. Le train = espace de la conscience libre.","prison":"Paradoxe central : Thérèse est libre (acquittée) mais prisonnière (séquestrée à Argelouse). Le mot prison dit que la liberté légale n'est pas la liberté réelle.","contrainte":"Antonyme constitutif de la liberté. La contrainte est la condition permanente de Thérèse : contrainte conjugale, sociale, géographique (Argelouse) et corporelle.","échapper":"Verbe de l'aspiration inaccomplie. Thérèse cherche à échapper sans jamais vraiment y parvenir — jusqu'à la scène finale de Paris, qui reste ouverte et incertaine.","cigarette":"Objet symbolique de liberté dans les années 1920 : une femme qui fume est une femme qui transgresse. La cigarette de Thérèse est un acte de résistance silencieux et corporel."}
+        },
+        identite: {
+          intro: "Le thème Identité est le cœur de Thérèse Desqueyroux. Thérèse ne se comprend pas elle-même — et ce non-savoir est le sujet véritable du roman. 'Thérèse' (le prénom lui-même) domine le corpus parce que c'est un roman d'intériorité : l'identité y est toujours en question. Méthode : sont retenus tous les mots de la conscience, de l'interrogation et de la perception intérieure.",
+          mots: {"Thérèse":"Le prénom lui-même est un mot du champ lexical Identité : c'est un roman à focalisation interne, et 'Thérèse' y désigne une conscience en train de se chercher plutôt qu'un personnage défini.","pourquoi":"Mot le plus important du roman. Thérèse elle-même ne comprend pas pourquoi elle a empoisonné Bernard. Le 'pourquoi' est la question sans fond du roman — Mauriac refuse d'y répondre.","silence":"Thérèse se tait tout au long du roman — au tribunal, face à Bernard, face à sa famille. Le silence dit l'impossibilité de se faire comprendre dans un monde qui ne veut pas entendre.","comprendre":"Verbe de la quête impossible. Thérèse veut se comprendre, veut être comprise. Le roman est une tentative d'explication — qui échoue, et cet échec est sa vérité.","âme":"Mot mauriacien par excellence. L'âme chez Mauriac est le lieu de la lutte entre le péché et la grâce. L'âme de Thérèse est le territoire du roman : tourmentée, opaque, cherchant.","conscience":"La conscience de Thérèse est le lieu narratif principal. Le style indirect libre de Mauriac plonge le lecteur dans cette conscience sans en donner une vue claire.","moi":"Pronom substantivé — Thérèse cherche un 'moi' propre dans une vie où tout lui est imposé : son mari, sa maison, ses devoirs. Le 'moi' dit la revendication d'une identité propre.","vérité":"Mot de la quête finale : Thérèse cherche à dire la vérité de son acte, à se confesser à Bernard dans le train. Mais la vérité reste informulable — elle n'arrive pas à expliquer."}
+        },
+        societe: {
+          intro: "Le thème Société regroupe les mots qui désignent la structure sociale bourgeoise catholique des Landes des années 1920, qui est la vraie 'adversaire' de Thérèse. 'Famille' y revient (comme dans Pouvoir) car elle est aussi une institution sociale. Méthode : sont retenus les mots de l'ordre social, de l'apparence et du jugement collectif.",
+          mots: {"famille":"Dans le thème Société, la famille est l'unité de base de l'ordre social bourgeois landais. Ce n'est pas un groupe affectif mais une structure de reproduction du pouvoir et du nom.","Argelouse":"Lieu-symbole de l'enfermement social. Le hameau isolé où Thérèse est séquestrée représente la société repliée sur elle-même, fermée à tout ce qui est extérieur et différent.","apparences":"Mot central de la critique sociale de Mauriac. La bourgeoisie des Landes fonctionne sur les apparences : l'acquittement est choisi pour sauver les apparences, pas Thérèse.","scandale":"Ce que la famille veut éviter à tout prix. Le scandale serait que la vérité éclate publiquement. La peur du scandale est le moteur des décisions familiales.","réputation":"Valeur suprême de la société bourgeoise. La réputation des Desqueyroux prime sur la justice, sur la vérité, sur Thérèse elle-même.","Saint-Clair":"Ville des Landes où habitent les familles Desqueyroux et Larroque. Centre de la vie sociale provinciale : messes, mariages, ragots, surveillance mutuelle permanente.","convention":"Mot-clé de la critique sociale : les conventions régissent tout dans ce monde. Thérèse les a violées — c'est son crime aux yeux de la société, plus que l'empoisonnement lui-même."}
+        },
+        nature: {
+          intro: "Le thème Nature est unique dans Thérèse Desqueyroux : la lande landaise n'est pas un simple décor. Mauriac la transforme en projection de l'âme de Thérèse. Les pins, la résine, la bruyère ne sont pas des éléments pittoresques : ils sont des états intérieurs. C'est pourquoi la Nature a un score élevé — elle est partout, comme une présence oppressante.",
+          mots: {"lande":"Espace central et symbolique. La lande landaise est à la fois la prison géographique de Thérèse et la projection de son âme : vaste, sauvage, sombre, sans issue. Mauriac la décrit comme vivante, presque sentiente.","pins":"Les pins représentent la richesse des Desqueyroux (les 'pins de Bernard') — les épousailles de Thérèse sont aussi une union avec les pins. Ils sont l'argent, la terre, la prison dorée.","forêt":"La forêt de pins est l'espace de l'enfermement : dense, obscure, labyrinthique. Thérèse y erre mentalement comme elle erre dans sa propre conscience.","nuit":"La nuit landaise est oppressante dans le roman — elle amplifie la solitude et l'isolement de Thérèse à Argelouse. La nuit est le temps de la conscience sans fard.","résine":"Odeur omniprésente de la lande. La résine matérialise la présence de la forêt — elle colle, elle est partout, elle imprègne. Comme la famille : inévitable et envahissante.","ombre":"L'ombre des pins sur la lande dit l'obscurité intérieure de Thérèse. Mauriac pratique le paysage-état d'âme : l'ombre extérieure reflète l'ombre intérieure.","bruyère":"Plante basse et résistante de la lande : comme Thérèse, elle pousse dans un sol ingrat, sans soin, en survivant malgré tout. Identification possible du lecteur averti."}
+        }
       }
     }
   },
@@ -6361,18 +6387,18 @@ ${body_html}
 
 // ── PDF spécifiques par sous-onglet Écrire ──────────────
 // ── Scatter SVG statique (pour PDF — pas de DOM, pas de rAF) ─────────────────
+// ── Scatter SVG statique (pour PDF — pas de DOM, pas de rAF) ─────────────────
 function _buildLexScatterSVG(lex, W, H) {
   var tranches=lex.tranches||[],phases=lex.phases||[];
   if(!tranches.length) return '';
-  W=W||600; H=H||130;
+  W=W||500; H=H||130;
   var MP=tranches[tranches.length-1].pageFin||tranches[tranches.length-1].pageDebut;
-  var ML=30,MR=8,MT=Math.round(H*0.17),MB=Math.round(H*0.13);
+  var ML=30,MR=6,MT=Math.round(H*0.17),MB=Math.round(H*0.14);
   var CW=W-ML-MR,CH=H-MT-MB;
   function xp(p){return ML+(p/MP)*CW;}
   function yv(v){return MT+(1-v/100)*CH;}
   function xtr(tr){return xp(((tr.pageDebut||0)+(tr.pageFin||tr.pageDebut||0))/2);}
   var s='';
-  // Fonds phases + numéros
   phases.forEach(function(ph,i){
     var p2=phases[i+1]?phases[i+1].pageDebut-1:MP;
     var x1=xp((ph.pageDebut||1)-0.5),x2=xp(p2+0.5),mx=(x1+x2)/2;
@@ -6382,25 +6408,24 @@ function _buildLexScatterSVG(lex, W, H) {
     s+='<text x="'+mx.toFixed(1)+'" y="'+(MT/2+cr*0.38)+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="'+Math.round(cr*1.3)+'" font-weight="900" fill="#fff">'+(i+1)+'</text>';
     if(i>0) s+='<line x1="'+x1.toFixed(1)+'" y1="'+MT+'" x2="'+x1.toFixed(1)+'" y2="'+(MT+CH)+'" stroke="#ccc" stroke-width="0.6" stroke-dasharray="2,2"/>';
   });
-  // Grille Y
   [0,50,100].forEach(function(v){
     var y=yv(v);
     s+='<line x1="'+ML+'" y1="'+y.toFixed(1)+'" x2="'+(ML+CW)+'" y2="'+y.toFixed(1)+'" stroke="#eee" stroke-width="0.6"/>';
     s+='<text x="'+(ML-4)+'" y="'+(y+3)+'" text-anchor="end" font-family="Arial,sans-serif" font-size="8" fill="#555">'+v+'</text>';
   });
-  // Points
   var pr=Math.max(2,Math.round(H/42));
   LEX_KEYS.forEach(function(k){
     tranches.forEach(function(tr){
       s+='<circle cx="'+xtr(tr).toFixed(1)+'" cy="'+yv(tr[k]||0).toFixed(1)+'" r="'+pr+'" fill="'+LEX_COLORS[k]+'" stroke="#fff" stroke-width="1" opacity="0.85"/>';
     });
   });
-  // Labels X alternés
-  tranches.forEach(function(tr,i){
-    if(i%2===0) s+='<text x="'+xtr(tr).toFixed(1)+'" y="'+(MT+CH+Math.round(MB*0.75))+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="8" fill="#555">p.'+(tr.pageDebut||'')+'</text>';
+  // Labels X : page de début de chaque phase (aux lignes de séparation)
+  phases.forEach(function(ph,i){
+    var x=xp(ph.pageDebut||1);
+    s+='<text x="'+x.toFixed(1)+'" y="'+(MT+CH+Math.round(MB*0.82))+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="8" fill="#555">p.'+ph.pageDebut+'</text>';
   });
   s+='<rect x="'+ML+'" y="'+MT+'" width="'+CW+'" height="'+CH+'" fill="none" stroke="#ccc" stroke-width="0.6"/>';
-  return '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;max-width:'+W+'px;height:auto;">'+s+'</svg>';
+  return '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:auto;">'+s+'</svg>';
 }
 
 // ── HTML partagé pour la toile (options A et B) ───────────────────────────────
@@ -6408,58 +6433,117 @@ function _buildLexToileHtml(L) {
   var lex=L&&L.lexique;
   if(!lex||!lex.tranches||!lex.tranches.length) return '';
   var h=function(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
-  var radarSvg=_buildLexRadarSVG(lex.tranches,200);
   var nt=lex.tranches.length;
   var mp=lex.tranches[nt-1].pageFin||lex.tranches[nt-1].pageDebut;
-  // Légende scores triée
+
+  // ── 1. Radar + légende scores (côte à côte) ────────────────────────────────
+  var radarSvg=_buildLexRadarSVG(lex.tranches,200);
   var sorted=LEX_KEYS.slice().sort(function(a,b){return _lexAvg(lex.tranches,b)-_lexAvg(lex.tranches,a);});
   var legendRows=sorted.map(function(k){
-    var v=Math.round(_lexAvg(lex.tranches,k)),col=LEX_COLORS[k],bg=LEX_BG[k];
-    var bar='<div style="height:7px;border-radius:3px;background:'+col+';width:'+v+'%;opacity:.7;"></div>';
-    return '<div style="display:flex;align-items:center;gap:7px;padding:4px 0;border-bottom:1px solid #f0e9f8;">'+
-      '<span style="width:10px;height:10px;border-radius:50%;background:'+col+';flex-shrink:0;display:inline-block;"></span>'+
-      '<span style="font-size:11px;font-weight:700;color:'+col+';flex:0 0 70px;">'+LEX_LABELS[k]+'</span>'+
+    var v=Math.round(_lexAvg(lex.tranches,k)),col=LEX_COLORS[k];
+    var bar='<div style="height:6px;border-radius:3px;background:'+col+';width:'+v+'%;opacity:.65;"></div>';
+    return '<div style="display:flex;align-items:center;gap:6px;padding:3px 0;border-bottom:1px solid #f0e9f8;">'+
+      '<span style="width:9px;height:9px;border-radius:50%;background:'+col+';flex-shrink:0;display:inline-block;"></span>'+
+      '<span style="font-size:11px;font-weight:700;color:'+col+';flex:0 0 65px;">'+LEX_LABELS[k]+'</span>'+
       '<div style="flex:1;">'+bar+'</div>'+
-      '<span style="font-size:12px;font-weight:900;color:'+col+';flex:0 0 28px;text-align:right;">'+v+'</span>'+
+      '<span style="font-size:12px;font-weight:900;color:'+col+';flex:0 0 26px;text-align:right;">'+v+'</span>'+
       '</div>';
   }).join('');
-  // Bloc radar + légende côte à côte
-  var topBlock='<div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:10px;">'+
-    '<div style="flex:0 0 auto;text-align:center;">'+radarSvg+'<div style="font-size:9px;color:#999;margin-top:3px;">'+nt+' phases · '+mp+' pages</div></div>'+
-    '<div style="flex:1;padding-top:8px;">'+legendRows+'</div>'+
+  var topBlock='<div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:14px;">'+
+    '<div style="flex:0 0 auto;text-align:center;">'+radarSvg+
+    '<div style="font-size:9px;color:#999;margin-top:3px;">'+nt+' phases · '+mp+' pages</div></div>'+
+    '<div style="flex:1;padding-top:6px;">'+legendRows+'</div>'+
     '</div>';
-  // Scatter pleine largeur
-  var scatterSvg=_buildLexScatterSVG(lex,580,120);
-  var scatterBlock='<div style="margin-bottom:10px;">'+
-    '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#6A1B9A;margin-bottom:4px;">Évolution par phase</div>'+
-    scatterSvg+
-    '</div>';
-  // Légende phases numérotées
-  var phaseBlock='';
+
+  // ── 2. Scatter + légende phases numérotées (côte à côte) ──────────────────
+  var scatterSvg=_buildLexScatterSVG(lex,480,120);
+  var phaseLegend='';
   if(lex.phases&&lex.phases.length){
-    phaseBlock='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px;">';
-    lex.phases.forEach(function(ph,i){
-      phaseBlock+='<span style="font-size:9px;background:#EDE7F6;color:#4A148C;padding:2px 6px;border-radius:10px;font-weight:700;">'+
-        (i+1)+'. '+h(ph.nom)+'</span>';
-    });
-    phaseBlock+='</div>';
+    phaseLegend=lex.phases.map(function(ph,i){
+      var lc=LEX_PH_LC[i%LEX_PH_LC.length];
+      return '<div style="display:flex;align-items:baseline;gap:5px;padding:3px 0;border-bottom:1px solid #f0f0f0;">'+
+        '<span style="flex:0 0 18px;height:18px;border-radius:50%;background:'+lc+';display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:#fff;flex-shrink:0;">'+(i+1)+'</span>'+
+        '<span style="font-size:10px;color:#333;line-height:1.35;">'+h(ph.nom)+'</span>'+
+        '</div>';
+    }).join('');
   }
-  // ChampLexical mots-clés
+  var scatterBlock='<div style="margin-bottom:14px;">'+
+    '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#6A1B9A;margin-bottom:4px;">Évolution par phase</div>'+
+    '<div style="display:flex;gap:10px;align-items:flex-start;">'+
+      '<div style="flex:1;min-width:0;">'+scatterSvg+'</div>'+
+      (phaseLegend?'<div style="flex:0 0 auto;min-width:130px;max-width:180px;padding-top:2px;">'+phaseLegend+'</div>':'')+
+    '</div>'+
+    '</div>';
+
+  // ── 3. Mots-clés & Justifications (table 6 lignes × 2 colonnes) ───────────
+  var hasChamp=lex.champLexical&&Object.keys(lex.champLexical).some(function(k){return lex.champLexical[k]&&lex.champLexical[k].length;});
+  var hasJust=lex.justifications&&Object.keys(lex.justifications).length;
   var champBlock='';
-  if(lex.champLexical&&Object.keys(lex.champLexical).length){
-    champBlock='<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#6A1B9A;margin-bottom:6px;">Mots-clés par thème</div>';
-    LEX_KEYS.forEach(function(k){
+  if(hasChamp){
+    var thStyle='font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;color:#6A1B9A;padding:5px 8px;border-bottom:2px solid #6A1B9A;text-align:left;';
+    var champRows=LEX_KEYS.map(function(k){
       var mots=lex.champLexical[k];
-      if(!mots||!mots.length) return;
+      if(!mots||!mots.length) return '';
       var col=LEX_COLORS[k],bg=LEX_BG[k];
-      var pills=mots.slice(0,10).map(function(m){
-        return '<span style="display:inline-flex;align-items:center;gap:3px;background:'+bg+';color:'+col+';padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700;margin:2px;">'+
-          h(m.mot)+'<span style="font-weight:900;opacity:.7;">·'+m.n+'</span></span>';
+      // Colonne 1 : thème + pills
+      var pills=mots.slice(0,12).map(function(m){
+        return '<span style="display:inline-flex;align-items:center;gap:2px;background:'+bg+';color:'+col+';padding:1px 6px;border-radius:8px;font-size:10px;font-weight:700;margin:1px 2px 2px 0;">'+
+          h(m.mot)+'<span style="opacity:.65;font-size:9px;">·'+m.n+'</span></span>';
       }).join('');
-      champBlock+='<div style="margin-bottom:5px;"><span style="font-size:10px;font-weight:800;color:'+col+';">'+LEX_LABELS[k]+'</span><br>'+pills+'</div>';
-    });
+      var col1='<div style="margin-bottom:4px;"><span style="font-size:11px;font-weight:900;color:'+col+';">'+LEX_LABELS[k]+'</span></div>'+pills;
+      // Colonne 2 : justification
+      var col2='';
+      if(hasJust&&lex.justifications[k]){
+        var jk=lex.justifications[k];
+        if(jk.intro) col2+='<div style="font-size:10px;color:#333;line-height:1.55;margin-bottom:6px;font-style:italic;">'+h(jk.intro)+'</div>';
+        if(jk.mots){
+          col2+=Object.entries(jk.mots).map(function(e){
+            return '<div style="margin-bottom:4px;padding-left:6px;border-left:2px solid '+col+';"><span style="font-size:10px;font-weight:800;color:'+col+';">'+h(e[0])+'</span> '+
+              '<span style="font-size:10px;color:#444;line-height:1.5;">'+h(e[1])+'</span></div>';
+          }).join('');
+        }
+      }
+      var rowBg=LEX_BG[k]+'44';
+      return '<tr style="background:'+rowBg+';vertical-align:top;">'+
+        '<td style="padding:8px 10px;border-bottom:1px solid #e8e0f0;width:38%;">'+col1+'</td>'+
+        '<td style="padding:8px 10px;border-bottom:1px solid #e8e0f0;width:62%;border-left:1px solid #e8e0f0;">'+col2+'</td>'+
+        '</tr>';
+    }).join('');
+    champBlock='<h2 style="font-size:.82rem;font-weight:900;color:#6A1B9A;border-bottom:2px solid #6A1B9A;padding-bottom:5px;margin:0 0 8px;">Mots-clés & Justifications</h2>'+
+      '<table style="width:100%;border-collapse:collapse;border:1px solid #e0d6f0;border-radius:8px;overflow:hidden;margin-bottom:16px;">'+
+        '<thead><tr>'+
+          '<th style="'+thStyle+'width:38%;">Thème · Mots-clés</th>'+
+          '<th style="'+thStyle+'width:62%;border-left:1px solid #e8e0f0;">Justification du choix</th>'+
+        '</tr></thead>'+
+        '<tbody>'+champRows+'</tbody>'+
+      '</table>';
   }
-  return topBlock+scatterBlock+phaseBlock+champBlock;
+
+  // ── 4. Aide générale (méthodologie) ───────────────────────────────────────
+  var aideBlock='<h2 style="font-size:.82rem;font-weight:900;color:#6A1B9A;border-bottom:2px solid #6A1B9A;padding-bottom:5px;margin:16px 0 10px;">📐 Méthodologie — Analyse lexicale</h2>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 18px;">'+
+    _lexAideItem('#4A148C','📐 Principe général',
+      'L\u2019analyse lexicale repose sur un <b>comptage des occurrences thématiques</b> dans l\u2019\u0153uvre entière, organisé en tranches de pages égales. Pour chaque thème, on recense tous les mots, syntagmes et noms propres qui \u00ab activent \u00bb ce champ sémantique dans le texte.')+
+    _lexAideItem('#1565C0','🔍 Sélection des mots',
+      'Un mot entre dans un thème s\u2019il satisfait l\u2019un de ces trois critères :<br>① <b>Appartenance directe</b> : le mot relève du champ lexical du thème<br>② <b>Antonyme constitutif</b> : le mot active le thème par opposition<br>③ <b>Vecteur narratif</b> : nom propre, lieu ou objet symbolique associé au thème')+
+    _lexAideItem('#C62828','📊 Score et radar',
+      'Le <b>score d\u2019un thème</b> = somme de toutes ses occurrences rapportée au nombre de pages × 100. Le <b>radar</b> compare les 6 thèmes sur une échelle 0–100. L\u2019axe dominant révèle le thème central de l\u2019\u0153uvre.')+
+    _lexAideItem('#E65100','📈 Scatter thématique',
+      'Chaque cercle représente la densité d\u2019un thème dans une tranche de pages. Un pic en début d\u2019\u0153uvre indique un thème d\u2019exposition ; un pic en fin, un thème de résolution ou de bascule narrative.')+
+    _lexAideItem('#6A1B9A','💡 Justification',
+      'La colonne <b>Justification</b> explique, thème par thème, <b>pourquoi chaque mot a été retenu</b> et ce qu\u2019il révèle de l\u2019\u0153uvre. C\u2019est la trace critique et argumentée de la méthode — indispensable pour une dissertation ou un commentaire composé.')+
+    _lexAideItem('#2E7D32','📋 Import JSON',
+      'Pour importer une analyse existante, colle le JSON du Prompt B dans le bouton <b>📋 Importer</b> (champs <code>phases</code> + <code>tranches</code>). Tu peux y ajouter <code>champLexical</code> et <code>justifications</code> pour enrichir l\u2019analyse.')+
+    '</div>';
+
+  return topBlock+scatterBlock+champBlock+aideBlock;
+}
+
+function _lexAideItem(col, titre, texte) {
+  return '<div style="background:#F8F5FF;border-left:3px solid '+col+';border-radius:0 6px 6px 0;padding:8px 10px;">'+
+    '<div style="font-size:10px;font-weight:900;color:'+col+';margin-bottom:4px;">'+titre+'</div>'+
+    '<div style="font-size:10px;color:#333;line-height:1.6;">'+texte+'</div>'+
+    '</div>';
 }
 
 // ── Export autonome de la toile (Option B) ────────────────────────────────────
