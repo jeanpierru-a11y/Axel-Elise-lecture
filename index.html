@@ -6456,22 +6456,29 @@ function _buildLexToileHtml(L) {
     '</div>';
 
   // ── 2. Scatter + légende phases numérotées (côte à côte) ──────────────────
+  var isModerne=(L.schemaType||'aristote')==='moderne';
   var scatterSvg=_buildLexScatterSVG(lex,480,120);
   var phaseLegend='';
   if(lex.phases&&lex.phases.length){
+    var txtStyle=isModerne
+      ? 'font-size:10px;color:#333;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'
+      : 'font-size:10px;color:#333;line-height:1.35;';
     phaseLegend=lex.phases.map(function(ph,i){
       var lc=LEX_PH_LC[i%LEX_PH_LC.length];
-      return '<div style="display:flex;align-items:baseline;gap:5px;padding:3px 0;border-bottom:1px solid #f0f0f0;">'+
+      return '<div style="display:flex;align-items:center;gap:5px;padding:3px 0;border-bottom:1px solid #f0f0f0;">'+
         '<span style="flex:0 0 18px;height:18px;border-radius:50%;background:'+lc+';display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:#fff;flex-shrink:0;">'+(i+1)+'</span>'+
-        '<span style="font-size:10px;color:#333;line-height:1.35;">'+h(ph.nom)+'</span>'+
+        '<span style="'+txtStyle+'">'+h(ph.nom)+'</span>'+
         '</div>';
     }).join('');
   }
+  var legendColStyle=isModerne
+    ? 'flex:0 0 40%;max-width:40%;padding-top:2px;'
+    : 'flex:0 0 auto;min-width:130px;max-width:180px;padding-top:2px;';
   var scatterBlock='<div style="margin-bottom:14px;">'+
     '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#6A1B9A;margin-bottom:4px;">Évolution par phase</div>'+
     '<div style="display:flex;gap:10px;align-items:flex-start;">'+
       '<div style="flex:1;min-width:0;">'+scatterSvg+'</div>'+
-      (phaseLegend?'<div style="flex:0 0 auto;min-width:130px;max-width:180px;padding-top:2px;">'+phaseLegend+'</div>':'')+
+      (phaseLegend?'<div style="'+legendColStyle+'">'+phaseLegend+'</div>':'')+
     '</div>'+
     '</div>';
 
