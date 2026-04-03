@@ -6472,7 +6472,7 @@ function _buildLexToileHtml(L) {
     }).join('');
   }
   var legendColStyle=isModerne
-    ? 'flex:0 0 40%;max-width:40%;padding-top:2px;'
+    ? 'flex:0 0 auto;padding-top:2px;'
     : 'flex:0 0 auto;min-width:130px;max-width:180px;padding-top:2px;';
   var scatterBlock='<div style="margin-bottom:14px;">'+
     '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#6A1B9A;margin-bottom:4px;">Évolution par phase</div>'+
@@ -6512,15 +6512,15 @@ function _buildLexToileHtml(L) {
       }
       var rowBg=LEX_BG[k]+'44';
       return '<tr style="background:'+rowBg+';vertical-align:top;">'+
-        '<td style="padding:8px 10px;border-bottom:1px solid #e8e0f0;width:38%;">'+col1+'</td>'+
-        '<td style="padding:8px 10px;border-bottom:1px solid #e8e0f0;width:62%;border-left:1px solid #e8e0f0;">'+col2+'</td>'+
+        '<td style="padding:8px 10px;border-bottom:1px solid #e8e0f0;width:28%;">'+col1+'</td>'+
+        '<td style="padding:8px 10px;border-bottom:1px solid #e8e0f0;width:72%;border-left:1px solid #e8e0f0;">'+col2+'</td>'+
         '</tr>';
     }).join('');
     champBlock='<h2 style="font-size:.82rem;font-weight:900;color:#6A1B9A;border-bottom:2px solid #6A1B9A;padding-bottom:5px;margin:0 0 8px;">Mots-clés & Justifications</h2>'+
       '<table style="width:100%;border-collapse:collapse;border:1px solid #e0d6f0;border-radius:8px;overflow:hidden;margin-bottom:16px;">'+
         '<thead><tr>'+
-          '<th style="'+thStyle+'width:38%;">Thème · Mots-clés</th>'+
-          '<th style="'+thStyle+'width:62%;border-left:1px solid #e8e0f0;">Justification du choix</th>'+
+          '<th style="'+thStyle+'width:28%;">Thème · Mots-clés</th>'+
+          '<th style="'+thStyle+'width:72%;border-left:1px solid #e8e0f0;">Justification du choix</th>'+
         '</tr></thead>'+
         '<tbody>'+champRows+'</tbody>'+
       '</table>';
