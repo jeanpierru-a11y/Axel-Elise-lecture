@@ -2582,16 +2582,16 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
           </div>
 
           <!-- Ligne 2 : Scatter + légende phases côte à côte -->
-          <div style="flex:1;min-height:0;border-top:1px solid #ede7f6;display:flex;overflow:hidden;">
+          <div style="flex:1;min-height:0;border-top:1px solid #ede7f6;display:flex;overflow:hidden;padding:5px 0 4px;">
 
-            <!-- Scatter (60% de la zone) -->
+            <!-- Scatter -->
             <div style="flex:1;min-width:0;position:relative;overflow:hidden;">
               <svg id="ni-q-th-scatter" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;"></svg>
               <div id="ni-q-th-ph-tip" style="display:none;position:absolute;background:#333;color:#fff;font-size:9px;font-weight:600;padding:2px 7px;border-radius:4px;pointer-events:none;white-space:nowrap;z-index:10;top:2px;left:50%;transform:translateX(-50%);"></div>
             </div>
 
-            <!-- Légende phases (colonne unique, largeur minimale) -->
-            <div id="ni-q-th-ph-legend" style="display:none;flex:0 0 auto;width:auto;border-left:1px solid #ede7f6;padding:3px 5px;overflow-y:auto;overflow-x:hidden;"></div>
+            <!-- Légende phases (colonne unique, largeur minimale, centrée sur zone graphique) -->
+            <div id="ni-q-th-ph-legend" style="display:none;flex:0 0 auto;width:auto;border-left:1px solid #ede7f6;padding:16px 6px 12px;overflow-y:auto;overflow-x:hidden;box-sizing:border-box;"></div>
 
           </div>
 
@@ -12330,28 +12330,28 @@ function _renderQ3ScatterDraw(svgEl,lex,W,H) {
   var tranches=lex.tranches||[],phases=lex.phases||[];
   if(!tranches.length) return;
   var MP=tranches[tranches.length-1].pageFin||tranches[tranches.length-1].pageDebut;
-  // Marges fixes (coordonnées = pixels réels, pas de scaling)
-  var ML=34,MR=8,MT=22,MB=16;
+  // Marges fixes (Régime A : pixels réels, pas de scaling)
+  var ML=34,MR=8,MT=16,MB=12;
   var CW=W-ML-MR,CH=H-MT-MB;
   function xp(p){return ML+(p/MP)*CW;}
   function yv(v){return MT+(1-v/100)*CH;}
   function xtr(tr){return xp(((tr.pageDebut||0)+(tr.pageFin||tr.pageDebut||0))/2);}
   var s='';
-  // Fonds phases + numéros (tailles fixes)
-  var CR=9; // rayon fixe des cercles de phase
+  // Fonds phases + numéros — cercles petits comme légende (CR=7)
+  var CR=7;
   phases.forEach(function(ph,i){
     var p2=phases[i+1]?phases[i+1].pageDebut-1:MP;
     var x1=xp((ph.pageDebut||1)-0.5),x2=xp(p2+0.5),mx=(x1+x2)/2;
     s+='<rect x="'+x1.toFixed(1)+'" y="'+MT+'" width="'+(x2-x1).toFixed(1)+'" height="'+CH+'" fill="'+LEX_PH_BG[i%LEX_PH_BG.length]+'"/>';
     s+='<circle cx="'+mx.toFixed(1)+'" cy="'+(MT/2)+'" r="'+CR+'" fill="'+LEX_PH_LC[i%LEX_PH_LC.length]+'" data-pname="'+ph.nom+'" style="cursor:pointer"/>';
-    s+='<text x="'+mx.toFixed(1)+'" y="'+(MT/2+3.5)+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" font-weight="900" fill="#fff" pointer-events="none">'+(i+1)+'</text>';
+    s+='<text x="'+mx.toFixed(1)+'" y="'+(MT/2+2.5)+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="7.5" font-weight="900" fill="#fff" pointer-events="none">'+(i+1)+'</text>';
     if(i>0) s+='<line x1="'+x1.toFixed(1)+'" y1="'+MT+'" x2="'+x1.toFixed(1)+'" y2="'+(MT+CH)+'" stroke="#ccc" stroke-width="0.6" stroke-dasharray="2,2"/>';
   });
-  // Grille Y (font fixe 9px)
+  // Grille Y (font 8px)
   [0,50,100].forEach(function(v){
     var y=yv(v);
     s+='<line x1="'+ML+'" y1="'+y.toFixed(1)+'" x2="'+(ML+CW)+'" y2="'+y.toFixed(1)+'" stroke="#eee" stroke-width="0.6"/>';
-    s+='<text x="'+(ML-4)+'" y="'+(y+4)+'" text-anchor="end" font-family="Arial,sans-serif" font-size="9" fill="#555">'+v+'</text>';
+    s+='<text x="'+(ML-4)+'" y="'+(y+3)+'" text-anchor="end" font-family="Arial,sans-serif" font-size="8" fill="#555">'+v+'</text>';
   });
   // Points (rayon plafonné à 4px)
   var pr=Math.min(4,Math.max(2,Math.round(H/60)));
@@ -13373,12 +13373,8 @@ function _q3TogglePaires() {
     if (_q3PairesOpen) {
       updateQ3PairesViz();
     } else {
-      // Retour vue globale : forcer redraw complet car scatter avait dimensions nulles
-      requestAnimationFrame(function(){
-        requestAnimationFrame(function(){
-          updateQ3LexViz();
-        });
-      });
+      // Retour vue globale : setTimeout garantit que le DOM est re-layouté avant mesure
+      setTimeout(function(){ updateQ3LexViz(); }, 100);
     }
   }
   if (btn) btn.classList.toggle('active', _q3PairesOpen);
