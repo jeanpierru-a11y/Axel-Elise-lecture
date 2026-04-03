@@ -2563,7 +2563,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
           <div id="ni-q-th-global" style="display:flex;flex:1;flex-direction:column;min-height:0;gap:12px;padding-bottom:8px;">
 
           <!-- ▌ OBJET 1 — Radar · Scores · Mots -->
-          <div style="flex:0 0 50%;display:grid;grid-template-columns:54% 20% 26%;min-height:0;overflow:hidden;">
+          <div id="ni-q-th-ob1" style="flex:0 0 50%;display:grid;grid-template-columns:54% 20% 26%;min-height:0;overflow:hidden;">
 
             <!-- Col 1 : Radar -->
             <div style="display:flex;align-items:flex-start;justify-content:center;overflow:hidden;padding:2px;">
@@ -2582,7 +2582,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
           </div>
 
           <!-- ▌ OBJET 2 — Scatter · Légende des phases -->
-          <div style="flex:1;min-height:0;border-top:1px solid #ede7f6;display:flex;overflow:hidden;">
+          <div id="ni-q-th-ob2" style="flex:1;min-height:0;border-top:1px solid #ede7f6;display:flex;overflow:hidden;">
 
             <!-- Scatter -->
             <div style="flex:1;min-width:0;position:relative;overflow:hidden;">
@@ -2594,6 +2594,9 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
             <div id="ni-q-th-ph-legend" style="display:none;flex:0 0 auto;width:auto;border-left:1px solid #ede7f6;padding:22px 6px 16px;overflow-y:auto;overflow-x:hidden;box-sizing:border-box;"></div>
 
           </div>
+
+          <!-- ▌ Paires — s'affiche en remplacement d'ob1+ob2 -->
+          <div id="ni-q-th-paires" style="display:none;flex:1;overflow-y:auto;min-height:0;padding:4px 6px;flex-direction:column;gap:7px;"></div>
 
           </div><!-- /ni-q-th-global -->
 
@@ -13371,19 +13374,24 @@ var _q3PairesOpen = false;
 
 function _q3TogglePaires() {
   _q3PairesOpen = !_q3PairesOpen;
-  var glb = document.getElementById('ni-q-th-global');
+  var ob1 = document.getElementById('ni-q-th-ob1');
+  var ob2 = document.getElementById('ni-q-th-ob2');
   var pai = document.getElementById('ni-q-th-paires');
-  var mod = document.getElementById('ni-q-th-mode');
   var btn = document.getElementById('ni-th-pairs-btn');
-  if (glb) glb.style.display = _q3PairesOpen ? 'none' : 'flex';
-  if (mod) mod.style.display = _q3PairesOpen ? 'none' : 'block';
+  // ni-q-th-global reste TOUJOURS display:flex — seuls ob1/ob2/paires togglés
+  if (ob1) ob1.style.display = _q3PairesOpen ? 'none' : 'grid';
+  if (ob2) ob2.style.display = _q3PairesOpen ? 'none' : 'flex';
   if (pai) {
-    pai.style.display = _q3PairesOpen ? 'block' : 'none';
+    pai.style.display = _q3PairesOpen ? 'flex' : 'none';
     if (_q3PairesOpen) {
       updateQ3PairesViz();
     } else {
-      // Retour vue globale : setTimeout garantit que le DOM est re-layouté avant mesure
-      setTimeout(function(){ updateQ3LexViz(); }, 400);
+      // Retour : global n'a jamais bougé → double rAF suffit
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+          _renderQ3Scatter(LIVRE_ACTIF && LIVRE_ACTIF.lexique);
+        });
+      });
     }
   }
   if (btn) btn.classList.toggle('active', _q3PairesOpen);
