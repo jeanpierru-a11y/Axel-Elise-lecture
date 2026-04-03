@@ -2590,8 +2590,8 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
               <div id="ni-q-th-ph-tip" style="display:none;position:absolute;background:#333;color:#fff;font-size:9px;font-weight:600;padding:2px 7px;border-radius:4px;pointer-events:none;white-space:nowrap;z-index:10;top:2px;left:50%;transform:translateX(-50%);"></div>
             </div>
 
-            <!-- Légende phases (colonne unique, max 40%) -->
-            <div id="ni-q-th-ph-legend" style="display:none;flex:0 0 38%;max-width:38%;border-left:1px solid #ede7f6;padding:4px 6px;overflow-y:auto;"></div>
+            <!-- Légende phases (colonne unique, largeur minimale) -->
+            <div id="ni-q-th-ph-legend" style="display:none;flex:0 0 auto;width:auto;border-left:1px solid #ede7f6;padding:3px 5px;overflow-y:auto;overflow-x:hidden;"></div>
 
           </div>
 
@@ -12254,12 +12254,10 @@ function updateQ3LexViz() {
     phLgEl.style.display='block';
     phLgEl.innerHTML=lex.phases.map(function(ph,i){
       var lc=LEX_PH_LC[i%LEX_PH_LC.length];
-      return '<div style="display:flex;align-items:flex-start;gap:4px;padding:2px 0;border-bottom:1px solid #f3eeff;">'+
-        '<span style="flex-shrink:0;width:15px;height:15px;border-radius:50%;background:'+lc+';display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;color:#fff;margin-top:1px;">'+(i+1)+'</span>'+
-        '<span style="font-size:8px;color:#444;line-height:1.35;overflow:hidden;">'+
-          '<b style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">p.'+ph.pageDebut+'</b>'+
-          '<span style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#777;">'+ph.nom+'</span>'+
-        '</span>'+
+      return '<div style="display:flex;align-items:center;gap:4px;padding:2px 0;border-bottom:1px solid #f3eeff;white-space:nowrap;">'+
+        '<span style="flex-shrink:0;width:14px;height:14px;border-radius:50%;background:'+lc+';display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;color:#fff;">'+(i+1)+'</span>'+
+        '<span style="font-size:8px;color:#444;white-space:nowrap;">p.'+ph.pageDebut+'</span>'+
+        '<span style="font-size:7.5px;color:#777;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:110px;">'+ph.nom+'</span>'+
       '</div>';
     }).join('');
   }
@@ -13366,12 +13364,22 @@ function _q3TogglePaires() {
   _q3PairesOpen = !_q3PairesOpen;
   var glb = document.getElementById('ni-q-th-global');
   var pai = document.getElementById('ni-q-th-paires');
+  var mod = document.getElementById('ni-q-th-mode');
   var btn = document.getElementById('ni-th-pairs-btn');
   if (glb) glb.style.display = _q3PairesOpen ? 'none' : 'flex';
+  if (mod) mod.style.display = _q3PairesOpen ? 'none' : 'block';
   if (pai) {
     pai.style.display = _q3PairesOpen ? 'block' : 'none';
-    if (_q3PairesOpen) updateQ3PairesViz();
-    else updateQ3LexViz(); // redessine le scatter (était masqué → dimensions nulles)
+    if (_q3PairesOpen) {
+      updateQ3PairesViz();
+    } else {
+      // Retour vue globale : forcer redraw complet car scatter avait dimensions nulles
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+          updateQ3LexViz();
+        });
+      });
+    }
   }
   if (btn) btn.classList.toggle('active', _q3PairesOpen);
 }
