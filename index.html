@@ -3694,16 +3694,19 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
   </div>
   <div id="lex-help-body">
     <h4 style="color:#4A148C">📐 Principe général</h4>
-    <p>L'analyse lexicale repose sur un <b>comptage des occurrences thématiques</b> dans l'œuvre entière, organisé en <b>tranches de pages égales</b> (3 tranches pour le schéma Aristote, 5 pour Freytag, 8 pour le schéma moderne). Pour chaque thème, on recense tous les mots, syntagmes et noms propres qui « activent » ce champ sémantique dans le texte.</p>
+    <p>L'analyse lexicale organise l'œuvre en <b>tranches de pages égales</b> (3 pour Aristote, 5 pour Freytag, 8 pour le schéma moderne) et attribue à chaque thème un <b>score de densité</b> dans chaque tranche.</p>
+    <h4 style="color:#37474F">🎚️ Des scores, pas des comptages bruts</h4>
+    <p>Les scores (0–100) <b>ne sont pas des comptages d'occurrences</b> : ce sont des <b>estimations de densité thématique</b> saisies à la main (ou générées par l'IA). Un score de 80 signifie « ce thème est très présent dans cette tranche », pas « 80 occurrences ont été comptées ».<br>
+    Ce choix est délibéré : il évite le <b>biais du champ inégal</b> — si un thème a 10 mots définis et un autre seulement 4, le premier aurait mécaniquement plus d'occurrences brutes, sans être plus important dans le livre.</p>
     <h4 style="color:#1565C0">🔍 Sélection des mots</h4>
     <p>Un mot entre dans un thème s'il satisfait l'un de ces trois critères :<br>
     ① <b>Appartenance directe</b> : le mot relève du champ lexical du thème (<i>ex. tendresse → Amour</i>)<br>
     ② <b>Antonyme constitutif</b> : le mot active le thème par opposition (<i>ex. haine → Amour, car le thème se définit aussi par ce qu'il nie</i>)<br>
     ③ <b>Vecteur narratif</b> : nom propre, lieu ou objet symbolique associé au thème (<i>ex. Bernard → Amour dans Thérèse Desqueyroux</i>)</p>
     <h4 style="color:#C62828">📊 Score et radar</h4>
-    <p>Le <b>score d'un thème</b> = somme de toutes ses occurrences rapportée au nombre de pages × 100. Le <b>radar</b> compare les 6 thèmes sur une échelle normalisée (0–100). L'axe dominant révèle le thème central de l'œuvre.</p>
+    <p>Le <b>radar</b> affiche la <b>moyenne des scores</b> de chaque thème sur toutes les tranches (échelle 0–100). L'axe dominant révèle le thème central de l'œuvre. Les scores sont comparables entre thèmes parce qu'ils sont tous sur la même base 100 — indépendamment du nombre de mots dans chaque champ lexical.</p>
     <h4 style="color:#E65100">📈 Scatter thématique</h4>
-    <p>Chaque cercle représente la densité d'un thème dans une tranche de pages. La <b>taille</b> du cercle = nombre d'occurrences. Un pic en début d'œuvre indique un thème d'exposition ; un pic en fin, un thème de résolution ou de bascule.</p>
+    <p>Chaque cercle représente la densité d'un thème dans une tranche de pages. La <b>taille</b> du cercle = intensité relative dans cette tranche. Un pic en début d'œuvre indique un thème d'exposition ; un pic en fin, un thème de résolution ou de bascule.</p>
     <h4 style="color:#2E7D32">💡 Bouton Justification</h4>
     <p>Le bouton <b>💡 Justification</b> dans la colonne Légende explique, thème par thème, <b>pourquoi chaque mot a été retenu</b> et ce qu'il révèle de l'œuvre. C'est la trace critique et argumentée de la méthode — indispensable pour une dissertation ou un commentaire composé.</p>
     <h4 style="color:#6A1B9A">📋 Import JSON</h4>
