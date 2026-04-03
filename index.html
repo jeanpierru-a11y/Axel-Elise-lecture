@@ -13377,16 +13377,18 @@ function _q3TogglePaires() {
   var ob1 = document.getElementById('ni-q-th-ob1');
   var ob2 = document.getElementById('ni-q-th-ob2');
   var pai = document.getElementById('ni-q-th-paires');
+  var mod = document.getElementById('ni-q-th-mode');
   var btn = document.getElementById('ni-th-pairs-btn');
-  // ni-q-th-global reste TOUJOURS display:flex — seuls ob1/ob2/paires togglés
+  // ob1+ob2+mode masqués → paires prend toute la hauteur de ni-q-th-haslex
   if (ob1) ob1.style.display = _q3PairesOpen ? 'none' : 'grid';
   if (ob2) ob2.style.display = _q3PairesOpen ? 'none' : 'flex';
+  if (mod) mod.style.display = _q3PairesOpen ? 'none' : 'block';
   if (pai) {
     pai.style.display = _q3PairesOpen ? 'flex' : 'none';
     if (_q3PairesOpen) {
       updateQ3PairesViz();
     } else {
-      // Retour : global n'a jamais bougé → double rAF suffit
+      // Retour : ni-q-th-global n'a jamais bougé → double rAF suffit
       requestAnimationFrame(function(){
         requestAnimationFrame(function(){
           _renderQ3Scatter(LIVRE_ACTIF && LIVRE_ACTIF.lexique);
