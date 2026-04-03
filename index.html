@@ -2072,24 +2072,21 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 .rsz2.rsz-se2{bottom:0;right:0;width:12px;height:12px;cursor:se-resize;}
 .rsz2.rsz-sw2{bottom:0;left:0;width:12px;height:12px;cursor:sw-resize;}
 
-/* ── Panneau mode lexique (sous le scatter) ── */
-#ni-q-th-mode{flex:0 0 auto;border-top:1.5px solid #EDE7F6;padding:5px 6px 4px;background:#FAFAFA;}
-.lm-toggle-row{display:flex;gap:4px;align-items:center;margin-bottom:4px;}
-.lm-toggle-lbl{font-size:.6rem;font-weight:800;color:#888;text-transform:uppercase;letter-spacing:.4px;flex-shrink:0;width:52px;}
-.lm-btn{font-size:.66rem;font-weight:700;padding:2px 8px;border-radius:10px;border:1.5px solid #ddd;background:#f5f5f5;color:#888;cursor:pointer;transition:all .15s;}
-.lm-btn.active{border-color:currentColor;background:white;box-shadow:0 1px 4px rgba(0,0,0,.12);}
-.lm-btn.active.ia{color:#6A1B9A;border-color:#B39DDB;background:#F5F0FF;}
+/* ── Panneau source & traitement (sous scatter, hors ni-q-th-global) ── */
+.lm-toggle-lbl{font-size:.6rem;font-weight:800;color:#6A1B9A;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap;padding-top:2px;}
+.lm-btn{font-size:.67rem;font-weight:700;padding:3px 0;border-radius:10px;border:1.5px solid #ddd;background:#f5f5f5;color:#999;cursor:pointer;transition:all .15s;width:100%;text-align:center;}
+.lm-btn:hover:not(:disabled){opacity:.85;}
+.lm-btn.active.ia{color:#4A148C;border-color:#B39DDB;background:#F5F0FF;}
 .lm-btn.active.compt{color:#1565C0;border-color:#90CAF9;background:#E3F2FD;}
 .lm-btn.active.perso{color:#E65100;border-color:#FFCC80;background:#FFF3E0;}
-.lm-btn:disabled{opacity:.35;cursor:default;}
-.lm-workflow{border-radius:7px;padding:5px 8px;font-size:.67rem;line-height:1.6;display:flex;flex-direction:column;gap:4px;}
+.lm-btn:disabled{opacity:.3;cursor:default;}
+.lm-workflow{border-radius:7px;padding:5px 8px;font-size:.66rem;line-height:1.6;}
 .lm-workflow.c1{background:#E8F5E9;border:1px solid #A5D6A7;}
-.lm-workflow.c2{background:#E3F2FD;border:1px solid #90CAF9;}
-.lm-workflow.c3{background:#FFF3E0;border:1px solid #FFCC80;}
-.lm-workflow.cx{background:#FAFAFA;border:1px dashed #ddd;color:#bbb;}
-.lm-wf-title{font-weight:800;font-size:.68rem;}
-.lm-wf-steps{color:#555;padding-left:2px;}
-.lm-wf-btns{display:flex;gap:5px;flex-wrap:wrap;margin-top:2px;}
+.lm-workflow.c2{background:#FFF8E1;border:1px solid #FFE082;}
+.lm-workflow.c3{background:#E8EAF6;border:1px solid #9FA8DA;}
+.lm-workflow.c4{background:#FFF3E0;border:1px solid #FFCC80;}
+.lm-wf-title{font-weight:800;margin-bottom:2px;}
+.lm-wf-btns{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px;}
 
 #ni-q-th-paires{display:none;flex:1;overflow-y:auto;min-height:0;padding:4px 6px;display:flex;flex-direction:column;gap:7px;}
 .ni-paire-item{background:#fff;border:1px solid #e2d9f0;border-radius:8px;padding:8px 10px 6px;box-shadow:0 1px 4px rgba(106,27,154,.07);display:flex;flex-direction:column;gap:4px;}
@@ -2593,22 +2590,31 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
           <!-- Légende phases (sous le scatter) -->
           <div id="ni-q-th-ph-legend" style="display:none;flex:0 0 auto;padding:3px 6px 4px;border-top:1px solid #ede7f6;"></div>
 
-          <!-- Panneau mode analyse -->
-          <div id="ni-q-th-mode" style="display:none;">
-            <div class="lm-toggle-row">
-              <span class="lm-toggle-lbl">Mots</span>
-              <button class="lm-btn active ia" id="lm-mots-ia" onclick="_lmSet('mots','ia')">🤖 IA</button>
-              <button class="lm-btn perso" id="lm-mots-perso" onclick="_lmSet('mots','perso')">✏️ Perso</button>
-            </div>
-            <div class="lm-toggle-row">
-              <span class="lm-toggle-lbl">Analyse</span>
-              <button class="lm-btn active ia" id="lm-trt-critique" onclick="_lmSet('trt','critique')">📚 Critique IA</button>
-              <button class="lm-btn compt" id="lm-trt-comptage" onclick="_lmSet('trt','comptage')">🔢 Comptage</button>
-            </div>
-            <div id="lm-workflow"></div>
-          </div>
-
           </div><!-- /ni-q-th-global -->
+
+          <!-- Panneau source de données & traitement (HORS ni-q-th-global) -->
+          <div id="ni-q-th-mode" style="display:none;flex:0 0 auto;border-top:2px solid #EDE7F6;margin-top:4px;">
+            <!-- Bandeau titre -->
+            <div style="background:#EDE7F6;padding:3px 8px;display:flex;align-items:center;gap:5px;">
+              <span style="font-size:.65rem;font-weight:900;color:#4A148C;text-transform:uppercase;letter-spacing:.5px;">📊 Source de données &amp; traitement</span>
+            </div>
+            <!-- Corps : toggles + légende -->
+            <div style="display:flex;gap:8px;padding:6px 8px;align-items:flex-start;">
+              <!-- Grille 2×2 boutons -->
+              <div style="display:grid;grid-template-columns:46px 1fr 1fr;gap:3px 5px;align-items:center;flex-shrink:0;">
+                <span class="lm-toggle-lbl">Mots</span>
+                <button class="lm-btn active ia" id="lm-mots-ia" onclick="_lmSet('mots','ia')">🤖 IA</button>
+                <button class="lm-btn perso" id="lm-mots-perso" onclick="_lmSet('mots','perso')">✏️ Perso</button>
+                <span class="lm-toggle-lbl">Traitement</span>
+                <button class="lm-btn active ia" id="lm-trt-ia" onclick="_lmSet('trt','ia')">🧠 IA</button>
+                <button class="lm-btn compt" id="lm-trt-manuel" onclick="_lmSet('trt','manuel')">✋ Manuel</button>
+              </div>
+              <!-- Légende du cas (à droite) -->
+              <div id="lm-case-desc" style="flex:1;font-size:.65rem;color:#555;line-height:1.5;padding:2px 0;"></div>
+            </div>
+            <!-- Workflow (actions) — affiché uniquement si nécessaire -->
+            <div id="lm-workflow" style="margin:0 8px 6px;"></div>
+          </div>
 
           <!-- Vue paires de thèmes -->
           <div id="ni-q-th-paires"></div>
@@ -12771,9 +12777,9 @@ function importerExcelComptage(input){
   });
 }
 // ══════════════════════════════════════════════════════════════
-// LEXIQUE — Panneau mode analyse (sous scatter)
+// LEXIQUE — Panneau source & traitement (sous scatter)
 // ══════════════════════════════════════════════════════════════
-var _LM={mots:'ia',trt:'critique'}; // état courant
+var _LM={mots:'ia',trt:'ia'}; // état courant
 
 function _lmSet(axis,val){
   _LM[axis]=val;
@@ -12781,6 +12787,85 @@ function _lmSet(axis,val){
 }
 
 function _lmRender(){
+  var m=_LM.mots, t=_LM.trt;
+  function setBtn(id,active,cls){
+    var b=document.getElementById(id);
+    if(!b) return;
+    b.className='lm-btn'+(active?' active '+cls:' '+cls);
+    b.disabled=false;
+  }
+  setBtn('lm-mots-ia',   m==='ia',   'ia');
+  setBtn('lm-mots-perso',m==='perso','perso');
+  setBtn('lm-trt-ia',    t==='ia',   'ia');
+  setBtn('lm-trt-manuel',t==='manuel','compt');
+
+  var desc=document.getElementById('lm-case-desc');
+  var wf=document.getElementById('lm-workflow');
+  if(!desc||!wf) return;
+  wf.className='lm-workflow';
+  wf.style.display='none';
+
+  // ── Case 1 : IA × IA ── fonctionnement standard
+  if(m==='ia'&&t==='ia'){
+    desc.innerHTML='<span style="color:#2E7D32;font-weight:800;">✅ Standard</span> — scores et mots fournis par l\u2019IA d\u2019apr\u00e8s la critique litt\u00e9raire \u00e9tablie. Rien \u00e0 faire.';
+    return;
+  }
+  // ── Case 2 : IA × Manuel ── comptage manuel sur mots IA
+  if(m==='ia'&&t==='manuel'){
+    desc.innerHTML='<span style="color:#F57F17;font-weight:800;">✋ Comptage manuel</span> sur mots IA — t\u00e9l\u00e9charge le mod\u00e8le Excel, compte les occurrences des mots IA tranche par tranche, retourne le fichier rempli.';
+    wf.className='lm-workflow c2';
+    wf.style.display='block';
+    wf.innerHTML=
+      '<div class="lm-wf-title">Workflow</div>'+
+      '<div>① T\u00e9l\u00e9charger le mod\u00e8le \u2014 les mots IA sont pr\u00e9-remplis dans la feuille <b>Champs lexicaux</b><br>'+
+      '② Compter les occurrences dans la feuille <b>Comptage</b> (cellules jaunes)<br>'+
+      '③ Importer le fichier Excel rempli</div>'+
+      '<div class="lm-wf-btns">'+
+        '<button onclick="genererModeleExcel()" style="font-size:.67rem;padding:3px 9px;background:#F57F17;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:700;">📥 Mod\u00e8le Excel</button>'+
+        '<button onclick="document.getElementById(\'lex-excel-import-file2\').click()" style="font-size:.67rem;padding:3px 9px;background:#2E7D32;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:700;">📤 Importer Excel</button>'+
+        '<input type="file" id="lex-excel-import-file2" accept=".xlsx,.xls" style="display:none;" onchange="importerExcelComptage(this)">'+
+      '</div>';
+    return;
+  }
+  // ── Case 3 : Perso × IA ── mots perso traités par IA externe
+  if(m==='perso'&&t==='ia'){
+    desc.innerHTML='<span style="color:#283593;font-weight:800;">🧠 Mots perso + traitement IA</span> — fournis tes mots \u00e0 une IA externe (Claude.ai, ChatGPT\u2026) avec le texte de l\u2019\u0153uvre. L\u2019IA effectue le comptage et retourne un fichier Excel \u00e0 importer.';
+    wf.className='lm-workflow c3';
+    wf.style.display='block';
+    wf.innerHTML=
+      '<div class="lm-wf-title">Workflow</div>'+
+      '<div>① T\u00e9l\u00e9charger le mod\u00e8le Excel et personnaliser la feuille <b>Champs lexicaux</b> (tes mots + justifications)<br>'+
+      '② Soumettre \u00e0 une IA externe : le fichier Excel + le texte brut de l\u2019\u0153uvre (format .txt)<br>'+
+      '③ L\u2019IA remplit la feuille <b>Comptage</b> et te retourne le fichier<br>'+
+      '④ Importer le fichier Excel rempli ici</div>'+
+      '<div class="lm-wf-btns">'+
+        '<button onclick="genererModeleExcel()" style="font-size:.67rem;padding:3px 9px;background:#283593;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:700;">📥 Mod\u00e8le Excel</button>'+
+        '<button onclick="document.getElementById(\'lex-excel-import-file3\').click()" style="font-size:.67rem;padding:3px 9px;background:#2E7D32;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:700;">📤 Importer Excel</button>'+
+        '<input type="file" id="lex-excel-import-file3" accept=".xlsx,.xls" style="display:none;" onchange="importerExcelComptage(this)">'+
+      '</div>';
+    return;
+  }
+  // ── Case 4 : Perso × Manuel ── mots perso + comptage à la main
+  if(m==='perso'&&t==='manuel'){
+    desc.innerHTML='<span style="color:#E65100;font-weight:800;">✏️ Mots perso + comptage manuel</span> \u2014 tu d\u00e9finis tes propres mots cl\u00e9s et tu comptes toi-m\u00eame leurs occurrences dans chaque tranche du livre.';
+    wf.className='lm-workflow c4';
+    wf.style.display='block';
+    wf.innerHTML=
+      '<div class="lm-wf-title">Workflow</div>'+
+      '<div>① T\u00e9l\u00e9charger le mod\u00e8le Excel<br>'+
+      '② Modifier la feuille <b>Champs lexicaux</b> : remplace les mots IA par tes mots, ajoute tes justifications<br>'+
+      '③ Compter les occurrences dans la feuille <b>Comptage</b> au fil de ta lecture<br>'+
+      '④ Importer le fichier Excel rempli</div>'+
+      '<div class="lm-wf-btns">'+
+        '<button onclick="genererModeleExcel()" style="font-size:.67rem;padding:3px 9px;background:#E65100;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:700;">📥 Mod\u00e8le Excel</button>'+
+        '<button onclick="document.getElementById(\'lex-excel-import-file4\').click()" style="font-size:.67rem;padding:3px 9px;background:#2E7D32;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:700;">📤 Importer Excel</button>'+
+        '<input type="file" id="lex-excel-import-file4" accept=".xlsx,.xls" style="display:none;" onchange="importerExcelComptage(this)">'+
+      '</div>';
+    return;
+  }
+}
+
+function openLexCount(){
   var mots=_LM.mots, trt=_LM.trt;
   // Boutons toggle
   function setBtn(id,active,cls){
