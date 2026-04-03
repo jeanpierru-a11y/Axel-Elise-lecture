@@ -2505,6 +2505,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
       <div class="ni-q-hdr" style="background:#EDE7F6;color:#4A148C;gap:4px;">
         <span class="ni-q-hdr-lbl">🕸️ Toile thématique</span>
         <button class="ni-q-hdr-icon" onclick="openLexiqueImport()" title="Importer analyse lexicale">📋</button>
+        <button class="ni-q-hdr-icon" id="ni-th-pdf-btn" onclick="genererPDF_lex()" title="Exporter la toile en PDF" style="display:none;">📄</button>
         <button class="ni-q-hdr-icon" id="ni-th-help-btn" onclick="openLexHelp()" title="Méthodologie" style="display:none;">?</button>
       </div>
       <div class="ni-q-body" style="padding:4px 6px;display:flex;flex-direction:column;overflow:hidden;">
@@ -2519,7 +2520,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
         <div id="ni-q-th-haslex" style="display:none;flex:1;flex-direction:column;min-height:0;">
 
           <!-- Ligne 1 : 3 colonnes, 50% hauteur -->
-          <div style="flex:0 0 50%;display:grid;grid-template-columns:50% 20% 30%;min-height:0;overflow:hidden;">
+          <div style="flex:0 0 50%;display:grid;grid-template-columns:54% 20% 26%;min-height:0;overflow:hidden;">
 
             <!-- Col 1 : Radar -->
             <div style="display:flex;align-items:flex-start;justify-content:center;overflow:hidden;padding:2px;">
@@ -2530,9 +2531,9 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
             <div id="ni-q-th-legend" style="display:flex;flex-direction:column;justify-content:flex-start;gap:1px;padding:2px 4px;border-left:1px solid #ede7f6;overflow:hidden;"></div>
 
             <!-- Col 3 : Mots du thème sélectionné -->
-            <div style="display:flex;flex-direction:column;padding:2px 4px;border-left:1px solid #ede7f6;overflow:hidden;min-height:0;">
-              <div id="ni-q-th-words-ttl" style="font-size:8px;font-weight:700;color:#aaa;flex-shrink:0;margin-bottom:2px;">—</div>
-              <div id="ni-q-th-words-list" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:1px;min-height:0;"></div>
+            <div style="display:flex;flex-direction:column;padding:3px 5px;border-left:1px solid #ede7f6;overflow:hidden;min-height:0;">
+              <div id="ni-q-th-words-ttl" style="font-size:11px;font-weight:900;letter-spacing:.1px;flex-shrink:0;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">—</div>
+              <div id="ni-q-th-words-list" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:2px;min-height:0;"></div>
             </div>
 
           </div>
@@ -5806,12 +5807,8 @@ function _buildPdfHtml(style) {
     // Toile thématique
     (() => {
       if (L.lexique && L.lexique.tranches && L.lexique.tranches.length) {
-        const radarSvg = _buildLexRadarSVG(L.lexique.tranches, 280);
-        const nt = L.lexique.tranches.length;
-        const mp = L.lexique.tranches[nt-1].pageFin || L.lexique.tranches[nt-1].pageDebut;
-        return sec('🕸️ Toile thématique — Analyse lexicale', P.violet,
-          '<div style="text-align:center;margin-bottom:8px;">' + radarSvg + '</div>' +
-          '<div style="font-size:11px;color:#888;text-align:center;">Scores moyens · ' + nt + ' tranches · ' + mp + ' pages</div>');
+        const corps = _buildLexToileHtml(L);
+        return sec('🕸️ Toile thématique — Analyse lexicale', P.violet, corps);
       }
       if (!L.themes || !Object.values(L.themes).some(v=>v)) return '';
       const radarSvg = _buildRadarSVG(L.themes, 280);
@@ -6201,12 +6198,8 @@ function genererPDF_selection() {
   }
   if (_ck('themes')) {
     if (L.lexique && L.lexique.tranches && L.lexique.tranches.length) {
-      const radarSvg = _buildLexRadarSVG(L.lexique.tranches, 280);
-      const nt = L.lexique.tranches.length;
-      const mp = L.lexique.tranches[nt-1].pageFin || L.lexique.tranches[nt-1].pageDebut;
-      parts.push(sec('🕸️ Toile thématique — Analyse lexicale', P.violet,
-        '<div style="text-align:center;margin-bottom:8px;">' + radarSvg + '</div>' +
-        '<div style="font-size:11px;color:#888;text-align:center;">Scores moyens · ' + nt + ' tranches · ' + mp + ' pages</div>'));
+      const corps = _buildLexToileHtml(L);
+      parts.push(sec('🕸️ Toile thématique — Analyse lexicale', P.violet, corps));
     } else if (L.themes && Object.values(L.themes).some(v=>v)) {
       const radarSvg = _buildRadarSVG(L.themes, 280);
       const liste = Object.entries({amour:'❤️ Amour',pouvoir:'⚡ Pouvoir',liberte:'🕊️ Liberté',identite:'🔍 Identité',societe:'🏛️ Société',nature:'🌿 Nature'})
@@ -6367,6 +6360,125 @@ ${body_html}
 }
 
 // ── PDF spécifiques par sous-onglet Écrire ──────────────
+// ── Scatter SVG statique (pour PDF — pas de DOM, pas de rAF) ─────────────────
+function _buildLexScatterSVG(lex, W, H) {
+  var tranches=lex.tranches||[],phases=lex.phases||[];
+  if(!tranches.length) return '';
+  W=W||600; H=H||130;
+  var MP=tranches[tranches.length-1].pageFin||tranches[tranches.length-1].pageDebut;
+  var ML=30,MR=8,MT=Math.round(H*0.17),MB=Math.round(H*0.13);
+  var CW=W-ML-MR,CH=H-MT-MB;
+  function xp(p){return ML+(p/MP)*CW;}
+  function yv(v){return MT+(1-v/100)*CH;}
+  function xtr(tr){return xp(((tr.pageDebut||0)+(tr.pageFin||tr.pageDebut||0))/2);}
+  var s='';
+  // Fonds phases + numéros
+  phases.forEach(function(ph,i){
+    var p2=phases[i+1]?phases[i+1].pageDebut-1:MP;
+    var x1=xp((ph.pageDebut||1)-0.5),x2=xp(p2+0.5),mx=(x1+x2)/2;
+    s+='<rect x="'+x1.toFixed(1)+'" y="'+MT+'" width="'+(x2-x1).toFixed(1)+'" height="'+CH+'" fill="'+LEX_PH_BG[i%LEX_PH_BG.length]+'"/>';
+    var cr=Math.round(Math.min(6,MT*0.38));
+    s+='<circle cx="'+mx.toFixed(1)+'" cy="'+(MT/2)+'" r="'+cr+'" fill="'+LEX_PH_LC[i%LEX_PH_LC.length]+'"/>';
+    s+='<text x="'+mx.toFixed(1)+'" y="'+(MT/2+cr*0.38)+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="'+Math.round(cr*1.3)+'" font-weight="900" fill="#fff">'+(i+1)+'</text>';
+    if(i>0) s+='<line x1="'+x1.toFixed(1)+'" y1="'+MT+'" x2="'+x1.toFixed(1)+'" y2="'+(MT+CH)+'" stroke="#ccc" stroke-width="0.6" stroke-dasharray="2,2"/>';
+  });
+  // Grille Y
+  [0,50,100].forEach(function(v){
+    var y=yv(v);
+    s+='<line x1="'+ML+'" y1="'+y.toFixed(1)+'" x2="'+(ML+CW)+'" y2="'+y.toFixed(1)+'" stroke="#eee" stroke-width="0.6"/>';
+    s+='<text x="'+(ML-4)+'" y="'+(y+3)+'" text-anchor="end" font-family="Arial,sans-serif" font-size="8" fill="#555">'+v+'</text>';
+  });
+  // Points
+  var pr=Math.max(2,Math.round(H/42));
+  LEX_KEYS.forEach(function(k){
+    tranches.forEach(function(tr){
+      s+='<circle cx="'+xtr(tr).toFixed(1)+'" cy="'+yv(tr[k]||0).toFixed(1)+'" r="'+pr+'" fill="'+LEX_COLORS[k]+'" stroke="#fff" stroke-width="1" opacity="0.85"/>';
+    });
+  });
+  // Labels X alternés
+  tranches.forEach(function(tr,i){
+    if(i%2===0) s+='<text x="'+xtr(tr).toFixed(1)+'" y="'+(MT+CH+Math.round(MB*0.75))+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="8" fill="#555">p.'+(tr.pageDebut||'')+'</text>';
+  });
+  s+='<rect x="'+ML+'" y="'+MT+'" width="'+CW+'" height="'+CH+'" fill="none" stroke="#ccc" stroke-width="0.6"/>';
+  return '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;max-width:'+W+'px;height:auto;">'+s+'</svg>';
+}
+
+// ── HTML partagé pour la toile (options A et B) ───────────────────────────────
+function _buildLexToileHtml(L) {
+  var lex=L&&L.lexique;
+  if(!lex||!lex.tranches||!lex.tranches.length) return '';
+  var h=function(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
+  var radarSvg=_buildLexRadarSVG(lex.tranches,200);
+  var nt=lex.tranches.length;
+  var mp=lex.tranches[nt-1].pageFin||lex.tranches[nt-1].pageDebut;
+  // Légende scores triée
+  var sorted=LEX_KEYS.slice().sort(function(a,b){return _lexAvg(lex.tranches,b)-_lexAvg(lex.tranches,a);});
+  var legendRows=sorted.map(function(k){
+    var v=Math.round(_lexAvg(lex.tranches,k)),col=LEX_COLORS[k],bg=LEX_BG[k];
+    var bar='<div style="height:7px;border-radius:3px;background:'+col+';width:'+v+'%;opacity:.7;"></div>';
+    return '<div style="display:flex;align-items:center;gap:7px;padding:4px 0;border-bottom:1px solid #f0e9f8;">'+
+      '<span style="width:10px;height:10px;border-radius:50%;background:'+col+';flex-shrink:0;display:inline-block;"></span>'+
+      '<span style="font-size:11px;font-weight:700;color:'+col+';flex:0 0 70px;">'+LEX_LABELS[k]+'</span>'+
+      '<div style="flex:1;">'+bar+'</div>'+
+      '<span style="font-size:12px;font-weight:900;color:'+col+';flex:0 0 28px;text-align:right;">'+v+'</span>'+
+      '</div>';
+  }).join('');
+  // Bloc radar + légende côte à côte
+  var topBlock='<div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:10px;">'+
+    '<div style="flex:0 0 auto;text-align:center;">'+radarSvg+'<div style="font-size:9px;color:#999;margin-top:3px;">'+nt+' phases · '+mp+' pages</div></div>'+
+    '<div style="flex:1;padding-top:8px;">'+legendRows+'</div>'+
+    '</div>';
+  // Scatter pleine largeur
+  var scatterSvg=_buildLexScatterSVG(lex,580,120);
+  var scatterBlock='<div style="margin-bottom:10px;">'+
+    '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#6A1B9A;margin-bottom:4px;">Évolution par phase</div>'+
+    scatterSvg+
+    '</div>';
+  // Légende phases numérotées
+  var phaseBlock='';
+  if(lex.phases&&lex.phases.length){
+    phaseBlock='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px;">';
+    lex.phases.forEach(function(ph,i){
+      phaseBlock+='<span style="font-size:9px;background:#EDE7F6;color:#4A148C;padding:2px 6px;border-radius:10px;font-weight:700;">'+
+        (i+1)+'. '+h(ph.nom)+'</span>';
+    });
+    phaseBlock+='</div>';
+  }
+  // ChampLexical mots-clés
+  var champBlock='';
+  if(lex.champLexical&&Object.keys(lex.champLexical).length){
+    champBlock='<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#6A1B9A;margin-bottom:6px;">Mots-clés par thème</div>';
+    LEX_KEYS.forEach(function(k){
+      var mots=lex.champLexical[k];
+      if(!mots||!mots.length) return;
+      var col=LEX_COLORS[k],bg=LEX_BG[k];
+      var pills=mots.slice(0,10).map(function(m){
+        return '<span style="display:inline-flex;align-items:center;gap:3px;background:'+bg+';color:'+col+';padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700;margin:2px;">'+
+          h(m.mot)+'<span style="font-weight:900;opacity:.7;">·'+m.n+'</span></span>';
+      }).join('');
+      champBlock+='<div style="margin-bottom:5px;"><span style="font-size:10px;font-weight:800;color:'+col+';">'+LEX_LABELS[k]+'</span><br>'+pills+'</div>';
+    });
+  }
+  return topBlock+scatterBlock+phaseBlock+champBlock;
+}
+
+// ── Export autonome de la toile (Option B) ────────────────────────────────────
+function genererPDF_lex() {
+  var L=LIVRE_ACTIF;
+  if(!L||!L.lexique||!L.lexique.tranches||!L.lexique.tranches.length){
+    showToast('Pas de toile thématique pour ce livre','warn'); return;
+  }
+  var h=function(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
+  var corps='<div class="header"><h1>🕸️ '+h(L.titre)+' — Toile thématique</h1>'+
+    '<p>'+h(L.auteur||'')+' · '+h(L.genre||'')+' · '+(L.pages?h(L.pages)+' pages · ':'')+h(L.annee||'')+'</p></div>'+
+    _buildLexToileHtml(L)+
+    '<div class="footer">Guide de lecture · '+h(L.titre)+' · Toile thématique</div>';
+  _pdfOuvrir(
+    _pdfEnveloppe('Toile thématique — '+h(L.titre),'#6A1B9A',corps),
+    'toile_'+( L.titre||'').replace(/\s+/g,'_')
+  );
+}
+
 function _pdfOuvrir(html, nomFichier) {
   try {
     const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
@@ -7296,6 +7408,8 @@ function _apresConnexion() {
     initRedacZones();
     renderSchemaPhases();
     chargerMode();
+    // Synchronisation initiale maintenant que l'auth est établie
+    if (!AUTH_IS_INVITE && _fbDb && _fbCode) fbPull(false);
   } else {
     // Re-render biblio pour appliquer les droits du nouvel utilisateur
     renderBiblio();
@@ -7589,6 +7703,12 @@ function fbPush(force) {
 async function fbPull(force) {
   if (!_fbDb || !_fbCode) {
     showToast('Configure la sync d\'abord ☁️', 'warn');
+    return;
+  }
+  // Si appelé avant l'authentification et pas forcé par l'utilisateur :
+  // patienter — _apresConnexion le rappellera une fois auth établie
+  if (!force && !AUTH_UID) {
+    setSyncBadge('busy', '☁️ Connexion…');
     return;
   }
   try {
@@ -11516,29 +11636,32 @@ function _buildLexRadarInner(tranches, size) {
   var avgs=LEX_KEYS.map(function(k){return _lexAvg(tranches,k);});
   function pt(i,r){var a=i*(2*PI/n)-PI/2;return[cx+r*Math.cos(a),cy+r*Math.sin(a)];}
   var h='';
+  // Grille : traits fins et discrets
   [0.33,0.66,1].forEach(function(lv){
     var r=R*lv,pts=LEX_KEYS.map(function(_,i){return pt(i,r).join(',');}).join(' ');
-    h+='<polygon points="'+pts+'" fill="none" stroke="'+(lv===1?'#bbb':'#ddd')+'" stroke-width="'+(lv===1?1.5:0.7)+'"/>';
+    h+='<polygon points="'+pts+'" fill="none" stroke="'+(lv===1?'#ccc':'#e8e8e8')+'" stroke-width="'+(lv===1?0.8:0.4)+'"/>';
   });
+  // Axes
   LEX_KEYS.forEach(function(_,i){
     var ep=pt(i,R);
-    h+='<line x1="'+cx+'" y1="'+cy+'" x2="'+ep[0].toFixed(1)+'" y2="'+ep[1].toFixed(1)+'" stroke="#ccc" stroke-width="0.8"/>';
+    h+='<line x1="'+cx+'" y1="'+cy+'" x2="'+ep[0].toFixed(1)+'" y2="'+ep[1].toFixed(1)+'" stroke="#ddd" stroke-width="0.4"/>';
   });
+  // Polygone données — trait fin et élégant
   var dpts=LEX_KEYS.map(function(_,i){return pt(i,R*avgs[i]/100).join(',');}).join(' ');
-  h+='<polygon points="'+dpts+'" fill="rgba(106,27,154,0.14)" stroke="#6A1B9A" stroke-width="2" stroke-linejoin="round"/>';
-  // Points (data-lk)
+  h+='<polygon points="'+dpts+'" fill="rgba(106,27,154,0.10)" stroke="#6A1B9A" stroke-width="1" stroke-linejoin="round"/>';
+  // Points de données
   LEX_KEYS.forEach(function(k,i){
     if(avgs[i]>0){
       var p=pt(i,R*avgs[i]/100);
-      h+='<circle data-lk="'+k+'" cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="4.5" fill="'+LEX_COLORS[k]+'" stroke="#fff" stroke-width="1.5" style="cursor:pointer"/>';
+      h+='<circle data-lk="'+k+'" cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="3" fill="'+LEX_COLORS[k]+'" stroke="#fff" stroke-width="0.8" style="cursor:pointer"/>';
     }
   });
-  // Labels + scores (data-lk)
-  var lR=size<200?R+16:R+22;
+  // Labels + scores : taille réduite car le SVG est affiché 1.5-2× sa taille native
+  var lR=R+14;
   LEX_KEYS.forEach(function(k,i){
-    var lp=pt(i,lR),ta=(i===0||i===3)?'middle':i<3?'start':'end',dy=i===3?12:2,bold=avgs[i]>60;
-    h+='<text data-lk="'+k+'" x="'+lp[0].toFixed(1)+'" y="'+(lp[1]+dy).toFixed(1)+'" text-anchor="'+ta+'" font-family="Arial,sans-serif" font-size="11" font-weight="'+(bold?700:500)+'" fill="'+(bold?LEX_COLORS[k]:'#666')+'" style="cursor:pointer">'+LEX_LABELS[k]+'</text>';
-    h+='<text data-lk="'+k+'" x="'+lp[0].toFixed(1)+'" y="'+(lp[1]+dy+13).toFixed(1)+'" text-anchor="'+ta+'" font-family="Arial,sans-serif" font-size="10" font-weight="800" fill="'+LEX_COLORS[k]+'" style="cursor:pointer">'+Math.round(avgs[i])+'</text>';
+    var lp=pt(i,lR),ta=(i===0||i===3)?'middle':i<3?'start':'end',dy=i===3?10:1,bold=avgs[i]>60;
+    h+='<text data-lk="'+k+'" x="'+lp[0].toFixed(1)+'" y="'+(lp[1]+dy).toFixed(1)+'" text-anchor="'+ta+'" font-family="Arial,sans-serif" font-size="8" font-weight="'+(bold?700:500)+'" fill="'+(bold?LEX_COLORS[k]:'#888')+'" style="cursor:pointer">'+LEX_LABELS[k]+'</text>';
+    h+='<text data-lk="'+k+'" x="'+lp[0].toFixed(1)+'" y="'+(lp[1]+dy+10).toFixed(1)+'" text-anchor="'+ta+'" font-family="Arial,sans-serif" font-size="8" font-weight="900" fill="'+LEX_COLORS[k]+'" style="cursor:pointer">'+Math.round(avgs[i])+'</text>';
   });
   return h;
 }
@@ -11581,20 +11704,22 @@ function updateQ3LexViz() {
   }
   var helpBtn=document.getElementById('ni-th-help-btn');
   if(helpBtn) helpBtn.style.display='inline';
+  var pdfBtn=document.getElementById('ni-th-pdf-btn');
+  if(pdfBtn) pdfBtn.style.display='inline';
   // Col2 : légende triée par score décroissant
   var lgEl=document.getElementById('ni-q-th-legend');
   if(lgEl){
     var sorted=LEX_KEYS.slice().sort(function(a,b){return _lexAvg(lex.tranches,b)-_lexAvg(lex.tranches,a);});
     lgEl.innerHTML=sorted.map(function(k){
       var v=Math.round(_lexAvg(lex.tranches,k)),col=LEX_COLORS[k];
-      return '<div id="ni-q-lg-'+k+'" onclick="_q3ThemeSelect(\''+k+'\')" style="display:flex;align-items:center;gap:3px;padding:1px 3px;border-radius:3px;cursor:pointer;">'+
-        '<span style="width:6px;height:6px;border-radius:50%;background:'+col+';flex-shrink:0;display:inline-block;"></span>'+
-        '<span style="font-size:9px;font-weight:600;color:'+col+';flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+LEX_LABELS[k]+'</span>'+
+      return '<div id="ni-q-lg-'+k+'" onclick="_q3ThemeSelect(\''+k+'\')" style="display:flex;align-items:center;gap:4px;padding:2px 4px;border-radius:4px;cursor:pointer;">'+
+        '<span style="width:8px;height:8px;border-radius:50%;background:'+col+';flex-shrink:0;display:inline-block;"></span>'+
+        '<span style="font-size:10px;font-weight:600;color:'+col+';flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+LEX_LABELS[k]+'</span>'+
         '<span style="font-size:10px;font-weight:800;color:'+col+';">'+v+'</span>'+
         '</div>';
     }).join('')+
     '<div style="margin-top:5px;padding-top:4px;border-top:1px solid #ede7f6;">'+
-    '<button id="ni-q-expl-btn" onclick="_q3OpenExpl()" style="display:flex;align-items:center;gap:3px;width:100%;padding:2px 4px;border:1px solid #B39DDB;border-radius:4px;background:#F5F0FF;cursor:pointer;font-size:8px;font-weight:700;color:#4A148C;">'+
+    '<button id="ni-q-expl-btn" onclick="_q3OpenExpl()" style="display:flex;align-items:center;gap:4px;width:100%;padding:3px 6px;border:1px solid #B39DDB;border-radius:5px;background:#F5F0FF;cursor:pointer;font-size:10px;font-weight:700;color:#4A148C;">'+
     '<span>💡</span><span>Justification</span></button></div>';
   }
   // Ligne 2 : scatter compact
@@ -11636,9 +11761,9 @@ function _q3ThemeSelect(key) {
       var bgA=(0.06+ratio*0.45).toFixed(2);
       var tc=ratio>0.55?col:'#555';
       var fw=ratio>0.5?700:500;
-      return '<div style="display:flex;align-items:center;justify-content:space-between;padding:1px 4px;border-radius:3px;background:rgba('+r+','+g+','+b+','+bgA+');min-height:14px;">'+
-        '<span style="font-size:'+(8+Math.round(ratio*3))+'px;font-weight:'+fw+';color:'+tc+';overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">'+w.mot+'</span>'+
-        '<span style="font-size:8px;font-weight:700;color:'+col+';margin-left:2px;flex-shrink:0;">'+w.n+'</span>'+
+      return '<div style="display:flex;align-items:center;justify-content:space-between;padding:2px 5px;border-radius:4px;background:rgba('+r+','+g+','+b+','+bgA+');min-height:16px;">'+
+        '<span style="font-size:'+(10+Math.round(ratio*3))+'px;font-weight:'+fw+';color:'+tc+';overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">'+w.mot+'</span>'+
+        '<span style="font-size:9px;font-weight:700;color:'+col+';margin-left:3px;flex-shrink:0;">'+w.n+'</span>'+
         '</div>';
     }).join('');
   }
