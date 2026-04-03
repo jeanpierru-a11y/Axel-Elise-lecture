@@ -3694,7 +3694,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
   </div>
   <div id="lex-help-body">
     <h4 style="color:#4A148C">📐 Principe général</h4>
-    <p>L'analyse lexicale repose sur un <b>comptage des occurrences thématiques</b> dans l'œuvre entière, organisé en <b>5 tranches de pages égales</b>. Pour chaque thème, on recense tous les mots, syntagmes et noms propres qui « activent » ce champ sémantique dans le texte.</p>
+    <p>L'analyse lexicale repose sur un <b>comptage des occurrences thématiques</b> dans l'œuvre entière, organisé en <b>tranches de pages égales</b> (3 tranches pour le schéma Aristote, 5 pour Freytag, 8 pour le schéma moderne). Pour chaque thème, on recense tous les mots, syntagmes et noms propres qui « activent » ce champ sémantique dans le texte.</p>
     <h4 style="color:#1565C0">🔍 Sélection des mots</h4>
     <p>Un mot entre dans un thème s'il satisfait l'un de ces trois critères :<br>
     ① <b>Appartenance directe</b> : le mot relève du champ lexical du thème (<i>ex. tendresse → Amour</i>)<br>
@@ -3708,6 +3708,23 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
     <p>Le bouton <b>💡 Justification</b> dans la colonne Légende explique, thème par thème, <b>pourquoi chaque mot a été retenu</b> et ce qu'il révèle de l'œuvre. C'est la trace critique et argumentée de la méthode — indispensable pour une dissertation ou un commentaire composé.</p>
     <h4 style="color:#6A1B9A">📋 Import JSON</h4>
     <p>Pour importer une analyse existante, utilise le bouton <b>📋 Importer</b> : colle le JSON du Prompt B (champ <code>phases</code> + <code>tranches</code>). Tu peux y ajouter un champ <code>champLexical</code> pour les mots avec leurs occurrences et leurs justifications personnalisées.</p>
+    <h4 style="color:#00695C">🤖 Prompt B — Générer avec l'IA</h4>
+    <p>Copie ce prompt dans Claude.ai pour obtenir le JSON à importer dans L'Adversaire :</p>
+    <div style="background:#f4f0fb;border-radius:7px;padding:8px 10px;margin:6px 0 4px;font-size:.68rem;color:#333;line-height:1.55;white-space:pre-wrap;font-family:monospace;max-height:140px;overflow-y:auto;border:1px solid #D1C4E9;" id="lex-help-promptB-txt">Analyse lexicale de L'Adversaire d'Emmanuel Carrère (218 pages, schéma moderne — 8 tranches de 27 pages chacune).
+
+Pour chaque tranche (1-27, 28-54, 55-94, 95-117, 118-132, 133-154, 155-189, 190-218), donne un score de 0-100 pour chacun des 6 thèmes suivants :
+- amour (liens affectifs, famille, victimes)
+- pouvoir (mensonge, statut, contrôle, médecin OMS)
+- liberte (fuite, vide, prison, autoroute)
+- identite (vide existentiel, pourquoi, je, moi)
+- societe (paraître, apparences, procès, monde)
+- nature (paysage, nuit, maison, extérieur)
+
+Inclus aussi un champ champLexical (6 mots-clés par thème avec leur nombre d'occurrences approximatif, format : [{mot:"...",n:XX}]).
+
+Retourne UNIQUEMENT un JSON strict, sans aucun texte avant ou après, sans backticks, dans ce format exact :
+{"phases":[{"pageDebut":1,"nom":"..."},...],"tranches":[{"pageDebut":1,"pageFin":27,"amour":XX,"pouvoir":XX,"liberte":XX,"identite":XX,"societe":XX,"nature":XX},...],"champLexical":{"amour":[...],...}}</div>
+    <button onclick="var t=document.getElementById('lex-help-promptB-txt');var ta=document.createElement('textarea');ta.value=t.textContent;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);this.textContent='✅ Copié !';var me=this;setTimeout(function(){me.textContent='📋 Copier le Prompt B';},2000);" style="font-size:.72rem;padding:4px 10px;background:#6A1B9A;color:#fff;border:none;border-radius:5px;cursor:pointer;margin-top:2px;">📋 Copier le Prompt B</button>
   </div>
 </div>
 
@@ -3801,7 +3818,7 @@ function sauvegarderBiblio() {
 // ════════════════════════════════════════════════════════
 // VERSION — incrémenter à chaque mise à jour des livres démo
 // ════════════════════════════════════════════════════════
-const DEMO_VERSION = 24; // v24 : paires de thèmes comparées (Thérèse + Adversaire)
+const DEMO_VERSION = 25; // v25 : lexique Petit Prince (8ph) + Tom Sawyer (5ph) + Alice (3ph)
 const LIVRES_DEMO = [
   {
     id: 'liv_petit_prince_001',
@@ -3963,6 +3980,70 @@ const LIVRES_DEMO = [
       ],
       bilan: "Saint-Exupéry réussit dans cette scène à faire du conte un véhicule philosophique : le dialogue naïf entre un enfant et un renard formule une définition rigoureuse de l'amour (relation, temps, responsabilité), l'exprime par des procédés stylistiques efficaces et l'inscrit dans une critique du matérialisme adulte.",
       ouverture: "On pourrait prolonger ce commentaire en lisant Antoine de Saint-Exupéry, Terre des hommes (1939) : le même combat contre la déshumanisation du monde moderne, la même défense des liens humains comme seules vraies richesses. On peut aussi rapprocher cette scène du concept d'amitié chez Aristote dans l'Éthique à Nicomaque — l'amitié vraie est fondée sur la vertu et le temps partagé, pas sur l'utilité."
+    },
+    lexique: {
+      phases: [
+        {pageDebut:1,  nom:"Exposition \u2014 L'aviateur dans le d\u00e9sert"},
+        {pageDebut:13, nom:"Apparition \u2014 Le Petit Prince et la rose"},
+        {pageDebut:25, nom:"Les plan\u00e8tes (I) \u2014 Roi, Vaniteux, Buveur"},
+        {pageDebut:37, nom:"Les plan\u00e8tes (II) \u2014 Businessman, Allumeur, G\u00e9ographe"},
+        {pageDebut:49, nom:"La Terre \u2014 le Serpent et les fleurs"},
+        {pageDebut:61, nom:"Le Renard \u2014 apprivoiser et le puits"},
+        {pageDebut:73, nom:"Le d\u00e9part \u2014 le serpent et les larmes"},
+        {pageDebut:85, nom:"Situation finale \u2014 l'aviateur et les \u00e9toiles"}
+      ],
+      tranches: [
+        {pageDebut:1,  pageFin:12,  amour:65, pouvoir:18, liberte:62, identite:72, societe:22, nature:72},
+        {pageDebut:13, pageFin:24,  amour:82, pouvoir:15, liberte:65, identite:85, societe:18, nature:62},
+        {pageDebut:25, pageFin:36,  amour:62, pouvoir:62, liberte:40, identite:68, societe:75, nature:25},
+        {pageDebut:37, pageFin:48,  amour:58, pouvoir:55, liberte:45, identite:65, societe:70, nature:28},
+        {pageDebut:49, pageFin:60,  amour:90, pouvoir:20, liberte:72, identite:85, societe:30, nature:75},
+        {pageDebut:61, pageFin:72,  amour:95, pouvoir:15, liberte:75, identite:88, societe:22, nature:68},
+        {pageDebut:73, pageFin:84,  amour:98, pouvoir:12, liberte:62, identite:80, societe:18, nature:55},
+        {pageDebut:85, pageFin:96,  amour:92, pouvoir:18, liberte:78, identite:82, societe:22, nature:68}
+      ],
+      champLexical: {
+        amour:    [{mot:"rose",n:38},{mot:"renard",n:22},{mot:"ami",n:18},{mot:"apprivoiser",n:15},{mot:"responsable",n:12},{mot:"tendresse",n:8}],
+        pouvoir:  [{mot:"grandes personnes",n:25},{mot:"roi",n:18},{mot:"businessman",n:12},{mot:"commander",n:10},{mot:"poss\u00e9der",n:8},{mot:"chiffres",n:8}],
+        liberte:  [{mot:"\u00e9toiles",n:28},{mot:"voyage",n:22},{mot:"plan\u00e8tes",n:18},{mot:"partir",n:12},{mot:"ciel",n:15},{mot:"libre",n:8}],
+        identite: [{mot:"B-612",n:15},{mot:"essentiel",n:12},{mot:"invisible",n:12},{mot:"enfant",n:18},{mot:"regarder",n:15},{mot:"comprendre",n:12}],
+        societe:  [{mot:"grandes personnes",n:25},{mot:"adultes",n:22},{mot:"s\u00e9rieux",n:10},{mot:"chiffres",n:12},{mot:"utile",n:10}],
+        nature:   [{mot:"d\u00e9sert",n:28},{mot:"\u00e9toiles",n:25},{mot:"fleur",n:18},{mot:"baobab",n:12},{mot:"soleil",n:15},{mot:"Sahara",n:10}]
+      },
+      justifications: {
+        amour: {
+          intro: "L'Amour dans Le Petit Prince, c'est apprendre \u00e0 voir avec le c\u0153ur plut\u00f4t qu'avec les yeux. La 'rose' et le 'renard' sont les deux vecteurs principaux : la rose repr\u00e9sente l'amour difficile mais unique, le renard la d\u00e9finition m\u00eame de l'amiti\u00e9. M\u00e9thode : sont retenus les mots des relations affectives et les noms propres des \u00eatres aim\u00e9s.",
+          mots: {"rose":"La rose est l'amour central du Petit Prince. Elle est capricieuse, orgueilleuse \u2014 mais elle est la sienne. C'est elle qui lui apprend la responsabilit\u00e9 affective.","renard":"Le renard enseigne l'essentiel : apprivoiser, c'est cr\u00e9er des liens uniques. Sans lui, le Petit Prince ne comprendrait pas pourquoi sa rose est si pr\u00e9cieuse.","ami":"Le mot 'ami' r\u00e9sume la le\u00e7on du renard : on n'a d'ami que celui qu'on a apprivois\u00e9. L'amiti\u00e9 vraie demande du temps et de l'investissement.","apprivoiser":"N\u00e9ologisme de la relation : 'apprivoiser' = cr\u00e9er des liens. Mot employ\u00e9 dans un sens nouveau par Saint-Exup\u00e9ry pour d\u00e9finir toute relation affective sinc\u00e8re.","responsable":"Le renard dit : 'Tu deviens responsable pour toujours de ce que tu as apprivois\u00e9.' Ce mot transforme l'amour en engagement \u00e9thique.","tendresse":"Mot rare dans le livre \u2014 sa rarit\u00e9 le rend pr\u00e9cieux. Appara\u00eet au moment des adieux, quand les \u00e9motions ne peuvent plus \u00eatre retenues."}
+        },
+        pouvoir: {
+          intro: "Le Pouvoir dans Le Petit Prince est pr\u00e9sent\u00e9 de fa\u00e7on comique et critique : les adultes des plan\u00e8tes sont des caricatures de personnes obss\u00e9d\u00e9es par le contr\u00f4le, la possession ou la reconnaissance. M\u00e9thode : sont retenus les mots du contr\u00f4le et de l'autorit\u00e9 exerc\u00e9e sans sens.",
+          mots: {"grandes personnes":"L'expression-cl\u00e9 de la critique du roman. Les 'grandes personnes' ne comprennent jamais rien \u2014 elles veulent tout contr\u00f4ler, tout chiffrer, tout poss\u00e9der. Oppos\u00e9 au regard de l'enfant.","roi":"Le roi de la premi\u00e8re plan\u00e8te veut commander tout \u2014 m\u00eame les couchers de soleil. Caricature du pouvoir absurde : personne n'est l\u00e0 pour ob\u00e9ir.","businessman":"Il 'poss\u00e8de' les \u00e9toiles en les comptant. Caricature de la soci\u00e9t\u00e9 capitaliste : croire qu'on poss\u00e8de ce qu'on ne fait que compter.","commander":"Verbe du pouvoir inutile. Le roi commande des choses qui se produiraient de toute fa\u00e7on. Le pouvoir sans objet r\u00e9el.","poss\u00e9der":"Mot cl\u00e9 du businessman. Poss\u00e9der sans cr\u00e9er, sans aimer, sans relation \u2014 c'est l'absurde du monde adulte.","chiffres":"Les grandes personnes aiment les chiffres \u2014 elles d\u00e9crivent une personne par son \u00e2ge, son salaire, sa maison. Critique de la quantification du r\u00e9el."}
+        },
+        liberte: {
+          intro: "La Libert\u00e9 dans Le Petit Prince, c'est le voyage entre les plan\u00e8tes, la contemplation des \u00e9toiles, et la capacit\u00e9 \u00e0 regarder le monde autrement. M\u00e9thode : sont retenus les mots du mouvement, de l'espace et de l'affranchissement des contraintes adultes.",
+          mots: {"\u00e9toiles":"Les \u00e9toiles sont l'espace de la libert\u00e9 infinie. Pour le Petit Prince, chaque \u00e9toile est une plan\u00e8te habitue \u2014 un monde possible. Pour l'aviateur, elles deviendront le souvenir du rire du Petit Prince.","voyage":"Le voyage interplan\u00e9taire est la structure de la libert\u00e9 dans le livre : chaque plan\u00e8te est une exp\u00e9rience nouvelle, sans contrainte sauf celle du regard.","plan\u00e8tes":"Les plan\u00e8tes repr\u00e9sentent des mondes alternatifs, des libert\u00e9s possibles. Mais elles montrent aussi que libert\u00e9 sans sens m\u00e8ne \u00e0 l'enfermement (chaque adulte est prisonnier de sa plan\u00e8te).","partir":"Verbe du mouvement, de la libert\u00e9 choisie. Le Petit Prince part \u2014 de chez lui, de la Terre \u2014 car il sait ce qui est important : retrouver sa rose.","ciel":"Le ciel est l'espace naturel du Petit Prince : c'est l\u00e0 qu'il vit, voyage, r\u00eave. Le ciel = la libert\u00e9 verticale par opposition au sol terrestre des adultes.","libre":"Mot rare \u2014 sa rarit\u00e9 dit sa valeur. \u00catre libre dans le monde du Petit Prince, c'est choisir ses liens, pas les subir."}
+        },
+        identite: {
+          intro: "L'Identit\u00e9 est la question centrale pos\u00e9e par chaque rencontre du Petit Prince : 'Qui es-tu ? D'o\u00f9 viens-tu ?' B-612 est son identit\u00e9-plan\u00e8te, l'essentiel son identit\u00e9-valeur. M\u00e9thode : sont retenus les mots de la qu\u00eate de soi et de la d\u00e9finition du sujet.",
+          mots: {"B-612":"La plan\u00e8te B-612 est l'identit\u00e9 du Petit Prince. Elle le d\u00e9finit dans le monde des astronomes adultes, mais aussi symboliquement : c'est son espace intime, son chez-lui, sa responsabilit\u00e9.","essentiel":"L'essentiel est invisible pour les yeux \u2014 c'est la phrase qui d\u00e9finit l'identit\u00e9 profonde. Ce qui compte vraiment ne se voit pas, ne se compte pas : c'est ce qu'on ressent.","invisible":"L'invisible est le territoire de l'identit\u00e9 vraie. On ne voit bien qu'avec le c\u0153ur \u2014 et ce que le c\u0153ur voit, c'est ce qui fait vraiment partie de nous.","enfant":"Le regard de l'enfant est l'identit\u00e9 que Saint-Exup\u00e9ry d\u00e9fend. \u00catre enfant = voir l'essentiel, ne pas avoir oubli\u00e9 ce qui compte. C'est une identit\u00e9 morale autant qu'un \u00e2ge.","regarder":"'Regarder' est le verbe de l'identit\u00e9 dans ce livre : selon comment on regarde, on voit un chapeau ou un boa. L'identit\u00e9 se construit dans le regard qu'on pose sur les choses.","comprendre":"Le Petit Prince cherche \u00e0 comprendre les adultes \u2014 et ne comprend pas. Ce d\u00e9calage r\u00e9v\u00e8le son identit\u00e9 propre : il n'est pas fait du m\u00eame regard qu'eux."}
+        },
+        societe: {
+          intro: "La Soci\u00e9t\u00e9 dans Le Petit Prince, c'est le monde absurde des adultes ridicul\u00e9s sur leurs plan\u00e8tes. Chaque habitant repr\u00e9sente un d\u00e9faut de la soci\u00e9t\u00e9 moderne : le pouvoir vide, la vanit\u00e9, la possession, la routine. M\u00e9thode : sont retenus les mots qui d\u00e9signent les comportements sociaux adultes critiqu\u00e9s.",
+          mots: {"grandes personnes":"Expression-cl\u00e9. Les grandes personnes incarnent la soci\u00e9t\u00e9 : elles demandent l'\u00e2ge, le salaire, le nombre de fr\u00e8res \u2014 jamais si on aime attraper les papillons. La soci\u00e9t\u00e9 adulte est l'oubli de l'essentiel.","adultes":"Synonyme de 'grandes personnes'. Dans le monde du Petit Prince, les adultes forment une soci\u00e9t\u00e9 enferm\u00e9e dans ses obsessions, incapable de voir autrement.","s\u00e9rieux":"Mot de la critique sociale : les adultes se prennent 'tr\u00e8s au s\u00e9rieux'. Le s\u00e9rieux est pr\u00e9sent\u00e9 comme un d\u00e9faut \u2014 il emp\u00eache de voir ce qui est vraiment important.","chiffres":"Les adultes d\u00e9crivent tout avec des chiffres. La soci\u00e9t\u00e9 adulte est fond\u00e9e sur la quantification : \u00e2ge, salaire, taille, nombre. Critique du r\u00e9ductionnisme social.","utile":"Les grandes personnes ne s'int\u00e9ressent qu'\u00e0 ce qui est 'utile'. Critique de la soci\u00e9t\u00e9 utilitariste : seule la beaut\u00e9 ou l'amiti\u00e9 sans utilit\u00e9 mesurable compte vraiment."}
+        },
+        nature: {
+          intro: "La Nature dans Le Petit Prince, c'est \u00e0 la fois le d\u00e9sert du Sahara (espace de la rencontre) et les \u00e9toiles (espace du souvenir et de l'espoir). La nature n'est pas une toile de fond : elle est le lieu o\u00f9 l'essentiel se r\u00e9v\u00e8le. M\u00e9thode : sont retenus les \u00e9l\u00e9ments naturels qui portent une signification symbolique.",
+          mots: {"d\u00e9sert":"Le d\u00e9sert du Sahara est le lieu fondamental de la rencontre. Espace vide, hostile, sans eau \u2014 et pourtant beau. Paradoxe central : c'est dans le lieu le plus inhospitalier que se r\u00e9v\u00e8le l'essentiel.","e\u0301toiles":"Les \u00e9toiles sont la nature \u00e0 la plus grande \u00e9chelle. Elles repr\u00e9sentent \u00e0 la fois le voyage, la libert\u00e9 et, \u00e0 la fin, le souvenir : l'aviateur entend peut-\u00eatre le rire du Petit Prince dans l'une d'elles.","fleur":"La fleur (et la rose) sont la fragilit\u00e9 de la nature. Ce qui est fragile m\u00e9rite d'\u00eatre prot\u00e9g\u00e9 \u2014 c'est une le\u00e7on que la nature du Petit Prince enseigne.","baobab":"Les baobabs repr\u00e9sentent le danger naturel : si on ne les arrache pas tout de suite, ils envahissent tout. M\u00e9taphore des mauvaises pens\u00e9es et des probl\u00e8mes qu'on laisse grandir.","soleil":"Le soleil est le rythme du Petit Prince : sur sa plan\u00e8te, il peut voir 43 couchers de soleil dans une journ\u00e9e en tournant sa chaise. La nature donne le temps et le rythme.","Sahara":"Le Sahara est le d\u00e9cor-symbole : vaste, silencieux, beau dans sa d\u00e9solation. C'est l\u00e0 que les humains se retrouvent, l\u00e0 o\u00f9 les mots importants sont dits."}
+        }
+      },
+      paires: [
+        {cles:["amour","societe"], score:4,
+         interpretation:"Arc en X \u2014 double croisement. D\u00e9but : amour (65) >> soci\u00e9t\u00e9 (22), le Petit Prince voit avec son c\u0153ur. Aux plan\u00e8tes (ph3-4) : la soci\u00e9t\u00e9 adulte absurde (75, 70) d\u00e9passe l'amour (62, 58). Retour d\u00e9cisif avec le Renard (ph5-8) : amour remonte \u00e0 90\u219898 quand la soci\u00e9t\u00e9 rechute \u00e0 30\u219822. Les plan\u00e8tes sont la seule victoire de la soci\u00e9t\u00e9 adulte sur le c\u0153ur."},
+        {cles:["nature","societe"], score:4,
+         interpretation:"M\u00eame arc que amour/soci\u00e9t\u00e9 mais centr\u00e9 sur l'espace : la nature du d\u00e9sert et des \u00e9toiles (72, 62) s'effondre aux plan\u00e8tes (25, 28) \u2014 espaces ferm\u00e9s, sans ciel. La soci\u00e9t\u00e9-plan\u00e8te domine (75, 70). Puis retour de la nature avec la Terre (75, 68, 55, 68). L'opposition d\u00e9sert ouvert / plan\u00e8te ferm\u00e9e dit visuellement la critique du monde adulte."},
+        {cles:["amour","pouvoir"], score:3,
+         interpretation:"Convergence exacte en phase 3 (amour=62, pouvoir=62) \u2014 chez le roi qui r\u00e8gne sans sujets. Avant : amour domine. Apr\u00e8s : pouvoir monte encore (55) puis s'effondre (20\u219812) quand l'amour explose avec le Renard. La rencontre du Renard est la d\u00e9faite d\u00e9finitive du pouvoir."}
+      ]
     }
   },
   {
@@ -4126,6 +4207,64 @@ const LIVRES_DEMO = [
       ],
       bilan: "Twain articule trois niveaux dans cette scène : le comique (manipulation réussie), le philosophique (théorie du désir) et le satirique (enfant plus intelligent que la société adulte).",
       ouverture: "On peut prolonger ce commentaire vers Molière (L'Avare) — même comique du personnage aveuglé par ses désirs. On peut aussi penser au behaviorisme (Skinner, 1938) : la récompense et le désir sont de meilleurs moteurs d'apprentissage que la punition — ce que Tom sait instinctivement à 12 ans."
+    },
+    lexique: {
+      phases: [
+        {pageDebut:1,   nom:"Exposition \u2014 Tom, tante Polly, la cl\u00f4ture"},
+        {pageDebut:56,  nom:"Complication \u2014 le cimeti\u00e8re, l'\u00eele des pirates"},
+        {pageDebut:111, nom:"Climax \u2014 le proc\u00e8s de Muff Potter, la grotte"},
+        {pageDebut:166, nom:"Action descendante \u2014 la sortie, Joe traqu\u00e9"},
+        {pageDebut:221, nom:"D\u00e9nouement \u2014 le tr\u00e9sor, Tom h\u00e9ros"}
+      ],
+      tranches: [
+        {pageDebut:1,   pageFin:55,  amour:38, pouvoir:48, liberte:58, identite:55, societe:65, nature:62},
+        {pageDebut:56,  pageFin:110, amour:42, pouvoir:35, liberte:88, identite:68, societe:35, nature:80},
+        {pageDebut:111, pageFin:165, amour:45, pouvoir:42, liberte:62, identite:75, societe:42, nature:85},
+        {pageDebut:166, pageFin:220, amour:48, pouvoir:38, liberte:80, identite:68, societe:42, nature:68},
+        {pageDebut:221, pageFin:274, amour:38, pouvoir:28, liberte:90, identite:62, societe:42, nature:62}
+      ],
+      champLexical: {
+        amour:    [{mot:"Becky",n:35},{mot:"tante Polly",n:22},{mot:"Huck",n:28},{mot:"amiti\u00e9",n:12}],
+        pouvoir:  [{mot:"Injun Joe",n:28},{mot:"tante Polly",n:22},{mot:"loi",n:15},{mot:"punir",n:18},{mot:"juge",n:12}],
+        liberte:  [{mot:"\u00eele",n:28},{mot:"pirate",n:22},{mot:"aventure",n:25},{mot:"fugue",n:12},{mot:"jouer",n:20},{mot:"Mississippi",n:18}],
+        identite: [{mot:"Tom",n:85},{mot:"h\u00e9ros",n:18},{mot:"courage",n:12},{mot:"imagination",n:15},{mot:"fier",n:10}],
+        societe:  [{mot:"\u00e9cole",n:22},{mot:"\u00e9glise",n:18},{mot:"cl\u00f4ture",n:8},{mot:"r\u00e8gles",n:12},{mot:"respectabilit\u00e9",n:10}],
+        nature:   [{mot:"Mississippi",n:18},{mot:"grotte",n:25},{mot:"for\u00eat",n:18},{mot:"nuit",n:22},{mot:"\u00eele",n:28},{mot:"rivi\u00e8re",n:15}]
+      },
+      justifications: {
+        amour: {
+          intro: "L'Amour dans Tom Sawyer est principalement repr\u00e9sent\u00e9 par les liens d'amiti\u00e9 et d'affection : Becky Thatcher (l'amour romantique), tante Polly (l'amour familial exigeant) et Huck Finn (l'amiti\u00e9 vraie). Ces liens motivent les actes courageux de Tom. M\u00e9thode : sont retenus les noms propres des personnes aim\u00e9es et les mots des liens affectifs.",
+          mots: {"Becky":"L'amour de Tom pour Becky Thatcher est le moteur romantique du roman. C'est pour elle qu'il t\u00e9moigne au proc\u00e8s, c'est elle qu'il sauve dans la grotte. L'amour comme force h\u00e9ro\u00efque.","tante Polly":"Tante Polly repr\u00e9sente l'amour familial s\u00e9v\u00e8re mais sinc\u00e8re. Elle punit Tom mais l'aime profond\u00e9ment \u2014 et Tom, malgr\u00e9 ses b\u00eatises, y est attach\u00e9.","Huck":"Huckleberry Finn est le meilleur ami de Tom. Leur amiti\u00e9 est celle de deux gar\u00e7ons libres qui se font confiance absolument. Huck incarne la loyaut\u00e9 sans condition.","amiti\u00e9":"Le mot 'amiti\u00e9' r\u00e9sume le tissu affectif du roman. Tom n'agit pas seul : il entra\u00eene ses amis, les prot\u00e8ge, et cette solidarit\u00e9 enfantine est pr\u00e9sent\u00e9e comme une vraie vertu."}
+        },
+        pouvoir: {
+          intro: "Le Pouvoir dans Tom Sawyer est incarn\u00e9 par les figures d'autorit\u00e9 (tante Polly, l'instituteur, le juge) et surtout par la menace du M\u00e9chant Joe (Injun Joe). Tom r\u00e9siste aux premi\u00e8res par la ruse et affronte le second par le courage. M\u00e9thode : sont retenus les mots de l'autorit\u00e9 exerc\u00e9e et du danger.",
+          mots: {"Injun Joe":"Le grand m\u00e9chant du roman. Joe repr\u00e9sente un pouvoir brutal et criminel que Tom doit affronter pour d\u00e9livrer la justice. Sa mort dans la grotte lib\u00e8re Tom et le village.","tante Polly":"Dans le th\u00e8me Pouvoir, tante Polly repr\u00e9sente l'autorit\u00e9 domestique : elle punit, ordonne, surveille. Tom la contourne sans vraiment la d\u00e9fier frontalement.","loi":"La loi est un th\u00e8me r\u00e9current : le proc\u00e8s de Muff Potter met Tom face \u00e0 la loi adulte. Il choisit de t\u00e9moigner malgr\u00e9 le danger \u2014 acte de courage civique enfantin.","punir":"Le verbe 'punir' r\u00e9sume la relation de Tom \u00e0 l'autorit\u00e9 adulte. Tante Polly punit, l'\u00e9cole punit. Tom l'accepte ou s'y d\u00e9robe \u2014 mais ne se r\u00e9volte pas id\u00e9ologiquement.","juge":"Le juge Thatcher repr\u00e9sente la loi respectable et l\u00e9gitime \u2014 par opposition \u00e0 la violence criminelle de Joe. Tom apprend \u00e0 distinguer la vraie autorit\u00e9 de la fausse."}
+        },
+        liberte: {
+          intro: "La Libert\u00e9 est le th\u00e8me dominant de Tom Sawyer : l'\u00eele des pirates, le Mississippi, les aventures nocturnes. Tom est l'enfant libre par excellence \u2014 qui fuit l'\u00e9cole et les corv\u00e9es pour vivre une vie d'aventure. M\u00e9thode : sont retenus les mots du mouvement, de l'espace ouvert et de l'affranchissement des r\u00e8gles.",
+          mots: {"\u00eele":"L'\u00eele de Jackson est l'espace de la libert\u00e9 absolue : loin des adultes, de l'\u00e9cole, de la soci\u00e9t\u00e9. Tom et Huck y jouent aux pirates, sans contraintes. L'\u00eele = l'utopie enfantine.","pirate":"\u00catre pirate, c'est la libert\u00e9 maximale imagin\u00e9e par Tom. Le pirate n'a pas de r\u00e8gles, pas de patron, pas d'\u00e9cole. C'est une identit\u00e9 h\u00e9ro\u00efque qui incarne le refus des contraintes.","aventure":"Le mot 'aventure' r\u00e9sume l'ambition de vie de Tom : tout est une aventure potentielle, m\u00eame badigeonner une cl\u00f4ture. La libert\u00e9, c'est transformer le monde en jeu.","fugue":"La fugue sur l'\u00eele est le grand acte de libert\u00e9 du roman. Tom, Huck et Joe Harper disparaissent \u2014 et assistaient \u00e0 leurs propres fun\u00e9railles. Libert\u00e9 maximale : jouer avec la mort.","jouer":"'Jouer', c'est d\u00e9finir sa libert\u00e9 contre le travail impos\u00e9. La sc\u00e8ne de la cl\u00f4ture r\u00e9sume tout : Tom transforme une corv\u00e9e en jeu et les autres veulent y participer.","Mississippi":"Le fleuve est l'espace de la libert\u00e9 g\u00e9ographique. Twain l'a connu toute son enfance \u2014 le Mississippi est la grande route de la libert\u00e9 am\u00e9ricaine dans son imaginaire."}
+        },
+        identite: {
+          intro: "L'Identit\u00e9 de Tom Sawyer se construit tout au long du roman : de gar\u00e7on espi\u00e8gle \u00e0 h\u00e9ros v\u00e9ritable. Tom se d\u00e9finit d'abord par l'imagination (je suis un pirate !) puis par ses actes courageux (t\u00e9moignage, sauvetage de Becky). M\u00e9thode : sont retenus les mots qui d\u00e9finissent le personnage de Tom.",
+          mots: {"Tom":"Le pr\u00e9nom lui-m\u00eame est le marqueur identitaire central. 'Tom le savait. Et il parla.' \u2014 la construction de Tom en h\u00e9ros passe par ce moment de d\u00e9cision o\u00f9 son identit\u00e9 se r\u00e9v\u00e8le.","h\u00e9ros":"Tom se r\u00eave en h\u00e9ros (pirate, d\u00e9tective) et le devient vraiment au moment du proc\u00e8s et de la grotte. La diff\u00e9rence : le h\u00e9ros r\u00e9el agit malgr\u00e9 la peur, pas en l'ignorant.","courage":"Le courage est l'identit\u00e9 accomplie de Tom. Twain montre que le courage n'est pas l'absence de peur : Tom a peur de Joe, peur dans la grotte \u2014 et agit quand m\u00eame.","imagination":"L'imagination est l'identit\u00e9 fondamentale de Tom au d\u00e9but : c'est elle qui transforme la cl\u00f4ture en aventure, le Mississippi en mer des Cara\u00efbes. C'est aussi ce qui le rend attachant.","fier":"La fiert\u00e9 de Tom est un trait identitaire ambigu : parfois vanit\u00e9 (vouloir \u00eatre admir\u00e9), parfois dignit\u00e9 (refuser d'\u00eatre injuste). Son identit\u00e9 se construit en apprenant la diff\u00e9rence."}
+        },
+        societe: {
+          intro: "La Soci\u00e9t\u00e9 dans Tom Sawyer est repr\u00e9sent\u00e9e par les institutions de Saint-Petersburg : l'\u00e9cole, l'\u00e9glise, la respectabilit\u00e9. Twain les pr\u00e9sente avec une ironie tendre \u2014 elles sont souvent hypocrites ou rigides, mais pas fondamentalement mauvaises. Tom les contourne plus qu'il ne les conteste. M\u00e9thode : sont retenus les mots des institutions sociales et leurs normes.",
+          mots: {"\u00e9cole":"L'\u00e9cole repr\u00e9sente la contrainte institutionnelle : r\u00e8gles, punitions, ennui. Tom d\u00e9teste l'\u00e9cole \u2014 mais Twain montre que ces normes appartiennent au monde adulte que Tom devra rejoindre.","e\u0301glise":"L'\u00e9glise du dimanche est l'espace de la respectabilit\u00e9 sociale. Tom apprend ses versets pour impressionner les adultes \u2014 puis r\u00e9v\u00e8le sa tromperie involontairement. Critique douce de l'hypocrisie sociale.","cl\u00f4ture":"La cl\u00f4ture est l'objet symbolique de la soci\u00e9t\u00e9 : corv\u00e9e impos\u00e9e, symbole de la propri\u00e9t\u00e9, de la fronti\u00e8re entre espace domestique et libert\u00e9. Tom la transforme en d\u00e9sir social.","r\u00e8gles":"Les r\u00e8gles sociales de Saint-Petersburg sont l\u00e9gion. Tom les enfreint toutes \u2014 mais pas par nihilisme : il comprend leur sens et choisit ses transgressions.","respectabilit\u00e9":"La respectabilit\u00e9 est la valeur supr\u00eame de Saint-Petersburg. Le retour de Tom sur l'\u00eele est trait\u00e9 comme un miracle \u2014 la soci\u00e9t\u00e9 r\u00e9cup\u00e8re son enfant prodigue et le sacralise."}
+        },
+        nature: {
+          intro: "La Nature est omnipr\u00e9sente dans Tom Sawyer : le Mississippi, la for\u00eat, la grotte, l'\u00eele. Twain transforme la nature en espace de libert\u00e9 et d'aventure. La grotte de McDougal est l'espace le plus dramatique : Tom y est prisonnier avec Becky, et Joe y meurt. M\u00e9thode : sont retenus les \u00e9l\u00e9ments naturels qui structurent l'intrigue.",
+          mots: {"Mississippi":"Le grand fleuve est la colonne vert\u00e9brale du roman. Il borde Saint-Petersburg, permet de rejoindre l'\u00eele, s\u00e9pare la civilisation de la libert\u00e9. Twain le conna\u00eet depuis l'enfance \u2014 c'est son territoire.","grotte":"La grotte de McDougal est le lieu le plus dramatique : Tom y est perdu avec Becky, Joe y habite, Joe y meurt. La grotte repr\u00e9sente la nature dangereuse qui transforme les gar\u00e7ons en hommes.","for\u00eat":"La for\u00eat est l'espace nocturne de l'aventure et de la peur. C'est l\u00e0 que Tom et Huck assistent au meurtre au cimeti\u00e8re. La for\u00eat = la nature de nuit, inqui\u00e9tante et fascinante.","\u00eele":"L'\u00eele de Jackson est \u00e0 la fois un lieu naturel (rivi\u00e8re, arbres, poissons) et un espace utopique (pas d'adultes, pas de r\u00e8gles). Nature et libert\u00e9 sont indissociables dans ce roman.","nuit":"La nuit est le temps de la vraie aventure : cimeti\u00e8re, \u00eele, grotte. La nuit efface les r\u00e8gles sociales \u2014 Tom devient Tom Sawyer le Pirate d\u00e8s que le soleil se couche.","rivi\u00e8re":"La rivi\u00e8re est le chemin vers la libert\u00e9 : Tom et ses amis traversent le Mississippi \u00e0 la nage pour rejoindre l'\u00eele. Traverser la rivi\u00e8re = traverser la fronti\u00e8re entre la soci\u00e9t\u00e9 et l'aventure."}
+        }
+      },
+      paires: [
+        {cles:["liberte","societe"], score:4,
+         interpretation:"Croisement fondateur entre ph1 et ph2 : la Soci\u00e9t\u00e9 (65) domine encore la Libert\u00e9 (58) \u2014 Tom est \u00e0 l'\u00e9cole, sous l'autorit\u00e9 de tante Polly. En ph2, inversion totale : Libert\u00e9 explose (88) quand Tom s'enfuit sur l'\u00eele des pirates, Soci\u00e9t\u00e9 s'effondre (35). Ce croisement brutal dit l'essence de Tom Sawyer : l'enfant qui s'affranchit de la contrainte adulte par un acte de fugue."},
+        {cles:["nature","societe"], score:3,
+         interpretation:"M\u00eame arc que Libert\u00e9/Soci\u00e9t\u00e9 mais centr\u00e9 sur l'espace physique. La Soci\u00e9t\u00e9 (65) domine la Nature (62) en ph1 \u2014 Tom est au village. Puis Nature prend le dessus (80, 85) avec l'\u00eele et la grotte. La nature n'est pas neutre : elle est l'espace de la libert\u00e9 contre les institutions."},
+        {cles:["liberte","pouvoir"], score:3,
+         interpretation:"Libert\u00e9 d\u00e9passe d\u00e9j\u00e0 le Pouvoir d\u00e8s ph1 (58 vs 48), puis s'envole (88 vs 35 en ph2). Le Pouvoir recule r\u00e9guli\u00e8rement (48\u219835\u219842\u219838\u219828) tandis que la Libert\u00e9 monte. Trajectoires inverses sans croisement mais divergence croissante : Tom grandit, les contraintes r\u00e9tr\u00e9cissent."}
+      ]
     }
   },
   {
@@ -4290,6 +4429,60 @@ const LIVRES_DEMO = [
       ],
       bilan: "Carroll construit dans ce procès une satire à plusieurs niveaux : le nonsense démasque la justice, Alice dit la vérité que le pouvoir refuse, et la structure rêve/réveil donne à cette vérité une portée universelle.",
       ouverture: "On pourrait prolonger ce commentaire vers Ionesco, Rhinocéros (1960) : même absurde comme révélateur du conformisme — les personnages se transforment en rhinocéros sous nos yeux. On peut aussi penser à Orwell, La Ferme des animaux (1945) : même fable politique sous couvert de conte."
+    },
+    lexique: {
+      phases: [
+        {pageDebut:1,   nom:"N\u0153ud \u2014 La chute, les transformations, le Chapelier"},
+        {pageDebut:62,  nom:"Action \u2014 La Duchesse, la Reine de C\u0153ur, le croquet"},
+        {pageDebut:123, nom:"D\u00e9nouement \u2014 Le proc\u00e8s, Alice tient t\u00eate, le r\u00e9veil"}
+      ],
+      tranches: [
+        {pageDebut:1,   pageFin:61,  amour:25, pouvoir:68, liberte:30, identite:88, societe:62, nature:42},
+        {pageDebut:62,  pageFin:122, amour:28, pouvoir:72, liberte:55, identite:85, societe:65, nature:28},
+        {pageDebut:123, pageFin:182, amour:32, pouvoir:82, liberte:92, identite:78, societe:55, nature:22}
+      ],
+      champLexical: {
+        amour:    [{mot:"s\u0153ur",n:12},{mot:"curiosit\u00e9",n:22},{mot:"chat",n:18},{mot:"maison",n:10}],
+        pouvoir:  [{mot:"Reine",n:42},{mot:"roi",n:15},{mot:"t\u00eate",n:18},{mot:"r\u00e8gles",n:15},{mot:"ordre",n:12}],
+        liberte:  [{mot:"sortir",n:18},{mot:"r\u00eave",n:22},{mot:"grandir",n:22},{mot:"courir",n:15},{mot:"refuser",n:10}],
+        identite: [{mot:"Alice",n:75},{mot:"qui suis-je",n:12},{mot:"grandir",n:22},{mot:"rapetisser",n:18},{mot:"nom",n:12}],
+        societe:  [{mot:"proc\u00e8s",n:18},{mot:"absurde",n:22},{mot:"politesse",n:15},{mot:"r\u00e8gles",n:15},{mot:"Chapelier",n:12}],
+        nature:   [{mot:"jardin",n:22},{mot:"fleurs",n:15},{mot:"champignon",n:12},{mot:"lapin",n:18},{mot:"chat",n:10}]
+      },
+      justifications: {
+        amour: {
+          intro: "L'Amour dans Alice au Pays des Merveilles est principalement repr\u00e9sent\u00e9 par la curiosit\u00e9 affectueuse d'Alice pour le monde \u2014 et par les liens t\u00e9nus avec sa s\u0153ur et son chat Dinah. Ce n'est pas un roman d'amour : c'est un roman d'exploration. M\u00e9thode : sont retenus les mots des liens affectifs et de la bienveillance d'Alice.",
+          mots: {"s\u0153ur":"La s\u0153ur d'Alice appara\u00eet au d\u00e9but (Alice s'ennuie \u00e0 c\u00f4t\u00e9 d'elle) et \u00e0 la fin (elle prend conscience du r\u00eave). C'est par elle que l'aventure commence et se termine \u2014 lien affectif discret mais structurant.","curiosit\u00e9":"La curiosit\u00e9 d'Alice est sa principale qualit\u00e9 affective : elle aime d\u00e9couvrir, apprendre, s'interroger. Cette curiosit\u00e9 bienveillante la prot\u00e8ge de la peur et du d\u00e9couragement.","chat":"Dinah, le chat d'Alice, est l'\u00eatre aim\u00e9 par excellence \u2014 elle y pense plusieurs fois pendant l'aventure. L'absence de Dinah mesure la distance d'Alice \u00e0 son monde normal.","maison":"La maison repr\u00e9sente l'appartenance affective : Alice veut rentrer chez elle. L'amour du chez-soi est l'ancre \u00e9motionnelle qui traverse toute l'aventure."}
+        },
+        pouvoir: {
+          intro: "Le Pouvoir est le th\u00e8me dominant d'Alice au Pays des Merveilles : le monde entier y est organis\u00e9 par des hi\u00e9rarchies absurdes. La Reine de C\u0153ur est la figure extr\u00eame \u2014 'Qu'on lui coupe la t\u00eate !' \u2014 mais tout le Pays des Merveilles est un syst\u00e8me de pouvoir sans logique. M\u00e9thode : sont retenus les mots des r\u00e8gles impos\u00e9es, des ordres arbitraires et des figures d'autorit\u00e9.",
+          mots: {"Reine":"La Reine de C\u0153ur est la parodie du pouvoir absolu. Son unique r\u00e9action \u00e0 tout : condamner \u00e0 mort. Carroll en fait une satire du pouvoir monarchique sans l\u00e9gitimit\u00e9 ni raison.","roi":"Le roi, mari de la Reine, est le pouvoir mou : il commue toutes les sentences, invisible derri\u00e8re sa femme. Caricature du pouvoir formel derri\u00e8re un pouvoir r\u00e9el plus fort.","t\u00eate":"'Qu'on lui coupe la t\u00eate !' est la phrase du pouvoir absurde. La t\u00eate repr\u00e9sente \u00e0 la fois la peine maximale et l'arbitraire pur : on la perd sans avoir rien fait de mal.","r\u00e8gles":"Le Pays des Merveilles est plein de r\u00e8gles \u2014 mais elles changent constamment, se contredisent, sont appliqu\u00e9es au hasard. Carroll parodie le monde des r\u00e8gles adultes.","ordre":"L'ordre est la pr\u00e9tention du pouvoir : les cartes rangent les rosiers, la Reine ordonne les d\u00e9capitations. Mais l'ordre est une fa\u00e7ade \u2014 le chaos r\u00e8gne en dessous."}
+        },
+        liberte: {
+          intro: "La Libert\u00e9 dans Alice au Pays des Merveilles, c'est la trajectoire d'Alice : de la petite fille terrifi\u00e9e qui n'ose pas parler (ph1) \u00e0 celle qui crie 'Vous n'\u00eates qu'un jeu de cartes !' (ph3). La lib\u00e9ration est progressive et dramatique. M\u00e9thode : sont retenus les mots du mouvement, de l'affirmation de soi et du refus de l'autorit\u00e9 arbitraire.",
+          mots: {"sortir":"Alice cherche \u00e0 sortir de chaque espace o\u00f9 elle se retrouve pi\u00e9g\u00e9e : le couloir, la maison du lapin, la maison de la Duchesse. 'Sortir' est le verbe de la libert\u00e9 physique.","r\u00eave":"Le r\u00eave est \u00e0 la fois la prison (Alice est pi\u00e9g\u00e9e dans un monde absurde) et la libert\u00e9 (elle peut se r\u00e9veiller et fuir). La libert\u00e9 finale passe par le r\u00e9veil.","grandir":"Alice grandit et rapetisse tout au long du roman \u2014 mais \u00e0 la fin, elle grandit face \u00e0 la Reine sans r\u00e9tr\u00e9cir. Grandir = prendre confiance, s'affirmer, \u00eatre libre.","courir":"Alice court derri\u00e8re le lapin au d\u00e9but \u2014 elle est men\u00e9e. \u00c0 la fin, elle tient t\u00eate. La libert\u00e9, c'est arr\u00eater de courir derri\u00e8re les autres et d\u00e9cider soi-m\u00eame.","refuser":"Le moment de libert\u00e9 maximal : Alice refuse d'ob\u00e9ir \u00e0 la Reine. 'Je ne vous ob\u00e9irai pas !' Refuser l'autorit\u00e9 absurde, c'est l'acte de libert\u00e9 culminant du roman."}
+        },
+        identite: {
+          intro: "L'Identit\u00e9 est LA question d'Alice au Pays des Merveilles : la Chenille lui demande 'Qui es-tu ?' et Alice ne sait pas r\u00e9pondre. Tout au long du roman, elle grandit, rapetisse, change de taille et de nom \u2014 son identit\u00e9 est instable jusqu'au moment de r\u00e9bellion finale. M\u00e9thode : sont retenus tous les mots de la d\u00e9finition de soi et du questionnement identitaire.",
+          mots: {"Alice":"Le pr\u00e9nom lui-m\u00eame est un marqueur d'identit\u00e9 instable. 'Alice' est \u00e0 la fois qui elle est et ce qu'elle ne sait plus \u00eatre dans ce monde absurde. Le nom est remis en question par des personnages qui refusent de le retenir.","qui suis-je":"La question fondamentale, pos\u00e9e par la Chenille : 'Qui es-tu ?' Alice ne sait pas. Cette question structure toute l'aventure \u2014 la r\u00e9ponse vient \u00e0 la fin, quand Alice s'affirme.","grandir":"Grandir physiquement et grandir int\u00e9rieurement se confondent dans Alice. Les transformations de taille sont la m\u00e9taphore de l'incertitude identitaire \u2014 et grandir symboliquement, c'est gagner en confiance.","rapetisser":"Rapetisser est la perte de soi, la r\u00e9gression. Chaque fois qu'Alice rapetisse, elle perd de l'assurance. L'identit\u00e9 se mesure ici \u00e0 la taille \u2014 Carroll joue avec le clich\u00e9.","nom":"Alice insiste sur son nom \u2014 les personnages l'oublient ou le changent. Le nom est l'identit\u00e9 sociale minimale : perdre son nom, c'est ne plus exister dans un monde."}
+        },
+        societe: {
+          intro: "La Soci\u00e9t\u00e9 dans Alice au Pays des Merveilles, c'est la soci\u00e9t\u00e9 victorienne vue par l'absurde : r\u00e8gles de politesse absurdes, hi\u00e9rarchies incompr\u00e9hensibles, proc\u00e8s sans sens. Carroll parodie les conventions de son \u00e9poque en les poussant \u00e0 l'extr\u00eame. M\u00e9thode : sont retenus les mots qui d\u00e9signent les institutions sociales et leurs absurdit\u00e9s.",
+          mots: {"proc\u00e8s":"Le proc\u00e8s du Valet de C\u0153ur est le climax social du roman : absurde de bout en bout, verdict d\u00e9cid\u00e9 avant les preuves, t\u00e9moins terroris\u00e9s. Parodie de la justice victorienne.","absurde":"L'absurde est la tonalit\u00e9 sociale de tout le roman. Carroll ne construit pas un monde fantastique : il construit un monde social exag\u00e9r\u00e9 jusqu'\u00e0 la contradiction logique.","politesse":"La politesse est la r\u00e8gle sociale n\u00b01 du Pays des Merveilles \u2014 tout le monde s'y r\u00e9f\u00e8re, personne ne la respecte vraiment. Carroll parodie la politesse victorienne comme masque de la violence.","r\u00e8gles":"Dans le Pays des Merveilles, les r\u00e8gles existent mais sont contradictoires, changeantes, arbitraires. Critique de la soci\u00e9t\u00e9 r\u00e9glement\u00e9e : les r\u00e8gles ne servent qu'\u00e0 ceux qui les interpr\u00e8tent.","Chapelier":"Le Chapelier Fou est coinc\u00e9 dans un th\u00e9 \u00e9ternel \u00e0 cause d'un crime contre le Temps. Il repr\u00e9sente la soci\u00e9t\u00e9 absurde : puni arbitrairement, incapable de sortir de sa routine."}
+        },
+        nature: {
+          intro: "La Nature dans Alice au Pays des Merveilles est domestiqu\u00e9e et symbolique : le jardin des roses peintes, les champignons magiques, le Chat du Cheshire. Elle n'est pas la nature sauvage de Tom Sawyer \u2014 c'est une nature de conte, transform\u00e9e par la magie absurde. M\u00e9thode : sont retenus les \u00e9l\u00e9ments naturels et les animaux qui jouent un r\u00f4le dans l'aventure.",
+          mots: {"jardin":"Le jardin de la Reine est le lieu le plus d\u00e9sir\u00e9 et le plus d\u00e9cevant : Alice veut y entrer tout au long du livre, et quand elle y est, c'est pour jouer au croquet avec des flamants. La nature-jardin est l'absurde domestiqu\u00e9.","fleurs":"Les fleurs qui parlent sont le signal que la nature du Pays des Merveilles est vivante et hostile \u2014 elles jugent Alice ('elle est bien ordinaire'). La nature parle et juge.","champignon":"Le champignon de la Chenille est l'objet magique central : manger un c\u00f4t\u00e9 fait grandir, l'autre fait rapetisser. La nature devient pharmacie et m\u00e9taphore identitaire.","lapin":"Le Lapin Blanc est l'animal d\u00e9clencheur de l'aventure. Il est toujours en retard, toujours press\u00e9 \u2014 animal de la soci\u00e9t\u00e9 du temps et de l'obligation, paradoxalement naturel et social.","chat":"Le Chat du Cheshire dispara\u00eet progressivement jusqu'\u00e0 ne laisser que son sourire. Ph\u00e9nom\u00e8ne naturel impossible \u2014 Carroll utilise la nature comme terrain de l'absurde logique."}
+        }
+      },
+      paires: [
+        {cles:["liberte","pouvoir"], score:4,
+         interpretation:"Arc central du roman : Pouvoir domine Libert\u00e9 sur toute la ph1-2 (68>30, 72>55). En ph3, Libert\u00e9 explose (92) et d\u00e9passe Pouvoir (82) au moment pr\u00e9cis o\u00f9 Alice crie aux cartes : 'Vous n'\u00eates qu'un jeu de cartes !' Le croisement = la r\u00e9bellion d'Alice. Avant : l'enfant subit. Apr\u00e8s : elle lib\u00e8re."},
+        {cles:["identite","pouvoir"], score:3,
+         interpretation:"Identit\u00e9 tr\u00e8s haute (88) face \u00e0 un Pouvoir croissant (68\u219272\u219282). Convergence puis croisement en ph3 : Identit\u00e9 descend (78) quand Pouvoir monte (82) \u2014 Alice perd pied. Mais c'est le moment m\u00eame o\u00f9 elle se ressaisit et crie la v\u00e9rit\u00e9. La pression maximale du pouvoir r\u00e9v\u00e8le l'identit\u00e9."},
+        {cles:["identite","societe"], score:2,
+         interpretation:"Identit\u00e9 reste toujours sup\u00e9rieure \u00e0 Soci\u00e9t\u00e9 (88/62, 85/65, 78/55). Pas de croisement \u2014 mais \u00e9cart r\u00e9v\u00e9lateur : m\u00eame quand l'absurde social est \u00e0 son comble (ph2), Alice garde son sens d'elle-m\u00eame. Son identit\u00e9 est le refuge contre la folie ambiante."}
+      ]
     }
   },
 
