@@ -2069,6 +2069,14 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 .rsz2.rsz-nw2{top:0;left:0;width:12px;height:12px;cursor:nw-resize;}
 .rsz2.rsz-se2{bottom:0;right:0;width:12px;height:12px;cursor:se-resize;}
 .rsz2.rsz-sw2{bottom:0;left:0;width:12px;height:12px;cursor:sw-resize;}
+
+/* ── Paires de thèmes comparées ────────────────────── */
+#ni-q-th-paires{display:none;flex:1;overflow-y:auto;min-height:0;padding:3px 4px;}
+.ni-paire-item{display:flex;flex-direction:column;gap:2px;padding-bottom:6px;}
+.ni-paire-ttl{font-size:9px;font-weight:800;color:#4A148C;display:flex;align-items:center;gap:4px;padding:2px 0;}
+.ni-paire-interp{font-size:8.5px;color:#444;line-height:1.5;padding:1px 2px;}
+.ni-paire-sep{height:1px;background:#ede7f6;margin:3px 0;}
+.ni-q-hdr-icon.active{background:rgba(106,27,154,.18);}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 </head>
@@ -2506,6 +2514,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
         <span class="ni-q-hdr-lbl">🕸️ Toile thématique</span>
         <button class="ni-q-hdr-icon" onclick="openLexiqueImport()" title="Importer analyse lexicale">📋</button>
         <button class="ni-q-hdr-icon" id="ni-th-pdf-btn" onclick="genererPDF_lex()" title="Exporter la toile en PDF" style="display:none;">📄</button>
+        <button class="ni-q-hdr-icon" id="ni-th-pairs-btn" onclick="_q3TogglePaires()" title="Comparer les paires de thèmes" style="display:none;">⇌</button>
         <button class="ni-q-hdr-icon" id="ni-th-help-btn" onclick="openLexHelp()" title="Méthodologie" style="display:none;">?</button>
       </div>
       <div class="ni-q-body" style="padding:4px 6px;display:flex;flex-direction:column;overflow:hidden;">
@@ -2518,6 +2527,9 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 
         <!-- Grille 3×2 (visible quand lexique disponible) -->
         <div id="ni-q-th-haslex" style="display:none;flex:1;flex-direction:column;min-height:0;">
+
+          <!-- Vue globale (radar + scatter) -->
+          <div id="ni-q-th-global" style="display:flex;flex:1;flex-direction:column;min-height:0;">
 
           <!-- Ligne 1 : 3 colonnes, 50% hauteur -->
           <div style="flex:0 0 50%;display:grid;grid-template-columns:54% 20% 26%;min-height:0;overflow:hidden;">
@@ -2543,6 +2555,11 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
             <svg id="ni-q-th-scatter" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;"></svg>
             <div id="ni-q-th-ph-tip" style="display:none;position:absolute;background:#333;color:#fff;font-size:9px;font-weight:600;padding:2px 7px;border-radius:4px;pointer-events:none;white-space:nowrap;z-index:10;top:2px;left:50%;transform:translateX(-50%);"></div>
           </div>
+
+          </div><!-- /ni-q-th-global -->
+
+          <!-- Vue paires de thèmes -->
+          <div id="ni-q-th-paires"></div>
 
         </div>
 
@@ -3780,7 +3797,7 @@ function sauvegarderBiblio() {
 // ════════════════════════════════════════════════════════
 // VERSION — incrémenter à chaque mise à jour des livres démo
 // ════════════════════════════════════════════════════════
-const DEMO_VERSION = 23; // v23 : justifications champLexical Thérèse Desqueyroux
+const DEMO_VERSION = 24; // v24 : paires de thèmes comparées (Thérèse + Adversaire)
 const LIVRES_DEMO = [
   {
     id: 'liv_petit_prince_001',
@@ -4479,7 +4496,19 @@ const LIVRES_DEMO = [
           intro: "Le thème Nature est unique dans Thérèse Desqueyroux : la lande landaise n'est pas un simple décor. Mauriac la transforme en projection de l'âme de Thérèse. Les pins, la résine, la bruyère ne sont pas des éléments pittoresques : ils sont des états intérieurs. C'est pourquoi la Nature a un score élevé — elle est partout, comme une présence oppressante.",
           mots: {"lande":"Espace central et symbolique. La lande landaise est à la fois la prison géographique de Thérèse et la projection de son âme : vaste, sauvage, sombre, sans issue. Mauriac la décrit comme vivante, presque sentiente.","pins":"Les pins représentent la richesse des Desqueyroux (les 'pins de Bernard') — les épousailles de Thérèse sont aussi une union avec les pins. Ils sont l'argent, la terre, la prison dorée.","forêt":"La forêt de pins est l'espace de l'enfermement : dense, obscure, labyrinthique. Thérèse y erre mentalement comme elle erre dans sa propre conscience.","nuit":"La nuit landaise est oppressante dans le roman — elle amplifie la solitude et l'isolement de Thérèse à Argelouse. La nuit est le temps de la conscience sans fard.","résine":"Odeur omniprésente de la lande. La résine matérialise la présence de la forêt — elle colle, elle est partout, elle imprègne. Comme la famille : inévitable et envahissante.","ombre":"L'ombre des pins sur la lande dit l'obscurité intérieure de Thérèse. Mauriac pratique le paysage-état d'âme : l'ombre extérieure reflète l'ombre intérieure.","bruyère":"Plante basse et résistante de la lande : comme Thérèse, elle pousse dans un sol ingrat, sans soin, en survivant malgré tout. Identification possible du lecteur averti."}
         }
-      }
+      },
+      paires: [
+        {cles:["liberte","nature"], score:4,
+         interpretation:"Arc inversé central : la lande monte vers l\'enfermement (Argelouse, ph5) quand la Liberté touche son minimum (18). Croisement en ph3 — le flashback du mariage — point de bascule. Au dénouement, Liberté explose (87) quand la lande disparaît (12) : Paris libère Thérèse du paysage qui l\'emprisonnait."},
+        {cles:["pouvoir","liberte"], score:4,
+         interpretation:"Deux croisements encadrent le crime et la libération. L\'empoisonnement (ph4-5) est le seul moment où le Pouvoir de résistance dépasse la Liberté effondrée. La bascule finale (ph6-7) dit que c\'est la condamnation qui libère Thérèse — pas l\'acquittement."},
+        {cles:["liberte","identite"], score:3,
+         interpretation:"Identité domine pendant tout le roman — Thérèse se questionne sans pouvoir agir. Le seul croisement en ph7 (Paris) révèle l\'essentiel : la conscience de soi ne suffit pas, il faut aussi la liberté concrète pour exister vraiment."},
+        {cles:["amour","liberte"], score:3,
+         interpretation:"Le poids de l\'Amour bourgeois reste constant pendant toute la chute de Liberté — l\'un est la condition de l\'autre. Ils se rejoignent exactement en ph7 (88/88) : quitter Bernard coïncide avec retrouver la liberté."},
+        {cles:["liberte","societe"], score:3,
+         interpretation:"Société est presque plate (33-38) mais c\'est là l\'enjeu : Liberté tombe EN DESSOUS de cette ligne inerte aux phases 4-5, quand l\'ordre social gagne sans effort. La fin est la réponse : Liberté à 87, Société à 33 — Thérèse échappe à un monde immobile."}
+      ]
     }
   },
 
@@ -4690,7 +4719,17 @@ const LIVRES_DEMO = [
           intro: "Le thème Nature est quasi absent dans L'Adversaire — et c'est précisément ce qui est signifiant. Chez Mauriac, la lande est une projection de l'âme de Thérèse. Chez Carrère, la nature n'existe pas : Romand habite des non-lieux artificiels (autoroutes, parkings, frontières) sans rapport avec le monde naturel. L'absence de nature dans ce roman est un fait littéraire.",
           mots: {"maison":"La maison de Prévessin est 'une maison comme les autres'. La nature y est domestiquée, ordinaire — c'est le décor d'une vie normale qui cache l'horreur.","nuit":"La nuit à Argelouse chez Mauriac est oppressante et chargée. Chez Carrère, la nuit n'a pas de présence propre — Romand habite des non-lieux sans cycle naturel.","jardin":"Le jardin avec les jouets d'enfants — détail d'une normalité saisissante avant la découverte du mensonge.","pluie":"Apparition rare. Carrère n'est pas un écrivain du paysage — son monde est celui du béton et de l'autoroute.","forêt":"Quasi absente. Romand habite les non-lieux bétonnés de l'autoroute, pas la nature. L'absence de forêt dit l'absence d'enracinement."}
         }
-      }
+      },
+      paires: [
+        {cles:["pouvoir","liberte"], score:4,
+         interpretation:"Arc inversé central : Pouvoir (le mensonge) monte vers le crime (85 ph5), Liberté s\'effondre (18). Paradoxe final : la prison libère Romand (Liberté 62) quand le Pouvoir du mensonge s\'effondre (37). Les deux croisements encadrent exactement le crime et le procès."},
+        {cles:["amour","liberte"], score:4,
+         interpretation:"Amour monte vers le crime (68 ph5) précisément quand Liberté est au plus bas — Romand invoque sa famille au moment où il la détruit. Après l\'arrestation les rôles s\'inversent : la Liberté retrouve une valeur, l\'Amour fictif se stabilise."},
+        {cles:["identite","societe"], score:3,
+         interpretation:"En ph1, Société (88) domine Identité (82) : Romand est d\'abord défini par le regard social. Dès ph2, Identité prend le dessus définitivement. Le croisement dit : le mensonge de 1975 naît d\'une pression sociale plus forte que le vide intérieur — qui prend sa revanche (Identité 92 vs Société 53 au procès)."},
+        {cles:["liberte","societe"], score:3,
+         interpretation:"Société domine Liberté pendant tout le roman — le paraître pèse plus que toute aspiration. Croisement unique en ph7-8 : la condamnation arrache Romand au paraître. La prison est le seul espace où il peut exister sans masque."}
+      ]
     }
   }
 ];
@@ -6438,7 +6477,7 @@ function _buildLexToileHtml(L) {
 
   // ── 1. Radar + légende scores (côte à côte) ────────────────────────────────
   // Radar : on rogne le viewBox depuis y=19 (top du label Amour) pour coller la légende
-  var RADAR_TOP_CLIP=23; // recalculé pour lR=R+8 : label Amour top ≈ y=25
+  var RADAR_TOP_CLIP=17; // lR=R+14 : Amour text top ≈ y=19, 2px margin
   var radarSvg='<svg viewBox="0 '+RADAR_TOP_CLIP+' 200 '+(200-RADAR_TOP_CLIP)+'" xmlns="http://www.w3.org/2000/svg" style="max-width:200px;width:100%;display:block;margin:0 auto;">'+_buildLexRadarInner(lex.tranches,200)+'</svg>';
   var sorted=LEX_KEYS.slice().sort(function(a,b){return _lexAvg(lex.tranches,b)-_lexAvg(lex.tranches,a);});
   var legendRows=sorted.map(function(k){
@@ -6451,15 +6490,16 @@ function _buildLexToileHtml(L) {
       '<span style="font-size:12px;font-weight:900;color:'+col+';flex:0 0 26px;text-align:right;">'+v+'</span>'+
       '</div>';
   }).join('');
-  var topBlock='<div style="display:flex;gap:16px;align-items:stretch;margin-bottom:14px;">'+
-    '<div style="flex:0 0 auto;text-align:center;">'+radarSvg+
-    '<div style="font-size:9px;color:#999;margin-top:3px;">'+nt+' phases · '+mp+' pages</div></div>'+
+  var topBlock='<div style="display:flex;gap:16px;align-items:stretch;margin-bottom:4px;">'+
+    '<div style="flex:0 0 auto;text-align:center;">'+radarSvg+'</div>'+
     '<div style="flex:1;display:flex;flex-direction:column;justify-content:center;">'+legendRows+'</div>'+
     '</div>';
 
   // ── 2. Scatter + légende phases numérotées (côte à côte) ──────────────────
   var isModerne=(L.schemaType||'aristote')==='moderne';
-  var scatterSvg=_buildLexScatterSVG(lex,480,120);
+  // H calculé sur le nombre de phases × hauteur d'une ligne légende
+  var scatterH=Math.max(150, lex.phases.length*22);
+  var scatterSvg=_buildLexScatterSVG(lex,480,scatterH);
   var phaseLegend='';
   if(lex.phases&&lex.phases.length){
     var txtStyle=isModerne
@@ -6544,7 +6584,32 @@ function _buildLexToileHtml(L) {
       'Pour importer une analyse existante, colle le JSON du Prompt B dans le bouton <b>📋 Importer</b> (champs <code>phases</code> + <code>tranches</code>). Tu peux y ajouter <code>champLexical</code> et <code>justifications</code> pour enrichir l\u2019analyse.')+
     '</div>';
 
-  return topBlock+scatterBlock+champBlock+aideBlock;
+  // ── 5. Paires de thèmes comparées ─────────────────────────────────────────
+  var pairesBlock='';
+  if(lex.paires&&lex.paires.length){
+    pairesBlock='<h2 style="font-size:.82rem;font-weight:900;color:#6A1B9A;border-bottom:2px solid #6A1B9A;padding-bottom:5px;margin:16px 0 10px;">Paires de thèmes — Comparaisons</h2>';
+    pairesBlock+=lex.paires.map(function(p){
+      var k1=p.cles[0],k2=p.cles[1];
+      var col1=LEX_COLORS[k1],col2=LEX_COLORS[k2];
+      var svg=_buildPairScatter(lex,k1,k2);
+      var nb=_findCrossings(lex.tranches,k1,k2).length;
+      var crTxt=nb===0?'Pas de croisement':nb+' croisement'+(nb>1?'s':'');
+      return '<div style="margin-bottom:14px;">'+
+        '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">'+
+          '<span style="width:10px;height:10px;border-radius:50%;background:'+col1+';display:inline-block;flex-shrink:0;"></span>'+
+          '<span style="font-size:11px;font-weight:800;color:'+col1+';">'+LEX_LABELS[k1]+'</span>'+
+          '<span style="color:#ccc;margin:0 3px;">/</span>'+
+          '<span style="width:10px;height:10px;border-radius:50%;background:'+col2+';display:inline-block;flex-shrink:0;"></span>'+
+          '<span style="font-size:11px;font-weight:800;color:'+col2+';">'+LEX_LABELS[k2]+'</span>'+
+          '<span style="margin-left:auto;font-size:9px;color:#888;">'+crTxt+' · ★'+p.score+'/4</span>'+
+        '</div>'+
+        svg+
+        '<div style="font-size:10px;color:#333;line-height:1.6;padding:4px 0 0;">'+h(p.interpretation)+'</div>'+
+        '</div>';
+    }).join('<hr style="border:none;border-top:1px solid #ede7f6;margin:10px 0;">');
+  }
+
+  return topBlock+scatterBlock+champBlock+pairesBlock+aideBlock;
 }
 
 function _lexAideItem(col, titre, texte) {
@@ -11750,9 +11815,9 @@ function _buildLexRadarInner(tranches, size) {
     }
   });
   // Labels + scores : taille réduite car le SVG est affiché 1.5-2× sa taille native
-  var lR=R+8; // minimum viable — labels au plus près du polygone (règle permanente)
+  var lR=R+14;
   LEX_KEYS.forEach(function(k,i){
-    var lp=pt(i,lR),ta=(i===0||i===3)?'middle':i<3?'start':'end',dy=i===3?10:1,bold=avgs[i]>60;
+    var lp=pt(i,lR),ta=(i===0||i===3)?'middle':i<3?'start':'end',dy=i===3?3:1,bold=avgs[i]>60;
     h+='<text data-lk="'+k+'" x="'+lp[0].toFixed(1)+'" y="'+(lp[1]+dy).toFixed(1)+'" text-anchor="'+ta+'" font-family="Arial,sans-serif" font-size="8" font-weight="'+(bold?700:500)+'" fill="'+(bold?LEX_COLORS[k]:'#888')+'" style="cursor:pointer">'+LEX_LABELS[k]+'</text>';
     h+='<text data-lk="'+k+'" x="'+lp[0].toFixed(1)+'" y="'+(lp[1]+dy+10).toFixed(1)+'" text-anchor="'+ta+'" font-family="Arial,sans-serif" font-size="8" font-weight="900" fill="'+LEX_COLORS[k]+'" style="cursor:pointer">'+Math.round(avgs[i])+'</text>';
   });
@@ -11799,6 +11864,8 @@ function updateQ3LexViz() {
   if(helpBtn) helpBtn.style.display='inline';
   var pdfBtn=document.getElementById('ni-th-pdf-btn');
   if(pdfBtn) pdfBtn.style.display='inline';
+  var pairsBtn=document.getElementById('ni-th-pairs-btn');
+  if(pairsBtn) pairsBtn.style.display=(lex&&lex.paires&&lex.paires.length)?'inline':'none';
   // Col2 : légende triée par score décroissant
   var lgEl=document.getElementById('ni-q-th-legend');
   if(lgEl){
@@ -12398,6 +12465,121 @@ function _closeAllFloatWins() {
   closeLexDetail();
   // Tooltip thème Q3
   hideLexThemeTip();
+}
+
+// ════════════════════════════════════════════════════════
+// PAIRES DE THÈMES — Comparaison & Scatters
+// ════════════════════════════════════════════════════════
+
+var _q3PairesOpen = false;
+
+function _q3TogglePaires() {
+  _q3PairesOpen = !_q3PairesOpen;
+  var glb = document.getElementById('ni-q-th-global');
+  var pai = document.getElementById('ni-q-th-paires');
+  var btn = document.getElementById('ni-th-pairs-btn');
+  if (glb) glb.style.display = _q3PairesOpen ? 'none' : 'flex';
+  if (pai) {
+    pai.style.display = _q3PairesOpen ? 'block' : 'none';
+    if (_q3PairesOpen) updateQ3PairesViz();
+  }
+  if (btn) btn.classList.toggle('active', _q3PairesOpen);
+}
+
+function _findCrossings(tranches, k1, k2) {
+  var result = [];
+  for (var i = 0; i < tranches.length - 1; i++) {
+    var d1 = tranches[i][k1] - tranches[i][k2];
+    var d2 = tranches[i+1][k1] - tranches[i+1][k2];
+    if (d1 * d2 < 0) {
+      var t = Math.abs(d1) / (Math.abs(d1) + Math.abs(d2));
+      result.push({idx: i, t: t});
+    } else if (d1 === 0) {
+      result.push({idx: i, t: 0});
+    }
+  }
+  return result;
+}
+
+function _buildPairScatter(lex, k1, k2) {
+  var tranches = lex.tranches || [], phases = lex.phases || [];
+  if (!tranches.length) return '';
+  var W = 400, H = 88;
+  var ML = 24, MR = 4, MT = Math.round(H * 0.19), MB = Math.round(H * 0.17);
+  var CW = W - ML - MR, CH = H - MT - MB;
+  var MP = tranches[tranches.length-1].pageFin || tranches[tranches.length-1].pageDebut;
+  var col1 = LEX_COLORS[k1], col2 = LEX_COLORS[k2];
+  function xp(p)  { return ML + (p / MP) * CW; }
+  function yv(v)  { return MT + (1 - v / 100) * CH; }
+  function xtr(t) { return xp(((t.pageDebut||0) + (t.pageFin||t.pageDebut||0)) / 2); }
+  var s = '';
+  phases.forEach(function(ph, i) {
+    var p2 = phases[i+1] ? phases[i+1].pageDebut - 1 : MP;
+    var x1 = xp((ph.pageDebut||1) - 0.5), x2 = xp(p2 + 0.5), mx = (x1 + x2) / 2;
+    s += '<rect x="'+x1.toFixed(1)+'" y="'+MT+'" width="'+(x2-x1).toFixed(1)+'" height="'+CH+'" fill="'+LEX_PH_BG[i%LEX_PH_BG.length]+'"/>';
+    var cr = Math.round(Math.min(5, MT * 0.38));
+    s += '<circle cx="'+mx.toFixed(1)+'" cy="'+(MT/2)+'" r="'+cr+'" fill="'+LEX_PH_LC[i%LEX_PH_LC.length]+'"/>';
+    s += '<text x="'+mx.toFixed(1)+'" y="'+(MT/2+cr*0.38)+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="'+Math.round(cr*1.3)+'" font-weight="900" fill="#fff">'+(i+1)+'</text>';
+    if (i > 0) s += '<line x1="'+x1.toFixed(1)+'" y1="'+MT+'" x2="'+x1.toFixed(1)+'" y2="'+(MT+CH)+'" stroke="#ccc" stroke-width="0.5" stroke-dasharray="2,2"/>';
+  });
+  [0, 50, 100].forEach(function(v) {
+    var y = yv(v);
+    s += '<line x1="'+ML+'" y1="'+y.toFixed(1)+'" x2="'+(ML+CW)+'" y2="'+y.toFixed(1)+'" stroke="#eee" stroke-width="0.5"/>';
+    s += '<text x="'+(ML-3)+'" y="'+(y+3)+'" text-anchor="end" font-family="Arial,sans-serif" font-size="7" fill="#888">'+v+'</text>';
+  });
+  [k1, k2].forEach(function(k) {
+    var col = LEX_COLORS[k];
+    var pts = tranches.map(function(tr) { return xtr(tr).toFixed(1)+','+yv(tr[k]||0).toFixed(1); }).join(' ');
+    s += '<polyline points="'+pts+'" fill="none" stroke="'+col+'" stroke-width="1.5" stroke-linejoin="round" opacity="0.85"/>';
+  });
+  [k1, k2].forEach(function(k) {
+    var col = LEX_COLORS[k];
+    tranches.forEach(function(tr) {
+      s += '<circle cx="'+xtr(tr).toFixed(1)+'" cy="'+yv(tr[k]||0).toFixed(1)+'" r="3" fill="'+col+'" stroke="#fff" stroke-width="0.8"/>';
+    });
+  });
+  var crossings = _findCrossings(tranches, k1, k2);
+  crossings.forEach(function(cr) {
+    var i = cr.idx, t = cr.t;
+    var x  = xtr(tranches[i]) * (1-t) + xtr(tranches[i+1]) * t;
+    var vC = ((tranches[i][k1]*(1-t) + tranches[i+1][k1]*t) + (tranches[i][k2]*(1-t) + tranches[i+1][k2]*t)) / 2;
+    var y  = yv(vC);
+    s += '<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="4.5" fill="white" stroke="#555" stroke-width="1.2"/>';
+    s += '<text x="'+x.toFixed(1)+'" y="'+(y+2.5).toFixed(1)+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="6" font-weight="900" fill="#555">x</text>';
+  });
+  s += '<rect x="'+ML+'" y="'+MT+'" width="'+CW+'" height="'+CH+'" fill="none" stroke="#ccc" stroke-width="0.6"/>';
+  var lY = MT + CH + Math.round(MB * 0.78), mid = ML + CW / 2;
+  s += '<circle cx="'+(mid-62)+'" cy="'+(lY-2)+'" r="3" fill="'+col1+'"/>';
+  s += '<text x="'+(mid-56)+'" y="'+lY+'" font-family="Arial,sans-serif" font-size="8" font-weight="700" fill="'+col1+'">'+LEX_LABELS[k1]+'</text>';
+  s += '<circle cx="'+(mid+18)+'" cy="'+(lY-2)+'" r="3" fill="'+col2+'"/>';
+  s += '<text x="'+(mid+24)+'" y="'+lY+'" font-family="Arial,sans-serif" font-size="8" font-weight="700" fill="'+col2+'">'+LEX_LABELS[k2]+'</text>';
+  return '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:auto;">'+s+'</svg>';
+}
+
+function updateQ3PairesViz() {
+  var L = LIVRE_ACTIF, lex = L && L.lexique;
+  var el = document.getElementById('ni-q-th-paires');
+  if (!el || !lex || !lex.paires || !lex.paires.length) return;
+  el.innerHTML = lex.paires.map(function(p, idx) {
+    var k1 = p.cles[0], k2 = p.cles[1];
+    var col1 = LEX_COLORS[k1], col2 = LEX_COLORS[k2];
+    var svg = _buildPairScatter(lex, k1, k2);
+    var nb = _findCrossings(lex.tranches, k1, k2).length;
+    var crTxt = nb === 0 ? 'pas de croisement' : nb + ' croisement'+(nb>1?'s':'');
+    return '<div class="ni-paire-item">'+
+      '<div class="ni-paire-ttl">'+
+        '<span style="width:8px;height:8px;border-radius:50%;background:'+col1+';display:inline-block;flex-shrink:0;"></span>'+
+        '<span style="color:'+col1+';">'+LEX_LABELS[k1]+'</span>'+
+        '<span style="color:#ccc;font-weight:400;margin:0 3px;">/</span>'+
+        '<span style="width:8px;height:8px;border-radius:50%;background:'+col2+';display:inline-block;flex-shrink:0;"></span>'+
+        '<span style="color:'+col2+';">'+LEX_LABELS[k2]+'</span>'+
+        '<span style="margin-left:auto;font-size:8px;color:#aaa;font-weight:500;">'+crTxt+' · ★'+p.score+'/4</span>'+
+      '</div>'+
+      svg+
+      '<div class="ni-paire-interp">'+p.interpretation+'</div>'+
+      (idx < lex.paires.length-1 ? '<div class="ni-paire-sep"></div>' : '')+
+    '</div>';
+  }).join('');
 }
 
 </script>
