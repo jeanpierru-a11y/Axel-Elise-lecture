@@ -2036,6 +2036,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
   box-shadow:0 8px 40px rgba(0,0,0,.28),0 2px 8px rgba(0,0,0,.12);
   display:none;flex-direction:column;overflow:hidden;
   min-width:320px;min-height:240px;width:520px;
+  max-height:calc(100vh - 100px);
 }
 #lex-expl-hdr{
   display:flex;align-items:center;gap:8px;padding:9px 13px;flex-shrink:0;
@@ -3798,6 +3799,20 @@ Inclus aussi un champ champLexical (6 mots-clés par thème avec leur nombre d'o
 Retourne UNIQUEMENT un JSON strict, sans aucun texte avant ou après, sans backticks, dans ce format exact :
 {"phases":[{"pageDebut":1,"nom":"..."},...],"tranches":[{"pageDebut":1,"pageFin":27,"amour":XX,"pouvoir":XX,"liberte":XX,"identite":XX,"societe":XX,"nature":XX},...],"champLexical":{"amour":[...],...}}</div>
     <button onclick="var t=document.getElementById('lex-help-promptB-txt');var ta=document.createElement('textarea');ta.value=t.textContent;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);this.textContent='✅ Copié !';var me=this;setTimeout(function(){me.textContent='📋 Copier le Prompt B';},2000);" style="font-size:.72rem;padding:4px 10px;background:#6A1B9A;color:#fff;border:none;border-radius:5px;cursor:pointer;margin-top:2px;">📋 Copier le Prompt B</button>
+    <h4 style="color:#1565C0">📄 Comptage sur texte complet</h4>
+    <p>Le bouton <b>📄</b> dans le bandeau (visible si un champ lexical est défini) lance un <b>comptage exhaustif automatique</b> du texte de l'œuvre. Il est à fiabilité 100 %.</p>
+    <p><b>Comment ça marche :</b><br>
+    ① Fournis le texte de l'œuvre en <b>.txt (UTF-8)</b> — copie-colle depuis un PDF ou depuis le web<br>
+    ② L'app compte les occurrences de chaque mot du champ lexical, tranche par tranche<br>
+    ③ Les scores sont normalisés automatiquement (formule * ci-dessus)<br>
+    ④ Les anciens scores sont <b>sauvegardés en backup</b> avant remplacement<br>
+    ⑤ Le badge dans le bandeau passe à <b>📊 [prénom] · 100 %</b></p>
+    <p>Le détail complet (occurrences par mot, par tranche, global) est conservé dans les données — exportable via PDF.</p>
+    <h4 style="color:#546E7A">✍️ Importer un comptage manuel ou externe</h4>
+    <p>Si tu as compté les mots <b>à la main</b> (au fil de la lecture) ou reçu un fichier de comptage, utilise le bouton <b>📋 Importer</b> (même bouton que le Prompt B).</p>
+    <p>Colle un JSON avec les champs suivants — les scores doivent déjà être <b>normalisés sur 100</b> :</p>
+    <div style="background:#f0f4f8;border-radius:6px;padding:6px 8px;font-size:.65rem;font-family:monospace;color:#333;line-height:1.7;margin-bottom:4px;">{"phases":[{"pageDebut":1,"nom":"..."},...],<br>"tranches":[{"pageDebut":1,"pageFin":27,"amour":XX,...},...],<br>"champLexical":{"amour":[{"mot":"rose","n":38},...], ...},<br>"source":"comptage_exhaustif",<br>"fiabilite":95,<br>"sourceAuteur":"Élise"}</div>
+    <p style="font-size:.67rem;color:#888;">Si <code>source</code> et <code>sourceAuteur</code> sont absents, le badge affichera « Import ».</p>
   </div>
 </div>
 
@@ -12791,7 +12806,7 @@ function openLexExpl(key) {
   _initExplDrag();
 }
 function closeLexExpl(){var w=document.getElementById('lex-expl-win');if(w)w.style.display='none';}
-function openLexHelp(){var w=document.getElementById('lex-help-win');if(w){w.style.display='flex';w.style.transform='none';w.style.left=(window.innerWidth/2-260)+'px';w.style.top='80px';_initHelpDrag();}}
+function openLexHelp(){var w=document.getElementById('lex-help-win');if(w){w.style.display='flex';w.style.transform='none';w.style.left=(window.innerWidth/2-260)+'px';w.style.top=Math.max(20,Math.min(80,window.innerHeight*0.06))+'px';w.style.height='';_initHelpDrag();}}
 function closeLexHelp(){var w=document.getElementById('lex-help-win');if(w)w.style.display='none';}
 
 var _helpDrag=null,_helpRsz=null;
