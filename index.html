@@ -3808,11 +3808,14 @@ Retourne UNIQUEMENT un JSON strict, sans aucun texte avant ou après, sans backt
     ④ Les anciens scores sont <b>sauvegardés en backup</b> avant remplacement<br>
     ⑤ Le badge dans le bandeau passe à <b>📊 [prénom] · 100 %</b></p>
     <p>Le détail complet (occurrences par mot, par tranche, global) est conservé dans les données — exportable via PDF.</p>
-    <h4 style="color:#546E7A">✍️ Importer un comptage manuel ou externe</h4>
-    <p>Si tu as compté les mots <b>à la main</b> (au fil de la lecture) ou reçu un fichier de comptage, utilise le bouton <b>📋 Importer</b> (même bouton que le Prompt B).</p>
-    <p>Colle un JSON avec les champs suivants — les scores doivent déjà être <b>normalisés sur 100</b> :</p>
-    <div style="background:#f0f4f8;border-radius:6px;padding:6px 8px;font-size:.65rem;font-family:monospace;color:#333;line-height:1.7;margin-bottom:4px;">{"phases":[{"pageDebut":1,"nom":"..."},...],<br>"tranches":[{"pageDebut":1,"pageFin":27,"amour":XX,...},...],<br>"champLexical":{"amour":[{"mot":"rose","n":38},...], ...},<br>"source":"comptage_exhaustif",<br>"fiabilite":95,<br>"sourceAuteur":"Élise"}</div>
-    <p style="font-size:.67rem;color:#888;">Si <code>source</code> et <code>sourceAuteur</code> sont absents, le badge affichera « Import ».</p>
+    <h4 style="color:#546E7A">✍️ Comptage manuel — modèle Excel</h4>
+    <p>Si tu as compté les mots <b>à la main</b> au fil de la lecture, utilise le modèle Excel. Les phases et les mots à compter sont déjà pré-remplis — il n'y a qu'à saisir les nombres d'occurrences.</p>
+    <div style="display:flex;gap:8px;margin:4px 0 8px;">
+      <button onclick="genererModeleExcel()" style="font-size:.72rem;padding:5px 10px;background:#1565C0;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:700;">📥 Télécharger le modèle</button>
+      <button onclick="document.getElementById('lex-excel-import-file').click()" style="font-size:.72rem;padding:5px 10px;background:#2E7D32;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:700;">📤 Importer l'Excel rempli</button>
+      <input type="file" id="lex-excel-import-file" accept=".xlsx,.xls" style="display:none;" onchange="importerExcelComptage(this)">
+    </div>
+    <p style="font-size:.67rem;color:#888;line-height:1.5;">Le modèle contient une ligne par tranche narrative. Tu remplis les cellules jaunes avec le nombre de fois que chaque mot apparaît dans cette tranche. À l'import, les scores sont calculés automatiquement.</p>
   </div>
 </div>
 
@@ -12517,8 +12520,185 @@ function hideLexThemeTip(){var t=document.getElementById('lex-th-tip');if(t)t.st
 
 // ── Import ────────────────────────────────────────────────────────────────────
 // ══════════════════════════════════════════════════════════════
-// LEXIQUE — Comptage sur texte complet
+// LEXIQUE — Excel modèle & import comptage manuel
 // ══════════════════════════════════════════════════════════════
+var _xlsxLoaded=false;
+function _loadXLSX(cb){
+  if(_xlsxLoaded){cb();return;}
+  var s=document.createElement('script');
+  s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+  s.onload=function(){_xlsxLoaded=true;cb();};
+  s.onerror=function(){showToast('⚠️ Impossible de charger la bibliothèque Excel (connexion requise)','warn');};
+  document.head.appendChild(s);
+}
+
+function genererModeleExcel(){
+  if(!LIVRE_ACTIF){showToast('Aucun livre ouvert','warn');return;}
+  var lex=LIVRE_ACTIF.lexique;
+  if(!lex||!lex.tranches||!lex.tranches.length){showToast('⚠️ Pas de tranches définies pour ce livre','warn');return;}
+  if(!lex.champLexical||!Object.keys(lex.champLexical).length){showToast('⚠️ Pas de champ lexical défini pour ce livre','warn');return;}
+  _loadXLSX(function(){
+    var XLSX=window.XLSX;
+    var phases=lex.phases||[];
+    var tranches=lex.tranches;
+    var champ=lex.champLexical;
+    // Couleurs thèmes (hex ARGB pour XLSX)
+    var COLORS={amour:'FFAD1457',pouvoir:'FFC62828',liberte:'FF1565C0',identite:'FF6A1B9A',societe:'FFFB8C00',nature:'FF2E7D32'};
+    var LABELS_FR={amour:'Amour',pouvoir:'Pouvoir',liberte:'Liberté',identite:'Identité',societe:'Société',nature:'Nature'};
+    // Construction des colonnes dynamiques
+    var cols=[
+      {label:'Phase',key:'phase',w:28},
+      {label:'Pages',key:'pages',w:12}
+    ];
+    var themeStart={};
+    LEX_KEYS.forEach(function(k){
+      themeStart[k]=cols.length;
+      var mots=champ[k]||[];
+      mots.forEach(function(m){cols.push({label:m.mot,key:k+'__'+m.mot,theme:k,w:14});});
+    });
+    var wb=XLSX.utils.book_new();
+    var ws={};
+    var range={s:{r:0,c:0},e:{r:tranches.length+2,c:cols.length-1}};
+    ws['!ref']=XLSX.utils.encode_range(range);
+    ws['!cols']=cols.map(function(c){return{wch:c.w||12};});
+    // Fusionner les en-têtes thèmes (ligne 0)
+    ws['!merges']=[];
+    // Ligne 0 : en-têtes thèmes
+    // Colonnes Phase et Pages
+    ws[XLSX.utils.encode_cell({r:0,c:0})]={v:'Phase',t:'s',s:{font:{bold:true,color:{rgb:'FFFFFFFF'}},fill:{fgColor:{rgb:'FF37474F'}},alignment:{horizontal:'center',vertical:'center'}}};
+    ws[XLSX.utils.encode_cell({r:0,c:1})]={v:'Pages',t:'s',s:{font:{bold:true,color:{rgb:'FFFFFFFF'}},fill:{fgColor:{rgb:'FF37474F'}},alignment:{horizontal:'center'}}};
+    // Fusionner et colorier par thème
+    LEX_KEYS.forEach(function(k){
+      var mots=champ[k]||[];
+      if(!mots.length) return;
+      var startC=themeStart[k];
+      var endC=startC+mots.length-1;
+      ws['!merges'].push({s:{r:0,c:startC},e:{r:0,c:endC}});
+      var cell={v:LABELS_FR[k],t:'s',s:{font:{bold:true,color:{rgb:'FFFFFFFF'}},fill:{fgColor:{rgb:COLORS[k]}},alignment:{horizontal:'center',vertical:'center'}}};
+      ws[XLSX.utils.encode_cell({r:0,c:startC})]=cell;
+    });
+    // Ligne 1 : noms des mots
+    ws[XLSX.utils.encode_cell({r:1,c:0})]={v:'Tranche narrative',t:'s',s:{font:{bold:true},fill:{fgColor:{rgb:'FFE0E0E0'}},alignment:{horizontal:'center'}}};
+    ws[XLSX.utils.encode_cell({r:1,c:1})]={v:'Début – Fin',t:'s',s:{font:{bold:true},fill:{fgColor:{rgb:'FFE0E0E0'}}}};
+    cols.slice(2).forEach(function(col,i){
+      var c=i+2;
+      var rgb=COLORS[col.theme]||'FF888888';
+      // Lighten : use the BG palette
+      var bgMap={amour:'FFFCE4EC',pouvoir:'FFFFEBEE',liberte:'FFE3F2FD',identite:'FFF3E5F5',societe:'FFFFF8E1',nature:'FFE8F5E9'};
+      ws[XLSX.utils.encode_cell({r:1,c:c})]={v:col.label,t:'s',s:{font:{bold:true,color:{rgb:rgb}},fill:{fgColor:{rgb:bgMap[col.theme]||'FFF5F5F5'}},alignment:{horizontal:'center'}}};
+    });
+    // Lignes données (une par tranche)
+    tranches.forEach(function(tr,i){
+      var r=i+2;
+      var ph=phases[i]||{};
+      var phaseTxt=ph.nom||('Phase '+(i+1));
+      var pagesTxt='p.'+tr.pageDebut+' – '+tr.pageFin;
+      ws[XLSX.utils.encode_cell({r:r,c:0})]={v:phaseTxt,t:'s',s:{font:{bold:true},alignment:{wrapText:true}}};
+      ws[XLSX.utils.encode_cell({r:r,c:1})]={v:pagesTxt,t:'s',s:{alignment:{horizontal:'center'}}};
+      cols.slice(2).forEach(function(col,j){
+        var c=j+2;
+        var parts=col.key.split('__');
+        var k=parts[0];
+        var mot=parts[1];
+        // Chercher occurrence existante dans champLexical (global approximé) — laisser vide
+        ws[XLSX.utils.encode_cell({r:r,c:c})]={v:0,t:'n',s:{fill:{fgColor:{rgb:'FFFFFF99'}},alignment:{horizontal:'center'}}};
+      });
+    });
+    // Ligne instructions
+    var iR=tranches.length+2;
+    ws[XLSX.utils.encode_cell({r:iR,c:0})]={v:'← Saisis le nombre de fois que chaque mot apparaît dans chaque tranche. Les cellules jaunes sont à remplir.',t:'s',s:{font:{italic:true,color:{rgb:'FF888888'}}}};
+    // Onglet
+    XLSX.utils.book_append_sheet(wb,ws,'Comptage');
+    // Téléchargement
+    var nom=(LIVRE_ACTIF.titre||'lexique').replace(/[^a-zA-Z0-9\u00C0-\u024F\s]/g,'').replace(/\s+/g,'_');
+    XLSX.writeFile(wb,'comptage_'+nom+'.xlsx');
+    showToast('📥 Modèle téléchargé — remplis les cellules jaunes puis importe-le','ok');
+  });
+}
+
+function importerExcelComptage(input){
+  var file=input.files[0];
+  input.value='';
+  if(!file) return;
+  if(!LIVRE_ACTIF||!LIVRE_ACTIF.lexique){showToast('Aucun livre ouvert','warn');return;}
+  var lex=LIVRE_ACTIF.lexique;
+  if(!lex.tranches||!lex.tranches.length){showToast('⚠️ Pas de tranches définies','warn');return;}
+  _loadXLSX(function(){
+    var reader=new FileReader();
+    reader.onload=function(e){
+      try{
+        var XLSX=window.XLSX;
+        var data=new Uint8Array(e.target.result);
+        var wb=XLSX.read(data,{type:'array'});
+        var ws=wb.Sheets[wb.SheetNames[0]];
+        var rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:0});
+        if(rows.length<3){throw new Error('Le fichier ne contient pas assez de lignes');}
+        // Ligne 0 : thèmes (fusionnés), ligne 1 : mots, lignes 2+ : données
+        var motRow=rows[1];        // noms des mots
+        var dataStart=2;
+        var champ=lex.champLexical||{};
+        // Reconstruire la carte colonne → (theme, mot)
+        var colMap=[];            // index → {theme, mot}
+        var curTheme=null;
+        for(var c=0;c<motRow.length;c++){
+          var v0=rows[0][c];
+          if(typeof v0==='string'&&v0.trim()){
+            // Chercher le thème correspondant
+            LEX_KEYS.forEach(function(k){
+              var LABELS_FR={amour:'Amour',pouvoir:'Pouvoir',liberte:'Liberté',identite:'Identité',societe:'Société',nature:'Nature'};
+              if(v0.trim()===LABELS_FR[k]) curTheme=k;
+            });
+          }
+          var motLabel=typeof motRow[c]==='string'?motRow[c].trim():'';
+          colMap.push(curTheme&&motLabel&&c>=2?{theme:curTheme,mot:motLabel}:null);
+        }
+        // Lire les occurrences par tranche
+        var tranchesOcc=lex.tranches.map(function(tr,i){
+          var row=rows[dataStart+i]||[];
+          var occ={};
+          LEX_KEYS.forEach(function(k){occ[k]=0;});
+          colMap.forEach(function(cm,c){
+            if(!cm) return;
+            var n=parseFloat(row[c])||0;
+            occ[cm.theme]=(occ[cm.theme]||0)+n;
+          });
+          return {pageDebut:tr.pageDebut,pageFin:tr.pageFin,occ:occ,nbPages:tr.pageFin-tr.pageDebut+1};
+        });
+        // Normalisation densité/max
+        var maxDens=0;
+        tranchesOcc.forEach(function(tr){
+          LEX_KEYS.forEach(function(k){
+            var d=tr.occ[k]/tr.nbPages;
+            if(d>maxDens) maxDens=d;
+          });
+        });
+        if(maxDens===0) throw new Error('Aucune occurrence trouvée — le fichier semble vide');
+        // Backup + nouveaux scores
+        lex._backupTranches=JSON.parse(JSON.stringify(lex.tranches));
+        lex._backupSource=lex.source||'modelisation_ia';
+        var newTranches=lex.tranches.map(function(tr,i){
+          var t=tranchesOcc[i];
+          var nr={pageDebut:tr.pageDebut,pageFin:tr.pageFin};
+          LEX_KEYS.forEach(function(k){nr[k]=Math.round(t.occ[k]/t.nbPages/maxDens*100);});
+          return nr;
+        });
+        lex.tranches=newTranches;
+        lex.source='comptage_exhaustif';
+        lex.fiabilite=95;
+        lex.sourceAuteur=AUTH_NOM||'?';
+        // Résumé global
+        var globalOcc={};
+        LEX_KEYS.forEach(function(k){globalOcc[k]=tranchesOcc.reduce(function(s,t){return s+t.occ[k];},0);});
+        lex.comptageDetail={fichier:file.name,date:new Date().toLocaleDateString('fr-FR'),source:'excel_manuel',global:globalOcc};
+        sauvegarderBiblio();
+        updateQ3LexViz();
+        showToast('✅ Comptage Excel importé — scores recalculés','ok');
+      }catch(ex){showToast('⚠️ Erreur import : '+ex.message,'warn');}
+    };
+    reader.readAsArrayBuffer(file);
+  });
+}
+
 function openLexCount(){
   if(!LIVRE_ACTIF||!LIVRE_ACTIF.lexique||!LIVRE_ACTIF.lexique.champLexical){
     showToast('⚠️ Ce livre n\u2019a pas de champ lexical défini','warn'); return;
