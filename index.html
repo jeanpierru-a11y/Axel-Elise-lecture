@@ -2072,7 +2072,25 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 .rsz2.rsz-se2{bottom:0;right:0;width:12px;height:12px;cursor:se-resize;}
 .rsz2.rsz-sw2{bottom:0;left:0;width:12px;height:12px;cursor:sw-resize;}
 
-/* ── Paires de thèmes comparées ────────────────────── */
+/* ── Panneau mode lexique (sous le scatter) ── */
+#ni-q-th-mode{flex:0 0 auto;border-top:1.5px solid #EDE7F6;padding:5px 6px 4px;background:#FAFAFA;}
+.lm-toggle-row{display:flex;gap:4px;align-items:center;margin-bottom:4px;}
+.lm-toggle-lbl{font-size:.6rem;font-weight:800;color:#888;text-transform:uppercase;letter-spacing:.4px;flex-shrink:0;width:52px;}
+.lm-btn{font-size:.66rem;font-weight:700;padding:2px 8px;border-radius:10px;border:1.5px solid #ddd;background:#f5f5f5;color:#888;cursor:pointer;transition:all .15s;}
+.lm-btn.active{border-color:currentColor;background:white;box-shadow:0 1px 4px rgba(0,0,0,.12);}
+.lm-btn.active.ia{color:#6A1B9A;border-color:#B39DDB;background:#F5F0FF;}
+.lm-btn.active.compt{color:#1565C0;border-color:#90CAF9;background:#E3F2FD;}
+.lm-btn.active.perso{color:#E65100;border-color:#FFCC80;background:#FFF3E0;}
+.lm-btn:disabled{opacity:.35;cursor:default;}
+.lm-workflow{border-radius:7px;padding:5px 8px;font-size:.67rem;line-height:1.6;display:flex;flex-direction:column;gap:4px;}
+.lm-workflow.c1{background:#E8F5E9;border:1px solid #A5D6A7;}
+.lm-workflow.c2{background:#E3F2FD;border:1px solid #90CAF9;}
+.lm-workflow.c3{background:#FFF3E0;border:1px solid #FFCC80;}
+.lm-workflow.cx{background:#FAFAFA;border:1px dashed #ddd;color:#bbb;}
+.lm-wf-title{font-weight:800;font-size:.68rem;}
+.lm-wf-steps{color:#555;padding-left:2px;}
+.lm-wf-btns{display:flex;gap:5px;flex-wrap:wrap;margin-top:2px;}
+
 #ni-q-th-paires{display:none;flex:1;overflow-y:auto;min-height:0;padding:4px 6px;display:flex;flex-direction:column;gap:7px;}
 .ni-paire-item{background:#fff;border:1px solid #e2d9f0;border-radius:8px;padding:8px 10px 6px;box-shadow:0 1px 4px rgba(106,27,154,.07);display:flex;flex-direction:column;gap:4px;}
 .ni-paire-ttl{font-size:11px;font-weight:800;display:flex;align-items:center;gap:5px;padding-bottom:5px;border-bottom:1px solid #f0e8f8;}
@@ -2574,6 +2592,21 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 
           <!-- Légende phases (sous le scatter) -->
           <div id="ni-q-th-ph-legend" style="display:none;flex:0 0 auto;padding:3px 6px 4px;border-top:1px solid #ede7f6;"></div>
+
+          <!-- Panneau mode analyse -->
+          <div id="ni-q-th-mode" style="display:none;">
+            <div class="lm-toggle-row">
+              <span class="lm-toggle-lbl">Mots</span>
+              <button class="lm-btn active ia" id="lm-mots-ia" onclick="_lmSet('mots','ia')">🤖 IA</button>
+              <button class="lm-btn perso" id="lm-mots-perso" onclick="_lmSet('mots','perso')">✏️ Perso</button>
+            </div>
+            <div class="lm-toggle-row">
+              <span class="lm-toggle-lbl">Analyse</span>
+              <button class="lm-btn active ia" id="lm-trt-critique" onclick="_lmSet('trt','critique')">📚 Critique IA</button>
+              <button class="lm-btn compt" id="lm-trt-comptage" onclick="_lmSet('trt','comptage')">🔢 Comptage</button>
+            </div>
+            <div id="lm-workflow"></div>
+          </div>
 
           </div><!-- /ni-q-th-global -->
 
@@ -12218,6 +12251,9 @@ function updateQ3LexViz() {
       }).join('')+
     '</div>';
   }
+  // Panneau mode analyse (sous scatter)
+  var modeEl=document.getElementById('ni-q-th-mode');
+  if(modeEl){ modeEl.style.display='block'; _lmRender(); }
   // Sélectionner thème dominant
   var dom=LEX_KEYS.reduce(function(b,k){return _lexAvg(lex.tranches,k)>_lexAvg(lex.tranches,b)?k:b;},LEX_KEYS[0]);
   _q3ThemeSelect(dom);
@@ -12734,6 +12770,78 @@ function importerExcelComptage(input){
     reader.readAsArrayBuffer(file);
   });
 }
+// ══════════════════════════════════════════════════════════════
+// LEXIQUE — Panneau mode analyse (sous scatter)
+// ══════════════════════════════════════════════════════════════
+var _LM={mots:'ia',trt:'critique'}; // état courant
+
+function _lmSet(axis,val){
+  _LM[axis]=val;
+  _lmRender();
+}
+
+function _lmRender(){
+  var mots=_LM.mots, trt=_LM.trt;
+  // Boutons toggle
+  function setBtn(id,active,cls){
+    var b=document.getElementById(id);
+    if(!b) return;
+    b.className='lm-btn'+(active?' active '+cls:' '+cls);
+  }
+  setBtn('lm-mots-ia',    mots==='ia',    'ia');
+  setBtn('lm-mots-perso', mots==='perso', 'perso');
+  setBtn('lm-trt-critique', trt==='critique', 'ia');
+  setBtn('lm-trt-comptage', trt==='comptage', 'compt');
+  // Désactiver Perso+Critique (case impossible)
+  var bPC=document.getElementById('lm-trt-critique');
+  if(bPC) bPC.disabled=(mots==='perso');
+  if(mots==='perso'&&trt==='critique') { _LM.trt='comptage'; _lmRender(); return; }
+
+  var wf=document.getElementById('lm-workflow');
+  if(!wf) return;
+  var hasChamp=LIVRE_ACTIF&&LIVRE_ACTIF.lexique&&LIVRE_ACTIF.lexique.champLexical&&
+    LEX_KEYS.some(function(k){return (LIVRE_ACTIF.lexique.champLexical[k]||[]).length>0;});
+
+  // Case 1 : IA × Critique (défaut)
+  if(mots==='ia'&&trt==='critique'){
+    wf.innerHTML='<div class="lm-workflow c1">'+
+      '<div class="lm-wf-title">✅ Fonctionnement standard — rien à faire</div>'+
+      '<div class="lm-wf-steps">Les scores et les mots cl\u00e9s sont fournis par l\u2019analyse IA d\u2019apr\u00e8s la critique litt\u00e9raire \u00e9tablie. Le radar et le scatter s\u2019affichent directement.</div>'+
+    '</div>';
+    return;
+  }
+  // Case 2 : IA × Comptage
+  if(mots==='ia'&&trt==='comptage'){
+    wf.innerHTML='<div class="lm-workflow c2">'+
+      '<div class="lm-wf-title">🔢 Comptage automatique sur texte brut — mots IA</div>'+
+      '<div class="lm-wf-steps">① Fournis le texte de l\'œuvre en .txt — les mots du champ lexical IA seront comptés automatiquement<br>② Les scores sont recalculés et le radar mis à jour</div>'+
+      '<div class="lm-wf-btns">'+
+        '<button onclick="openLexCount()" style="font-size:.67rem;padding:3px 9px;background:#1565C0;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:700;">📄 Fournir le texte .txt</button>'+
+      '</div>'+
+    '</div>';
+    return;
+  }
+  // Case 3 : Perso × Comptage
+  if(mots==='perso'&&trt==='comptage'){
+    wf.innerHTML='<div class="lm-workflow c3">'+
+      '<div class="lm-wf-title">✏️ Comptage sur mots personnalisés</div>'+
+      '<div class="lm-wf-steps">'+
+        '① Télécharge le modèle Excel — la feuille <b>Champs lexicaux</b> liste les mots IA à modifier<br>'+
+        '② Modifie les mots et leurs justifications selon ta lecture<br>'+
+        '③ Remplis la feuille <b>Comptage</b> (occurrences par tranche) <i>— ou —</i> fournis le texte .txt pour un comptage auto<br>'+
+        '④ Importe le fichier Excel rempli'+
+      '</div>'+
+      '<div class="lm-wf-btns">'+
+        '<button onclick="genererModeleExcel()" style="font-size:.67rem;padding:3px 9px;background:#E65100;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:700;">📥 Modèle Excel</button>'+
+        '<button onclick="document.getElementById(\'lex-excel-import-file2\').click()" style="font-size:.67rem;padding:3px 9px;background:#2E7D32;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:700;">📤 Importer Excel</button>'+
+        '<input type="file" id="lex-excel-import-file2" accept=".xlsx,.xls" style="display:none;" onchange="importerExcelComptage(this)">'+
+      '</div>'+
+      (!hasChamp?'<div style="font-size:.65rem;color:#E65100;margin-top:3px;">⚠️ Aucun champ lexical défini — génère d\'abord le modèle Excel pour en créer un.</div>':'')+
+    '</div>';
+    return;
+  }
+}
+
 function openLexCount(){
   if(!LIVRE_ACTIF||!LIVRE_ACTIF.lexique||!LIVRE_ACTIF.lexique.champLexical){
     showToast('⚠️ Ce livre n\u2019a pas de champ lexical défini','warn'); return;
