@@ -3764,7 +3764,7 @@ function sauvegarderBiblio() {
 // ════════════════════════════════════════════════════════
 // VERSION — incrémenter à chaque mise à jour des livres démo
 // ════════════════════════════════════════════════════════
-const DEMO_VERSION = 19; // v19 : lexique Thérèse — phases alignées sur schéma moderne 8 parties
+const DEMO_VERSION = 20; // v20 : Thérèse — 8 tranches alignées sur les 8 phases modernes
 const LIVRES_DEMO = [
   {
     id: 'liv_petit_prince_001',
@@ -4421,11 +4421,14 @@ const LIVRES_DEMO = [
         {pageDebut:197, nom:"Situation finale — Paris, la liberté"}
       ],
       tranches: [
-        {pageDebut:1,   pageFin:44,  amour:80, pouvoir:38, liberte:60, identite:82, societe:35, nature:38},
-        {pageDebut:45,  pageFin:89,  amour:88, pouvoir:42, liberte:52, identite:88, societe:40, nature:42},
-        {pageDebut:90,  pageFin:134, amour:85, pouvoir:45, liberte:50, identite:82, societe:36, nature:45},
-        {pageDebut:135, pageFin:179, amour:78, pouvoir:42, liberte:55, identite:90, societe:38, nature:42},
-        {pageDebut:180, pageFin:224, amour:84, pouvoir:38, liberte:58, identite:88, societe:36, nature:33}
+        {pageDebut:1,   pageFin:28,  amour:80, pouvoir:40, liberte:55, identite:82, societe:40, nature:45},
+        {pageDebut:29,  pageFin:56,  amour:84, pouvoir:38, liberte:58, identite:88, societe:35, nature:42},
+        {pageDebut:57,  pageFin:84,  amour:92, pouvoir:38, liberte:52, identite:84, societe:38, nature:40},
+        {pageDebut:85,  pageFin:112, amour:82, pouvoir:45, liberte:48, identite:86, societe:36, nature:38},
+        {pageDebut:113, pageFin:140, amour:76, pouvoir:50, liberte:42, identite:90, societe:38, nature:45},
+        {pageDebut:141, pageFin:168, amour:74, pouvoir:42, liberte:48, identite:88, societe:35, nature:45},
+        {pageDebut:169, pageFin:196, amour:86, pouvoir:38, liberte:68, identite:86, societe:36, nature:38},
+        {pageDebut:197, pageFin:224, amour:90, pouvoir:38, liberte:72, identite:86, societe:36, nature:27}
       ],
       champLexical: {
         amour:    [{mot:"Bernard",n:42},{mot:"Anne",n:28},{mot:"mariage",n:22},{mot:"coeur",n:15},{mot:"indifférence",n:12},{mot:"tendresse",n:8},{mot:"haine",n:8}],
