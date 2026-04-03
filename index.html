@@ -2557,7 +2557,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
         </div>
 
         <!-- Grille 3×2 (visible quand lexique disponible) -->
-        <div id="ni-q-th-haslex" style="display:none;flex:1;flex-direction:column;min-height:0;">
+        <div id="ni-q-th-haslex" style="display:none;flex:1;flex-direction:column;min-height:0;overflow:hidden;">
 
           <!-- Vue globale (radar + scatter) -->
           <div id="ni-q-th-global" style="display:flex;flex:1;flex-direction:column;min-height:0;gap:12px;padding-bottom:8px;">
@@ -12314,14 +12314,23 @@ function _renderQ3Scatter(lex) {
   if(!svgEl||!lex||!lex.tranches||!lex.tranches.length) return;
   svgEl.style.width='100%';
   svgEl.style.height='100%';
-  // Double rAF : 1er frame prépare, 2e frame mesure les dimensions réelles → cercles ronds garantis
+  // Double rAF : mesure les dimensions réelles après layout complet
   requestAnimationFrame(function(){
     requestAnimationFrame(function(){
       var cont=svgEl.parentElement;
       var rect=cont?cont.getBoundingClientRect():null;
       var W=rect&&rect.width>10?Math.round(rect.width):Math.max(60,cont?cont.clientWidth:300);
       var H=rect&&rect.height>10?Math.round(rect.height):Math.max(60,cont?cont.clientHeight:100);
-      _renderQ3ScatterDraw(svgEl,lex,W,H);
+      // Garde : si H est aberrant (> 600px), repousser d'un frame supplémentaire
+      if(H>600){
+        requestAnimationFrame(function(){
+          var r2=cont?cont.getBoundingClientRect():null;
+          var H2=r2&&r2.height>10?Math.round(r2.height):H;
+          _renderQ3ScatterDraw(svgEl,lex,W,Math.min(H2,600));
+        });
+      } else {
+        _renderQ3ScatterDraw(svgEl,lex,W,H);
+      }
     });
   });
 }
@@ -13374,7 +13383,7 @@ function _q3TogglePaires() {
       updateQ3PairesViz();
     } else {
       // Retour vue globale : setTimeout garantit que le DOM est re-layouté avant mesure
-      setTimeout(function(){ updateQ3LexViz(); }, 100);
+      setTimeout(function(){ updateQ3LexViz(); }, 400);
     }
   }
   if (btn) btn.classList.toggle('active', _q3PairesOpen);
