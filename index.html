@@ -3809,13 +3809,15 @@ Retourne UNIQUEMENT un JSON strict, sans aucun texte avant ou après, sans backt
     ⑤ Le badge dans le bandeau passe à <b>📊 [prénom] · 100 %</b></p>
     <p>Le détail complet (occurrences par mot, par tranche, global) est conservé dans les données — exportable via PDF.</p>
     <h4 style="color:#546E7A">✍️ Comptage manuel — modèle Excel</h4>
-    <p>Si tu as compté les mots <b>à la main</b> au fil de la lecture, utilise le modèle Excel. Les phases et les mots à compter sont déjà pré-remplis — il n'y a qu'à saisir les nombres d'occurrences.</p>
+    <p>Le modèle Excel généré contient <b>deux feuilles</b> :</p>
+    <p><b>📋 Feuille « Champs lexicaux »</b> — liste des mots retenus par thème, pré-remplie avec l'analyse IA. Tu peux ajouter, supprimer ou modifier les mots, et écrire tes propres justifications. Ce sont ces mots qui seront comptés.</p>
+    <p><b>📊 Feuille « Comptage »</b> — matrice transposée : <b>une ligne par mot</b>, une colonne par tranche narrative. Tu saisis le nombre d'occurrences dans chaque cellule jaune (une tranche = une portion du livre, ex. pages 1–27).</p>
     <div style="display:flex;gap:8px;margin:4px 0 8px;">
       <button onclick="genererModeleExcel()" style="font-size:.72rem;padding:5px 10px;background:#1565C0;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:700;">📥 Télécharger le modèle</button>
       <button onclick="document.getElementById('lex-excel-import-file').click()" style="font-size:.72rem;padding:5px 10px;background:#2E7D32;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:700;">📤 Importer l'Excel rempli</button>
       <input type="file" id="lex-excel-import-file" accept=".xlsx,.xls" style="display:none;" onchange="importerExcelComptage(this)">
     </div>
-    <p style="font-size:.67rem;color:#888;line-height:1.5;">Le modèle contient une ligne par tranche narrative. Tu remplis les cellules jaunes avec le nombre de fois que chaque mot apparaît dans cette tranche. À l'import, les scores sont calculés automatiquement.</p>
+    <p style="font-size:.67rem;color:#555;background:#e8f5e9;border-radius:6px;padding:5px 7px;line-height:1.6;"><b>À l'import :</b> les scores sont calculés automatiquement (normalisation densité/max). Si tu as modifié la feuille « Champs lexicaux », le champ lexical et les justifications du livre sont mis à jour en même temps.</p>
   </div>
 </div>
 
@@ -12535,84 +12537,91 @@ function _loadXLSX(cb){
 function genererModeleExcel(){
   if(!LIVRE_ACTIF){showToast('Aucun livre ouvert','warn');return;}
   var lex=LIVRE_ACTIF.lexique;
-  if(!lex||!lex.tranches||!lex.tranches.length){showToast('⚠️ Pas de tranches définies pour ce livre','warn');return;}
-  if(!lex.champLexical||!Object.keys(lex.champLexical).length){showToast('⚠️ Pas de champ lexical défini pour ce livre','warn');return;}
+  if(!lex||!lex.tranches||!lex.tranches.length){showToast('⚠️ Pas de tranches définies','warn');return;}
   _loadXLSX(function(){
     var XLSX=window.XLSX;
     var phases=lex.phases||[];
     var tranches=lex.tranches;
-    var champ=lex.champLexical;
-    // Couleurs thèmes (hex ARGB pour XLSX)
+    var champ=lex.champLexical||{};
+    var justifs=(lex.justifications)||{};
     var COLORS={amour:'FFAD1457',pouvoir:'FFC62828',liberte:'FF1565C0',identite:'FF6A1B9A',societe:'FFFB8C00',nature:'FF2E7D32'};
+    var BGCOL={amour:'FFFCE4EC',pouvoir:'FFFFEBEE',liberte:'FFE3F2FD',identite:'FFF3E5F5',societe:'FFFFF8E1',nature:'FFE8F5E9'};
     var LABELS_FR={amour:'Amour',pouvoir:'Pouvoir',liberte:'Liberté',identite:'Identité',societe:'Société',nature:'Nature'};
-    // Construction des colonnes dynamiques
-    var cols=[
-      {label:'Phase',key:'phase',w:28},
-      {label:'Pages',key:'pages',w:12}
-    ];
-    var themeStart={};
-    LEX_KEYS.forEach(function(k){
-      themeStart[k]=cols.length;
-      var mots=champ[k]||[];
-      mots.forEach(function(m){cols.push({label:m.mot,key:k+'__'+m.mot,theme:k,w:14});});
-    });
+    function cell(v,t,s){return {v:v,t:t||'s',s:s||{}};}
+    function hdr(v,rgb,bg){return cell(v,'s',{font:{bold:true,color:{rgb:'FFFFFFFF'}},fill:{fgColor:{rgb:bg||rgb}},alignment:{horizontal:'center',vertical:'center'}});}
+    function mot_hdr(v,rgb,bg){return cell(v,'s',{font:{bold:true,color:{rgb:rgb}},fill:{fgColor:{rgb:bg}},alignment:{horizontal:'center'}});}
+    function yellow(n){return {v:n,t:'n',s:{fill:{fgColor:{rgb:'FFFFFF99'}},alignment:{horizontal:'center'}}};}
     var wb=XLSX.utils.book_new();
-    var ws={};
-    var range={s:{r:0,c:0},e:{r:tranches.length+2,c:cols.length-1}};
-    ws['!ref']=XLSX.utils.encode_range(range);
-    ws['!cols']=cols.map(function(c){return{wch:c.w||12};});
-    // Fusionner les en-têtes thèmes (ligne 0)
-    ws['!merges']=[];
-    // Ligne 0 : en-têtes thèmes
-    // Colonnes Phase et Pages
-    ws[XLSX.utils.encode_cell({r:0,c:0})]={v:'Phase',t:'s',s:{font:{bold:true,color:{rgb:'FFFFFFFF'}},fill:{fgColor:{rgb:'FF37474F'}},alignment:{horizontal:'center',vertical:'center'}}};
-    ws[XLSX.utils.encode_cell({r:0,c:1})]={v:'Pages',t:'s',s:{font:{bold:true,color:{rgb:'FFFFFFFF'}},fill:{fgColor:{rgb:'FF37474F'}},alignment:{horizontal:'center'}}};
-    // Fusionner et colorier par thème
+
+    // ── FEUILLE 1 : Comptage (matrice transposée — mots en lignes, tranches en colonnes) ──
+    var ws1={};
+    var nbTr=tranches.length;
+    // En-tête col 0-1 fixe + une colonne par tranche
+    var totalCols=2+nbTr;
+    // Ligne 0 : Thème | Mot | Phase1 | Phase2 | …
+    ws1[XLSX.utils.encode_cell({r:0,c:0})]=hdr('Thème','FF37474F','FF37474F');
+    ws1[XLSX.utils.encode_cell({r:0,c:1})]=hdr('Mot','FF37474F','FF37474F');
+    tranches.forEach(function(tr,j){
+      var ph=phases[j]||{};
+      var label='P'+(j+1)+'\np.'+tr.pageDebut+'–'+tr.pageFin;
+      ws1[XLSX.utils.encode_cell({r:0,c:2+j})]=hdr(label,'FF37474F','FF546E7A');
+    });
+    // Lignes : une par mot, regroupées par thème
+    var r=1;
+    var merges1=[];
     LEX_KEYS.forEach(function(k){
       var mots=champ[k]||[];
       if(!mots.length) return;
-      var startC=themeStart[k];
-      var endC=startC+mots.length-1;
-      ws['!merges'].push({s:{r:0,c:startC},e:{r:0,c:endC}});
-      var cell={v:LABELS_FR[k],t:'s',s:{font:{bold:true,color:{rgb:'FFFFFFFF'}},fill:{fgColor:{rgb:COLORS[k]}},alignment:{horizontal:'center',vertical:'center'}}};
-      ws[XLSX.utils.encode_cell({r:0,c:startC})]=cell;
-    });
-    // Ligne 1 : noms des mots
-    ws[XLSX.utils.encode_cell({r:1,c:0})]={v:'Tranche narrative',t:'s',s:{font:{bold:true},fill:{fgColor:{rgb:'FFE0E0E0'}},alignment:{horizontal:'center'}}};
-    ws[XLSX.utils.encode_cell({r:1,c:1})]={v:'Début – Fin',t:'s',s:{font:{bold:true},fill:{fgColor:{rgb:'FFE0E0E0'}}}};
-    cols.slice(2).forEach(function(col,i){
-      var c=i+2;
-      var rgb=COLORS[col.theme]||'FF888888';
-      // Lighten : use the BG palette
-      var bgMap={amour:'FFFCE4EC',pouvoir:'FFFFEBEE',liberte:'FFE3F2FD',identite:'FFF3E5F5',societe:'FFFFF8E1',nature:'FFE8F5E9'};
-      ws[XLSX.utils.encode_cell({r:1,c:c})]={v:col.label,t:'s',s:{font:{bold:true,color:{rgb:rgb}},fill:{fgColor:{rgb:bgMap[col.theme]||'FFF5F5F5'}},alignment:{horizontal:'center'}}};
-    });
-    // Lignes données (une par tranche)
-    tranches.forEach(function(tr,i){
-      var r=i+2;
-      var ph=phases[i]||{};
-      var phaseTxt=ph.nom||('Phase '+(i+1));
-      var pagesTxt='p.'+tr.pageDebut+' – '+tr.pageFin;
-      ws[XLSX.utils.encode_cell({r:r,c:0})]={v:phaseTxt,t:'s',s:{font:{bold:true},alignment:{wrapText:true}}};
-      ws[XLSX.utils.encode_cell({r:r,c:1})]={v:pagesTxt,t:'s',s:{alignment:{horizontal:'center'}}};
-      cols.slice(2).forEach(function(col,j){
-        var c=j+2;
-        var parts=col.key.split('__');
-        var k=parts[0];
-        var mot=parts[1];
-        // Chercher occurrence existante dans champLexical (global approximé) — laisser vide
-        ws[XLSX.utils.encode_cell({r:r,c:c})]={v:0,t:'n',s:{fill:{fgColor:{rgb:'FFFFFF99'}},alignment:{horizontal:'center'}}};
+      var themeStartR=r;
+      mots.forEach(function(m){
+        ws1[XLSX.utils.encode_cell({r:r,c:0})]=cell(LABELS_FR[k],'s',{font:{bold:true,color:{rgb:'FFFFFFFF'}},fill:{fgColor:{rgb:COLORS[k]}},alignment:{horizontal:'center',vertical:'center'}});
+        ws1[XLSX.utils.encode_cell({r:r,c:1})]=mot_hdr(m.mot,COLORS[k],BGCOL[k]);
+        tranches.forEach(function(tr,j){
+          ws1[XLSX.utils.encode_cell({r:r,c:2+j})]=yellow(0);
+        });
+        r++;
       });
+      if(mots.length>1) merges1.push({s:{r:themeStartR,c:0},e:{r:r-1,c:0}});
     });
-    // Ligne instructions
-    var iR=tranches.length+2;
-    ws[XLSX.utils.encode_cell({r:iR,c:0})]={v:'← Saisis le nombre de fois que chaque mot apparaît dans chaque tranche. Les cellules jaunes sont à remplir.',t:'s',s:{font:{italic:true,color:{rgb:'FF888888'}}}};
-    // Onglet
-    XLSX.utils.book_append_sheet(wb,ws,'Comptage');
-    // Téléchargement
+    // Ligne instruction
+    ws1[XLSX.utils.encode_cell({r:r,c:0})]=cell('← Saisis les occurrences de chaque mot dans chaque tranche (cellules jaunes).','s',{font:{italic:true,color:{rgb:'FF888888'}}});
+    ws1['!ref']=XLSX.utils.encode_range({s:{r:0,c:0},e:{r:r,c:totalCols-1}});
+    ws1['!cols']=[{wch:14},{wch:18}].concat(tranches.map(function(){return {wch:11};}));
+    ws1['!rows']=[{hpt:28}];
+    ws1['!merges']=merges1;
+    XLSX.utils.book_append_sheet(wb,ws1,'Comptage');
+
+    // ── FEUILLE 2 : Champs lexicaux (thème | mot | justification — éditable) ──
+    var ws2={};
+    ws2[XLSX.utils.encode_cell({r:0,c:0})]=hdr('Thème','FF37474F','FF37474F');
+    ws2[XLSX.utils.encode_cell({r:0,c:1})]=hdr('Mot','FF37474F','FF37474F');
+    ws2[XLSX.utils.encode_cell({r:0,c:2})]=hdr('Justification (optionnelle)','FF37474F','FF37474F');
+    var r2=1;
+    var merges2=[];
+    LEX_KEYS.forEach(function(k){
+      var mots=champ[k]||[];
+      // Si aucun mot défini, créer 3 lignes vides pour saisie libre
+      if(!mots.length) mots=[{mot:''},{mot:''},{mot:''}];
+      var startR2=r2;
+      mots.forEach(function(m){
+        var justifTxt='';
+        if(justifs[k]&&justifs[k].mots&&m.mot) justifTxt=justifs[k].mots[m.mot]||'';
+        ws2[XLSX.utils.encode_cell({r:r2,c:0})]=cell(LABELS_FR[k],'s',{font:{bold:true,color:{rgb:'FFFFFFFF'}},fill:{fgColor:{rgb:COLORS[k]}},alignment:{horizontal:'center',vertical:'center'}});
+        ws2[XLSX.utils.encode_cell({r:r2,c:1})]=cell(m.mot||'','s',{fill:{fgColor:{rgb:BGCOL[k]}}});
+        ws2[XLSX.utils.encode_cell({r:r2,c:2})]=cell(justifTxt,'s',{alignment:{wrapText:true}});
+        r2++;
+      });
+      if(mots.length>1) merges2.push({s:{r:startR2,c:0},e:{r:r2-1,c:0}});
+    });
+    ws2[XLSX.utils.encode_cell({r:r2,c:0})]=cell('← Tu peux modifier les mots et ajouter tes propres justifications. Ne change pas les noms de thèmes.','s',{font:{italic:true,color:{rgb:'FF888888'}}});
+    ws2['!ref']=XLSX.utils.encode_range({s:{r:0,c:0},e:{r:r2,c:2}});
+    ws2['!cols']=[{wch:14},{wch:18},{wch:60}];
+    ws2['!merges']=merges2;
+    XLSX.utils.book_append_sheet(wb,ws2,'Champs lexicaux');
+
     var nom=(LIVRE_ACTIF.titre||'lexique').replace(/[^a-zA-Z0-9\u00C0-\u024F\s]/g,'').replace(/\s+/g,'_');
     XLSX.writeFile(wb,'comptage_'+nom+'.xlsx');
-    showToast('📥 Modèle téléchargé — remplis les cellules jaunes puis importe-le','ok');
+    showToast('📥 Modèle téléchargé — 2 feuilles : Comptage + Champs lexicaux','ok');
   });
 }
 
@@ -12630,75 +12639,101 @@ function importerExcelComptage(input){
         var XLSX=window.XLSX;
         var data=new Uint8Array(e.target.result);
         var wb=XLSX.read(data,{type:'array'});
-        var ws=wb.Sheets[wb.SheetNames[0]];
-        var rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:0});
-        if(rows.length<3){throw new Error('Le fichier ne contient pas assez de lignes');}
-        // Ligne 0 : thèmes (fusionnés), ligne 1 : mots, lignes 2+ : données
-        var motRow=rows[1];        // noms des mots
-        var dataStart=2;
-        var champ=lex.champLexical||{};
-        // Reconstruire la carte colonne → (theme, mot)
-        var colMap=[];            // index → {theme, mot}
-        var curTheme=null;
-        for(var c=0;c<motRow.length;c++){
-          var v0=rows[0][c];
-          if(typeof v0==='string'&&v0.trim()){
-            // Chercher le thème correspondant
-            LEX_KEYS.forEach(function(k){
-              var LABELS_FR={amour:'Amour',pouvoir:'Pouvoir',liberte:'Liberté',identite:'Identité',societe:'Société',nature:'Nature'};
-              if(v0.trim()===LABELS_FR[k]) curTheme=k;
-            });
-          }
-          var motLabel=typeof motRow[c]==='string'?motRow[c].trim():'';
-          colMap.push(curTheme&&motLabel&&c>=2?{theme:curTheme,mot:motLabel}:null);
+        var LABELS_FR={amour:'Amour',pouvoir:'Pouvoir',liberte:'Liberté',identite:'Identité',societe:'Société',nature:'Nature'};
+        function findThemeKey(label){
+          var found=null;
+          LEX_KEYS.forEach(function(k){if(LABELS_FR[k]===(label||'').trim()) found=k;});
+          return found;
         }
-        // Lire les occurrences par tranche
-        var tranchesOcc=lex.tranches.map(function(tr,i){
-          var row=rows[dataStart+i]||[];
-          var occ={};
-          LEX_KEYS.forEach(function(k){occ[k]=0;});
-          colMap.forEach(function(cm,c){
-            if(!cm) return;
-            var n=parseFloat(row[c])||0;
-            occ[cm.theme]=(occ[cm.theme]||0)+n;
-          });
-          return {pageDebut:tr.pageDebut,pageFin:tr.pageFin,occ:occ,nbPages:tr.pageFin-tr.pageDebut+1};
-        });
+
+        // ── Feuille "Champs lexicaux" (optionnelle) ──
+        var wsChamp=wb.Sheets['Champs lexicaux'];
+        if(wsChamp){
+          var rowsC=XLSX.utils.sheet_to_json(wsChamp,{header:1,defval:''});
+          var newChamp={};
+          var newJustifs=lex.justifications?JSON.parse(JSON.stringify(lex.justifications)):{};
+          LEX_KEYS.forEach(function(k){newChamp[k]=[];});
+          var curK=null;
+          for(var ri=1;ri<rowsC.length;ri++){
+            var row=rowsC[ri];
+            var thLbl=(row[0]||'').toString().trim();
+            var mot=(row[1]||'').toString().trim();
+            var justif=(row[2]||'').toString().trim();
+            if(thLbl){var k2=findThemeKey(thLbl);if(k2) curK=k2;}
+            if(curK&&mot&&mot!=='←'){
+              newChamp[curK].push({mot:mot,n:0});
+              if(justif){
+                if(!newJustifs[curK]) newJustifs[curK]={intro:'',mots:{}};
+                if(!newJustifs[curK].mots) newJustifs[curK].mots={};
+                newJustifs[curK].mots[mot]=justif;
+              }
+            }
+          }
+          // N'appliquer que si au moins un thème a des mots
+          var hasData=LEX_KEYS.some(function(k){return newChamp[k]&&newChamp[k].length>0;});
+          if(hasData){
+            lex.champLexical=newChamp;
+            lex.justifications=newJustifs;
+          }
+        }
+
+        // ── Feuille "Comptage" (matrice transposée) ──
+        var wsComp=wb.Sheets['Comptage']||wb.Sheets[wb.SheetNames[0]];
+        var rows=XLSX.utils.sheet_to_json(wsComp,{header:1,defval:0});
+        if(rows.length<3) throw new Error('Feuille Comptage vide ou trop courte');
+        // Ligne 0 : on ignore (c'est l'en-tête tranches)
+        // Colonnes 0=thème, 1=mot, 2..N=tranches
+        var nbTr=lex.tranches.length;
+        // Construire tableau occ[tranche_idx][theme_key] = total
+        var trOcc=[];
+        for(var ti=0;ti<nbTr;ti++){
+          var o={};LEX_KEYS.forEach(function(k){o[k]=0;});
+          trOcc.push(o);
+        }
+        var curKey=null;
+        for(var ri2=1;ri2<rows.length;ri2++){
+          var row2=rows[ri2];
+          var thCell=(row2[0]||'').toString().trim();
+          var motCell=(row2[1]||'').toString().trim();
+          if(!motCell||motCell==='←') continue;
+          if(thCell){var k3=findThemeKey(thCell);if(k3) curKey=k3;}
+          if(!curKey) continue;
+          for(var ti2=0;ti2<nbTr;ti2++){
+            var n=parseFloat(row2[2+ti2])||0;
+            trOcc[ti2][curKey]=(trOcc[ti2][curKey]||0)+n;
+          }
+        }
         // Normalisation densité/max
         var maxDens=0;
-        tranchesOcc.forEach(function(tr){
-          LEX_KEYS.forEach(function(k){
-            var d=tr.occ[k]/tr.nbPages;
-            if(d>maxDens) maxDens=d;
-          });
+        trOcc.forEach(function(occ,i){
+          var nbPg=lex.tranches[i].pageFin-lex.tranches[i].pageDebut+1;
+          LEX_KEYS.forEach(function(k){var d=occ[k]/nbPg;if(d>maxDens)maxDens=d;});
         });
         if(maxDens===0) throw new Error('Aucune occurrence trouvée — le fichier semble vide');
-        // Backup + nouveaux scores
         lex._backupTranches=JSON.parse(JSON.stringify(lex.tranches));
         lex._backupSource=lex.source||'modelisation_ia';
-        var newTranches=lex.tranches.map(function(tr,i){
-          var t=tranchesOcc[i];
+        lex.tranches=lex.tranches.map(function(tr,i){
+          var nbPg=tr.pageFin-tr.pageDebut+1;
           var nr={pageDebut:tr.pageDebut,pageFin:tr.pageFin};
-          LEX_KEYS.forEach(function(k){nr[k]=Math.round(t.occ[k]/t.nbPages/maxDens*100);});
+          LEX_KEYS.forEach(function(k){nr[k]=Math.round(trOcc[i][k]/nbPg/maxDens*100);});
           return nr;
         });
-        lex.tranches=newTranches;
         lex.source='comptage_exhaustif';
         lex.fiabilite=95;
         lex.sourceAuteur=AUTH_NOM||'?';
-        // Résumé global
         var globalOcc={};
-        LEX_KEYS.forEach(function(k){globalOcc[k]=tranchesOcc.reduce(function(s,t){return s+t.occ[k];},0);});
+        LEX_KEYS.forEach(function(k){globalOcc[k]=trOcc.reduce(function(s,o){return s+(o[k]||0);},0);});
         lex.comptageDetail={fichier:file.name,date:new Date().toLocaleDateString('fr-FR'),source:'excel_manuel',global:globalOcc};
         sauvegarderBiblio();
         updateQ3LexViz();
-        showToast('✅ Comptage Excel importé — scores recalculés','ok');
+        var msg='✅ Excel importé — scores recalculés';
+        if(wsChamp) msg+=' · champs lexicaux mis à jour';
+        showToast(msg,'ok');
       }catch(ex){showToast('⚠️ Erreur import : '+ex.message,'warn');}
     };
     reader.readAsArrayBuffer(file);
   });
 }
-
 function openLexCount(){
   if(!LIVRE_ACTIF||!LIVRE_ACTIF.lexique||!LIVRE_ACTIF.lexique.champLexical){
     showToast('⚠️ Ce livre n\u2019a pas de champ lexical défini','warn'); return;
