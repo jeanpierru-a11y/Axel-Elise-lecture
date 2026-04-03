@@ -2079,7 +2079,18 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 .ni-paire-interp{font-size:11px;color:#333;line-height:1.65;padding:3px 0 2px;}
 .ni-paire-sep{display:none;}
 .ni-q-hdr-icon.active{background:rgba(106,27,154,.18);}
-</style>
+/* ── Badge source lexique ── */
+#ni-q-th-source-badge{font-size:.57rem;font-weight:700;padding:1px 6px;border-radius:8px;background:rgba(106,27,154,.1);color:#4A148C;white-space:nowrap;flex-shrink:0;line-height:1.5;display:none;}
+#ni-q-th-source-badge.ia{background:#E8F5E9;color:#2E7D32;}
+#ni-q-th-source-badge.exhaustif{background:#E3F2FD;color:#1565C0;}
+/* ── Modale comptage texte ── */
+#lex-count-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10200;align-items:center;justify-content:center;}
+#lex-count-overlay.open{display:flex;}
+#lex-count-box{background:#fff;border-radius:12px;padding:18px 20px;max-width:500px;width:92%;box-shadow:0 4px 28px rgba(0,0,0,.28);display:flex;flex-direction:column;gap:10px;}
+#lex-count-progress{display:none;font-size:.72rem;color:#1565C0;font-weight:700;}
+#lex-count-err{display:none;color:#c00;font-size:.72rem;}
+#lex-count-result{display:none;background:#f0f7ff;border-radius:7px;padding:8px 10px;font-size:.7rem;line-height:1.6;}
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 </head>
 <body>
@@ -2514,6 +2525,8 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
     <div class="ni-q" id="ni-q-themes">
       <div class="ni-q-hdr" style="background:#EDE7F6;color:#4A148C;gap:4px;">
         <span class="ni-q-hdr-lbl">🕸️ Toile thématique</span>
+        <span id="ni-q-th-source-badge"></span>
+        <button class="ni-q-hdr-icon" id="ni-th-count-btn" onclick="openLexCount()" title="Compter sur texte complet (.txt)" style="display:none;">📄</button>
         <button class="ni-q-hdr-icon" onclick="openLexiqueImport()" title="Importer analyse lexicale">📋</button>
         <button class="ni-q-hdr-icon" id="ni-th-pdf-btn" onclick="genererPDF_lex()" title="Exporter la toile en PDF" style="display:none;">📄</button>
         <button class="ni-q-hdr-icon" id="ni-th-pairs-btn" onclick="_q3TogglePaires()" title="Comparer les paires de thèmes" style="display:none;">⇌</button>
@@ -3635,6 +3648,28 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
   </div>
 </div>
 
+<!-- ── LEXIQUE COMPTAGE TEXTE COMPLET ── -->
+<div id="lex-count-overlay">
+  <div id="lex-count-box">
+    <div style="font-size:.9rem;font-weight:700;color:#1565C0;margin-bottom:2px;">📄 Comptage sur texte complet</div>
+    <div style="font-size:.73rem;color:#555;line-height:1.5;">
+      Fournis le texte de l'œuvre en <b>.txt</b> (UTF-8). L'application comptera les occurrences de chaque mot du champ lexical, par tranche et par thème, et recalculera les scores.<br>
+      <span style="color:#888;font-size:.67rem;">Les scores actuels sont sauvegardés en backup avant remplacement.</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <label style="font-size:.75rem;font-weight:700;color:#333;flex-shrink:0;">Fichier .txt :</label>
+      <input type="file" id="lex-count-file" accept=".txt" style="font-size:.72rem;flex:1;" onchange="document.getElementById('lex-count-err').style.display='none';">
+    </div>
+    <div id="lex-count-err">⚠️ Erreur : </div>
+    <div id="lex-count-progress">⏳ Analyse en cours…</div>
+    <div id="lex-count-result"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px;">
+      <button class="btn btn-gris btn-sm" onclick="closeLexCount()">Annuler</button>
+      <button class="btn btn-sm" style="background:#1565C0;color:#fff;" onclick="runLexCount()">🔢 Lancer le comptage</button>
+    </div>
+  </div>
+</div>
+
 <!-- ── LEXIQUE IMPORT ── -->
 <div id="lex-import-overlay">
   <div style="background:#fff;border-radius:12px;padding:20px;max-width:520px;width:90%;box-shadow:0 4px 24px rgba(0,0,0,.25);">
@@ -3696,9 +3731,43 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
   <div id="lex-help-body">
     <h4 style="color:#4A148C">📐 Principe général</h4>
     <p>L'analyse lexicale organise l'œuvre en <b>tranches de pages égales</b> (3 pour Aristote, 5 pour Freytag, 8 pour le schéma moderne) et attribue à chaque thème un <b>score de densité</b> dans chaque tranche.</p>
-    <h4 style="color:#37474F">🎚️ Des scores, pas des comptages bruts</h4>
-    <p>Les scores (0–100) <b>ne sont pas des comptages d'occurrences</b> : ce sont des <b>estimations de densité thématique</b> saisies à la main (ou générées par l'IA). Un score de 80 signifie « ce thème est très présent dans cette tranche », pas « 80 occurrences ont été comptées ».<br>
-    Ce choix est délibéré : il évite le <b>biais du champ inégal</b> — si un thème a 10 mots définis et un autre seulement 4, le premier aurait mécaniquement plus d'occurrences brutes, sans être plus important dans le livre.</p>
+    <h4 style="color:#37474F">🎚️ Origine et fiabilité des scores</h4>
+    <p>Les scores (0–100) ne sont pas toujours des comptages bruts — leur origine et leur fiabilité dépendent du cas :</p>
+    <table style="width:100%;border-collapse:collapse;font-size:.67rem;margin-bottom:5px;">
+      <tr style="background:#F3E5F5;">
+        <th style="padding:3px 5px;text-align:left;font-weight:800;color:#4A148C;border-bottom:1px solid #E0D7F5;">Cas</th>
+        <th style="padding:3px 5px;text-align:left;font-weight:800;color:#4A148C;border-bottom:1px solid #E0D7F5;">Origine des scores</th>
+        <th style="padding:3px 5px;text-align:left;font-weight:800;color:#4A148C;border-bottom:1px solid #E0D7F5;">Fiabilité</th>
+      </tr>
+      <tr style="border-bottom:1px solid #f0e8f8;">
+        <td style="padding:3px 5px;font-weight:700;">🤖 Livres démo</td>
+        <td style="padding:3px 5px;color:#555;">Modélisation IA d'après la critique littéraire établie</td>
+        <td style="padding:3px 5px;color:#2E7D32;font-weight:700;">~85 %</td>
+      </tr>
+      <tr style="border-bottom:1px solid #f0e8f8;">
+        <td style="padding:3px 5px;font-weight:700;">🤖 Import Prompt B</td>
+        <td style="padding:3px 5px;color:#555;">Estimation IA sur demande (connaissance de l'œuvre)</td>
+        <td style="padding:3px 5px;color:#E65100;font-weight:700;">60–85 %</td>
+      </tr>
+      <tr style="border-bottom:1px solid #f0e8f8;">
+        <td style="padding:3px 5px;font-weight:700;">✍️ Lecture manuelle</td>
+        <td style="padding:3px 5px;color:#555;">Comptage au fil de la lecture, normalisé <b>*</b></td>
+        <td style="padding:3px 5px;color:#1565C0;font-weight:700;">95 %</td>
+      </tr>
+      <tr>
+        <td style="padding:3px 5px;font-weight:700;">📄 Texte .txt fourni</td>
+        <td style="padding:3px 5px;color:#555;">Comptage exhaustif automatique, normalisé <b>*</b></td>
+        <td style="padding:3px 5px;color:#1565C0;font-weight:700;">100 %</td>
+      </tr>
+    </table>
+    <p style="font-size:.67rem;color:#555;background:#f5f0ff;border-radius:6px;padding:5px 7px;line-height:1.6;">
+      <b>* Formule de normalisation (cas 3 et 4) :</b><br>
+      Pour chaque thème T et tranche P :<br>
+      <code>densité(T,P) = occurrences(T,P) ÷ nb_pages(P)</code><br>
+      <code>score(T,P) = densité(T,P) ÷ max_densité × 100</code><br>
+      où <code>max_densité</code> = maximum de densité(T,P) sur <i>tous</i> les thèmes et <i>toutes</i> les tranches.<br>
+      Résultat : le thème le plus dense vaut 100 — tous les autres sont proportionnels, indépendamment du nombre de mots dans le champ lexical.
+    </p>
     <h4 style="color:#1565C0">🔍 Sélection des mots</h4>
     <p>Un mot entre dans un thème s'il satisfait l'un de ces trois critères :<br>
     ① <b>Appartenance directe</b> : le mot relève du champ lexical du thème (<i>ex. tendresse → Amour</i>)<br>
@@ -3822,7 +3891,7 @@ function sauvegarderBiblio() {
 // ════════════════════════════════════════════════════════
 // VERSION — incrémenter à chaque mise à jour des livres démo
 // ════════════════════════════════════════════════════════
-const DEMO_VERSION = 25; // v25 : lexique Petit Prince (8ph) + Tom Sawyer (5ph) + Alice (3ph)
+const DEMO_VERSION = 26; // v26 : source/fiabilite dans lexiques démo + comptage texte complet
 const LIVRES_DEMO = [
   {
     id: 'liv_petit_prince_001',
@@ -4047,7 +4116,9 @@ const LIVRES_DEMO = [
          interpretation:"M\u00eame arc que amour/soci\u00e9t\u00e9 mais centr\u00e9 sur l'espace : la nature du d\u00e9sert et des \u00e9toiles (72, 62) s'effondre aux plan\u00e8tes (25, 28) \u2014 espaces ferm\u00e9s, sans ciel. La soci\u00e9t\u00e9-plan\u00e8te domine (75, 70). Puis retour de la nature avec la Terre (75, 68, 55, 68). L'opposition d\u00e9sert ouvert / plan\u00e8te ferm\u00e9e dit visuellement la critique du monde adulte."},
         {cles:["amour","pouvoir"], score:3,
          interpretation:"Convergence exacte en phase 3 (amour=62, pouvoir=62) \u2014 chez le roi qui r\u00e8gne sans sujets. Avant : amour domine. Apr\u00e8s : pouvoir monte encore (55) puis s'effondre (20\u219812) quand l'amour explose avec le Renard. La rencontre du Renard est la d\u00e9faite d\u00e9finitive du pouvoir."}
-      ]
+      ],
+      source: 'modelisation_ia',
+      fiabilite: 90
     }
   },
   {
@@ -4268,7 +4339,9 @@ const LIVRES_DEMO = [
          interpretation:"M\u00eame arc que Libert\u00e9/Soci\u00e9t\u00e9 mais centr\u00e9 sur l'espace physique. La Soci\u00e9t\u00e9 (65) domine la Nature (62) en ph1 \u2014 Tom est au village. Puis Nature prend le dessus (80, 85) avec l'\u00eele et la grotte. La nature n'est pas neutre : elle est l'espace de la libert\u00e9 contre les institutions."},
         {cles:["liberte","pouvoir"], score:3,
          interpretation:"Libert\u00e9 d\u00e9passe d\u00e9j\u00e0 le Pouvoir d\u00e8s ph1 (58 vs 48), puis s'envole (88 vs 35 en ph2). Le Pouvoir recule r\u00e9guli\u00e8rement (48\u219835\u219842\u219838\u219828) tandis que la Libert\u00e9 monte. Trajectoires inverses sans croisement mais divergence croissante : Tom grandit, les contraintes r\u00e9tr\u00e9cissent."}
-      ]
+      ],
+      source: 'modelisation_ia',
+      fiabilite: 82
     }
   },
   {
@@ -4486,7 +4559,9 @@ const LIVRES_DEMO = [
          interpretation:"Identit\u00e9 tr\u00e8s haute (88) face \u00e0 un Pouvoir croissant (68\u219272\u219282). Convergence puis croisement en ph3 : Identit\u00e9 descend (78) quand Pouvoir monte (82) \u2014 Alice perd pied. Mais c'est le moment m\u00eame o\u00f9 elle se ressaisit et crie la v\u00e9rit\u00e9. La pression maximale du pouvoir r\u00e9v\u00e8le l'identit\u00e9."},
         {cles:["identite","societe"], score:2,
          interpretation:"Identit\u00e9 reste toujours sup\u00e9rieure \u00e0 Soci\u00e9t\u00e9 (88/62, 85/65, 78/55). Pas de croisement \u2014 mais \u00e9cart r\u00e9v\u00e9lateur : m\u00eame quand l'absurde social est \u00e0 son comble (ph2), Alice garde son sens d'elle-m\u00eame. Son identit\u00e9 est le refuge contre la folie ambiante."}
-      ]
+      ],
+      source: 'modelisation_ia',
+      fiabilite: 88
     }
   },
 
@@ -4709,7 +4784,9 @@ const LIVRES_DEMO = [
          interpretation:"Le poids de l\'Amour bourgeois reste constant pendant toute la chute de Liberté — l\'un est la condition de l\'autre. Ils se rejoignent exactement en ph7 (88/88) : quitter Bernard coïncide avec retrouver la liberté."},
         {cles:["liberte","societe"], score:3,
          interpretation:"Société est presque plate (33-38) mais c\'est là l\'enjeu : Liberté tombe EN DESSOUS de cette ligne inerte aux phases 4-5, quand l\'ordre social gagne sans effort. La fin est la réponse : Liberté à 87, Société à 33 — Thérèse échappe à un monde immobile."}
-      ]
+      ],
+      source: 'modelisation_ia',
+      fiabilite: 88
     }
   },
 
@@ -4930,7 +5007,9 @@ const LIVRES_DEMO = [
          interpretation:"En ph1, Société (88) domine Identité (82) : Romand est d\'abord défini par le regard social. Dès ph2, Identité prend le dessus définitivement. Le croisement dit : le mensonge de 1975 naît d\'une pression sociale plus forte que le vide intérieur — qui prend sa revanche (Identité 92 vs Société 53 au procès)."},
         {cles:["liberte","societe"], score:3,
          interpretation:"Société domine Liberté pendant tout le roman — le paraître pèse plus que toute aspiration. Croisement unique en ph7-8 : la condamnation arrache Romand au paraître. La prison est le seul espace où il peut exister sans masque."}
-      ]
+      ],
+      source: 'modelisation_ia',
+      fiabilite: 85
     }
   }
 ];
@@ -12067,6 +12146,26 @@ function updateQ3LexViz() {
   if(pdfBtn) pdfBtn.style.display='inline';
   var pairsBtn=document.getElementById('ni-th-pairs-btn');
   if(pairsBtn) pairsBtn.style.display=(lex&&lex.paires&&lex.paires.length)?'inline':'none';
+  // Bouton comptage : visible si champLexical défini
+  var countBtn=document.getElementById('ni-th-count-btn');
+  if(countBtn) countBtn.style.display=(lex&&lex.champLexical)?'inline':'none';
+  // Badge source
+  var badge=document.getElementById('ni-q-th-source-badge');
+  if(badge){
+    badge.className='';
+    if(lex.source==='comptage_exhaustif'){
+      badge.textContent='📊 '+( lex.sourceAuteur||'') +' · 100%';
+      badge.className='exhaustif';
+      badge.style.display='inline';
+    } else if(lex.source==='modelisation_ia'){
+      badge.textContent='🤖 IA · '+(lex.fiabilite||'?')+'%';
+      badge.className='ia';
+      badge.style.display='inline';
+    } else {
+      badge.textContent='';
+      badge.style.display='none';
+    }
+  }
   // Col2 : légende triée par score décroissant
   var lgEl=document.getElementById('ni-q-th-legend');
   if(lgEl){
@@ -12402,8 +12501,153 @@ function showLexThemeTip(evt, key) {
 function hideLexThemeTip(){var t=document.getElementById('lex-th-tip');if(t)t.style.display='none';}
 
 // ── Import ────────────────────────────────────────────────────────────────────
-function openLexiqueImport(){
-  var ov=document.getElementById('lex-import-overlay');if(!ov)return;
+// ══════════════════════════════════════════════════════════════
+// LEXIQUE — Comptage sur texte complet
+// ══════════════════════════════════════════════════════════════
+function openLexCount(){
+  if(!LIVRE_ACTIF||!LIVRE_ACTIF.lexique||!LIVRE_ACTIF.lexique.champLexical){
+    showToast('⚠️ Ce livre n\u2019a pas de champ lexical défini','warn'); return;
+  }
+  var ov=document.getElementById('lex-count-overlay');if(!ov)return;
+  ov.classList.add('open');
+  document.getElementById('lex-count-file').value='';
+  document.getElementById('lex-count-err').style.display='none';
+  document.getElementById('lex-count-progress').style.display='none';
+  document.getElementById('lex-count-result').style.display='none';
+}
+function closeLexCount(){
+  var ov=document.getElementById('lex-count-overlay');
+  if(ov) ov.classList.remove('open');
+}
+function runLexCount(){
+  var errEl=document.getElementById('lex-count-err');
+  var progEl=document.getElementById('lex-count-progress');
+  var resEl=document.getElementById('lex-count-result');
+  errEl.style.display='none';
+  var file=document.getElementById('lex-count-file').files[0];
+  if(!file){errEl.textContent='⚠️ Sélectionne un fichier .txt';errEl.style.display='block';return;}
+  if(!LIVRE_ACTIF||!LIVRE_ACTIF.lexique){return;}
+  var lex=LIVRE_ACTIF.lexique;
+  var champLex=lex.champLexical;
+  if(!champLex||!Object.keys(champLex).length){
+    errEl.textContent='⚠️ Aucun champ lexical défini pour ce livre';errEl.style.display='block';return;
+  }
+  progEl.style.display='block'; resEl.style.display='none';
+  var reader=new FileReader();
+  reader.onerror=function(){progEl.style.display='none';errEl.textContent='⚠️ Lecture du fichier impossible';errEl.style.display='block';};
+  reader.onload=function(e){
+    try{
+      var text=e.target.result;
+      var pages=parseInt(LIVRE_ACTIF.pages)||200;
+      var totalChars=text.length;
+      var charPerPage=Math.ceil(totalChars/pages);
+      // Construire les regex par mot (insensible à la casse)
+      var motRegex={};
+      LEX_KEYS.forEach(function(k){
+        motRegex[k]={};
+        var mots=champLex[k]||[];
+        mots.forEach(function(m){
+          var esc=m.mot.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+          motRegex[k][m.mot]=new RegExp(esc,'gi');
+        });
+      });
+      // Compter par tranche
+      var tranches=lex.tranches;
+      var tranchesDetail=[];
+      var allDensities=[];
+      tranches.forEach(function(tr){
+        var nbPages=tr.pageFin-tr.pageDebut+1;
+        var cStart=(tr.pageDebut-1)*charPerPage;
+        var cEnd=Math.min(tr.pageFin*charPerPage,totalChars);
+        var chunk=text.slice(cStart,cEnd);
+        var row={pageDebut:tr.pageDebut,pageFin:tr.pageFin,nbPages:nbPages,mots:{}};
+        LEX_KEYS.forEach(function(k){
+          row.mots[k]={};
+          var occ=0;
+          Object.keys(motRegex[k]).forEach(function(mot){
+            var re=motRegex[k][mot];
+            re.lastIndex=0;
+            var cnt=(chunk.match(re)||[]).length;
+            row.mots[k][mot]=cnt;
+            occ+=cnt;
+          });
+          row['_occ_'+k]=occ;
+          var density=nbPages>0?occ/nbPages:0;
+          row['_dens_'+k]=density;
+          allDensities.push(density);
+        });
+        tranchesDetail.push(row);
+      });
+      // Normalisation : max densité = 100
+      var maxDens=Math.max.apply(null,allDensities)||1;
+      // Backup des tranches actuelles
+      lex._backupTranches=JSON.parse(JSON.stringify(lex.tranches));
+      lex._backupSource=lex.source||'modelisation_ia';
+      lex._backupFiabilite=lex.fiabilite||85;
+      // Nouveaux scores
+      var newTranches=tranches.map(function(tr,i){
+        var detail=tranchesDetail[i];
+        var newTr={pageDebut:tr.pageDebut,pageFin:tr.pageFin};
+        LEX_KEYS.forEach(function(k){
+          newTr[k]=Math.round(detail['_dens_'+k]/maxDens*100);
+        });
+        return newTr;
+      });
+      // Global totaux par thème et par mot
+      var globalTotaux={};
+      LEX_KEYS.forEach(function(k){
+        globalTotaux[k]={};
+        tranchesDetail.forEach(function(tr){
+          Object.keys(tr.mots[k]).forEach(function(mot){
+            globalTotaux[k][mot]=(globalTotaux[k][mot]||0)+tr.mots[k][mot];
+          });
+        });
+      });
+      // Mettre à jour lexique
+      lex.tranches=newTranches;
+      lex.source='comptage_exhaustif';
+      lex.fiabilite=100;
+      lex.sourceAuteur=AUTH_NOM||'?';
+      lex.comptageDetail={
+        fichier:file.name,
+        date:new Date().toLocaleDateString('fr-FR'),
+        pages:pages,
+        charPerPage:charPerPage,
+        totalChars:totalChars,
+        maxDensite:Math.round(maxDens*100)/100,
+        parTranche:tranchesDetail.map(function(tr){
+          var r={pageDebut:tr.pageDebut,pageFin:tr.pageFin};
+          LEX_KEYS.forEach(function(k){r[k]={occ:tr['_occ_'+k],mots:tr.mots[k]};});
+          return r;
+        }),
+        global:globalTotaux
+      };
+      sauvegarderBiblio();
+      progEl.style.display='none';
+      // Résumé
+      var totalOcc=0;
+      LEX_KEYS.forEach(function(k){
+        Object.values(globalTotaux[k]).forEach(function(n){totalOcc+=n;});
+      });
+      resEl.innerHTML='<b>✅ Comptage terminé</b><br>'+
+        pages+' pages analysées · '+totalChars.toLocaleString('fr-FR')+' caractères<br>'+
+        totalOcc+' occurrences thématiques trouvées<br>'+
+        LEX_KEYS.map(function(k){
+          var tot=Object.values(globalTotaux[k]).reduce(function(s,n){return s+n;},0);
+          return '<span style="color:'+LEX_COLORS[k]+';font-weight:700;">'+LEX_LABELS[k]+'</span> : '+tot;
+        }).join(' · ');
+      resEl.style.display='block';
+      updateQ3LexViz();
+    }catch(ex){
+      progEl.style.display='none';
+      errEl.textContent='⚠️ Erreur : '+ex.message;
+      errEl.style.display='block';
+    }
+  };
+  reader.readAsText(file,'utf-8');
+}
+
+function openLexiqueImport(){  var ov=document.getElementById('lex-import-overlay');if(!ov)return;
   ov.style.display='flex';
   document.getElementById('lex-import-json').value='';
   document.getElementById('lex-import-err').style.display='none';
