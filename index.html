@@ -2560,7 +2560,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
         <div id="ni-q-th-haslex" style="display:none;flex:1;flex-direction:column;min-height:0;">
 
           <!-- Vue globale (radar + scatter) -->
-          <div id="ni-q-th-global" style="display:flex;flex:1;flex-direction:column;min-height:0;">
+          <div id="ni-q-th-global" style="display:flex;flex:1;flex-direction:column;min-height:0;gap:6px;padding-bottom:5px;">
 
           <!-- Ligne 1 : 3 colonnes, 50% hauteur -->
           <div style="flex:0 0 50%;display:grid;grid-template-columns:54% 20% 26%;min-height:0;overflow:hidden;">
@@ -2582,7 +2582,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
           </div>
 
           <!-- Ligne 2 : Scatter + légende phases côte à côte -->
-          <div style="flex:1;min-height:0;border-top:1px solid #ede7f6;display:flex;overflow:hidden;padding:5px 0 4px;">
+          <div style="flex:1;min-height:0;border-top:1px solid #ede7f6;display:flex;overflow:hidden;">
 
             <!-- Scatter -->
             <div style="flex:1;min-width:0;position:relative;overflow:hidden;">
@@ -2591,7 +2591,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
             </div>
 
             <!-- Légende phases (colonne unique, largeur minimale, centrée sur zone graphique) -->
-            <div id="ni-q-th-ph-legend" style="display:none;flex:0 0 auto;width:auto;border-left:1px solid #ede7f6;padding:16px 6px 12px;overflow-y:auto;overflow-x:hidden;box-sizing:border-box;"></div>
+            <div id="ni-q-th-ph-legend" style="display:none;flex:0 0 auto;width:auto;border-left:1px solid #ede7f6;padding:22px 6px 16px;overflow-y:auto;overflow-x:hidden;box-sizing:border-box;"></div>
 
           </div>
 
@@ -12331,7 +12331,7 @@ function _renderQ3ScatterDraw(svgEl,lex,W,H) {
   if(!tranches.length) return;
   var MP=tranches[tranches.length-1].pageFin||tranches[tranches.length-1].pageDebut;
   // Marges fixes (Régime A : pixels réels, pas de scaling)
-  var ML=34,MR=8,MT=16,MB=12;
+  var ML=34,MR=8,MT=22,MB=16;
   var CW=W-ML-MR,CH=H-MT-MB;
   function xp(p){return ML+(p/MP)*CW;}
   function yv(v){return MT+(1-v/100)*CH;}
