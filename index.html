@@ -12326,6 +12326,11 @@ function updateQ3LexViz() {
       var lg=document.getElementById('ni-q-th-legend');
       if(ttl&&lg) lg.style.paddingTop=Math.max(0,Math.round(ttl.getBoundingClientRect().height)+3)+'px';
       _ajustRadarCol();
+      // Fixer ob1 et ob2 en pixels absolus pour que global puisse varier sans les affecter
+      var ob1=document.getElementById('ni-q-th-ob1');
+      var ob2=document.getElementById('ni-q-th-ob2');
+      if(ob1){ var h1=Math.round(ob1.getBoundingClientRect().height); if(h1>0) ob1.style.flex='0 0 '+h1+'px'; }
+      if(ob2){ var h2=Math.round(ob2.getBoundingClientRect().height); if(h2>0) ob2.style.flex='0 0 '+h2+'px'; }
     });
   });
 }
