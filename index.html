@@ -2160,7 +2160,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 
 <nav id="ni-sidebar">
   <div class="ni-pdf-row">
-    <button class="ni-pdf-btn" onclick="showTab('pdf',null)">🖨️ PDF</button>
+    <button class="ni-pdf-btn" onclick="ouvrirModalPDF()">🖨️ PDF</button>
   </div>
   <div class="ni-tout" onclick="niToggleAll(null,null)">tout sélectionner <div class="ni-cb on" id="cb-pdf-all" onclick="niToggleAll(this,event)" style="display:inline-flex;vertical-align:middle;"></div></div>
   <div class="ni-sep"></div>
@@ -2196,7 +2196,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
       <div style="flex:1">
         <h1>📚 Ma Bibliothèque</h1>
-        <p>Guide de lecture — Axel & Élise · 6ème</p>
+        <p>Guide de lecture — Axel & Élise</p>
       </div>
       <button id="sync-badge" class="idle" onclick="ouvrirModalSync()">
         <span class="sb-dot"></span><span id="sync-label">☁️ Sync</span>
@@ -2229,7 +2229,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 ══════════════════════════════════════════ -->
 <div id="screen-guide">
   <div id="guide-header">
-    <button id="btn-retour" onclick="retourBiblio()">← Livres</button>
+    <button id="btn-retour" onclick="retourBiblio()">← Ma Bibliothèque</button>
     <div style="flex:1;min-width:0;">
       <div id="header-titre">—</div>
       <div id="header-date"></div>
