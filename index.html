@@ -2591,7 +2591,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
             </div>
 
             <!-- Légende phases (colonne unique, largeur minimale, centrée sur zone graphique) -->
-            <div id="ni-q-th-ph-legend" style="display:none;flex:0 0 auto;width:auto;border-left:1px solid #ede7f6;padding:17px 6px 16px;overflow-y:auto;box-sizing:border-box;"></div>
+            <div id="ni-q-th-ph-legend" style="display:none;flex:0 0 auto;width:auto;border-left:1px solid #ede7f6;padding:12px 6px 16px;overflow-y:auto;box-sizing:border-box;"></div>
 
           </div>
 
@@ -12163,8 +12163,8 @@ function _buildLexRadarInner(tranches, size) {
   var lR=R+14;
   LEX_KEYS.forEach(function(k,i){
     var lp=pt(i,lR),ta=(i===0||i===3)?'middle':i<3?'start':'end',dy=i===3?3:1,bold=avgs[i]>60;
-    h+='<text data-lk="'+k+'" x="'+lp[0].toFixed(1)+'" y="'+(lp[1]+dy).toFixed(1)+'" text-anchor="'+ta+'" font-family="Arial,sans-serif" font-size="10" font-weight="'+(bold?700:500)+'" fill="'+(bold?LEX_COLORS[k]:'#888')+'" style="cursor:pointer">'+LEX_LABELS[k]+'</text>';
-    h+='<text data-lk="'+k+'" x="'+lp[0].toFixed(1)+'" y="'+(lp[1]+dy+11).toFixed(1)+'" text-anchor="'+ta+'" font-family="Arial,sans-serif" font-size="10" font-weight="900" fill="'+LEX_COLORS[k]+'" style="cursor:pointer">'+Math.round(avgs[i])+'</text>';
+    h+='<text data-lk="'+k+'" x="'+lp[0].toFixed(1)+'" y="'+(lp[1]+dy).toFixed(1)+'" text-anchor="'+ta+'" font-family="Arial,sans-serif" font-size="11" font-weight="'+(bold?700:500)+'" fill="'+(bold?LEX_COLORS[k]:'#888')+'" style="cursor:pointer">'+LEX_LABELS[k]+'</text>';
+    h+='<text data-lk="'+k+'" x="'+lp[0].toFixed(1)+'" y="'+(lp[1]+dy+12).toFixed(1)+'" text-anchor="'+ta+'" font-family="Arial,sans-serif" font-size="11" font-weight="900" fill="'+LEX_COLORS[k]+'" style="cursor:pointer">'+Math.round(avgs[i])+'</text>';
   });
   return h;
 }
@@ -12251,8 +12251,8 @@ function updateQ3LexViz() {
       var v=Math.round(_lexAvg(lex.tranches,k)),col=LEX_COLORS[k];
       return '<div id="ni-q-lg-'+k+'" onclick="_q3ThemeSelect(\''+k+'\')" style="display:flex;align-items:center;gap:4px;padding:2px 4px;border-radius:4px;cursor:pointer;">'+
         '<span style="width:8px;height:8px;border-radius:50%;background:'+col+';flex-shrink:0;display:inline-block;"></span>'+
-        '<span style="font-size:13px;font-weight:600;color:'+col+';flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+LEX_LABELS[k]+'</span>'+
-        '<span style="font-size:13px;font-weight:800;color:'+col+';">'+v+'</span>'+
+        '<span style="font-size:12px;font-weight:600;color:'+col+';flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+LEX_LABELS[k]+'</span>'+
+        '<span style="font-size:12px;font-weight:800;color:'+col+';">'+v+'</span>'+
         '</div>';
     }).join('')+
     '<div style="margin-top:5px;padding-top:4px;border-top:1px solid #ede7f6;">'+
