@@ -2563,7 +2563,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
           <div id="ni-q-th-global" style="display:flex;flex:1;flex-direction:column;min-height:0;gap:12px;padding-bottom:8px;">
 
           <!-- ▌ OBJET 1 — Radar · Scores · Mots -->
-          <div id="ni-q-th-ob1" style="flex:0 0 auto;display:grid;grid-template-columns:54% 20% 26%;min-height:0;overflow:hidden;aspect-ratio:20/9;">
+          <div id="ni-q-th-ob1" style="flex:0 0 auto;display:grid;grid-template-columns:54% 20% 26%;min-height:0;overflow:hidden;">
 
             <!-- Col 1 : Radar -->
             <div style="display:flex;align-items:flex-start;justify-content:center;overflow:hidden;padding:2px;">
@@ -12189,6 +12189,13 @@ function _attachLexRadarClick(svgId, mode) {
 }
 
 // ── Q3 compact ────────────────────────────────────────────────────────────────
+function _ajustOb1Height() {
+  var ob1 = document.getElementById('ni-q-th-ob1');
+  if(!ob1) return;
+  var w = ob1.getBoundingClientRect().width;
+  if(w > 0) ob1.style.flex = '0 0 ' + Math.round(w * 0.54 * 210 / 236) + 'px';
+}
+
 function updateQ3LexViz() {
   var L=LIVRE_ACTIF,lex=L&&L.lexique;
   var ok=lex&&Array.isArray(lex.tranches)&&lex.tranches.length>0;
@@ -12274,6 +12281,7 @@ function updateQ3LexViz() {
       var ttl=document.getElementById('ni-q-th-words-ttl');
       var lg=document.getElementById('ni-q-th-legend');
       if(ttl&&lg) lg.style.paddingTop=Math.max(0,Math.round(ttl.getBoundingClientRect().height)+3)+'px';
+      _ajustOb1Height();
     });
   });
 }
@@ -13390,6 +13398,7 @@ function _q3TogglePaires() {
       requestAnimationFrame(function(){
         requestAnimationFrame(function(){
           _renderQ3Scatter(LIVRE_ACTIF && LIVRE_ACTIF.lexique);
+          _ajustOb1Height();
         });
       });
     }
