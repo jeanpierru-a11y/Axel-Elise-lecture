@@ -2095,6 +2095,9 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 .ni-paire-interp{font-size:11px;color:#333;line-height:1.65;padding:3px 0 2px;}
 .ni-paire-sep{display:none;}
 .ni-q-hdr-icon.active{background:rgba(106,27,154,.18);}
+.ni-q-hdr-alpha{background:#E0D7F5;color:#4A148C;border:1.5px solid #B39DDB;border-radius:5px;padding:2px 8px;font-size:.62rem;font-weight:800;cursor:pointer;font-family:inherit;flex-shrink:0;line-height:1.4;}
+.ni-q-hdr-alpha:hover{background:#C5B3E6;}
+.ni-q-hdr-alpha.active{background:#7B1FA2;color:#fff;border-color:#7B1FA2;}
 /* ── Badge source lexique ── */
 #ni-q-th-source-badge{font-size:.57rem;font-weight:700;padding:1px 6px;border-radius:8px;background:rgba(106,27,154,.1);color:#4A148C;white-space:nowrap;flex-shrink:0;line-height:1.5;display:none;}
 #ni-q-th-source-badge.ia{background:#E8F5E9;color:#2E7D32;}
@@ -2539,14 +2542,17 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 
     <!-- COL 1 : TOILE THÉMATIQUE (pleine hauteur, large) -->
     <div class="ni-q" id="ni-q-themes">
-      <div class="ni-q-hdr" style="background:#EDE7F6;color:#4A148C;gap:4px;">
-        <span class="ni-q-hdr-lbl">🕸️ Toile thématique</span>
-        <span id="ni-q-th-source-badge"></span>
-        <button class="ni-q-hdr-icon" id="ni-th-count-btn" onclick="openLexCount()" title="Compter sur texte complet (.txt)" style="display:none;">📄</button>
-        <button class="ni-q-hdr-icon" onclick="openLexiqueImport()" title="Importer analyse lexicale">📋</button>
-        <button class="ni-q-hdr-icon" id="ni-th-pdf-btn" onclick="genererPDF_lex()" title="Exporter la toile en PDF" style="display:none;">📄</button>
-        <button class="ni-q-hdr-icon" id="ni-th-pairs-btn" onclick="_q3TogglePaires()" title="Comparer les paires de thèmes" style="display:none;">⇌</button>
-        <button class="ni-q-hdr-icon" id="ni-th-help-btn" onclick="openLexHelp()" title="Méthodologie" style="display:none;">?</button>
+      <div class="ni-q-hdr" style="background:#EDE7F6;color:#4A148C;gap:0;">
+        <span class="ni-q-hdr-lbl" style="flex:0 0 auto;">🕸️ Toile thématique</span>
+        <span id="ni-q-th-source-badge" style="margin-left:5px;flex-shrink:0;"></span>
+        <button class="ni-q-hdr-alpha" id="ni-th-pairs-btn" onclick="_q3TogglePaires()" title="Comparer les paires de thèmes" style="display:none;margin-left:10px;">Paires</button>
+        <button class="ni-q-hdr-alpha" id="ni-th-pdf-btn" onclick="genererPDF_lex()" title="Exporter la toile en PDF" style="display:none;margin-left:10px;">PDF toile</button>
+        <div style="flex:1;min-width:0;"></div>
+        <div style="display:flex;align-items:center;gap:3px;">
+          <button class="ni-q-hdr-icon" id="ni-th-count-btn" onclick="openLexCount()" title="Compter sur texte complet (.txt)" style="display:none;">📄</button>
+          <button class="ni-q-hdr-icon" onclick="openLexiqueImport()" title="Importer analyse lexicale">📋</button>
+          <button class="ni-q-hdr-icon" id="ni-th-help-btn" onclick="openLexHelp()" title="Méthodologie" style="display:none;">?</button>
+        </div>
       </div>
       <div class="ni-q-body" style="padding:4px 6px;display:flex;flex-direction:column;overflow:hidden;">
 
