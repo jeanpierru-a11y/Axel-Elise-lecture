@@ -2560,7 +2560,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
         <div id="ni-q-th-haslex" style="display:none;flex:1;flex-direction:column;min-height:0;overflow:hidden;">
 
           <!-- Vue globale (radar + scatter) -->
-          <div id="ni-q-th-global" style="display:flex;flex:1;flex-direction:column;min-height:0;gap:12px;padding-bottom:8px;">
+          <div id="ni-q-th-global" style="display:flex;flex:0 0 50%;flex-direction:column;min-height:0;gap:12px;padding-bottom:8px;overflow:hidden;">
 
           <!-- ▌ OBJET 1 — Radar · Scores · Mots -->
           <div id="ni-q-th-ob1" style="flex:0 0 min(50%,265px);display:grid;grid-template-columns:54% 20% 26%;min-height:180px;overflow:hidden;">
@@ -2574,7 +2574,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
             <div id="ni-q-th-legend" style="display:flex;flex-direction:column;justify-content:flex-start;gap:1px;padding:2px 4px;border-left:1px solid #ede7f6;overflow:hidden;"></div>
 
             <!-- Col 3 : Mots du thème sélectionné -->
-            <div style="display:flex;flex-direction:column;padding:3px 5px;border-left:1px solid #ede7f6;overflow:hidden;min-height:0;">
+            <div id="ni-q-th-words-col" style="display:flex;flex-direction:column;padding:3px 5px;border-left:1px solid #ede7f6;overflow:hidden;min-height:0;">
               <div id="ni-q-th-words-ttl" style="font-size:11px;font-weight:900;letter-spacing:.1px;flex-shrink:0;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">—</div>
               <div id="ni-q-th-words-list" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:2px;min-height:0;"></div>
             </div>
@@ -2582,7 +2582,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
           </div>
 
           <!-- ▌ OBJET 2 — Scatter · Légende des phases -->
-          <div id="ni-q-th-ob2" style="flex:1;min-height:0;border-top:1px solid #ede7f6;display:flex;overflow:hidden;">
+          <div id="ni-q-th-ob2" style="flex:0 0 40%;min-height:0;border-top:1px solid #ede7f6;display:flex;overflow:hidden;">
 
             <!-- Scatter -->
             <div style="flex:1;min-width:0;position:relative;overflow:hidden;">
@@ -2591,14 +2591,14 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
             </div>
 
             <!-- Légende phases (colonne unique, largeur minimale, centrée sur zone graphique) -->
-            <div id="ni-q-th-ph-legend" style="display:none;flex:0 0 auto;width:auto;border-left:1px solid #ede7f6;padding:22px 6px 16px;overflow-y:auto;overflow-x:hidden;box-sizing:border-box;"></div>
+            <div id="ni-q-th-ph-legend" style="display:none;flex:0 0 auto;width:auto;border-left:1px solid #ede7f6;padding:22px 6px 16px;overflow-y:auto;box-sizing:border-box;"></div>
 
           </div>
 
-          <!-- ▌ Paires — s'affiche en remplacement d'ob1+ob2 -->
-          <div id="ni-q-th-paires" style="display:none;flex:1;overflow-y:auto;min-height:0;padding:4px 6px;flex-direction:column;gap:7px;"></div>
-
           </div><!-- /ni-q-th-global -->
+
+          <!-- ▌ Paires — hors de ni-q-th-global, enfant direct de ni-q-th-haslex -->
+          <div id="ni-q-th-paires" style="display:none;flex:1;overflow-y:auto;min-height:0;padding:4px 6px;flex-direction:column;gap:7px;"></div>
 
           <!-- ▌ OBJET 3 — Source de données & Traitement -->
           <div id="ni-q-th-mode" style="display:none;flex:0 0 auto;border-top:2px solid #EDE7F6;margin-top:10px;">
@@ -12189,6 +12189,18 @@ function _attachLexRadarClick(svgId, mode) {
 }
 
 // ── Q3 compact ────────────────────────────────────────────────────────────────
+function _ajustRadarCol() {
+  var ob1 = document.getElementById('ni-q-th-ob1');
+  if(!ob1) return;
+  var r = ob1.getBoundingClientRect();
+  if(r.width <= 0 || r.height <= 0) return;
+  // col3 = 13% de la largeur ob1 (50% de l'original 26%)
+  var col3px = Math.round(r.width * 0.13);
+  // col1 = largeur pour que hauteur SVG (viewBox 236×210) = hauteur ob1
+  var col1px = Math.min(Math.round(r.height * 236 / 210), r.width - col3px - 60);
+  ob1.style.gridTemplateColumns = col1px + 'px auto ' + col3px + 'px';
+}
+
 function updateQ3LexViz() {
   var L=LIVRE_ACTIF,lex=L&&L.lexique;
   var ok=lex&&Array.isArray(lex.tranches)&&lex.tranches.length>0;
@@ -12239,8 +12251,8 @@ function updateQ3LexViz() {
       var v=Math.round(_lexAvg(lex.tranches,k)),col=LEX_COLORS[k];
       return '<div id="ni-q-lg-'+k+'" onclick="_q3ThemeSelect(\''+k+'\')" style="display:flex;align-items:center;gap:4px;padding:2px 4px;border-radius:4px;cursor:pointer;">'+
         '<span style="width:8px;height:8px;border-radius:50%;background:'+col+';flex-shrink:0;display:inline-block;"></span>'+
-        '<span style="font-size:10px;font-weight:600;color:'+col+';flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+LEX_LABELS[k]+'</span>'+
-        '<span style="font-size:10px;font-weight:800;color:'+col+';">'+v+'</span>'+
+        '<span style="font-size:13px;font-weight:600;color:'+col+';flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+LEX_LABELS[k]+'</span>'+
+        '<span style="font-size:13px;font-weight:800;color:'+col+';">'+v+'</span>'+
         '</div>';
     }).join('')+
     '<div style="margin-top:5px;padding-top:4px;border-top:1px solid #ede7f6;">'+
@@ -12256,9 +12268,9 @@ function updateQ3LexViz() {
     phLgEl.innerHTML=lex.phases.map(function(ph,i){
       var lc=LEX_PH_LC[i%LEX_PH_LC.length];
       return '<div style="display:flex;align-items:center;gap:4px;padding:2px 0;border-bottom:1px solid #f3eeff;white-space:nowrap;">'+
-        '<span style="flex-shrink:0;width:14px;height:14px;border-radius:50%;background:'+lc+';display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;color:#fff;">'+(i+1)+'</span>'+
-        '<span style="font-size:8px;color:#444;white-space:nowrap;">p.'+ph.pageDebut+'</span>'+
-        '<span style="font-size:7.5px;color:#777;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:110px;">'+ph.nom+'</span>'+
+        '<span style="flex-shrink:0;width:12px;height:12px;border-radius:50%;background:'+lc+';display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;color:#fff;">'+(i+1)+'</span>'+
+        '<span style="font-size:10px;color:#444;white-space:nowrap;">p.'+ph.pageDebut+'</span>'+
+        '<span style="font-size:12px;color:#555;font-weight:600;white-space:nowrap;">'+ph.nom+'</span>'+
       '</div>';
     }).join('');
   }
@@ -12274,6 +12286,7 @@ function updateQ3LexViz() {
       var ttl=document.getElementById('ni-q-th-words-ttl');
       var lg=document.getElementById('ni-q-th-legend');
       if(ttl&&lg) lg.style.paddingTop=Math.max(0,Math.round(ttl.getBoundingClientRect().height)+3)+'px';
+      _ajustRadarCol();
     });
   });
 }
@@ -13372,26 +13385,19 @@ var _q3PairesOpen = false;
 
 function _q3TogglePaires() {
   _q3PairesOpen = !_q3PairesOpen;
-  var ob1 = document.getElementById('ni-q-th-ob1');
-  var ob2 = document.getElementById('ni-q-th-ob2');
+  var glb = document.getElementById('ni-q-th-global');
   var pai = document.getElementById('ni-q-th-paires');
   var mod = document.getElementById('ni-q-th-mode');
   var btn = document.getElementById('ni-th-pairs-btn');
-  // ob1+ob2+mode masqués → paires prend toute la hauteur de ni-q-th-haslex
-  if (ob1) ob1.style.display = _q3PairesOpen ? 'none' : 'grid';
-  if (ob2) ob2.style.display = _q3PairesOpen ? 'none' : 'flex';
+  if (glb) glb.style.display = _q3PairesOpen ? 'none' : 'flex';
   if (mod) mod.style.display = _q3PairesOpen ? 'none' : 'block';
   if (pai) {
     pai.style.display = _q3PairesOpen ? 'flex' : 'none';
     if (_q3PairesOpen) {
       updateQ3PairesViz();
     } else {
-      // Retour : ni-q-th-global n'a jamais bougé → double rAF suffit
-      requestAnimationFrame(function(){
-        requestAnimationFrame(function(){
-          _renderQ3Scatter(LIVRE_ACTIF && LIVRE_ACTIF.lexique);
-        });
-      });
+      // global a été caché → dimensions nulles → reconstruire complètement
+      updateQ3LexViz();
     }
   }
   if (btn) btn.classList.toggle('active', _q3PairesOpen);
