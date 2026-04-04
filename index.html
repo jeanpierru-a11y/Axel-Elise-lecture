@@ -2098,6 +2098,8 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 .ni-q-hdr-alpha{background:#E0D7F5;color:#4A148C;border:1.5px solid #B39DDB;border-radius:5px;padding:2px 8px;font-size:.62rem;font-weight:800;cursor:pointer;font-family:inherit;flex-shrink:0;line-height:1.4;}
 .ni-q-hdr-alpha:hover{background:#C5B3E6;}
 .ni-q-hdr-alpha.active{background:#7B1FA2;color:#fff;border-color:#7B1FA2;}
+.ni-sc-ftgl{border-radius:4px;padding:2px 9px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0;line-height:1.6;}
+.ni-sc-ftgl:hover{opacity:.8;}
 /* ── Badge source lexique ── */
 #ni-q-th-source-badge{font-size:.57rem;font-weight:700;padding:1px 6px;border-radius:8px;background:rgba(106,27,154,.1);color:#4A148C;white-space:nowrap;flex-shrink:0;line-height:1.5;display:none;}
 #ni-q-th-source-badge.ia{background:#E8F5E9;color:#2E7D32;}
@@ -2566,7 +2568,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
         <div id="ni-q-th-haslex" style="display:none;flex:1;flex-direction:column;min-height:0;overflow:hidden;">
 
           <!-- Vue globale (radar + scatter) -->
-          <div id="ni-q-th-global" style="display:flex;flex:0 0 50%;flex-direction:column;min-height:0;gap:12px;padding-bottom:8px;overflow:hidden;">
+          <div id="ni-q-th-global" style="display:flex;flex:0 0 calc(50% - 15px);flex-direction:column;min-height:0;gap:12px;padding-bottom:8px;overflow:hidden;">
 
           <!-- ▌ OBJET 1 — Radar · Scores · Mots -->
           <div id="ni-q-th-ob1" style="flex:0 0 min(50%,265px);display:grid;grid-template-columns:54% 20% 26%;min-height:180px;overflow:hidden;">
@@ -2590,10 +2592,13 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
           <!-- ▌ OBJET 2 — Scatter · Légende des phases -->
           <div id="ni-q-th-ob2" style="flex:0 0 40%;min-height:0;border-top:1px solid #ede7f6;display:flex;overflow:hidden;">
 
-            <!-- Scatter -->
-            <div style="flex:1;min-width:0;position:relative;overflow:hidden;">
-              <svg id="ni-q-th-scatter" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;"></svg>
-              <div id="ni-q-th-ph-tip" style="display:none;position:absolute;background:#333;color:#fff;font-size:9px;font-weight:600;padding:2px 7px;border-radius:4px;pointer-events:none;white-space:nowrap;z-index:10;top:2px;left:50%;transform:translateX(-50%);"></div>
+            <!-- Scatter + filtres thèmes -->
+            <div style="flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;">
+              <div style="flex:1;min-height:0;position:relative;overflow:hidden;">
+                <svg id="ni-q-th-scatter" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;"></svg>
+                <div id="ni-q-th-ph-tip" style="display:none;position:absolute;background:#333;color:#fff;font-size:9px;font-weight:600;padding:2px 7px;border-radius:4px;pointer-events:none;white-space:nowrap;z-index:10;top:2px;left:50%;transform:translateX(-50%);"></div>
+              </div>
+              <div id="ni-q-th-filters" style="flex:0 0 auto;display:flex;gap:3px;padding:2px 4px;flex-wrap:wrap;border-top:1px solid #ede7f6;background:#fafbfe;justify-content:center;"></div>
             </div>
 
             <!-- Légende phases (colonne unique, largeur minimale, centrée sur zone graphique) -->
@@ -12195,6 +12200,23 @@ function _attachLexRadarClick(svgId, mode) {
 }
 
 // ── Q3 compact ────────────────────────────────────────────────────────────────
+var _q3ActiveThemes = [];
+
+function _q3Toggle(key) {
+  var idx = _q3ActiveThemes.indexOf(key);
+  var btn = document.getElementById('ni-sc-ftg-'+key);
+  if(idx >= 0) {
+    if(_q3ActiveThemes.length <= 1) return; // toujours au moins 1 actif
+    _q3ActiveThemes.splice(idx, 1);
+    if(btn){ btn.style.background='transparent'; btn.style.color=LEX_COLORS[key]; }
+  } else {
+    _q3ActiveThemes.push(key);
+    if(btn){ btn.style.background=LEX_COLORS[key]; btn.style.color='#fff'; }
+  }
+  var lex = LIVRE_ACTIF && LIVRE_ACTIF.lexique;
+  if(lex) _renderQ3Scatter(lex);
+}
+
 function _ajustRadarCol() {
   var ob1 = document.getElementById('ni-q-th-ob1');
   if(!ob1) return;
@@ -12266,7 +12288,18 @@ function updateQ3LexViz() {
     '<span>💡</span><span>Justification</span></button></div>';
   }
   // Ligne 2 : scatter compact
+  _q3ActiveThemes = LEX_KEYS.slice(); // réinitialiser tous actifs
   _renderQ3Scatter(lex);
+  // Boutons filtres thèmes sous le scatter
+  var filEl = document.getElementById('ni-q-th-filters');
+  if(filEl) {
+    filEl.innerHTML = LEX_KEYS.map(function(k){
+      var col = LEX_COLORS[k];
+      return '<button class="ni-sc-ftgl" id="ni-sc-ftg-'+k+'" data-k="'+k+'" '+
+        'style="background:'+col+';color:#fff;border:1.5px solid '+col+';" '+
+        'onclick="var _k=this.dataset.k;_q3Toggle(_k)">'+LEX_LABELS[k]+'</button>';
+    }).join('');
+  }
   // Légende phases — colonne unique à droite du scatter
   var phLgEl=document.getElementById('ni-q-th-ph-legend');
   if(phLgEl&&lex.phases&&lex.phases.length){
@@ -12382,11 +12415,26 @@ function _renderQ3ScatterDraw(svgEl,lex,W,H) {
     s+='<line x1="'+ML+'" y1="'+y.toFixed(1)+'" x2="'+(ML+CW)+'" y2="'+y.toFixed(1)+'" stroke="#eee" stroke-width="0.6"/>';
     s+='<text x="'+(ML-4)+'" y="'+(y+3)+'" text-anchor="end" font-family="Arial,sans-serif" font-size="8" fill="#555">'+v+'</text>';
   });
-  // Points (rayon plafonné à 4px)
+  // Points — filtrés par _q3ActiveThemes, trajectoires si ≤2 actifs
   var pr=Math.min(4,Math.max(2,Math.round(H/60)));
+  var _q3act=(_q3ActiveThemes&&_q3ActiveThemes.length)?_q3ActiveThemes:LEX_KEYS;
+  var _q3traj=_q3act.length<=2;
+  // Thèmes inactifs grisés en premier (dessous)
   LEX_KEYS.forEach(function(k){
+    if(_q3act.indexOf(k)>=0) return;
     tranches.forEach(function(tr){
-      s+='<circle cx="'+xtr(tr).toFixed(1)+'" cy="'+yv(tr[k]||0).toFixed(1)+'" r="'+pr+'" fill="'+LEX_COLORS[k]+'" stroke="#fff" stroke-width="1" opacity="0.85"/>';
+      s+='<circle cx="'+xtr(tr).toFixed(1)+'" cy="'+yv(tr[k]||0).toFixed(1)+'" r="'+pr+'" fill="#ccc" stroke="#fff" stroke-width="0.8" opacity="0.3"/>';
+    });
+  });
+  // Thèmes actifs : ligne de liaison si ≤2, puis points
+  _q3act.forEach(function(k){
+    var col=LEX_COLORS[k];
+    if(_q3traj){
+      var pts=tranches.map(function(tr){return xtr(tr).toFixed(1)+','+yv(tr[k]||0).toFixed(1);}).join(' ');
+      s+='<polyline points="'+pts+'" fill="none" stroke="'+col+'" stroke-width="1.5" opacity="0.55" stroke-linejoin="round" stroke-linecap="round"/>';
+    }
+    tranches.forEach(function(tr){
+      s+='<circle cx="'+xtr(tr).toFixed(1)+'" cy="'+yv(tr[k]||0).toFixed(1)+'" r="'+pr+'" fill="'+col+'" stroke="#fff" stroke-width="1" opacity="0.85"/>';
     });
   });
   // Labels X : pages de début de chaque phase (comme PDF)
