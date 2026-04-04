@@ -6874,9 +6874,9 @@ function _buildLexToileHtml(L) {
     }).join('');
   }
   var legendColStyle=isModerne
-    ? 'flex:0 0 auto;padding-top:2px;'
+    ? 'flex:0 0 auto;max-width:185px;padding-top:2px;overflow:hidden;'
     : 'flex:0 0 auto;min-width:130px;max-width:180px;padding-top:2px;';
-  var scatterBlock='<div style="margin-bottom:14px;">'+
+  var scatterBlock='<div class="lex-scatter-row" style="margin-bottom:14px;">'+
     '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#6A1B9A;margin-bottom:4px;">Évolution par phase</div>'+
     '<div style="display:flex;gap:10px;align-items:flex-start;">'+
       '<div style="flex:1;min-width:0;">'+scatterSvg+'</div>'+
@@ -6912,13 +6912,13 @@ function _buildLexToileHtml(L) {
           }).join('');
         }
       }
-      return '<tr style="background:white;vertical-align:top;border-left:3px solid '+col+';">'+
-        '<td style="padding:8px 10px;border-bottom:1px solid #e8e0f0;width:28%;">'+col1+'</td>'+
-        '<td style="padding:8px 10px;border-bottom:1px solid #e8e0f0;width:72%;border-left:1px solid #e8e0f0;">'+col2+'</td>'+
+      return '<tr style="background:white;vertical-align:top;border-left:3px solid '+col+';break-inside:avoid;page-break-inside:avoid;">'+
+        '<td style="padding:8px 10px;border-bottom:1px solid #e8e0f0;width:28%;word-break:break-word;overflow-wrap:break-word;">'+col1+'</td>'+
+        '<td style="padding:8px 10px;border-bottom:1px solid #e8e0f0;width:72%;border-left:1px solid #e8e0f0;word-break:break-word;overflow-wrap:break-word;">'+col2+'</td>'+
         '</tr>';
     }).join('');
     champBlock='<h2 style="font-size:.82rem;font-weight:900;color:#6A1B9A;border-bottom:2px solid #6A1B9A;padding-bottom:5px;margin:0 0 8px;">Mots-clés & Justifications</h2>'+
-      '<table style="width:100%;border-collapse:collapse;border:1px solid #e0d6f0;border-radius:8px;overflow:hidden;margin-bottom:16px;">'+
+      '<table style="width:100%;table-layout:fixed;border-collapse:collapse;border:1px solid #e0d6f0;border-radius:8px;overflow:hidden;margin-bottom:16px;">'+
         '<thead><tr>'+
           '<th style="'+thStyle+'width:28%;">Thème · Mots-clés</th>'+
           '<th style="'+thStyle+'width:72%;border-left:1px solid #e8e0f0;">Justification du choix</th>'+
@@ -6990,7 +6990,16 @@ function genererPDF_lex() {
     '<p>'+h(L.auteur||'')+' · '+h(L.genre||'')+' · '+(L.pages?h(L.pages)+' pages · ':'')+h(L.annee||'')+'</p></div>'+
     _buildLexToileHtml(L)+
     '<div class="footer">Guide de lecture · '+h(L.titre)+' · Toile thématique</div>';
-  var printStyle='@media print{.header{background:white!important;color:#4A148C!important;border:2px solid #6A1B9A;border-radius:8px;padding:12px 18px;}button{display:none!important;}}';
+  var printStyle='@media print{'+
+    '.header{background:white!important;color:#4A148C!important;border:2px solid #6A1B9A;border-radius:8px;padding:12px 18px;}'+
+    'button{display:none!important;}'+
+    'table{table-layout:fixed!important;width:100%!important;}'+
+    'td,th{word-break:break-word!important;overflow-wrap:break-word!important;}'+
+    'tr{break-inside:avoid!important;page-break-inside:avoid!important;}'+
+    'svg{max-width:100%!important;height:auto!important;}'+
+    '.lex-scatter-row{break-inside:avoid;page-break-inside:avoid;}'+
+    'h2{break-after:avoid;page-break-after:avoid;}'+
+    '}';
   _pdfOuvrir(
     _pdfEnveloppe('Toile thématique — '+h(L.titre),'#6A1B9A',corps,printStyle),
     'toile_'+(L.titre||'').replace(/\s+/g,'_')
