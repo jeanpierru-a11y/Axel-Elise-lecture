@@ -2073,12 +2073,15 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 .rsz2.rsz-sw2{bottom:0;left:0;width:12px;height:12px;cursor:sw-resize;}
 
 /* ── Panneau source & traitement (sous scatter, hors ni-q-th-global) ── */
-.lm-toggle-lbl{font-size:.6rem;font-weight:800;color:#6A1B9A;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap;padding-top:2px;}
-.lm-btn{font-size:.67rem;font-weight:700;padding:3px 0;border-radius:10px;border:1.5px solid #ddd;background:#f5f5f5;color:#999;cursor:pointer;transition:all .15s;width:100%;text-align:center;}
+.lm-toggle-lbl{font-size:.75rem;font-weight:800;color:#6A1B9A;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap;}
+.lm-btn{font-size:.72rem;font-weight:700;padding:7px 6px;border-radius:10px;border:1.5px solid #ddd;background:#f5f5f5;color:#999;cursor:pointer;transition:all .15s;width:100%;text-align:center;}
+.lm-btn.active::before{content:'●';color:#2E7D32;font-size:.55rem;margin-right:4px;vertical-align:middle;}
 .lm-btn:hover:not(:disabled){opacity:.85;}
 .lm-btn.active.ia{color:#4A148C;border-color:#B39DDB;background:#F5F0FF;}
-.lm-btn.active.compt{color:#1565C0;border-color:#90CAF9;background:#E3F2FD;}
-.lm-btn.active.perso{color:#E65100;border-color:#FFCC80;background:#FFF3E0;}
+.lm-btn.active.compt{color:#0D47A1;border-color:#1976D2;background:#BBDEFB;}
+.lm-btn.active.perso{color:#BF360C;border-color:#F4511E;background:#FFCCBC;}
+.lm-btn.perso{color:#BF360C;border-color:#FF8A65;background:#FFE0B2;}
+.lm-btn.compt{color:#0D47A1;border-color:#64B5F6;background:#E3F2FD;}
 .lm-btn:disabled{opacity:.3;cursor:default;}
 .lm-workflow{border-radius:7px;padding:5px 8px;font-size:.66rem;line-height:1.6;}
 .lm-workflow.c1{background:#E8F5E9;border:1px solid #A5D6A7;}
@@ -2617,22 +2620,23 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
             <div style="background:#EDE7F6;padding:3px 8px;display:flex;align-items:center;gap:5px;">
               <span style="font-size:.65rem;font-weight:900;color:#4A148C;text-transform:uppercase;letter-spacing:.5px;">📊 Source de données &amp; traitement</span>
             </div>
-            <!-- Corps : toggles + légende -->
-            <div style="display:flex;gap:8px;padding:6px 8px;align-items:flex-start;">
-              <!-- Grille 2×2 boutons -->
-              <div style="display:grid;grid-template-columns:46px 1fr 1fr;gap:3px 5px;align-items:center;flex-shrink:0;">
-                <span class="lm-toggle-lbl">Mots</span>
+            <!-- Corps : 30px sous le bandeau · flex gauche (boutons) + droite (zone fond extensible) -->
+            <div style="padding:30px 8px 8px;display:flex;gap:10px;align-items:stretch;">
+              <!-- Grille 3 colonnes : libellé | btn IA | btn Perso/Manuel -->
+              <div style="display:grid;grid-template-columns:80px 90px 90px;grid-template-rows:auto auto;gap:8px 10px;flex-shrink:0;align-content:start;">
+                <span class="lm-toggle-lbl" style="align-self:center;">Mots</span>
                 <button class="lm-btn active ia" id="lm-mots-ia" onclick="_lmSet('mots','ia')">🤖 IA</button>
                 <button class="lm-btn perso" id="lm-mots-perso" onclick="_lmSet('mots','perso')">✏️ Perso</button>
-                <span class="lm-toggle-lbl">Traitement</span>
+                <span class="lm-toggle-lbl" style="align-self:center;">Traitement</span>
                 <button class="lm-btn active ia" id="lm-trt-ia" onclick="_lmSet('trt','ia')">🧠 IA</button>
                 <button class="lm-btn compt" id="lm-trt-manuel" onclick="_lmSet('trt','manuel')">✋ Manuel</button>
               </div>
-              <!-- Légende du cas (à droite) -->
-              <div id="lm-case-desc" style="flex:1;font-size:.65rem;color:#555;line-height:1.5;padding:2px 0;"></div>
+              <!-- Zone droite extensible — fond coloré, contient description + workflow -->
+              <div style="flex:1;min-width:0;background:#EDE7F6;border-radius:9px;padding:10px 12px;display:flex;flex-direction:column;gap:10px;">
+                <div id="lm-case-desc" style="font-size:.72rem;color:#333;line-height:1.65;display:flex;flex-direction:column;gap:4px;"></div>
+                <div id="lm-workflow" style="display:none;"></div>
+              </div>
             </div>
-            <!-- Workflow (actions) — affiché uniquement si nécessaire -->
-            <div id="lm-workflow" style="margin:0 8px 6px;"></div>
           </div>
 
           <!-- Vue paires de thèmes -->
@@ -12902,12 +12906,16 @@ function _lmRender(){
 
   // ── Case 1 : IA × IA ── fonctionnement standard
   if(m==='ia'&&t==='ia'){
-    desc.innerHTML='<span style="color:#2E7D32;font-weight:800;">✅ Standard</span> — scores et mots fournis par l\u2019IA d\u2019apr\u00e8s la critique litt\u00e9raire \u00e9tablie. Rien \u00e0 faire.';
+    desc.innerHTML=
+      '<div style="font-weight:800;color:#2E7D32;font-size:.76rem;margin-bottom:3px;">✅ Standard</div>'+
+      '<div>Scores et mots fournis par l\u2019IA d\u2019apr\u00e8s la critique litt\u00e9raire \u00e9tablie. Rien \u00e0 faire.</div>';
     return;
   }
   // ── Case 2 : IA × Manuel ── comptage manuel sur mots IA
   if(m==='ia'&&t==='manuel'){
-    desc.innerHTML='<span style="color:#F57F17;font-weight:800;">✋ Comptage manuel</span> sur mots IA — t\u00e9l\u00e9charge le mod\u00e8le Excel, compte les occurrences des mots IA tranche par tranche, retourne le fichier rempli.';
+    desc.innerHTML=
+      '<div style="font-weight:800;color:#F57F17;font-size:.76rem;margin-bottom:3px;">✋ Comptage manuel</div>'+
+      '<div>Sur mots IA \u2014 t\u00e9l\u00e9charge le mod\u00e8le Excel, compte les occurrences des mots IA tranche par tranche, retourne le fichier rempli.</div>';
     wf.className='lm-workflow c2';
     wf.style.display='block';
     wf.innerHTML=
@@ -12924,7 +12932,9 @@ function _lmRender(){
   }
   // ── Case 3 : Perso × IA ── mots perso traités par IA externe
   if(m==='perso'&&t==='ia'){
-    desc.innerHTML='<span style="color:#283593;font-weight:800;">🧠 Mots perso + traitement IA</span> — fournis tes mots \u00e0 une IA externe (Claude.ai, ChatGPT\u2026) avec le texte de l\u2019\u0153uvre. L\u2019IA effectue le comptage et retourne un fichier Excel \u00e0 importer.';
+    desc.innerHTML=
+      '<div style="font-weight:800;color:#283593;font-size:.76rem;margin-bottom:3px;">🧠 Mots perso + traitement IA</div>'+
+      '<div>Fournis tes mots \u00e0 une IA externe (Claude.ai, ChatGPT\u2026) avec le texte de l\u2019\u0153uvre. L\u2019IA effectue le comptage et retourne un fichier Excel \u00e0 importer.</div>';
     wf.className='lm-workflow c3';
     wf.style.display='block';
     wf.innerHTML=
@@ -12942,7 +12952,9 @@ function _lmRender(){
   }
   // ── Case 4 : Perso × Manuel ── mots perso + comptage à la main
   if(m==='perso'&&t==='manuel'){
-    desc.innerHTML='<span style="color:#E65100;font-weight:800;">✏️ Mots perso + comptage manuel</span> \u2014 tu d\u00e9finis tes propres mots cl\u00e9s et tu comptes toi-m\u00eame leurs occurrences dans chaque tranche du livre.';
+    desc.innerHTML=
+      '<div style="font-weight:800;color:#E65100;font-size:.76rem;margin-bottom:3px;">✏️ Mots perso + comptage manuel</div>'+
+      '<div>Tu d\u00e9finis tes propres mots cl\u00e9s et tu comptes toi-m\u00eame leurs occurrences dans chaque tranche du livre.</div>';
     wf.className='lm-workflow c4';
     wf.style.display='block';
     wf.innerHTML=
