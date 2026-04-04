@@ -12331,6 +12331,15 @@ function updateQ3LexViz() {
       var ob2=document.getElementById('ni-q-th-ob2');
       if(ob1){ var h1=Math.round(ob1.getBoundingClientRect().height); if(h1>0) ob1.style.flex='0 0 '+h1+'px'; }
       if(ob2){ var h2=Math.round(ob2.getBoundingClientRect().height); if(h2>0) ob2.style.flex='0 0 '+h2+'px'; }
+      // Si les paires étaient ouvertes avant cet appel, rétablir leur état
+      if(_q3PairesOpen){
+        var glb2=document.getElementById('ni-q-th-global');
+        var mod2=document.getElementById('ni-q-th-mode');
+        var pai2=document.getElementById('ni-q-th-paires');
+        if(glb2) glb2.style.display='none';
+        if(mod2) mod2.style.display='none';
+        if(pai2) pai2.style.display='flex';
+      }
     });
   });
 }
@@ -13536,33 +13545,45 @@ function updateQ3PairesViz() {
   var L = LIVRE_ACTIF, lex = L && L.lexique;
   var el = document.getElementById('ni-q-th-paires');
   if (!el || !lex || !lex.paires || !lex.paires.length) return;
-  el.innerHTML = lex.paires.map(function(p, idx) {
+  var phases = lex.phases || [];
+  // Légende phases commune à toutes les paires (colonne droite)
+  var phLegHtml = phases.map(function(ph, i) {
+    var lc = LEX_PH_LC[i % LEX_PH_LC.length];
+    var nom = ph.nom || '';
+    return '<div style="display:flex;align-items:center;gap:3px;padding:1px 0;border-bottom:1px solid #f3eeff;">'+
+      '<span style="flex-shrink:0;width:13px;height:13px;border-radius:50%;background:'+lc+
+        ';display:inline-flex;align-items:center;justify-content:center;'+
+        'font-size:7.5px;font-weight:900;color:#fff;">'+(i+1)+'</span>'+
+      '<span style="font-size:9px;color:#444;line-height:1.35;">p.'+ph.pageDebut+'\u00a0'+nom+'</span>'+
+    '</div>';
+  }).join('');
+
+  el.innerHTML = lex.paires.map(function(p) {
     var k1 = p.cles[0], k2 = p.cles[1];
     var col1 = LEX_COLORS[k1], col2 = LEX_COLORS[k2];
     var svg = _buildPairScatter(lex, k1, k2);
     var nb = _findCrossings(lex.tranches, k1, k2).length;
     var crTxt = nb === 0 ? 'pas de croisement' : nb + ' croisement'+(nb>1?'s':'');
     return '<div class="ni-paire-item">'+
+      // ── Titre ──
       '<div class="ni-paire-ttl">'+
         '<span style="width:9px;height:9px;border-radius:50%;background:'+col1+';display:inline-block;flex-shrink:0;"></span>'+
         '<span style="color:'+col1+';">'+LEX_LABELS[k1]+'</span>'+
         '<span style="color:#ddd;font-weight:300;margin:0 2px;">/</span>'+
         '<span style="width:9px;height:9px;border-radius:50%;background:'+col2+';display:inline-block;flex-shrink:0;"></span>'+
         '<span style="color:'+col2+';">'+LEX_LABELS[k2]+'</span>'+
-        '<span class="ni-paire-badge">'+crTxt+' · ★'+p.score+'/4</span>'+
+        '<span class="ni-paire-badge">'+crTxt+' · \u2605'+p.score+'/4</span>'+
       '</div>'+
-      svg+
+      // ── Scatter (flex:1) + Légende phases (colonne droite) ──
+      '<div style="display:flex;gap:8px;align-items:flex-start;margin:3px 0;">'+
+        '<div style="flex:1;min-width:0;">'+svg+'</div>'+
+        (phases.length ?
+          '<div style="flex:0 0 auto;width:185px;display:flex;flex-direction:column;gap:0;padding-top:1px;">'+
+          phLegHtml+
+          '</div>' : '')+
+      '</div>'+
+      // ── Interprétation ──
       '<div class="ni-paire-interp">'+p.interpretation+'</div>'+
-      (lex.phases&&lex.phases.length?
-        '<div style="margin-top:5px;display:grid;grid-template-columns:1fr 1fr;gap:1px 10px;">'+
-        lex.phases.map(function(ph,i){
-          var lc=LEX_PH_LC[i%LEX_PH_LC.length];
-          return '<div style="display:flex;align-items:center;gap:3px;padding:1px 0;">'+
-            '<span style="flex-shrink:0;width:13px;height:13px;border-radius:50%;background:'+lc+';display:inline-flex;align-items:center;justify-content:center;font-size:7.5px;font-weight:900;color:#fff;">'+(i+1)+'</span>'+
-            '<span style="font-size:8px;color:#555;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">p.'+ph.pageDebut+' '+ph.nom+'</span>'+
-            '</div>';
-        }).join('')+
-        '</div>':'')+
     '</div>';
   }).join('');
 }
@@ -13571,8 +13592,10 @@ function updateQ3PairesViz() {
 var _q3ResizeTid = null;
 window.addEventListener('resize', function(){
   if (!document.body.classList.contains('ni-sec-mots')) return;
+  if (_q3PairesOpen) return; // paires ouvertes → ne pas toucher au layout global
   clearTimeout(_q3ResizeTid);
   _q3ResizeTid = setTimeout(function(){
+    if (_q3PairesOpen) return; // double vérification (délai 150ms)
     var ob1 = document.getElementById('ni-q-th-ob1');
     var ob2 = document.getElementById('ni-q-th-ob2');
     if (ob1) ob1.style.flex = '0 0 min(50%,265px)';
