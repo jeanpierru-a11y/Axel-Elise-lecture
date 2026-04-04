@@ -12195,10 +12195,10 @@ function _ajustRadarCol() {
   var r = ob1.getBoundingClientRect();
   if(r.width <= 0 || r.height <= 0) return;
   // col3 = 13% de la largeur ob1 (50% de l'original 26%)
-  var col3px = Math.round(r.width * 0.13);
+  var col3px = Math.round(r.width * 0.195);
   // col1 = largeur pour que hauteur SVG (viewBox 236×210) = hauteur ob1
   var col1px = Math.min(Math.round(r.height * 236 / 210), r.width - col3px - 60);
-  ob1.style.gridTemplateColumns = col1px + 'px auto ' + col3px + 'px';
+  ob1.style.gridTemplateColumns = col1px + 'px 140px ' + col3px + 'px';
 }
 
 function updateQ3LexViz() {
