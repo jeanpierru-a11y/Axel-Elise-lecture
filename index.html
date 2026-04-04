@@ -3967,7 +3967,7 @@ function sauvegarderBiblio() {
 // ════════════════════════════════════════════════════════
 // VERSION — incrémenter à chaque mise à jour des livres démo
 // ════════════════════════════════════════════════════════
-const DEMO_VERSION = 26; // v26 : source/fiabilite dans lexiques démo + comptage texte complet
+const DEMO_VERSION = 27; // v27 : arg3 dissertation Alice + Adversaire · resize listener ob1/ob2
 const LIVRES_DEMO = [
   {
     id: 'liv_petit_prince_001',
@@ -4493,7 +4493,7 @@ const LIVRES_DEMO = [
       intro: "Alice au Pays des Merveilles, écrit par Lewis Carroll en 1865, raconte l'aventure d'une petite fille de 7 ans qui tombe dans un terrier de lapin et découvre un monde complètement illogique. Dans ce monde absurde où rien ne fonctionne normalement, Alice fait face à des situations impossibles. On peut se demander comment une si petite fille réussit à rester courageuse face à tant d'absurdité.",
       arg1: "Tout d'abord, Alice garde son bon sens et ose dire ce qu'elle pense, même quand tout le monde autour d'elle est fou. Par exemple, face à la Reine de Coeur qui crie constamment des ordres ridicules, Alice finit par lui dire qu'elle n'a pas peur d'elle. Elle montre ainsi un courage rare pour une enfant de 7 ans.",
       arg2: "Ensuite, Alice n'abandonne pas malgré les situations impossibles qu'elle rencontre. En effet, quand elle rapetisse ou grandit sans le vouloir, quand les portes sont trop petites ou trop grandes, elle cherche toujours une solution. Cette persévérance montre qu'elle est déterminée à rentrer chez elle quoi qu'il arrive.",
-      arg3: "",
+      arg3: "Enfin, Alice garde confiance en son identité même quand tout change autour d'elle. Au fil du récit, son corps se transforme sans qu'elle puisse le contrôler, et des personnages comme la Chenille la questionnent : « Qui es-tu ? » Pourtant, elle sait qu'elle reste Alice — et c'est cette certitude intérieure qui lui permet de tenir tête à la Reine de Cœur au dernier chapitre. Ce sentiment d'identité solide est la source profonde de son courage.",
       conclu: "Pour conclure, Alice est un personnage courageux parce qu'elle garde sa raison et sa volonté dans un monde qui n'a aucun sens. Lewis Carroll nous montre qu'un enfant peut faire face à l'inconnu et à l'absurde en restant lui-même. Ce livre nous rappelle que le courage, ce n'est pas l'absence de peur, mais la capacité à continuer malgré elle."
     },
     themes: {amour: "chaton Dinah (p.7 ch.1) · larmes d'Alice (p.18 ch.2) · sœur (p.97 fin) · tendresse du souvenir · enfance aimée · Alice protège ses amis au procès (p.91)", pouvoir: "Reine de Cœur (p.67 ch.8) · Qu'on lui coupe la tête ! (p.68) · procès absurde (p.88 ch.12) · Roi (p.70) · règles arbitraires · le valet de cœur (p.88)", liberte: "sortie du Pays des Merveilles (p.93) · rêve = liberté totale (p.96 fin) · résistance d'Alice (p.91) · grandir/rapetisser (p.10 ch.1) · échapper aux règles adultes", identite: "Qui es-tu (p.35 ch.5) · Chenille (p.35) · je ne sais plus qui je suis (p.14) · grandir = changer (p.11) · rester soi-même · Alice au bout du rêve (p.96)", societe: "règles absurdes (p.55 ch.7) · thé fou chapelier (p.55) · croquet de la Reine (p.67) · règles qui changent (p.46) · tribunal illogique (p.88) · cartes à jouer (p.93)", nature: "terrier (p.8 ch.1) · jardin fleuri (p.12 ch.1) · champignon (p.36 ch.5) · chat du Cheshire (p.58 ch.6) · bois mystérieux · fleur parlante (p.62)"},
@@ -4927,7 +4927,7 @@ const LIVRES_DEMO = [
       intro:  "Le 9 janvier 1993, Jean-Claude Romand tue sa femme, ses deux enfants et ses parents après dix-huit ans de mensonge absolu. Ce fait divers devient en 2000 le matériau d'un récit d'Emmanuel Carrère. Comment raconter le vide d'une conscience, les meurtres d'un homme ordinaire, en restant fidèle à la réalité des victimes ? C'est la question que pose L'Adversaire.",
       arg1:   "Tout d'abord, le sujet de ce récit résiste par nature à la narration : Romand n'a pas d'intériorité accessible. Carrère ne peut pas savoir ce que Romand pensait — il le dit lui-même. L'omniscience romanesque traditionnelle est impossible.",
       arg2:   "Cependant, Carrère rend ce récit possible grâce à l'autofiction. En s'introduisant lui-même dans le récit, en disant ce qu'il ne sait pas (« peut-être », « sans doute »), il transforme l'impossibilité en matière littéraire. La modalisation devient une solution stylistique et éthique.",
-      arg3:   "",
+      arg3:   "Cependant, cette solution a un prix éthique : faire de Romand le centre du récit, c'est risquer d'accorder une existence littéraire à un meurtrier, là où ses victimes restent des ombres. Carrère thématise pourtant ce risque explicitement — en avouant sa propre proximité troublante avec Romand, en refusant tout verdict définitif. C'est précisément cette honnêteté qui distingue L'Adversaire d'un simple fait divers romancé et en fait un objet littéraire à part entière.",
       conclu: "Pour conclure, L'Adversaire est un récit qui se sait impossible et qui fait de cette impossibilité son sujet véritable. C'est précisément parce qu'il exhibe ses limites qu'il devient l'un des récits les plus nécessaires de la littérature française contemporaine."
     },
     dissertation2: {
@@ -13566,6 +13566,20 @@ function updateQ3PairesViz() {
     '</div>';
   }).join('');
 }
+
+// ── Resize listener : re-fige ob1/ob2 si le panneau Mots est visible ──────────
+var _q3ResizeTid = null;
+window.addEventListener('resize', function(){
+  if (!document.body.classList.contains('ni-sec-mots')) return;
+  clearTimeout(_q3ResizeTid);
+  _q3ResizeTid = setTimeout(function(){
+    var ob1 = document.getElementById('ni-q-th-ob1');
+    var ob2 = document.getElementById('ni-q-th-ob2');
+    if (ob1) ob1.style.flex = '0 0 min(50%,265px)';
+    if (ob2) ob2.style.flex = '0 0 40%';
+    updateQ3LexViz();
+  }, 150);
+});
 
 </script>
 
