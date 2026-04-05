@@ -1431,15 +1431,21 @@ textarea{
 
 /* ── Toile thématique — Panneau démarrage (état sans lexique) ── */
 /* Chapeau */
-.lex-chapeau{background:#ede0f7;border:1px solid #b49fd4;border-radius:10px;padding:14px 18px;}
-.lex-chapeau-titre{font-size:.84rem;font-weight:900;color:#3a0d6e;margin-bottom:10px;}
-.lex-chapeau-section{margin-bottom:8px;}
+.lex-chapeau{background:#ede0f7;border:1px solid #b49fd4;border-radius:10px;padding:16px 18px;text-align:left;}
+.lex-chapeau-titre{font-size:.88rem;font-weight:900;color:#3a0d6e;margin-bottom:12px;letter-spacing:-.01em;}
+.lex-chapeau-section{margin-bottom:10px;}
 .lex-chapeau-section:last-child{margin-bottom:0;}
-.lex-chapeau-sec-titre{font-size:.64rem;font-weight:900;color:#6A1B9A;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
-.lex-chapeau-list{margin:0;padding:0 0 0 16px;list-style:disc;}
-.lex-chapeau-list li{font-size:.73rem;color:#1a1f2e;line-height:1.6;margin-bottom:2px;}
-.lex-chapeau-list li b{color:#3a0d6e;}
+.lex-chapeau-sec-titre{font-size:.63rem;font-weight:900;color:#6A1B9A;text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px;padding-bottom:3px;border-bottom:1px solid #c9b3e8;}
+.lex-chapeau-list{margin:0;padding:0 0 0 14px;list-style:disc;}
+.lex-chapeau-list li{font-size:.73rem;color:#1a1f2e;line-height:1.62;margin-bottom:3px;padding-left:2px;}
+.lex-chapeau-list li b{color:#2e0a5e;}
 .lex-chapeau-list li i{color:#444;}
+.lch-themes{display:inline-flex;flex-wrap:wrap;gap:3px;vertical-align:middle;margin-top:1px;}
+.lch-themes::before{content:'';display:block;width:0;}
+.lch-themes{font-size:.65rem;font-weight:800;background:linear-gradient(90deg,#4a148c,#1565c0,#c62828,#ad1457,#1565c0,#2e7d32);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.lch-num{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:#c9b3e8;color:#3a0d6e;font-size:.6rem;font-weight:900;flex-shrink:0;vertical-align:middle;margin-right:2px;}
+.lch-aside{font-size:.67rem;color:#666;font-style:italic;}
+.lch-warning{list-style:none !important;margin-left:-14px !important;background:#fff3e0;border:1px solid #ffe0b2;border-radius:6px;padding:4px 9px !important;font-size:.68rem !important;color:#bf360c !important;font-weight:600;}
 /* Label section */
 .lex-start-label{font-size:.74rem;font-weight:900;color:#3a0d6e;letter-spacing:.3px;text-transform:uppercase;}
 /* Grille */
@@ -2622,7 +2628,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
       <div class="ni-q-body" style="padding:4px 6px;display:flex;flex-direction:column;overflow:hidden;">
 
         <!-- Pas de lexique : panneau de démarrage -->
-        <div id="ni-q-th-nolex" style="overflow-y:auto;padding:40px 6px 20px;">
+        <div id="ni-q-th-nolex" style="overflow-y:auto;padding:20px 6px 20px;">
 
           <!-- CHAPEAU DOCUMENTAIRE -->
           <div class="lex-chapeau">
@@ -2631,31 +2637,38 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
             <div class="lex-chapeau-section">
               <div class="lex-chapeau-sec-titre">Structure</div>
               <ul class="lex-chapeau-list">
-                <li>L'œuvre est découpée en <b>tranches de pages égales</b> — 3, 5 ou 8 selon le schéma narratif</li>
-                <li>Chaque tranche reçoit un <b>score 0–100</b> par thème · 100 = tranche la plus dense</li>
+                <li>L'œuvre est découpée en <b>tranches de pages</b> — 3, 5 ou 8 selon le schéma narratif imposé ou choisi (<i>Aristote, Freytag ou moderne</i>)</li>
+                <li>Les <b>6 thèmes</b> étudiés : <span class="lch-themes">Identité · Société · Pouvoir · Amour · Liberté · Nature</span></li>
+                <li>Chaque thème est analysé selon un <b>champ lexical</b> qu'il est possible de définir soi-même ou de déléguer à l'IA</li>
+                <li>Si les mots sont choisis par l'<b>IA</b>, les scores sont attribués d'après la critique littéraire établie — pas par comptage mot à mot</li>
+                <li>Si l'analyse repose sur un <b>comptage</b>, il faut fournir une version numérique de l'œuvre</li>
+                <li class="lch-warning">⚠️ Respecter les droits d'auteur · utiliser une solution informatique de comptage</li>
+                <li>Fiabilité : <b>75 à 100 %</b> selon le choix des mots (IA ou perso) et le mode de traitement</li>
               </ul>
             </div>
 
             <div class="lex-chapeau-section">
-              <div class="lex-chapeau-sec-titre">Sélection des mots</div>
+              <div class="lex-chapeau-sec-titre">Comment choisir les mots</div>
               <ul class="lex-chapeau-list">
-                <li>① <b>Champ lexical direct</b> — <i>tendresse → Amour</i></li>
-                <li>② <b>Antonyme constitutif</b> — <i>haine → Amour</i> (le thème se définit aussi par ce qu'il nie)</li>
-                <li>③ <b>Vecteur narratif</b> — nom propre, lieu ou objet symbolique associé au thème</li>
+                <li><span class="lch-num">①</span> <b>Champ lexical direct</b> — <i>tendresse → Amour</i></li>
+                <li><span class="lch-num">②</span> <b>Antonyme constitutif</b> — <i>haine → Amour</i> <span class="lch-aside">(le thème se définit aussi par ce qu'il nie)</span></li>
+                <li><span class="lch-num">③</span> <b>Vecteur narratif</b> — nom propre, lieu ou objet symbolique associé au thème</li>
               </ul>
             </div>
 
             <div class="lex-chapeau-section">
               <div class="lex-chapeau-sec-titre">Lecture du résultat</div>
               <ul class="lex-chapeau-list">
-                <li><b>Radar</b> — moyenne par thème sur toute l'œuvre (vue globale)</li>
-                <li><b>Scatter</b> — évolution tranche par tranche (arcs narratifs)</li>
+                <li><b>Radar</b> — moyenne par thème sur toute l'œuvre <span class="lch-aside">(vue globale)</span></li>
+                <li><b>Scatter</b> — évolution tranche par tranche <span class="lch-aside">(arcs narratifs)</span></li>
+                <li><b>Justification</b> — explication du choix de chaque mot-clé par thème</li>
+                <li><b>Paires de scatter</b> — comparaisons thématiques pour l'analyse</li>
               </ul>
             </div>
           </div>
 
           <!-- TITRE + GRILLE -->
-          <div style="margin-top:40px;">
+          <div style="margin-top:20px;">
             <div class="lex-start-label">Choisir un mode</div>
             <div style="height:15px;"></div>
             <div class="lex-start-grid">
