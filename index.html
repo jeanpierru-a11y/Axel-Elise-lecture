@@ -1429,6 +1429,66 @@ textarea{
   color:var(--texte) !important;
 }
 
+/* ── Toile thématique — Panneau démarrage (état sans lexique) ── */
+/* Chapeau */
+.lex-chapeau{background:#ede0f7;border:1px solid #b49fd4;border-radius:10px;padding:14px 18px;}
+.lex-chapeau-titre{font-size:.84rem;font-weight:900;color:#3a0d6e;margin-bottom:10px;}
+.lex-chapeau-section{margin-bottom:8px;}
+.lex-chapeau-section:last-child{margin-bottom:0;}
+.lex-chapeau-sec-titre{font-size:.64rem;font-weight:900;color:#6A1B9A;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
+.lex-chapeau-list{margin:0;padding:0 0 0 16px;list-style:disc;}
+.lex-chapeau-list li{font-size:.73rem;color:#1a1f2e;line-height:1.6;margin-bottom:2px;}
+.lex-chapeau-list li b{color:#3a0d6e;}
+.lex-chapeau-list li i{color:#444;}
+/* Label section */
+.lex-start-label{font-size:.74rem;font-weight:900;color:#3a0d6e;letter-spacing:.3px;text-transform:uppercase;}
+/* Grille */
+.lex-start-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:0 12px;}
+/* Cartouche */
+.lsc{border:1.5px solid #ccc;border-radius:10px;padding:10px 12px;background:#fafafa;cursor:pointer;transition:box-shadow .18s,border-color .18s;}
+.lsc.lsc-ia{border-color:#9c27b0;background:#f5edfb;}
+.lsc.lsc-solo{border-color:#1565c0;background:#edf3fb;}
+.lsc.lsc-hybride{border-color:#e65100;background:#fdf3ed;}
+.lsc.lsc-controleur{border-color:#2e7d32;background:#edf6ee;}
+.lsc.lsc-ia.lsc-selected{border-color:#6a1b9a;box-shadow:0 0 0 3px rgba(154,39,176,.2);}
+.lsc.lsc-solo.lsc-selected{border-color:#0d47a1;box-shadow:0 0 0 3px rgba(21,101,192,.2);}
+.lsc.lsc-hybride.lsc-selected{border-color:#bf360c;box-shadow:0 0 0 3px rgba(230,81,0,.2);}
+.lsc.lsc-controleur.lsc-selected{border-color:#1b5e20;box-shadow:0 0 0 3px rgba(46,125,50,.2);}
+/* Badge mode */
+.lsc-mode{display:inline-block;font-size:.57rem;font-weight:900;letter-spacing:.6px;text-transform:uppercase;padding:2px 7px;border-radius:4px;margin-bottom:7px;}
+.lsc-ia .lsc-mode{background:#e1bee7;color:#4a148c;}
+.lsc-solo .lsc-mode{background:#bbdefb;color:#0d47a1;}
+.lsc-hybride .lsc-mode{background:#ffe0b2;color:#bf360c;}
+.lsc-controleur .lsc-mode{background:#c8e6c9;color:#1b5e20;}
+/* Citation */
+.lsc-quote{font-size:.70rem;color:#1a1f2e;line-height:1.58;font-style:italic;}
+/* Bouton lumineux */
+.lsc-launch{display:none;margin-top:9px;width:100%;border:none;border-radius:7px;padding:7px 10px;font-size:.74rem;font-weight:800;cursor:pointer;font-family:inherit;}
+@keyframes lsc-pulse{0%,100%{opacity:1;}50%{opacity:.8;}}
+.lsc-ia .lsc-launch{background:linear-gradient(135deg,#6a1b9a,#ab47bc);color:#fff;box-shadow:0 0 12px rgba(156,39,176,.5);animation:lsc-pulse 2s ease-in-out infinite;}
+.lsc-solo .lsc-launch{background:linear-gradient(135deg,#0d47a1,#42a5f5);color:#fff;box-shadow:0 0 12px rgba(21,101,192,.5);animation:lsc-pulse 2s ease-in-out infinite;}
+.lsc-hybride .lsc-launch{background:linear-gradient(135deg,#bf360c,#ff8a65);color:#fff;box-shadow:0 0 12px rgba(230,81,0,.5);animation:lsc-pulse 2s ease-in-out infinite;}
+.lsc-controleur .lsc-launch{background:linear-gradient(135deg,#1b5e20,#66bb6a);color:#fff;box-shadow:0 0 12px rgba(46,125,50,.5);animation:lsc-pulse 2s ease-in-out infinite;}
+/* Panneau processus */
+.ni-lex-proc{border-radius:10px;padding:13px 16px;display:none;}
+.ni-lex-proc-ia{background:#f3e8fd;border:1px solid #ce93d8;}
+.ni-lex-proc-solo{background:#e8f1fd;border:1px solid #90caf9;}
+.ni-lex-proc-hybride{background:#fdf0e8;border:1px solid #ffcc80;}
+.ni-lex-proc-controleur{background:#e8f5e9;border:1px solid #a5d6a7;}
+.ni-lex-proc-title{font-size:.73rem;font-weight:900;margin-bottom:9px;}
+.ni-lex-proc-ia .ni-lex-proc-title{color:#4a148c;}
+.ni-lex-proc-solo .ni-lex-proc-title{color:#0d47a1;}
+.ni-lex-proc-hybride .ni-lex-proc-title{color:#bf360c;}
+.ni-lex-proc-controleur .ni-lex-proc-title{color:#1b5e20;}
+.ni-lex-proc-steps{margin:0;padding:0;list-style:none;counter-reset:proc-step;display:flex;flex-direction:column;gap:6px;}
+.ni-lex-proc-steps li{counter-increment:proc-step;font-size:.71rem;color:#1a1f2e;line-height:1.5;display:flex;align-items:baseline;gap:7px;}
+.ni-lex-proc-steps li::before{content:counter(proc-step);display:inline-flex;align-items:center;justify-content:center;min-width:17px;height:17px;border-radius:50%;font-size:.6rem;font-weight:900;flex-shrink:0;margin-top:1px;}
+.ni-lex-proc-ia li::before{background:#ce93d8;color:#4a148c;}
+.ni-lex-proc-solo li::before{background:#90caf9;color:#0d47a1;}
+.ni-lex-proc-hybride li::before{background:#ffcc80;color:#bf360c;}
+.ni-lex-proc-controleur li::before{background:#a5d6a7;color:#1b5e20;}
+#ni-lex-ia-status{font-size:.65rem;color:#5b0ea6;text-align:center;min-height:12px;margin-top:3px;}
+
 /* ── En-têtes / bandeaux principaux ── */
 #biblio-header,
 #guide-header{
@@ -2556,15 +2616,126 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
         <div style="display:flex;align-items:center;gap:3px;">
           <button class="ni-q-hdr-icon" id="ni-th-count-btn" onclick="openLexCount()" title="Compter sur texte complet (.txt)" style="display:none;">📄</button>
           <button class="ni-q-hdr-icon" onclick="openLexiqueImport()" title="Importer analyse lexicale">📋</button>
-          <button class="ni-q-hdr-icon" id="ni-th-help-btn" onclick="openLexHelp()" title="Méthodologie" style="display:none;">?</button>
+          <button class="ni-q-hdr-icon" id="ni-th-help-btn" onclick="openLexHelp()" title="Méthodologie — Analyse lexicale">?</button>
         </div>
       </div>
       <div class="ni-q-body" style="padding:4px 6px;display:flex;flex-direction:column;overflow:hidden;">
 
-        <!-- Pas de lexique -->
-        <div id="ni-q-th-nolex">
-          <div style="font-size:.72rem;color:#bbb;margin-bottom:6px;">Pas encore d'analyse lexicale</div>
-          <button class="btn btn-violet btn-sm" style="width:100%;" onclick="openLexiqueImport()">📋 Importer</button>
+        <!-- Pas de lexique : panneau de démarrage -->
+        <div id="ni-q-th-nolex" style="overflow-y:auto;padding:40px 6px 20px;">
+
+          <!-- CHAPEAU DOCUMENTAIRE -->
+          <div class="lex-chapeau">
+            <div class="lex-chapeau-titre">📐 L'analyse lexicale — principe</div>
+
+            <div class="lex-chapeau-section">
+              <div class="lex-chapeau-sec-titre">Structure</div>
+              <ul class="lex-chapeau-list">
+                <li>L'œuvre est découpée en <b>tranches de pages égales</b> — 3, 5 ou 8 selon le schéma narratif</li>
+                <li>Chaque tranche reçoit un <b>score 0–100</b> par thème · 100 = tranche la plus dense</li>
+              </ul>
+            </div>
+
+            <div class="lex-chapeau-section">
+              <div class="lex-chapeau-sec-titre">Sélection des mots</div>
+              <ul class="lex-chapeau-list">
+                <li>① <b>Champ lexical direct</b> — <i>tendresse → Amour</i></li>
+                <li>② <b>Antonyme constitutif</b> — <i>haine → Amour</i> (le thème se définit aussi par ce qu'il nie)</li>
+                <li>③ <b>Vecteur narratif</b> — nom propre, lieu ou objet symbolique associé au thème</li>
+              </ul>
+            </div>
+
+            <div class="lex-chapeau-section">
+              <div class="lex-chapeau-sec-titre">Lecture du résultat</div>
+              <ul class="lex-chapeau-list">
+                <li><b>Radar</b> — moyenne par thème sur toute l'œuvre (vue globale)</li>
+                <li><b>Scatter</b> — évolution tranche par tranche (arcs narratifs)</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- TITRE + GRILLE -->
+          <div style="margin-top:40px;">
+            <div class="lex-start-label">Choisir un mode</div>
+            <div style="height:15px;"></div>
+            <div class="lex-start-grid">
+
+              <!-- (1,1) MODE IA -->
+              <div class="lsc lsc-ia" id="lsc-ia" onclick="niLexModeSelect('ia')">
+                <div class="lsc-mode">Mode IA</div>
+                <div class="lsc-quote">« Je n'ai rien à faire — l'IA choisit les mots clés et saisit les scores »</div>
+                <button class="lsc-launch" id="lsc-launch-ia" onclick="event.stopPropagation();niLexIA()">🚀 Lancer</button>
+                <div id="ni-lex-ia-status"></div>
+              </div>
+
+              <!-- (1,2) MODE SOLO -->
+              <div class="lsc lsc-solo" id="lsc-solo" onclick="niLexModeSelect('solo')">
+                <div class="lsc-mode">Mode Solo</div>
+                <div class="lsc-quote">« Je choisis mes mots clés, j'ai une version numérique de l'œuvre et je m'occupe du comptage »</div>
+                <button class="lsc-launch" id="lsc-launch-solo" onclick="event.stopPropagation();genererModeleExcel()">🚀 Lancer</button>
+              </div>
+
+              <!-- (2,1) MODE HYBRIDE -->
+              <div class="lsc lsc-hybride" id="lsc-hybride" onclick="niLexModeSelect('hybride')">
+                <div class="lsc-mode">Mode Hybride</div>
+                <div class="lsc-quote">« Je choisis les mots clés, j'ai une version numérique de l'œuvre et je laisse Claude s'occuper du comptage »</div>
+                <button class="lsc-launch" id="lsc-launch-hybride" onclick="event.stopPropagation();openLexiqueImport()">🚀 Lancer</button>
+              </div>
+
+              <!-- (2,2) MODE CONTRÔLEUR -->
+              <div class="lsc lsc-controleur" id="lsc-controleur" onclick="niLexModeSelect('controleur')">
+                <div class="lsc-mode">Mode Contrôleur</div>
+                <div class="lsc-quote">« Je choisis les mots clés de l'IA, j'ai une version numérique de l'œuvre et je m'occupe du comptage »</div>
+                <button class="lsc-launch" id="lsc-launch-controleur" onclick="event.stopPropagation();niLexIA()">🚀 Lancer</button>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- PANNEAUX PROCESSUS -->
+          <div style="margin-top:16px;padding:0 12px;">
+
+            <div id="ni-lex-proc-ia" class="ni-lex-proc ni-lex-proc-ia">
+              <div class="ni-lex-proc-title">🤖 Processus — Mode IA</div>
+              <ol class="ni-lex-proc-steps">
+                <li>Cliquer sur <b>Lancer</b> — la clé API doit être configurée (Sync › IA)</li>
+                <li>L'IA construit le champ lexical : 6 thèmes × 6 mots-clés</li>
+                <li>Les scores sont estimés tranche par tranche (3, 5 ou 8 selon le schéma)</li>
+                <li>La toile s'affiche — fiabilité <b>~75 %</b> · améliorable par comptage .txt</li>
+              </ol>
+            </div>
+
+            <div id="ni-lex-proc-solo" class="ni-lex-proc ni-lex-proc-solo">
+              <div class="ni-lex-proc-title">✍️ Processus — Mode Solo</div>
+              <ol class="ni-lex-proc-steps">
+                <li>Cliquer sur <b>Lancer</b> — le modèle Excel se télécharge</li>
+                <li>Feuille « Champs lexicaux » — définir ses propres mots-clés par thème</li>
+                <li>Feuille « Comptage » — saisir les occurrences de chaque mot par tranche</li>
+                <li>Réimporter l'Excel : scores calculés automatiquement — fiabilité <b>95 %</b></li>
+              </ol>
+            </div>
+
+            <div id="ni-lex-proc-hybride" class="ni-lex-proc ni-lex-proc-hybride">
+              <div class="ni-lex-proc-title">🔀 Processus — Mode Hybride</div>
+              <ol class="ni-lex-proc-steps">
+                <li>Télécharger le modèle Excel et définir ses mots-clés (feuille « Champs lexicaux »)</li>
+                <li>Dans Claude.ai <em>(hors application)</em>, soumettre mots-clés + texte de l'œuvre</li>
+                <li>Claude.ai comptabilise les occurrences — copier le JSON résultant</li>
+                <li>Cliquer sur <b>Lancer</b> et coller le JSON — fiabilité <b>85 %</b></li>
+              </ol>
+            </div>
+
+            <div id="ni-lex-proc-controleur" class="ni-lex-proc ni-lex-proc-controleur">
+              <div class="ni-lex-proc-title">🎛️ Processus — Mode Contrôleur</div>
+              <ol class="ni-lex-proc-steps">
+                <li>Cliquer sur <b>Lancer</b> — l'IA génère le champ lexical de base</li>
+                <li>Ajuster les mots-clés si besoin via le bouton Justification</li>
+                <li>Fournir le texte .txt via le bouton 📄 dans le bandeau</li>
+                <li>Scores recalculés par comptage exhaustif — fiabilité <b>100 %</b></li>
+              </ol>
+            </div>
+
+          </div>
         </div>
 
         <!-- Grille 3×2 (visible quand lexique disponible) -->
@@ -13391,6 +13562,122 @@ function _initExplDrag(){
 }
 
 // ── Prompt A : remplissage IA des 5 zones auteur ─────────────────────────────
+// ════════════════════════════════════════════════════════
+// TOILE THÉMATIQUE — Sélection de mode (interaction grille)
+// ════════════════════════════════════════════════════════
+function niLexModeSelect(mode) {
+  // Désélectionner tous les cartouches
+  ['ia','solo','hybride','controleur'].forEach(function(m) {
+    var c = document.getElementById('lsc-' + m);
+    if (c) c.classList.remove('lsc-selected');
+    var b = document.getElementById('lsc-launch-' + m);
+    if (b) b.style.display = 'none';
+    var p = document.getElementById('ni-lex-proc-' + m);
+    if (p) p.style.display = 'none';
+  });
+  // Sélectionner le cartouche cliqué
+  var card = document.getElementById('lsc-' + mode);
+  if (card) card.classList.add('lsc-selected');
+  // Afficher le bouton lumineux
+  var btn = document.getElementById('lsc-launch-' + mode);
+  if (btn) btn.style.display = 'block';
+  // Afficher le panneau processus
+  var proc = document.getElementById('ni-lex-proc-' + mode);
+  if (proc) {
+    proc.style.display = 'block';
+    setTimeout(function() { proc.scrollIntoView({behavior:'smooth', block:'nearest'}); }, 80);
+  }
+}
+
+// ════════════════════════════════════════════════════════
+// TOILE THÉMATIQUE — Génération IA du lexique (1 clic)
+// ════════════════════════════════════════════════════════
+async function niLexIA() {
+  var L = LIVRE_ACTIF;
+  if (!L) return;
+  var cleIA = getCleIA();
+  if (!cleIA) {
+    showToast('❌ Clé API manquante — configure-la dans Sync \u203a IA', 'warn');
+    setTimeout(function(){ ouvrirModalSync(); setTimeout(function(){ if(typeof showSyncTab==='function') showSyncTab('ia'); },120); },100);
+    return;
+  }
+  var pages   = parseInt(L.pages) || 200;
+  var schema  = L.schemaType || 'aristote';
+  var nTr     = schema === 'moderne' ? 8 : schema === 'freytag' ? 5 : 3;
+  var taille  = Math.round(pages / nTr);
+
+  // Construire la description des tranches pour le prompt
+  var tDesc = [];
+  for (var i = 0; i < nTr; i++) {
+    var deb = i * taille + 1;
+    var fin = i === nTr - 1 ? pages : (i + 1) * taille;
+    tDesc.push('p.' + deb + '\u2013' + fin);
+  }
+  var prompt =
+    'Analyse lexicale de \u00ab\u00a0' + (L.titre||'?') + '\u00a0\u00bb de ' + (L.auteur||'?') +
+    ' (' + pages + '\u00a0pages, sch\u00e9ma ' + schema + ' \u2014 ' + nTr + ' tranches de ~' + taille + '\u00a0pages).\n\n' +
+    'Pour chaque tranche (' + tDesc.join(', ') + '), donne un score de 0\u2013100 pour chacun des 6 th\u00e8mes :\n' +
+    '- amour (liens affectifs, sentiments, famille, relations)\n' +
+    '- pouvoir (domination, contr\u00f4le, autorit\u00e9, manipulation, hi\u00e9rarchie)\n' +
+    '- liberte (\u00e9mancipation, enfermement, r\u00e9sistance, fuite, d\u00e9terminisme)\n' +
+    '- identite (qu\u00eate de soi, m\u00e9moire, conscience, je, nom, origine)\n' +
+    '- societe (classe sociale, normes, institutions, regard des autres, apparences)\n' +
+    '- nature (paysages, corps, saisons, espace physique, animaux)\n\n' +
+    'Inclus aussi champLexical : 6 mots-cl\u00e9s par th\u00e8me avec leurs occurrences approximatives.\n\n' +
+    'Retourne UNIQUEMENT un JSON strict, sans texte avant ni apr\u00e8s, sans backticks :\n' +
+    '{"phases":[{"pageDebut":1,"nom":"..."},...(' + nTr + '\u00a0\u00e9l\u00e9ments)],' +
+    '"tranches":[{"pageDebut":1,"pageFin":' + taille + ',"amour":XX,"pouvoir":XX,"liberte":XX,"identite":XX,"societe":XX,"nature":XX},...(' + nTr + '\u00a0\u00e9l\u00e9ments)],' +
+    '"champLexical":{"amour":[{"mot":"...","n":XX},...],"pouvoir":[...],"liberte":[...],"identite":[...],"societe":[...],"nature":[...]}}';
+
+  // UI : état chargement
+  var nolex  = document.getElementById('ni-q-th-nolex');
+  var status = document.getElementById('ni-lex-ia-status');
+  var btnIA  = nolex ? nolex.querySelector('button.btn-violet') : null;
+  if (btnIA) { btnIA.disabled = true; btnIA.textContent = '\u23f3 Analyse en cours\u2026'; }
+  if (status) status.textContent = 'L\u2019IA analyse \u00ab\u00a0' + (L.titre||'') + '\u00a0\u00bb\u2026';
+
+  try {
+    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': cleIA,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 4000,
+        system: 'Tu es un assistant d\u2019analyse litt\u00e9raire. R\u00e9ponds UNIQUEMENT en JSON valide, sans texte avant ou apr\u00e8s, sans blocs markdown.',
+        messages: [{role: 'user', content: prompt}]
+      })
+    });
+    var data = await resp.json();
+    if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
+    var raw = ((data.content||[]).find(function(b){return b.type==='text';})||{}).text || '{}';
+    var s = raw.indexOf('{'), e = raw.lastIndexOf('}');
+    if (s === -1 || e === -1) throw new Error('R\u00e9ponse non JSON');
+    var obj = JSON.parse(raw.slice(s, e + 1));
+    if (!obj.phases || !obj.tranches) throw new Error('JSON incomplet (phases\u2009/\u2009tranches manquants)');
+    if (obj.phases.length !== nTr)    throw new Error('Nombre de phases incorrect (' + obj.phases.length + ' au lieu de ' + nTr + ')');
+
+    if (!L.lexique) L.lexique = {};
+    L.lexique.phases        = obj.phases;
+    L.lexique.tranches      = obj.tranches;
+    if (obj.champLexical)   L.lexique.champLexical = obj.champLexical;
+    L.lexique.source        = 'modelisation_ia';
+    L.lexique.fiabilite     = 75;
+    sauvegarderBiblio();
+    updateQ3LexViz();
+    showToast('\uD83E\uDD16 Analyse lexicale g\u00e9n\u00e9r\u00e9e \u2014 fiabilit\u00e9 ~75\u00a0%', 'ok');
+  } catch(err) {
+    if (btnIA) { btnIA.disabled = false; btnIA.textContent = '\uD83E\uDD16 G\u00e9n\u00e9rer maintenant'; }
+    if (status) status.textContent = '\u274C ' + err.message;
+    showToast('\u274C Erreur IA\u00a0: ' + err.message, 'warn');
+    console.error('niLexIA:', err);
+  }
+}
+
 async function niLVPromptA() {
   var L = LIVRE_ACTIF;
   if (!L) return;
