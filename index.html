@@ -354,6 +354,17 @@ body.mode-elise .ni-mi.only-elise{display:flex;}
 .pmw-badge-moyen {background:rgba(255,179,0,.2);color:#FFE082;}
 .pmw-badge-faible{background:rgba(239,83,80,.2);color:#EF9A9A;}
 .pmw-note{padding:8px 10px;font-size:.68rem;color:rgba(255,255,255,.55);line-height:1.5;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-top:none;border-radius:0 0 8px 8px;}
+.pmw-copy-intro{font-size:.82rem;line-height:1.7;color:rgba(255,255,255,.82);margin-bottom:18px;padding:12px 14px;background:rgba(255,255,255,.04);border-radius:8px;border-left:3px solid #7B1FA2;}
+.pmw-copy-zone{margin-bottom:16px;}
+.pmw-copy-label{font-size:.65rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#CE93D8;margin-bottom:8px;}
+.pmw-copy-probl-display{font-family:Georgia,serif;font-size:.9rem;font-style:italic;line-height:1.6;color:rgba(255,255,255,.92);padding:12px 14px;background:rgba(123,31,162,.12);border:1px solid rgba(123,31,162,.35);border-radius:8px;}
+.pmw-copy-prompt-box{font-family:'Courier New',monospace;font-size:.75rem;line-height:1.7;color:rgba(255,255,255,.82);padding:14px 16px;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.12);border-radius:8px;white-space:pre-wrap;max-height:200px;overflow-y:auto;}
+.pmw-copy-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
+.pmw-copy-btn{padding:9px 18px;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-size:.78rem;font-weight:700;transition:all .15s;background:#7B1FA2;color:#fff;}
+.pmw-copy-btn:hover{background:#9C27B0;}
+.pmw-copy-btn-sec{background:rgba(255,255,255,.08);color:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.15);}
+.pmw-copy-btn-sec:hover{background:rgba(255,255,255,.15);color:#fff;}
+.pmw-copy-confirm{margin-top:12px;font-size:.78rem;color:#A5D6A7;font-weight:600;padding:8px 12px;background:rgba(76,175,80,.1);border-radius:6px;}
 .pmw-exemple{margin-top:12px;padding:14px 16px;background:rgba(123,31,162,.15);border:1px solid rgba(123,31,162,.4);border-radius:8px;font-family:Georgia,serif;font-size:.9rem;font-style:italic;line-height:1.7;color:rgba(255,255,255,.92);}
 .pmw-ex-label{font-family:inherit;font-size:.62rem;font-style:normal;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:rgba(255,255,255,.4);display:block;margin-bottom:6px;}
 /* Exemples dans la fenêtre */
@@ -3949,6 +3960,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
     <div class="pmw-tabs">
       <div class="pmw-tab act" onclick="pmwTab('structure',this)">Structure</div>
       <div class="pmw-tab"     onclick="pmwTab('exemples',this)">Exemples du livre</div>
+      <div class="pmw-tab"     onclick="pmwTab('copier',this)">📋 Copier pour l'IA</div>
     </div>
     <div class="pmw-panel act" id="pmw-panel-structure">
       <div class="pmw-struct-grid">
@@ -4012,6 +4024,29 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
     <div class="pmw-panel" id="pmw-panel-exemples">
       <div id="pmw-exemples-body"></div>
       <a class="pmw-open-full" onclick="openPMWFull()">↗ Ouvrir la machine complète</a>
+    </div>
+    <div class="pmw-panel" id="pmw-panel-copier">
+      <div class="pmw-copy-intro">
+        Pas de clé API ? Colle ce prompt dans <strong>Claude.ai, ChatGPT ou Gemini</strong>
+        — gratuits sans installation. L'IA saura exactement quoi évaluer.
+      </div>
+      <div class="pmw-copy-zone">
+        <div class="pmw-copy-label">Ta problématique actuelle</div>
+        <div id="pmw-copy-probl" class="pmw-copy-probl-display">
+          <em style="color:rgba(255,255,255,.35);">Aucune problématique trouvée — écris-en une dans Dissertation, Analyse linéaire ou Commentaire.</em>
+        </div>
+      </div>
+      <div class="pmw-copy-zone">
+        <div class="pmw-copy-label">Prompt prêt à coller</div>
+        <div id="pmw-copy-prompt" class="pmw-copy-prompt-box"></div>
+      </div>
+      <div class="pmw-copy-btns">
+        <button class="pmw-copy-btn" onclick="pmwCopyPrompt()">📋 Copier le prompt</button>
+        <button class="pmw-copy-btn pmw-copy-btn-sec" onclick="pmwOpenChat('claude')">→ Ouvrir Claude.ai</button>
+        <button class="pmw-copy-btn pmw-copy-btn-sec" onclick="pmwOpenChat('chatgpt')">→ Ouvrir ChatGPT</button>
+        <button class="pmw-copy-btn pmw-copy-btn-sec" onclick="pmwOpenChat('gemini')">→ Ouvrir Gemini</button>
+      </div>
+      <div id="pmw-copy-confirm" class="pmw-copy-confirm" style="display:none">✓ Copié — colle dans le chat de ton choix</div>
     </div>
   </div>
 </div>
@@ -15227,6 +15262,77 @@ function pmwTab(id, el) {
   document.querySelectorAll('.pmw-panel').forEach(function(p){ p.classList.remove('act'); });
   el.classList.add('act');
   document.getElementById('pmw-panel-' + id).classList.add('act');
+  if (id === 'copier') _pmwBuildCopy();
+}
+
+function _pmwGetProbl() {
+  var targets = ['diss2-problematique','lin-intro3','com-problematique-ta'];
+  var found = '';
+  targets.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && el.value && el.value.trim() && !found) found = el.value.trim();
+  });
+  return found;
+}
+
+function _pmwBuildCopy() {
+  var L = LIVRE_ACTIF;
+  var probl = _pmwGetProbl();
+  var titre = L ? (L.titre + (L.auteur ? ', ' + L.auteur : '')) : 'l\'œuvre étudiée';
+
+  // Afficher la problématique actuelle
+  var pd = document.getElementById('pmw-copy-probl');
+  if (pd) pd.innerHTML = probl
+    ? '« ' + probl + ' »'
+    : '<em style="color:rgba(255,255,255,.35);">Aucune problématique trouvée — écris-en une dans Dissertation, Analyse linéaire ou Commentaire.</em>';
+
+  // Construire le prompt
+  var prompt =
+    'Tu es un professeur de lycée en France spécialisé en littérature.\n' +
+    'Une élève de lycée (niveau lycée, Première ou Terminale) travaille sur ' + titre + '.\n\n' +
+    'Elle propose cette problématique :\n' +
+    '« ' + (probl || '[colle ta problématique ici]') + ' »\n\n' +
+    'Évalue-la en 3 points courts :\n' +
+    '1. Ce qui fonctionne (la tension identifiée, la pertinence pour l\'œuvre)\n' +
+    '2. Ce qui pose problème (trop vague, trop fermée, hors sujet, simple paraphrase, réponse évidente…)\n' +
+    '3. Une suggestion d\'amélioration en une phrase, dans le même registre.\n\n' +
+    'Réponds de façon directe et bienveillante, sans jargon excessif. Maximum 150 mots.';
+
+  var pb = document.getElementById('pmw-copy-prompt');
+  if (pb) pb.textContent = prompt;
+
+  // Cacher le confirm
+  var conf = document.getElementById('pmw-copy-confirm');
+  if (conf) conf.style.display = 'none';
+}
+
+function pmwCopyPrompt() {
+  var pb = document.getElementById('pmw-copy-prompt');
+  if (!pb) return;
+  var txt = pb.textContent;
+  navigator.clipboard.writeText(txt).then(function() {
+    var conf = document.getElementById('pmw-copy-confirm');
+    if (conf) { conf.style.display = 'block'; setTimeout(function(){ conf.style.display='none'; }, 3000); }
+  }).catch(function() {
+    // Fallback IE/old browsers
+    var ta = document.createElement('textarea');
+    ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    document.body.removeChild(ta);
+    var conf = document.getElementById('pmw-copy-confirm');
+    if (conf) { conf.style.display = 'block'; setTimeout(function(){ conf.style.display='none'; }, 3000); }
+  });
+}
+
+function pmwOpenChat(service) {
+  pmwCopyPrompt();
+  var urls = {
+    claude:  'https://claude.ai/new',
+    chatgpt: 'https://chat.openai.com/',
+    gemini:  'https://gemini.google.com/'
+  };
+  window.open(urls[service] || 'https://claude.ai/new', '_blank');
 }
 
 function openPMWFull() {
