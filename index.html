@@ -2322,7 +2322,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
       <div id="ni-focus">
         <div class="ni-flbl"><div class="ni-fpulse"></div>Nouveau personnage</div>
         <div class="ni-focus-row">
-          <textarea id="ni-focus-ta" placeholder="Dicte ou tape… ex : « Le Renard, ami du PP, lui enseigne l'apprivoisement »"
+          <textarea id="ni-focus-ta" placeholder="Dicte ou tape… ex : « Tel personnage enseigne telle leçon au héros. »"
             onkeydown="if(event.ctrlKey&&event.key==='Enter')niPAjouter()"></textarea>
           <div class="ni-focus-btns">
             <button class="ni-fb-add" onclick="niPAjouter()" title="Ajouter (Ctrl+Entrée)">＋</button>
@@ -2423,7 +2423,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
             <button class="btn-mic" id="lv-mic-courant" onclick="niMicStart('ni-lv-courant','lv-mic-courant')" title="Dicter" style="width:22px;height:22px;font-size:.75rem;margin-left:auto;">🎤</button>
           </div>
           <textarea id="ni-lv-courant" class="ni-lv-small-ta" rows="2"
-            placeholder="Réalisme, Romantisme…"
+            placeholder="Nom du courant, époque, caractéristiques principales…"
             oninput="niLVSave('courant',this.value)"></textarea>
         </div>
         <div class="ni-lv-small-zone">
@@ -2431,7 +2431,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
             <button class="btn-mic" id="lv-mic-style" onclick="niMicStart('ni-lv-style','lv-mic-style')" title="Dicter" style="width:22px;height:22px;font-size:.75rem;margin-left:auto;">🎤</button>
           </div>
           <textarea id="ni-lv-style" class="ni-lv-small-ta" rows="2"
-            placeholder="Lexique, syntaxe, figures récurrentes…"
+            placeholder="Registre, point de vue, figures de style récurrentes, rythme des phrases…"
             oninput="niLVSave('style',this.value)">
           </textarea>
           <details id="ni-lv-narrdetails">
@@ -2473,7 +2473,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
         </div>
         <div class="ni-lv-zone-hint">Que se passait-il dans le monde quand ce livre a été écrit ? (politique, guerres, société, culture…)</div>
         <textarea id="ni-lv-contexte" class="ni-lv-ta"
-          placeholder="Ex. : L'Angleterre victorienne (1837-1901) est une époque de révolution industrielle…"
+          placeholder="Politique, guerres, société, culture au moment de l'écriture…"
           oninput="niLVSave('contexte',this.value)"></textarea>
       </div>
 
@@ -2483,7 +2483,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
         </div>
         <div class="ni-lv-zone-hint">Quel âge avait-il/elle ? Sa vie à cette époque (santé, famille, rencontres importantes…)</div>
         <textarea id="ni-lv-auteurVie" class="ni-lv-ta"
-          placeholder="Ex. : Quand il écrit ce livre, l'auteur a 38 ans. Il vient de traverser une période difficile…"
+          placeholder="Âge, santé, famille, événements importants dans la vie de l'auteur à ce moment…"
           oninput="niLVSave('auteurVie',this.value)"></textarea>
       </div>
 
@@ -2493,7 +2493,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
         </div>
         <div class="ni-lv-zone-hint">Est-ce son premier livre ? Une rupture dans son style ? Ce que ce livre représente dans sa carrière.</div>
         <textarea id="ni-lv-trajectoire" class="ni-lv-ta"
-          placeholder="Ex. : Ce roman est son œuvre majeure. Il marque un tournant car… Avant, il avait publié… Après, il écrira…"
+          placeholder="Premier livre ? Rupture ? Ce que cette œuvre représente dans la carrière de l'auteur…"
           oninput="niLVSave('trajectoire',this.value)"></textarea>
       </div>
 
@@ -2861,7 +2861,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
           <div class="ni-q-body">
             <div class="ni-q-hint">Un mot difficile par bloc, avec sa définition ou son contexte.</div>
             <textarea id="ni-m-mots-ta" class="ni-q-ta"
-              placeholder="── Mot inconnu ──&#10;In medias res : commencer au cœur de l'action.&#10;&#10;── Mot inconnu ──&#10;Analepse : retour en arrière (flashback)."
+              placeholder="── Mot inconnu ──&#10;Sa définition ou son contexte dans l'œuvre.&#10;&#10;── Mot inconnu ──&#10;Sa définition ou son contexte dans l'œuvre."
               oninput="niMSaveMots()"></textarea>
           </div>
         </div>
@@ -2872,7 +2872,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
           <div class="ni-q-body">
             <div class="ni-q-hint">Ce que tu as compris, aimé, les passages marquants…</div>
             <textarea id="ni-m-avis-ta" class="ni-q-ta"
-              placeholder="Mon avis sur ce livre…&#10;&#10;Les passages qui m'ont marqué…&#10;&#10;Ce que j'ai compris…"
+              placeholder="Ce que j'ai compris, ce qui m'a marqué, mon avis personnel…"
               oninput="niMSaveAvis()"></textarea>
           </div>
         </div>
@@ -2992,7 +2992,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
         <div class="card-title" style="color:var(--orange)">🌍 L'époque — contexte historique &amp; culturel</div>
         <div style="font-size:.73rem;color:#888;margin-bottom:6px;">Que se passait-il dans le monde quand ce livre a été écrit ? (politique, guerres, société, culture…)</div>
         <textarea id="livre-contexte" class="field" rows="5"
-          placeholder="Ex. : L'Angleterre victorienne (1837-1901) est une époque de révolution industrielle, d'expansion coloniale et de grandes inégalités sociales. Les villes s'industrialisent rapidement mais les ouvriers vivent dans des conditions difficiles…"
+          placeholder="Politique, guerres, société, culture au moment de l'écriture…"
           oninput="saveLivreContexte()"></textarea>
       </div>
 
@@ -3010,7 +3010,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
         <div class="card-title" style="color:var(--vert)">📖 Place dans la trajectoire de l'auteur·e</div>
         <div style="font-size:.73rem;color:#888;margin-bottom:6px;">Est-ce son premier livre ? Une œuvre majeure ? Une rupture dans son style ? Ce que ce livre représente dans sa carrière.</div>
         <textarea id="livre-trajectoire" class="field" rows="4"
-          placeholder="Ex. : Ce roman est l'œuvre la plus célèbre de l'auteur. Écrit après… il marque un tournant dans son écriture car… Avant ce livre, il/elle avait publié… Après, il/elle écrira…"
+          placeholder="Premier livre ? Rupture ? Ce que cette œuvre représente dans la carrière de l'auteur…"
           oninput="saveLivreContexte()"></textarea>
       </div>
 
@@ -3020,7 +3020,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
           <div class="card-title" style="color:#00838F">📚 Courant littéraire</div>
           <div style="font-size:.73rem;color:#888;margin-bottom:6px;">Classicisme / Lumières / Romantisme / Réalisme / Naturalisme / Symbolisme / Surréalisme / Existentialisme… Caractéristiques du courant dans ce livre.</div>
           <textarea id="livre-courant" class="field" rows="4"
-            placeholder="Ex. : Cette œuvre s'inscrit dans tel courant littéraire. L'auteur est influencé par… On retrouve les caractéristiques du courant : …"
+            placeholder="Courant littéraire, influences, caractéristiques stylistiques…"
             oninput="saveLivreElise()"></textarea>
         </div>
 
@@ -3028,7 +3028,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
           <div class="card-title" style="color:#AD1457">🖋️ Style de l'auteur·e</div>
           <div style="font-size:.73rem;color:#888;margin-bottom:6px;">Lexique (registre, champs sémantiques) · Syntaxe (phrases longues/courtes) · Figures de style récurrentes · Point de vue narratif (narrateur interne/externe, focalisation)</div>
           <textarea id="livre-style" class="field" rows="5"
-            placeholder="Ex. : L'auteur utilise un style sobre et dense. Le point de vue est interne. Figures récurrentes : métaphores, symboles liés au thème central, ironie…"
+            placeholder="Registre, point de vue, figures récurrentes, rythme…"
             oninput="saveLivreElise()"></textarea>
         </div>
       </div>
@@ -3174,25 +3174,25 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
       <div class="card only-elise" style="border-top:4px solid var(--orange)">
         <div class="card-title" style="color:var(--orange)">📐 Ordre narratif</div>
         <div class="struct-zone-hint">L'histoire est-elle racontée dans l'ordre ? Y a-t-il des flashbacks (analepse) ou anticipations (prolepse) ? → Effets : suspense, révélation, surprise.</div>
-        <textarea id="temps2-ordre" class="field" rows="3" placeholder="Ex. : Le récit commence in medias res, puis un long flashback explique les événements. La narration est donc anachronique (analepse)…" oninput="saveTemps2()"></textarea>
+        <textarea id="temps2-ordre" class="field" rows="3" placeholder="L'histoire est-elle dans l'ordre ? Y a-t-il des retours en arrière (analepse) ou des anticipations (prolepse) ?" oninput="saveTemps2()"></textarea>
       </div>
 
       <div class="card only-elise" style="border-top:4px solid var(--bleu)">
         <div class="card-title" style="color:var(--bleu)">⏱️ Durée &amp; Rythme</div>
         <div class="struct-zone-hint">Quels moments sont dilatés (racontés lentement) ? Quels moments sont résumés ou ellipsés ? Pourquoi ?</div>
-        <textarea id="temps2-duree" class="field" rows="3" placeholder="Ex. : La scène de l'aveu intérieur est très dilatée (plusieurs pages pour quelques minutes). Les années du mariage sont résumées en quelques lignes (ellipse). Le trajet en train occupe tout le roman…" oninput="saveTemps2()"></textarea>
+        <textarea id="temps2-duree" class="field" rows="3" placeholder="Quels moments sont dilatés (lents) ? Accélérés ? Quelles ellipses ?" oninput="saveTemps2()"></textarea>
       </div>
 
       <div class="card only-elise" style="border-top:4px solid var(--violet)">
         <div class="card-title" style="color:var(--violet)">🔁 Fréquence</div>
         <div class="struct-zone-hint">Certains événements sont-ils racontés une seule fois (singulatif), résumés (itératif : « il faisait souvent »), ou répétés plusieurs fois (répétitif) ?</div>
-        <textarea id="temps2-frequence" class="field" rows="3" placeholder="Ex. : Les saisons des Landes reviennent de manière itérative — l'été étouffant est évoqué chaque année comme un leitmotiv…" oninput="saveTemps2()"></textarea>
+        <textarea id="temps2-frequence" class="field" rows="3" placeholder="Singulatif, itératif (habitude), répétitif (obsession) — certains événements reviennent-ils ?" oninput="saveTemps2()"></textarea>
       </div>
 
       <div class="card only-elise" style="border-top:4px solid var(--vert)">
         <div class="card-title" style="color:var(--vert)">🗺️ Organisation de l'espace</div>
         <div class="struct-zone-hint">Espaces réels vs symboliques · Ouverts vs fermés · Mouvements des personnages · Géographie symbolique (ville/campagne, haut/bas…)</div>
-        <textarea id="temps2-espace" class="field" rows="4" placeholder="Ex. : L'espace principal = lieu fermé, prison symbolique. L'ailleurs = espace ouvert, liberté rêvée. Les déplacements du personnage sont contraints ou libérateurs…" oninput="saveTemps2()"></textarea>
+        <textarea id="temps2-espace" class="field" rows="4" placeholder="Espaces réels ou symboliques, ouverts ou fermés, mouvements des personnages…" oninput="saveTemps2()"></textarea>
       </div>
     </div>
 
@@ -3215,7 +3215,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
             <button class="btn btn-gris btn-sm" onclick="insertSep()">── Mot ──</button>
           </div>
           <textarea id="mots-zone" class="field" rows="12"
-            placeholder="── Mot inconnu ──&#10;In medias res : commencer un récit au cœur de l'action.&#10;&#10;── Mot inconnu ──&#10;Analepse : retour en arrière (flashback)."
+            placeholder="── Mot inconnu ──&#10;Sa définition ou son contexte dans l'œuvre.&#10;&#10;── Mot inconnu ──&#10;Sa définition ou son contexte dans l'œuvre."
             oninput="saveTexte('mots')"></textarea>
         </div>
 
@@ -3244,27 +3244,27 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
             <tbody>
               <tr>
                 <td><div class="theme-label" style="color:#AD1457">❤️ Amour / Sentiments</div></td>
-                <td><textarea id="theme-amour"    class="theme-ta" placeholder="Ex. : rose (p. 12, ch. 2) · apprivoiser (p. 67, ch. 21) · larmes (p. 89)…" oninput="saveTheme('amour',this.value)"></textarea></td>
+                <td><textarea id="theme-amour"    class="theme-ta" placeholder="Ex. : mot1 (p. X) · mot2 (p. Y, ch. Z) · mot3 (p. …)…" oninput="saveTheme('amour',this.value)"></textarea></td>
               </tr>
               <tr>
                 <td><div class="theme-label" style="color:#c0392b">⚡ Pouvoir / Domination</div></td>
-                <td><textarea id="theme-pouvoir"  class="theme-ta" placeholder="Ex. : roi (p. 30, ch. 10) · ordre · obéir · contrainte (p. 44)…" oninput="saveTheme('pouvoir',this.value)"></textarea></td>
+                <td><textarea id="theme-pouvoir"  class="theme-ta" placeholder="Ex. : mot1 (p. X) · ordre · obéir · contrainte (p. …)…" oninput="saveTheme('pouvoir',this.value)"></textarea></td>
               </tr>
               <tr>
                 <td><div class="theme-label" style="color:#2E5FA3">🕊️ Liberté / Déterminisme</div></td>
-                <td><textarea id="theme-liberte"  class="theme-ta" placeholder="Ex. : fuir (p. 55) · prison · enchaîné · s'évader (p. 103, ch. 9)…" oninput="saveTheme('liberte',this.value)"></textarea></td>
+                <td><textarea id="theme-liberte"  class="theme-ta" placeholder="Ex. : fuir (p. X) · prison · enchaîné · s'évader (p. …)…" oninput="saveTheme('liberte',this.value)"></textarea></td>
               </tr>
               <tr>
                 <td><div class="theme-label" style="color:#6A1B9A">🔍 Identité / Quête</div></td>
-                <td><textarea id="theme-identite" class="theme-ta" placeholder="Ex. : qui suis-je (p. 7) · miroir · nom · masque (p. 61, ch. 5)…" oninput="saveTheme('identite',this.value)"></textarea></td>
+                <td><textarea id="theme-identite" class="theme-ta" placeholder="Ex. : identité (p. X) · miroir · nom · masque (p. …)…" oninput="saveTheme('identite',this.value)"></textarea></td>
               </tr>
               <tr>
                 <td><div class="theme-label" style="color:#E65100">🏛️ Société / Critique</div></td>
-                <td><textarea id="theme-societe"  class="theme-ta" placeholder="Ex. : bourgeoisie (p. 18) · honneur · apparences · conventions (p. 92)…" oninput="saveTheme('societe',this.value)"></textarea></td>
+                <td><textarea id="theme-societe"  class="theme-ta" placeholder="Ex. : société (p. X) · honneur · apparences · conventions (p. …)…" oninput="saveTheme('societe',this.value)"></textarea></td>
               </tr>
               <tr>
                 <td><div class="theme-label" style="color:#2E7D32">🌿 Nature / Civilisation</div></td>
-                <td><textarea id="theme-nature"   class="theme-ta" placeholder="Ex. : forêt (p. 5, ch. 1) · lande · pins · silence · lumière (p. 78)…" oninput="saveTheme('nature',this.value)"></textarea></td>
+                <td><textarea id="theme-nature"   class="theme-ta" placeholder="Ex. : nature (p. X) · paysage · silence · lumière (p. …)…" oninput="saveTheme('nature',this.value)"></textarea></td>
               </tr>
             </tbody>
           </table>
@@ -3313,17 +3313,17 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
         <div class="card" style="border-top:4px solid #2E5FA3">
           <div class="card-title" style="color:#2E5FA3">① Introduction</div>
           <div style="font-size:.75rem;color:#888;margin-bottom:6px;">Présente le livre, l'auteur, et pose la question du sujet.</div>
-          <textarea id="diss-intro" class="field" rows="5" placeholder="Exemple : Le Petit Prince, écrit par Antoine de Saint-Exupéry en 1943, est un conte philosophique qui nous raconte l'histoire d'un petit garçon venu d'une autre planète. Dans ce livre, l'auteur nous pose une question importante : qu'est-ce qui compte vraiment dans la vie ?" oninput="saveDiss()"></textarea>
+          <textarea id="diss-intro" class="field" rows="5" placeholder="Présenter le livre (titre, auteur, genre) et la question principale…" oninput="saveDiss()"></textarea>
         </div>
         <div class="card" style="border-top:4px solid #2E7D32">
           <div class="card-title" style="color:#2E7D32">② Argument 1 + exemple</div>
           <div style="font-size:.75rem;color:#888;margin-bottom:6px;">Tout d'abord… / En premier lieu… + Par exemple…</div>
-          <textarea id="diss-arg1" class="field" rows="5" placeholder="Tout d'abord, l'auteur montre que l'amitié est la chose la plus précieuse. Par exemple, quand le Petit Prince rencontre le Renard, celui-ci lui apprend que pour avoir un ami, il faut l'apprivoiser, c'est-à-dire créer des liens." oninput="saveDiss()"></textarea>
+          <textarea id="diss-arg1" class="field" rows="5" placeholder="Premier argument + exemple tiré du livre (citation ou résumé d'un passage)…" oninput="saveDiss()"></textarea>
         </div>
         <div class="card" style="border-top:4px solid #E65100">
           <div class="card-title" style="color:#E65100">③ Argument 2 + exemple</div>
           <div style="font-size:.75rem;color:#888;margin-bottom:6px;">Ensuite… / De plus… + En effet… / Ainsi…</div>
-          <textarea id="diss-arg2" class="field" rows="5" placeholder="Ensuite, Saint-Exupéry nous montre que les adultes ont oublié ce qui est essentiel. En effet, le Petit Prince visite plusieurs planètes où les adultes sont ridicules : le roi qui veut commander, le vaniteux qui veut être admiré…" oninput="saveDiss()"></textarea>
+          <textarea id="diss-arg2" class="field" rows="5" placeholder="Deuxième argument + exemple tiré du livre…" oninput="saveDiss()"></textarea>
         </div>
         <div class="card" style="border-top:4px solid #6A1B9A">
           <div class="card-title" style="color:#6A1B9A">④ Argument 3 (facultatif)</div>
@@ -3333,7 +3333,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
         <div class="card" style="border-top:4px solid #c0392b">
           <div class="card-title" style="color:#c0392b">⑤ Conclusion</div>
           <div style="font-size:.75rem;color:#888;margin-bottom:6px;">Pour conclure… / En résumé… — rappelle tes idées principales.</div>
-          <textarea id="diss-conclu" class="field" rows="5" placeholder="Pour conclure, Le Petit Prince nous rappelle que l'essentiel est invisible pour les yeux : l'amitié, l'amour et la simplicité sont plus importants que la richesse ou le pouvoir. Ce livre nous invite à garder notre regard d'enfant pour voir ce qui compte vraiment." oninput="saveDiss()"></textarea>
+          <textarea id="diss-conclu" class="field" rows="5" placeholder="Résumer les arguments et donner son avis final sur le livre…" oninput="saveDiss()"></textarea>
         </div>
         <div class="card" style="background:var(--jauneC);border:1.5px solid var(--jaune)">
           <div class="card-title" style="color:var(--jaune)">💡 Connecteurs utiles</div>
@@ -3366,12 +3366,12 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
           <div class="struct-zone">
             <div class="struct-zone-title">🔑 Mots-clés &amp; définitions</div>
             <div class="struct-zone-hint">Identifie les mots porteurs de sens. Donne plusieurs sens possibles à chaque terme.</div>
-            <textarea id="diss2-mots-cles" class="field" rows="3" placeholder="Ex. — « liberté » : physique / sociale / intérieure / philosophique. « incarne » : suppose que c'est le cas, à vérifier et nuancer…" oninput="saveDiss2()"></textarea>
+            <textarea id="diss2-mots-cles" class="field" rows="3" placeholder="Définir chaque mot-clé du sujet : sens littéral, sens littéraire, nuances à vérifier…" oninput="saveDiss2()"></textarea>
           </div>
           <div class="struct-zone">
             <div class="struct-zone-title">🔄 Reformulation &amp; tension</div>
             <div class="struct-zone-hint">Reformule le sujet avec tes mots. Cherche l'opposition ou la nuance cachée.</div>
-            <textarea id="diss2-reformulation" class="field" rows="3" placeholder="Ex. : Il s'agit de montrer comment X cherche à s'affranchir de contraintes. Tension : liberté vs déterminisme / quête vs échec / apparent vs réel…" oninput="saveDiss2()"></textarea>
+            <textarea id="diss2-reformulation" class="field" rows="3" placeholder="Reformuler le sujet avec ses propres mots. Quelle est la tension ou l'opposition centrale ?" oninput="saveDiss2()"></textarea>
           </div>
         </div>
 
@@ -3396,11 +3396,11 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
           <div class="struct-zone">
             <div class="struct-zone-title">🎯 Accroche</div>
             <div class="struct-zone-hint">Citation, fait littéraire ou mise en contexte (2-3 lignes).</div>
-            <textarea id="diss2-accroche" class="field" rows="2" placeholder="Ex. : Depuis l'Antiquité, la littérature s'interroge sur la frontière entre le crime et la justice. L'auteur, dans cette œuvre, choisit de donner la parole à celui ou celle que la société condamne…" oninput="saveDiss2()"></textarea>
+            <textarea id="diss2-accroche" class="field" rows="2" placeholder="Citation, fait littéraire ou mise en contexte large (2-3 lignes)…" oninput="saveDiss2()"></textarea>
           </div>
           <div class="struct-zone">
             <div class="struct-zone-title">📖 Présentation de l'œuvre + définition + problématique + annonce</div>
-            <textarea id="diss2-intro-suite" class="field" rows="5" placeholder="Ex. : Dans cette œuvre, l'auteur suit un personnage placé dans une situation extrême. On peut dès lors se demander si… Nous verrons d'abord que… puis que… enfin que…" oninput="saveDiss2()"></textarea>
+            <textarea id="diss2-intro-suite" class="field" rows="5" placeholder="Présentation de l'œuvre + problématique + annonce du plan en 3 parties…" oninput="saveDiss2()"></textarea>
           </div>
         </div>
 
@@ -3443,16 +3443,16 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
           <div class="struct-zone">
             <div class="struct-zone-title">📊 Bilan</div>
             <div class="struct-zone-hint">Résume les grandes étapes du raisonnement en 2-3 lignes. Ne pas répéter — synthétiser.</div>
-            <textarea id="diss2-bilan" class="field" rows="3" placeholder="Ex. : Nous avons vu que le personnage est bien coupable d'un acte grave, mais que l'auteur nous le rend sympathique en montrant ce qui l'a conduit à agir…" oninput="saveDiss2()"></textarea>
+            <textarea id="diss2-bilan" class="field" rows="3" placeholder="Synthèse des 3 parties en répondant directement au sujet…" oninput="saveDiss2()"></textarea>
           </div>
           <div class="struct-zone">
             <div class="struct-zone-title">✅ Réponse à la problématique</div>
-            <textarea id="diss2-reponse" class="field" rows="2" placeholder="Ex. : Ainsi, le personnage est coupable aux yeux de la loi mais l'auteur nous invite à partager un autre regard — et le lecteur finit par le comprendre…" oninput="saveDiss2()"></textarea>
+            <textarea id="diss2-reponse" class="field" rows="2" placeholder="Réponse claire et argumentée à la question du sujet…" oninput="saveDiss2()"></textarea>
           </div>
           <div class="struct-zone">
             <div class="struct-zone-title">🔭 Ouverture</div>
             <div class="struct-zone-hint">Perspective nouvelle : autre œuvre, enjeu actuel, question philosophique. Ne pas être artificiel.</div>
-            <textarea id="diss2-ouverture" class="field" rows="2" placeholder="Ex. : Cette question de la culpabilité féminine résonne avec d'autres œuvres — Madame Bovary de Flaubert, ou plus récemment La Femme gelée d'Annie Ernaux…" oninput="saveDiss2()"></textarea>
+            <textarea id="diss2-ouverture" class="field" rows="2" placeholder="Ouverture vers une autre œuvre, une question plus large, un contexte contemporain…" oninput="saveDiss2()"></textarea>
           </div>
         </div>
 
@@ -3563,7 +3563,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
             id="lin-intro2"></textarea>
 
           <div style="font-size:.73rem;font-weight:700;color:#00838F;margin-bottom:4px;">3. Problématique <span style="font-weight:400;font-style:italic;color:#888;">("Par quels moyens…", "Quels procédés…", "Comment l'écrivain…" → nous montre / révèle / construit…)</span></div>
-          <textarea class="field" rows="2" style="margin-bottom:10px;resize:vertical;" placeholder='Ex : "Par quels procédés l'auteur nous montre-t-il que…"'
+          <textarea class="field" rows="2" style="margin-bottom:10px;resize:vertical;" placeholder="Ex : Par quels procédés l'auteur nous montre-t-il que… / Comment l'écrivain construit-il… / Quels moyens stylistiques révèlent…" 
             oninput="if(LIVRE_ACTIF){if(!LIVRE_ACTIF.lineaire)LIVRE_ACTIF.lineaire={};LIVRE_ACTIF.lineaire.intro3=this.value;sauvegarderBiblio();}"
             id="lin-intro3"></textarea>
 
@@ -3658,12 +3658,12 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
           <div style="font-weight:800;color:#AD1457;font-size:.82rem;margin-bottom:10px;">① INTRODUCTION <span style="font-weight:400;font-size:.72rem;color:#888;">(10–12 lignes min. — progression en entonnoir : du général au particulier)</span></div>
 
           <div style="font-size:.73rem;font-weight:700;color:#AD1457;margin-bottom:4px;">1. Amorce <span style="font-weight:400;font-style:italic;color:#888;">(contexte culturel ou esthétique large : mouvement, topos, problématique d'époque)</span></div>
-          <textarea class="field" rows="2" style="margin-bottom:10px;resize:vertical;" placeholder="Ex : Au XIXe siècle, le réalisme cherche à représenter la société dans toute sa complexité…"
+          <textarea class="field" rows="2" style="margin-bottom:10px;resize:vertical;" placeholder="Contexte culturel large : courant, époque, topos littéraire…"
             oninput="if(LIVRE_ACTIF){if(!LIVRE_ACTIF.commentaire)LIVRE_ACTIF.commentaire={};LIVRE_ACTIF.commentaire.amorce=this.value;sauvegarderBiblio();}"
             id="com-amorce"></textarea>
 
           <div style="font-size:.73rem;font-weight:700;color:#AD1457;margin-bottom:4px;">2. Présentation <span style="font-weight:400;font-style:italic;color:#888;">(auteur + dates + genre littéraire + œuvre + titre + date + situation de l'extrait + thème)</span></div>
-          <textarea class="field" rows="2" style="margin-bottom:10px;resize:vertical;" placeholder="Ex : Gustave Flaubert, romancier réaliste du XIXe s., publie Madame Bovary en 1857. L'extrait étudié, au chapitre III, présente…"
+          <textarea class="field" rows="2" style="margin-bottom:10px;resize:vertical;" placeholder="Auteur, dates, genre, titre, date — situation précise de l'extrait étudié…"
             oninput="if(LIVRE_ACTIF){if(!LIVRE_ACTIF.commentaire)LIVRE_ACTIF.commentaire={};LIVRE_ACTIF.commentaire.presentation=this.value;sauvegarderBiblio();}"
             id="com-presentation"></textarea>
 
@@ -4155,7 +4155,7 @@ function sauvegarderBiblio() {
 // ════════════════════════════════════════════════════════
 // VERSION — incrémenter à chaque mise à jour des livres démo
 // ════════════════════════════════════════════════════════
-const DEMO_VERSION = 30; // v30 : ajout champ problematique dans dissertation2 des 4 livres Élise
+const DEMO_VERSION = 32; // v32 : matrices relations inter-personnages pour les 4 livres Élise
 const LIVRES_DEMO = [
   {
     id: 'liv_petit_prince_001',
@@ -5304,6 +5304,18 @@ const LIVRES_DEMO = [
       {id:'ent_ile_05', nom:'Trivelin', couleur:'#E65100',
        notes:"Repr\u00e9sentant des lois de l\u2019\u00eele. Il organise le renversement avec une autorit\u00e9 bienveillante."}
     ],
+    matrice: {
+      'ent_ile_01__ent_ile_02': 'Antagoniste',
+      'ent_ile_02__ent_ile_01': 'Rival(e)',
+      'ent_ile_03__ent_ile_04': 'Antagoniste',
+      'ent_ile_04__ent_ile_03': 'Rival(e)',
+      'ent_ile_02__ent_ile_04': 'Complice',
+      'ent_ile_01__ent_ile_03': 'Ami(e)',
+      'ent_ile_05__ent_ile_01': 'Mentor',
+      'ent_ile_05__ent_ile_02': 'Mentor',
+      'ent_ile_05__ent_ile_03': 'Mentor',
+      'ent_ile_05__ent_ile_04': 'Mentor'
+    },
     lieux: [
       {id:'lx_ile_01', nom:"L\u2019\u00eele des esclaves", couleur:'#2E7D32',
        notes:"Espace utopique fond\u00e9 par d\u2019anciens esclaves grecs. R\u00e8gles\u00a0: toute noblesse qui y \u00e9choue voit ses esclaves devenir ma\u00eetres."},
@@ -5508,6 +5520,17 @@ const LIVRES_DEMO = [
       {id:'ent_cal_05', nom:'Scipio', couleur:'#E65100',
        notes:"Jeune po\u00e8te, fils d\u2019une victime. Il comprend Caligula mieux que personne."}
     ],
+    matrice: {
+      'ent_cal_01__ent_cal_02': 'Antagoniste',
+      'ent_cal_02__ent_cal_01': 'Ennemi(e)',
+      'ent_cal_01__ent_cal_03': 'Amoureux/se',
+      'ent_cal_03__ent_cal_01': 'Amoureux/se',
+      'ent_cal_01__ent_cal_04': 'Ami(e)',
+      'ent_cal_04__ent_cal_01': 'Complice',
+      'ent_cal_01__ent_cal_05': 'Rival(e)',
+      'ent_cal_05__ent_cal_01': 'Rival(e)',
+      'ent_cal_02__ent_cal_05': 'Ami(e)'
+    },
     lieux: [
       {id:'lx_cal_01', nom:'Le palais imp\u00e9rial', couleur:'#C62828',
        notes:"Espace du pouvoir absolu. Tout se passe dans ce lieu ferm\u00e9, clos sur lui-m\u00eame comme la logique de Caligula."},
@@ -5713,6 +5736,15 @@ const LIVRES_DEMO = [
       {id:'ent_vll_05', nom:"Le Moine", couleur:'#6A1B9A',
        notes:"Il a v\u00e9cu avec les Indiens et apporte des t\u00e9moignages concrets."}
     ],
+    matrice: {
+      'ent_vll_01__ent_vll_02': 'Antagoniste',
+      'ent_vll_02__ent_vll_01': 'Antagoniste',
+      'ent_vll_01__ent_vll_04': 'Protecteur/trice',
+      'ent_vll_02__ent_vll_04': 'Antagoniste',
+      'ent_vll_03__ent_vll_01': 'Mentor',
+      'ent_vll_03__ent_vll_02': 'Mentor',
+      'ent_vll_05__ent_vll_04': 'Protecteur/trice'
+    },
     lieux: [
       {id:'lx_vll_01', nom:'La salle du d\u00e9bat, Valladolid', couleur:'#E65100',
        notes:"Espace clos, solennel. Le d\u00e9bat contraste avec l\u2019immensit\u00e9 du monde am\u00e9ricain."},
@@ -5920,6 +5952,18 @@ const LIVRES_DEMO = [
       {id:'ent_bri_06', nom:'Burrhus', couleur:'#546E7A',
        notes:"Pr\u00e9cepteur de N\u00e9ron, honn\u00eate et loyal. Il essaie de retenir N\u00e9ron \u2014 et \u00e9choue."}
     ],
+    matrice: {
+      'ent_bri_01__ent_bri_04': 'Antagoniste',
+      'ent_bri_04__ent_bri_01': 'Rival(e)',
+      'ent_bri_01__ent_bri_03': 'Amoureux/se',
+      'ent_bri_04__ent_bri_03': 'Amoureux/se',
+      'ent_bri_03__ent_bri_04': 'Amoureux/se',
+      'ent_bri_01__ent_bri_02': 'Antagoniste',
+      'ent_bri_02__ent_bri_01': 'Protecteur/trice',
+      'ent_bri_05__ent_bri_01': 'Complice',
+      'ent_bri_05__ent_bri_04': 'Ennemi(e)',
+      'ent_bri_06__ent_bri_01': 'Mentor'
+    },
     lieux: [
       {id:'lx_bri_01', nom:'Le palais imp\u00e9rial, Rome', couleur:'#C62828',
        notes:"Espace unique. Espace du pouvoir et de la surveillance. Tout y est politique."},
@@ -11114,6 +11158,13 @@ function niRenderGraph(){
     var s=persos.find(function(p){return p.id===pts[0];}),t=persos.find(function(p){return p.id===pts[1];});
     if(s&&t)links.push({source:s.id,target:t.id,lbl:matrice[k]});
   });
+  // Détecter les paires réciproques (A→B et B→A)
+  var recipSet={};
+  links.forEach(function(l){
+    var rev=l.target+'__'+l.source;
+    if(matrice[rev]&&matrice[rev]!=='—') recipSet[l.source+'__'+l.target]=true;
+  });
+
   var defs=svg.append('defs');
   defs.append('marker').attr('id','niarr').attr('viewBox','0 -4 8 8').attr('refX',24).attr('refY',0).attr('markerWidth',5).attr('markerHeight',5).attr('orient','auto').append('path').attr('d','M0,-4L8,0L0,4').attr('fill','#90A4AE');
   var g=svg.append('g');
@@ -11121,23 +11172,90 @@ function niRenderGraph(){
   svg.call(_niZb);
   var nodes=persos.map(function(p){return {id:p.id,nom:p.nom,couleur:p.couleur};});
   _niSim=d3.forceSimulation(nodes)
-    .force('link',d3.forceLink(links).id(function(d){return d.id;}).distance(95))
-    .force('charge',d3.forceManyBody().strength(-220))
+    .force("link",d3.forceLink(links).id(function(d){return d.id;}).distance(140))
+    .force('charge',d3.forceManyBody().strength(-260))
     .force('center',d3.forceCenter(W/2,H/2))
-    .force('collide',d3.forceCollide(32));
+    .force("collide",d3.forceCollide(50));
+
   var lG=g.append('g');
-  var ll=lG.selectAll('line').data(links).enter().append('line').attr('stroke','#B0BEC5').attr('stroke-width',1.5).attr('marker-end','url(#niarr)');
-  var lt=lG.selectAll('text').data(links).enter().append('text').attr('text-anchor','middle').attr('font-size','7px').attr('font-family','inherit').attr('fill','#78909C').attr('dy','-3px').text(function(d){return d.lbl.substring(0,13);});
+  var RX=42, RY=18; // ellipse : largeur 42, hauteur 18
+
+  // Point sur le bord de l'ellipse dans la direction (dx,dy)
+  function ellipseBorder(cx,cy,dx,dy,rx,ry){
+    var dr=Math.sqrt(dx*dx+dy*dy)||1;
+    var nx=dx/dr,ny=dy/dr;
+    var d2=Math.sqrt((ry*nx)*(ry*nx)+(rx*ny)*(rx*ny))||1;
+    var t=rx*ry/d2;
+    return {x:cx+nx*t, y:cy+ny*t};
+  }
+
+  // Calcul du path : courbe si réciproque, droite sinon
+  function arcPath(d,curved){
+    var sx=d.source.x,sy=d.source.y,tx=d.target.x,ty=d.target.y;
+    var dx=tx-sx,dy=ty-sy;
+    var o=ellipseBorder(sx,sy,dx,dy,RX,RY);
+    var e=ellipseBorder(tx,ty,-dx,-dy,RX,RY);
+    if(!curved) return 'M'+o.x+','+o.y+'L'+e.x+','+e.y;
+    var dr=Math.sqrt(dx*dx+dy*dy)||1;
+    var bend=60;
+    var mx=(o.x+e.x)/2-(dy/dr)*bend, my=(o.y+e.y)/2+(dx/dr)*bend;
+    return 'M'+o.x+','+o.y+'Q'+mx+','+my+' '+e.x+','+e.y;
+  }
+  function midPoint(d,curved){
+    var sx=d.source.x,sy=d.source.y,tx=d.target.x,ty=d.target.y;
+    var dx=tx-sx,dy=ty-sy,dr=Math.sqrt(dx*dx+dy*dy)||1;
+    if(!curved) return {x:(sx+tx)/2,y:(sy+ty)/2};
+    var bend=60;
+    return {x:(sx+tx)/2-(dy/dr)*bend*0.5, y:(sy+ty)/2+(dx/dr)*bend*0.5};
+  }
+
+  var ll=lG.selectAll('path').data(links).enter().append('path')
+    .attr('fill','none').attr('stroke','#B0BEC5').attr('stroke-width',1.5)
+    .attr('marker-end','url(#niarr)');
+  var lt=lG.selectAll('text').data(links).enter().append('text')
+    .attr('text-anchor','middle').attr('font-size','7px').attr('font-family','inherit')
+    .attr('fill','#546E7A').attr('dy','-3px')
+    .text(function(d){return d.lbl.substring(0,13);});
+
+  // Découper le nom en mots pour affichage sur 2 lignes max
+  function splitName(nom){
+    var words=nom.split(' ').filter(function(w){return w.length>0;});
+    if(words.length<=1) return [nom];
+    // Répartir en 2 lignes équilibrées
+    var mid=Math.ceil(words.length/2);
+    return [words.slice(0,mid).join(' '), words.slice(mid).join(' ')];
+  }
+
   var nG=g.append('g').selectAll('g').data(nodes).enter().append('g').style('cursor','grab')
     .call(d3.drag()
       .on('start',function(ev,d){if(!ev.active)_niSim.alphaTarget(.3).restart();d.fx=d.x;d.fy=d.y;})
       .on('drag',function(ev,d){d.fx=ev.x;d.fy=ev.y;})
       .on('end',function(ev,d){if(!ev.active)_niSim.alphaTarget(0);}));
-  nG.append('circle').attr('r',17).attr('fill',function(d){return d.couleur;}).attr('stroke','#fff').attr('stroke-width',2.5);
-  nG.append('text').attr('text-anchor','middle').attr('dy','.35em').attr('font-size','7.5px').attr('font-weight','700').attr('fill','#fff').attr('font-family','inherit').text(function(d){return d.nom.split(' ').pop().substring(0,6);});
+  nG.append('ellipse').attr('rx',RX).attr('ry',RY).attr('fill',function(d){return d.couleur;}).attr('stroke','#fff').attr('stroke-width',2);
+  nG.each(function(d){
+    var lines=splitName(d.nom);
+    var el=d3.select(this);
+    var dy0=lines.length===1?'.35em':'-0.3em';
+    el.append('text').attr('text-anchor','middle').attr('font-size','8px').attr('font-weight','700')
+      .attr('fill','#fff').attr('font-family','inherit')
+      .attr('dy',dy0).text(lines[0]);
+    if(lines.length>1){
+      el.append('text').attr('text-anchor','middle').attr('font-size','8px').attr('font-weight','700')
+        .attr('fill','#fff').attr('font-family','inherit')
+        .attr('dy','1.1em').text(lines[1]);
+    }
+  });
+
   _niSim.on('tick',function(){
-    ll.attr('x1',function(d){return d.source.x;}).attr('y1',function(d){return d.source.y;}).attr('x2',function(d){return d.target.x;}).attr('y2',function(d){return d.target.y;});
-    lt.attr('x',function(d){return(d.source.x+d.target.x)/2;}).attr('y',function(d){return(d.source.y+d.target.y)/2;});
+    ll.attr('d',function(d){
+      var curved=!!recipSet[d.source.id+'__'+d.target.id];
+      return arcPath(d,curved);
+    });
+    lt.each(function(d){
+      var curved=!!recipSet[d.source.id+'__'+d.target.id];
+      var m=midPoint(d,curved);
+      d3.select(this).attr('x',m.x).attr('y',m.y);
+    });
     nG.attr('transform',function(d){return'translate('+d.x+','+d.y+')';});
   });
 }
@@ -11465,6 +11583,7 @@ niGo = function(tabId, el) {
   } else if (tabId === 'personnages') {
     document.body.classList.add('ni-sec-personnages');
     niPRender();
+    if (_niRelOn) { niSyncMatrice(); niRenderMatrix(); setTimeout(niRenderGraph, 180); }
   } else if (tabId === 'lieux') {
     document.body.classList.add('ni-sec-lieux');
     niLRender();
