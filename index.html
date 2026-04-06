@@ -3021,7 +3021,6 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
       <button class="mots-subtab only-elise" id="etab-commentaire" onclick="showEcrirePanel('commentaire',this)" style="color:#AD1457;">📝 Commentaire litt.</button>
     </div>
     <button id="btn-aide-ecrire" onclick="niAideToggle()" title="Aide pour cet exercice" aria-label="Aide">❓</button>
-    <button id="btn-probl-machine" title="Construire ma problématique (maintenir = plein écran)" aria-label="Machine à problématiques">🧩 Problématique<span class="pmb-hint">maintenir = plein écran</span></button>
   </div>
 
   <div id="content">
@@ -3433,7 +3432,9 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
         <div class="card" style="border-top:4px solid #00695C">
           <div class="card-title" style="color:#00695C">② Problématique &amp; Plan</div>
           <div class="struct-zone">
-            <div class="struct-zone-title" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px;" onclick="openProbHelp()" title="Voir des exemples de problématiques">❓ Problématique</div>
+            <div class="struct-zone-title" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px;display:flex;align-items:center;gap:8px;" onclick="openProbHelp()" title="Voir des exemples de problématiques">❓ Problématique
+              <button id="btn-probl-machine" onclick="event.stopPropagation();openPMW()" onmousedown="event.stopPropagation();_pmwHoldStart()" onmouseup="event.stopPropagation();_pmwHoldEnd()" onmouseleave="_pmwHoldCancel()" title="Construire ma problématique · maintenir = plein écran" style="font-size:.7rem;padding:2px 8px;border-radius:6px;background:rgba(123,31,162,.15);border:1px solid rgba(123,31,162,.5);color:#9C27B0;cursor:pointer;font-weight:700;">🧩</button>
+            </div>
             <div class="struct-zone-hint">Question centrale — ouverte, problématique, pas de réponse par oui/non. Ex. : « Dans quelle mesure… tout en… ? » / « En quoi… bien que… ? »</div>
             <textarea id="diss2-problematique" class="field" rows="3" placeholder="Ex. : Dans quelle mesure le personnage principal est-il à la fois coupable et victime de son époque ?" oninput="saveDiss2()"></textarea>
           </div>
@@ -3616,7 +3617,9 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
             oninput="if(LIVRE_ACTIF){if(!LIVRE_ACTIF.lineaire)LIVRE_ACTIF.lineaire={};LIVRE_ACTIF.lineaire.intro2=this.value;sauvegarderBiblio();}"
             id="lin-intro2"></textarea>
 
-          <div style="font-size:.73rem;font-weight:700;color:#00838F;margin-bottom:4px;cursor:pointer;" onclick="openProbHelp()" title="Voir des exemples de problématiques">3. <span style="text-decoration:underline dotted;text-underline-offset:3px;">Problématique</span> <span style="font-weight:400;font-style:italic;color:#888;">("Par quels moyens…", "Quels procédés…", "Comment l'écrivain…" → nous montre / révèle / construit…)</span></div>
+          <div style="font-size:.73rem;font-weight:700;color:#00838F;margin-bottom:4px;cursor:pointer;display:flex;align-items:center;gap:6px;" onclick="openProbHelp()" title="Voir des exemples de problématiques">3. <span style="text-decoration:underline dotted;text-underline-offset:3px;">Problématique</span> <span style="font-weight:400;font-style:italic;color:#888;">("Par quels moyens…", "Quels procédés…", "Comment l'écrivain…" → nous montre / révèle / construit…)</span>
+            <button onclick="event.stopPropagation();openPMW()" onmousedown="event.stopPropagation();_pmwHoldStart()" onmouseup="event.stopPropagation();_pmwHoldEnd()" onmouseleave="_pmwHoldCancel()" title="Construire ma problématique · maintenir = plein écran" style="font-size:.7rem;padding:2px 8px;border-radius:6px;background:rgba(123,31,162,.15);border:1px solid rgba(123,31,162,.5);color:#9C27B0;cursor:pointer;font-weight:700;flex-shrink:0;">🧩</button>
+          </div>
           <textarea class="field" rows="2" style="margin-bottom:10px;resize:vertical;" placeholder="Ex : Par quels procédés l'auteur nous montre-t-il que… / Comment l'écrivain construit-il… / Quels moyens stylistiques révèlent…" 
             oninput="if(LIVRE_ACTIF){if(!LIVRE_ACTIF.lineaire)LIVRE_ACTIF.lineaire={};LIVRE_ACTIF.lineaire.intro3=this.value;sauvegarderBiblio();}"
             id="lin-intro3"></textarea>
@@ -3721,7 +3724,9 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
             oninput="if(LIVRE_ACTIF){if(!LIVRE_ACTIF.commentaire)LIVRE_ACTIF.commentaire={};LIVRE_ACTIF.commentaire.presentation=this.value;sauvegarderBiblio();}"
             id="com-presentation"></textarea>
 
-          <div style="font-size:.73rem;font-weight:700;color:#AD1457;margin-bottom:4px;cursor:pointer;" onclick="openProbHelp()" title="Voir des exemples de problématiques">3. <span style="text-decoration:underline dotted;text-underline-offset:3px;">Problématique</span> <span style="font-weight:400;font-style:italic;color:#888;">(question de sens — jamais descriptive)</span></div>
+          <div style="font-size:.73rem;font-weight:700;color:#AD1457;margin-bottom:4px;cursor:pointer;display:flex;align-items:center;gap:6px;" onclick="openProbHelp()" title="Voir des exemples de problématiques">3. <span style="text-decoration:underline dotted;text-underline-offset:3px;">Problématique</span> <span style="font-weight:400;font-style:italic;color:#888;">(question de sens — jamais descriptive)</span>
+            <button onclick="event.stopPropagation();openPMW()" onmousedown="event.stopPropagation();_pmwHoldStart()" onmouseup="event.stopPropagation();_pmwHoldEnd()" onmouseleave="_pmwHoldCancel()" title="Construire ma problématique · maintenir = plein écran" style="font-size:.7rem;padding:2px 8px;border-radius:6px;background:rgba(123,31,162,.15);border:1px solid rgba(123,31,162,.5);color:#9C27B0;cursor:pointer;font-weight:700;flex-shrink:0;">🧩</button>
+          </div>
           <div style="font-size:.7rem;color:#888;margin-bottom:6px;padding:5px 8px;background:#fff;border-radius:6px;">
             ❌ « Comment l'auteur décrit-il un paysage ? »<br>
             ✅ « Comment la description d'un paysage devient-elle l'occasion d'une méditation existentielle ? »
@@ -15175,40 +15180,24 @@ function openProbHelp() {
 // ════════════════════════════════════════════════════════
 // MACHINE À PROBLÉMATIQUES — fenêtre flottante + plein écran
 // ════════════════════════════════════════════════════════
-(function(){
-  var btn = null;
-  var _holdTimer = null;
-  var _didLong   = false;
-  var HOLD_MS    = 550;
+// ════════════════════════════════════════════════════════
+// MACHINE À PROBLÉMATIQUES — clic court / long
+// ════════════════════════════════════════════════════════
+var _pmwHoldTimer = null;
+var _pmwDidLong   = false;
 
-  function _down(e) {
-    _didLong = false;
-    _holdTimer = setTimeout(function(){
-      _didLong = true;
-      openPMWFull();
-    }, HOLD_MS);
-  }
-  function _up(e) {
-    clearTimeout(_holdTimer);
-    if (!_didLong) openPMW();
-  }
-  function _cancel() { clearTimeout(_holdTimer); }
-
-  function _initBtn() {
-    btn = document.getElementById('btn-probl-machine');
-    if (!btn) return;
-    btn.addEventListener('mousedown',  _down);
-    btn.addEventListener('mouseup',    _up);
-    btn.addEventListener('mouseleave', _cancel);
-    btn.addEventListener('touchstart', _down,  {passive:true});
-    btn.addEventListener('touchend',   _up);
-    btn.addEventListener('touchcancel',_cancel);
-    btn.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); });
-  }
-
-  // DOM déjà prêt en bas de page — pas besoin de DOMContentLoaded
-  _initBtn();
-})();
+function _pmwHoldStart() {
+  _pmwDidLong = false;
+  _pmwHoldTimer = setTimeout(function(){
+    _pmwDidLong = true;
+    openPMWFull();
+  }, 550);
+}
+function _pmwHoldEnd() {
+  clearTimeout(_pmwHoldTimer);
+  // le clic court est géré par onclick (openPMW) — si long, déjà fait
+}
+function _pmwHoldCancel() { clearTimeout(_pmwHoldTimer); }
 
 function openPMW() {
   var win = document.getElementById('probl-machine-win');
