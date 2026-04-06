@@ -2733,8 +2733,8 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
               <ol class="ni-lex-proc-steps">
                 <li>Télécharger le modèle Excel et définir ses mots-clés (feuille « Champs lexicaux »)</li>
                 <li>Dans Claude.ai <em>(hors application)</em>, soumettre mots-clés + texte de l'œuvre</li>
-                <li>Claude.ai comptabilise les occurrences — copier le JSON résultant</li>
-                <li>Cliquer sur <b>Lancer</b> et coller le JSON — fiabilité <b>85 %</b></li>
+                <li>Claude.ai comptabilise les occurrences — télécharger l'Excel généré</li>
+                <li>Réimporter l'Excel : scores calculés automatiquement — fiabilité <b>85 %</b></li>
               </ol>
             </div>
 
@@ -3020,7 +3020,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
           <div class="card-title" style="color:#00838F">📚 Courant littéraire</div>
           <div style="font-size:.73rem;color:#888;margin-bottom:6px;">Classicisme / Lumières / Romantisme / Réalisme / Naturalisme / Symbolisme / Surréalisme / Existentialisme… Caractéristiques du courant dans ce livre.</div>
           <textarea id="livre-courant" class="field" rows="4"
-            placeholder="Ex. : Thérèse Desqueyroux s'inscrit dans le courant du roman psychologique des années 1920. Mauriac est influencé par le catholicisme et par Freud. On retrouve les caractéristiques du courant : analyse minutieuse de la vie intérieure, langue épurée, refus du jugement moral simple…"
+            placeholder="Ex. : Cette œuvre s'inscrit dans tel courant littéraire. L'auteur est influencé par… On retrouve les caractéristiques du courant : …"
             oninput="saveLivreElise()"></textarea>
         </div>
 
@@ -3028,7 +3028,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
           <div class="card-title" style="color:#AD1457">🖋️ Style de l'auteur·e</div>
           <div style="font-size:.73rem;color:#888;margin-bottom:6px;">Lexique (registre, champs sémantiques) · Syntaxe (phrases longues/courtes) · Figures de style récurrentes · Point de vue narratif (narrateur interne/externe, focalisation)</div>
           <textarea id="livre-style" class="field" rows="5"
-            placeholder="Ex. : Mauriac utilise un style sobre et dense. Les phrases sont souvent longues, sinueuses, comme le monologue intérieur de Thérèse. Le point de vue est interne : on voit tout depuis la conscience de Thérèse. Figures récurrentes : métaphores de l'étouffement et de la prison (la forêt = la cage), ironie douce-amère…"
+            placeholder="Ex. : L'auteur utilise un style sobre et dense. Le point de vue est interne. Figures récurrentes : métaphores, symboles liés au thème central, ironie…"
             oninput="saveLivreElise()"></textarea>
         </div>
       </div>
@@ -3174,7 +3174,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
       <div class="card only-elise" style="border-top:4px solid var(--orange)">
         <div class="card-title" style="color:var(--orange)">📐 Ordre narratif</div>
         <div class="struct-zone-hint">L'histoire est-elle racontée dans l'ordre ? Y a-t-il des flashbacks (analepse) ou anticipations (prolepse) ? → Effets : suspense, révélation, surprise.</div>
-        <textarea id="temps2-ordre" class="field" rows="3" placeholder="Ex. : Le roman commence in medias res — Thérèse sort du tribunal. Puis long flashback dans le train. La narration est donc anachronique (analepse principale)…" oninput="saveTemps2()"></textarea>
+        <textarea id="temps2-ordre" class="field" rows="3" placeholder="Ex. : Le récit commence in medias res, puis un long flashback explique les événements. La narration est donc anachronique (analepse)…" oninput="saveTemps2()"></textarea>
       </div>
 
       <div class="card only-elise" style="border-top:4px solid var(--bleu)">
@@ -3192,7 +3192,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
       <div class="card only-elise" style="border-top:4px solid var(--vert)">
         <div class="card-title" style="color:var(--vert)">🗺️ Organisation de l'espace</div>
         <div class="struct-zone-hint">Espaces réels vs symboliques · Ouverts vs fermés · Mouvements des personnages · Géographie symbolique (ville/campagne, haut/bas…)</div>
-        <textarea id="temps2-espace" class="field" rows="4" placeholder="Ex. : Les Landes = espace fermé, prison symbolique. Paris = espace ouvert, liberté rêvée. Argelouse = isolement total, punition. Les déplacements de Thérèse sont toujours contraints — elle ne choisit jamais sa destination…" oninput="saveTemps2()"></textarea>
+        <textarea id="temps2-espace" class="field" rows="4" placeholder="Ex. : L'espace principal = lieu fermé, prison symbolique. L'ailleurs = espace ouvert, liberté rêvée. Les déplacements du personnage sont contraints ou libérateurs…" oninput="saveTemps2()"></textarea>
       </div>
     </div>
 
@@ -3381,12 +3381,12 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
           <div class="struct-zone">
             <div class="struct-zone-title">❓ Problématique</div>
             <div class="struct-zone-hint">Question centrale — ouverte, problématique, pas de réponse par oui/non. Ex. : « Dans quelle mesure… tout en… ? » / « En quoi… bien que… ? »</div>
-            <textarea id="diss2-problematique" class="field" rows="3" placeholder="Ex. : Dans quelle mesure Thérèse Desqueyroux est-elle un personnage coupable, tout en restant profondément sympathique aux yeux du lecteur ?" oninput="saveDiss2()"></textarea>
+            <textarea id="diss2-problematique" class="field" rows="3" placeholder="Ex. : Dans quelle mesure le personnage principal est-il à la fois coupable et victime de son époque ?" oninput="saveDiss2()"></textarea>
           </div>
           <div class="struct-zone">
             <div class="struct-zone-title">📋 Type de plan</div>
             <div class="struct-zone-hint">Dialectique (thèse/antithèse/synthèse) · Analytique/thématique · Progressif</div>
-            <textarea id="diss2-type-plan" class="field" rows="2" placeholder="Ex. : Plan dialectique — I. Thérèse est bien coupable (acte intentionnel). II. Mais Mauriac nous la rend sympathique (étouffement, lucidité). III. La culpabilité dépasse le jugement moral…" oninput="saveDiss2()"></textarea>
+            <textarea id="diss2-type-plan" class="field" rows="2" placeholder="Ex. : Plan dialectique — I. Le personnage est coupable. II. Mais il nous est rendu sympathique. III. La question dépasse le jugement moral…" oninput="saveDiss2()"></textarea>
           </div>
         </div>
 
@@ -3396,11 +3396,11 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
           <div class="struct-zone">
             <div class="struct-zone-title">🎯 Accroche</div>
             <div class="struct-zone-hint">Citation, fait littéraire ou mise en contexte (2-3 lignes).</div>
-            <textarea id="diss2-accroche" class="field" rows="2" placeholder="Ex. : Depuis l'Antiquité, la littérature s'interroge sur la frontière entre le crime et la justice. Mauriac, dans Thérèse Desqueyroux (1927), choisit de donner la parole à une empoisonneuse…" oninput="saveDiss2()"></textarea>
+            <textarea id="diss2-accroche" class="field" rows="2" placeholder="Ex. : Depuis l'Antiquité, la littérature s'interroge sur la frontière entre le crime et la justice. L'auteur, dans cette œuvre, choisit de donner la parole à celui ou celle que la société condamne…" oninput="saveDiss2()"></textarea>
           </div>
           <div class="struct-zone">
             <div class="struct-zone-title">📖 Présentation de l'œuvre + définition + problématique + annonce</div>
-            <textarea id="diss2-intro-suite" class="field" rows="5" placeholder="Ex. : Dans ce roman psychologique, François Mauriac suit Thérèse, une bourgeoise landaise qui a tenté d'empoisonner son mari. On peut dès lors se demander si… Nous verrons d'abord que… puis que… enfin que…" oninput="saveDiss2()"></textarea>
+            <textarea id="diss2-intro-suite" class="field" rows="5" placeholder="Ex. : Dans cette œuvre, l'auteur suit un personnage placé dans une situation extrême. On peut dès lors se demander si… Nous verrons d'abord que… puis que… enfin que…" oninput="saveDiss2()"></textarea>
           </div>
         </div>
 
@@ -3443,11 +3443,11 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
           <div class="struct-zone">
             <div class="struct-zone-title">📊 Bilan</div>
             <div class="struct-zone-hint">Résume les grandes étapes du raisonnement en 2-3 lignes. Ne pas répéter — synthétiser.</div>
-            <textarea id="diss2-bilan" class="field" rows="3" placeholder="Ex. : Nous avons vu que Thérèse est bien coupable d'un acte grave, mais que Mauriac nous la rend sympathique en montrant l'étouffement qui l'a conduite à agir…" oninput="saveDiss2()"></textarea>
+            <textarea id="diss2-bilan" class="field" rows="3" placeholder="Ex. : Nous avons vu que le personnage est bien coupable d'un acte grave, mais que l'auteur nous le rend sympathique en montrant ce qui l'a conduit à agir…" oninput="saveDiss2()"></textarea>
           </div>
           <div class="struct-zone">
             <div class="struct-zone-title">✅ Réponse à la problématique</div>
-            <textarea id="diss2-reponse" class="field" rows="2" placeholder="Ex. : Ainsi, Thérèse est coupable aux yeux de la loi mais innocente aux yeux de Mauriac — et le lecteur finit par partager ce regard…" oninput="saveDiss2()"></textarea>
+            <textarea id="diss2-reponse" class="field" rows="2" placeholder="Ex. : Ainsi, le personnage est coupable aux yeux de la loi mais l'auteur nous invite à partager un autre regard — et le lecteur finit par le comprendre…" oninput="saveDiss2()"></textarea>
           </div>
           <div class="struct-zone">
             <div class="struct-zone-title">🔭 Ouverture</div>
@@ -3918,9 +3918,9 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 <!-- ── LEXIQUE IMPORT ── -->
 <div id="lex-import-overlay">
   <div style="background:#fff;border-radius:12px;padding:20px;max-width:520px;width:90%;box-shadow:0 4px 24px rgba(0,0,0,.25);">
-    <div style="font-size:.9rem;font-weight:700;color:var(--violet);margin-bottom:6px;">📋 Import — Analyse lexicale</div>
+    <div style="font-size:.9rem;font-weight:700;color:var(--violet);margin-bottom:6px;">📥 Import — Analyse lexicale</div>
     <div style="font-size:.75rem;color:#888;margin-bottom:10px;">
-      Colle le JSON du Prompt B.<br>
+      Colle ici le résultat brut retourné par l'IA (étape intermédiaire avant Excel).<br>
       <b>Optionnel :</b> ajoute <code>champLexical</code> pour les mots-clés avec comptage d'occurrences :<br>
       <code style="font-size:.68rem;">"champLexical":{"identite":[{"mot":"loup","n":23},...],...}</code>
     </div>
@@ -4024,10 +4024,10 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
     <p>Chaque cercle représente la densité d'un thème dans une tranche de pages. La <b>taille</b> du cercle = intensité relative dans cette tranche. Un pic en début d'œuvre indique un thème d'exposition ; un pic en fin, un thème de résolution ou de bascule.</p>
     <h4 style="color:#2E7D32">💡 Bouton Justification</h4>
     <p>Le bouton <b>💡 Justification</b> dans la colonne Légende explique, thème par thème, <b>pourquoi chaque mot a été retenu</b> et ce qu'il révèle de l'œuvre. C'est la trace critique et argumentée de la méthode — indispensable pour une dissertation ou un commentaire composé.</p>
-    <h4 style="color:#6A1B9A">📋 Import JSON</h4>
-    <p>Pour importer une analyse existante, utilise le bouton <b>📋 Importer</b> : colle le JSON du Prompt B (champ <code>phases</code> + <code>tranches</code>). Tu peux y ajouter un champ <code>champLexical</code> pour les mots avec leurs occurrences et leurs justifications personnalisées.</p>
+    <h4 style="color:#6A1B9A">📥 Import Excel</h4>
+    <p>Pour importer une analyse existante, utilise le bouton <b>📥 Importer</b> : télécharge le modèle Excel, remplis les tranches et réimporte le fichier. Tu peux aussi enrichir les champs <code>champLexical</code> et <code>justifications</code> directement dans le fichier.</p>
     <h4 style="color:#00695C">🤖 Prompt B — Générer avec l'IA</h4>
-    <p>Copie ce prompt dans Claude.ai pour obtenir le JSON à importer dans L'Adversaire :</p>
+    <p>Copie ce prompt dans Claude.ai pour obtenir les scores à reporter dans l'Excel :</p>
     <div style="background:#f4f0fb;border-radius:7px;padding:8px 10px;margin:6px 0 4px;font-size:.68rem;color:#333;line-height:1.55;white-space:pre-wrap;font-family:monospace;max-height:140px;overflow-y:auto;border:1px solid #D1C4E9;" id="lex-help-promptB-txt">Analyse lexicale de L'Adversaire d'Emmanuel Carrère (218 pages, schéma moderne — 8 tranches de 27 pages chacune).
 
 Pour chaque tranche (1-27, 28-54, 55-94, 95-117, 118-132, 133-154, 155-189, 190-218), donne un score de 0-100 pour chacun des 6 thèmes suivants :
@@ -4155,7 +4155,7 @@ function sauvegarderBiblio() {
 // ════════════════════════════════════════════════════════
 // VERSION — incrémenter à chaque mise à jour des livres démo
 // ════════════════════════════════════════════════════════
-const DEMO_VERSION = 29; // v29 : correction \n littéraux dans contexte/auteurVie/trajectoire/courant/style/comprehension des 4 livres Élise
+const DEMO_VERSION = 30; // v30 : ajout champ problematique dans dissertation2 des 4 livres Élise
 const LIVRES_DEMO = [
   {
     id: 'liv_petit_prince_001',
@@ -5349,7 +5349,7 @@ const LIVRES_DEMO = [
       sujet:         "En quoi L\u2019\u00cele des esclaves est-elle une com\u00e9die philosophique\u00a0?",
       motsCles:      "\u00ab Com\u00e9die \u00bb = genre th\u00e9\u00e2tral qui produit du rire, d\u00e9nouement heureux. \u00ab Philosophique \u00bb = qui d\u00e9veloppe une th\u00e8se sur la condition humaine.",
       reformulation: "Comment Marivaux parvient-il \u00e0 faire du rire un outil philosophique pour r\u00e9fl\u00e9chir \u00e0 l\u2019in\u00e9galit\u00e9\u00a0?",
-      typePlan:      "Plan dialectique. I. Une com\u00e9die efficace. II. Une pi\u00e8ce \u00e0 th\u00e8se sur la hi\u00e9rarchie sociale. III. Les limites du projet.",
+      problematique: "Dans quelle mesure L\u2019\u00cele des esclaves est-elle une com\u00e9die qui, tout en divertissant, d\u00e9montre que la hi\u00e9rarchie sociale est arbitraire et r\u00e9formable\u00a0?",
       accroche:      "Sur la sc\u00e8ne de la Com\u00e9die-Italienne en 1725, un valet devient ma\u00eetre et un ma\u00eetre devient valet. Le public rit. Mais ce rire cache une question.",
       introSuite:    "On se demandera comment Marivaux construit une com\u00e9die qui est aussi une d\u00e9monstration philosophique.",
       p1arg:         "La pi\u00e8ce produit du rire \u00e0 trois niveaux\u00a0: situation, langage, caract\u00e8re.",
@@ -5553,6 +5553,7 @@ const LIVRES_DEMO = [
       sujet:         "En quoi Caligula est-il une r\u00e9flexion sur les limites de la libert\u00e9\u00a0?",
       motsCles:      "\u00ab R\u00e9flexion \u00bb = question philosophique sans r\u00e9ponse simple. \u00ab Libert\u00e9 \u00bb = double sens\u00a0: politique et philosophique. \u00ab Limites \u00bb = morale, autrui, logique interne.",
       reformulation: "Comment Camus utilise-t-il Caligula pour montrer que la libert\u00e9 absolue se retourne contre elle-m\u00eame\u00a0?",
+      problematique: "Dans quelle mesure Caligula est-il une pièce philosophique qui, sous les apparences d’un drame historique, démontre les limites de la liberté absolue et l’impasse du nihilisme ?",
       typePlan:      "Plan dialectique. I. Caligula incarne une libert\u00e9 absolue. II. Cette libert\u00e9 se d\u00e9truit elle-m\u00eame. III. Une autre d\u00e9finition de la libert\u00e9 en creux.",
       accroche:      "\u2018Les hommes meurent et ils ne sont pas heureux\u2019\u00a0: cette phrase au premier acte est la pr\u00e9misse de toute la pi\u00e8ce.",
       introSuite:    "Nous nous demanderons comment Camus utilise Caligula pour r\u00e9fl\u00e9chir aux limites de la libert\u00e9.",
@@ -5757,6 +5758,7 @@ const LIVRES_DEMO = [
       sujet:         "En quoi La Controverse de Valladolid est-elle un texte qui d\u00e9passe son contexte historique\u00a0?",
       motsCles:      "\u00ab D\u00e9passe \u00bb = va au-del\u00e0 de l\u2019anecdote historique. \u00ab Contexte historique \u00bb = 1550, Espagne, conqu\u00eate.",
       reformulation: "Comment Carri\u00e8re utilise-t-il un d\u00e9bat historique pour poser une question philosophique universelle\u00a0?",
+      problematique: "Dans quelle mesure La Controverse de Valladolid, en mettant en scène un débat historique sur l’humanité des Indiens, pose-t-elle une question philosophique toujours actuelle sur les fondements de l’universel ?",
       typePlan:      "Plan progressif. I. Ancrage historique. II. Arguments transcendant le contexte. III. La conclusion ouverte comme posture philosophique.",
       accroche:      "En 1550, des th\u00e9ologiens espagnols d\u00e9battent\u00a0: les Indiens d\u2019Am\u00e9rique ont-ils une \u00e2me\u00a0? Derri\u00e8re cette question se cache la question fondamentale de l\u2019\u00e9thique.",
       introSuite:    "Nous nous demanderons comment Carri\u00e8re transforme un d\u00e9bat historique en r\u00e9flexion philosophique universelle.",
@@ -5963,6 +5965,7 @@ const LIVRES_DEMO = [
       sujet:         "En quoi Britannicus est-il une trag\u00e9die politique\u00a0?",
       motsCles:      "\u00ab Trag\u00e9die \u00bb = personnages d\u00e9truits par une force qui les d\u00e9passe. \u00ab Politique \u00bb = organisation et exercice du pouvoir.",
       reformulation: "Comment Racine utilise-t-il la forme tragique pour r\u00e9fl\u00e9chir aux m\u00e9canismes du pouvoir et \u00e0 la naissance de la tyrannie\u00a0?",
+      problematique: "Dans quelle mesure Britannicus est-il une tragédie qui, en représentant la naissance de Néron, analyse les mécanismes psychologiques et politiques de la tyrannie ?",
       typePlan:      "Plan dialectique. I. Trag\u00e9die de cour\u00a0: passions priv\u00e9es. II. Trag\u00e9die politique\u00a0: m\u00e9canismes du pouvoir. III. Trag\u00e9die sur la naissance du despotisme.",
       accroche:      "En 1669, Racine s\u2019empare de Tacite pour mettre en sc\u00e8ne non pas N\u00e9ron le monstre \u2014 mais N\u00e9ron avant d\u2019\u00eatre le monstre.",
       introSuite:    "Nous nous demanderons en quoi Britannicus est une trag\u00e9die politique.",
@@ -6170,7 +6173,16 @@ function mettreAJourLivresDemo() {
 
       // dissertation et redac : conserver si au moins un champ rempli
       if (aVraiContenu(existant.dissertation))  majour.dissertation  = existant.dissertation;
-      if (aVraiContenu(existant.dissertation2)) majour.dissertation2 = existant.dissertation2;
+      if (aVraiContenu(existant.dissertation2)) {
+        majour.dissertation2 = existant.dissertation2;
+        // Patcher les champs démo manquants dans dissertation2 (ex: problematique ajouté en v30)
+        var d2demo = demo.dissertation2 || {};
+        var d2maj  = majour.dissertation2;
+        ['problematique','motsCles','reformulation','typePlan','accroche','introSuite',
+         'bilan','reponse','ouverture'].forEach(function(k) {
+          if (!d2maj[k] && d2demo[k]) d2maj[k] = d2demo[k];
+        });
+      }
       if (aVraiContenu(existant.temps2))        majour.temps2        = existant.temps2;
       if (aVraiContenu(existant.redac))         majour.redac         = existant.redac;
       if (existant.redacType) majour.redacType = existant.redacType;
@@ -6387,10 +6399,11 @@ function ouvrirLivre(id) {
   document.getElementById('livre-pages').value  = livre.pages  || '';
   document.getElementById('livre-annee').value  = livre.annee  || '';
   document.getElementById('temps-text').value   = livre.temps  || '';
-  document.getElementById('compre-text').value  = livre.comprehension || '';
-  document.getElementById('livre-contexte').value    = livre.contexte    || '';
-  document.getElementById('livre-auteur-vie').value  = livre.auteurVie   || '';
-  document.getElementById('livre-trajectoire').value = livre.trajectoire || '';
+  var _fn2 = function(s){ return (s||'').replace(/\\n/g,'\n'); };
+  document.getElementById('compre-text').value  = _fn2(livre.comprehension);
+  document.getElementById('livre-contexte').value    = _fn2(livre.contexte);
+  document.getElementById('livre-auteur-vie').value  = _fn2(livre.auteurVie);
+  document.getElementById('livre-trajectoire').value = _fn2(livre.trajectoire);
   const diss = livre.dissertation || {};
   document.getElementById('diss-sujet').value = diss.sujet  || '';
   document.getElementById('diss-intro').value  = diss.intro  || '';
@@ -6523,7 +6536,8 @@ function showMotsPanel(id, btnEl) {
 }
 
 function loadMots(livre) {
-  const sv = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+  const _fn = (s) => (s||'').replace(/\\n/g,'\n');
+  const sv = (id, val) => { const el = document.getElementById(id); if (el) el.value = _fn(val); };
   sv('mots-zone',   livre.mots);
   sv('compre-text', livre.comprehension);
   const th = livre.themes || {};
@@ -7030,7 +7044,7 @@ function _buildPdfHtml(style) {
 
   // ── Helpers ───────────────────────────────────────────────
   const h = (txt) => esc(txt || '');
-  const br = (txt) => esc(txt || '').replace(/\n/g,'<br>');
+  const br = (txt) => esc((txt||'').replace(/\\n/g,'\n')).replace(/\n/g,'<br>');
 
   const sec = (titre, col, contenu) => !contenu ? '' :
     `<div class="sec">
@@ -7493,7 +7507,7 @@ function genererPDF_selection() {
     teal:   '#00838F'
   };
   const h = (txt) => esc(txt || '');
-  const br = (txt) => esc(txt || '').replace(/\n/g,'<br>');
+  const br = (txt) => esc((txt||'').replace(/\\n/g,'\n')).replace(/\n/g,'<br>');
 
   const sec = (titre, col, contenu) => !contenu ? '' :
     `<div class="sec">
@@ -7942,8 +7956,8 @@ function _buildLexToileHtml(L) {
       'Chaque cercle représente la densité d\u2019un thème dans une tranche de pages. Un pic en début d\u2019\u0153uvre indique un thème d\u2019exposition ; un pic en fin, un thème de résolution ou de bascule narrative.')+
     _lexAideItem('#6A1B9A','💡 Justification',
       'La colonne <b>Justification</b> explique, thème par thème, <b>pourquoi chaque mot a été retenu</b> et ce qu\u2019il révèle de l\u2019\u0153uvre. C\u2019est la trace critique et argumentée de la méthode — indispensable pour une dissertation ou un commentaire composé.')+
-    _lexAideItem('#2E7D32','📋 Import JSON',
-      'Pour importer une analyse existante, colle le JSON du Prompt B dans le bouton <b>📋 Importer</b> (champs <code>phases</code> + <code>tranches</code>). Tu peux y ajouter <code>champLexical</code> et <code>justifications</code> pour enrichir l\u2019analyse.')+
+    _lexAideItem('#2E7D32','📥 Import Excel',
+      'Pour importer une analyse existante, utilise le bouton <b>📥 Importer</b> : télécharge le modèle Excel, remplis les scores par tranche et réimporte le fichier. Tu peux enrichir le champ lexical et les justifications directement dans l\u2019Excel.')+
     '</div>';
 
   // ── 5. Paires de thèmes comparées ─────────────────────────────────────────
@@ -8054,7 +8068,7 @@ function genererPDF_redac() {
   const L = LIVRE_ACTIF;
   if (!L) { showToast('Aucun livre ouvert', 'warn'); return; }
   const h = (s) => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const br = (s) => h(s).replace(/\n/g,'<br>');
+  const br = (s) => h((s||'').replace(/\\n/g,'\n')).replace(/\n/g,'<br>');
   const r = L.redac || {};
   const type = L.redacType || 'recit';
   let corps = `<div class="header"><h1>📖 ${h(L.titre)} — Rédaction</h1><p>${h(L.auteur||'')} · Créé le ${h(L.dateCreation||'')}</p></div>`;
@@ -8075,7 +8089,7 @@ function genererPDF_lineaire() {
   const L = LIVRE_ACTIF;
   if (!L) { showToast('Aucun livre ouvert', 'warn'); return; }
   const h = (s) => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const br = (s) => h(s).replace(/\n/g,'<br>');
+  const br = (s) => h((s||'').replace(/\\n/g,'\n')).replace(/\n/g,'<br>');
   const d = L.lineaire || {};
   let corps = `<div class="header"><h1>🔍 ${h(L.titre)} — Analyse linéaire</h1><p>${h(L.auteur||'')} · Créé le ${h(L.dateCreation||'')}</p></div>`;
   corps += '<h2>① Introduction</h2>';
@@ -8098,7 +8112,7 @@ function genererPDF_commentaire() {
   const L = LIVRE_ACTIF;
   if (!L) { showToast('Aucun livre ouvert', 'warn'); return; }
   const h = (s) => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const br = (s) => h(s).replace(/\n/g,'<br>');
+  const br = (s) => h((s||'').replace(/\\n/g,'\n')).replace(/\n/g,'<br>');
   const d = L.commentaire || {};
   let corps = `<div class="header"><h1>📝 ${h(L.titre)} — Commentaire littéraire</h1><p>${h(L.auteur||'')} · Créé le ${h(L.dateCreation||'')}</p></div>`;
   corps += '<h2>① Introduction</h2>';
@@ -8121,7 +8135,7 @@ function genererPDF_diss() {
   const L = LIVRE_ACTIF;
   if (!L) { showToast('Aucun livre ouvert', 'warn'); return; }
   const h = (s) => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const br = (s) => h(s).replace(/\n/g,'<br>');
+  const br = (s) => h((s||'').replace(/\\n/g,'\n')).replace(/\n/g,'<br>');
   const isElise = document.body.classList.contains('mode-elise');
   let corps = `<div class="header"><h1>✍️ ${h(L.titre)} — Dissertation</h1><p>${h(L.auteur||'')} · Créé le ${h(L.dateCreation||'')}</p></div>`;
   if (isElise) {
@@ -9353,7 +9367,7 @@ function sauvegarderConfigFB() {
       .replace(/([{,]\s*)([a-zA-Z]+)\s*:/g, '$1"$2":'); // unquoted keys → quoted
     cfg = JSON.parse(normalized);
   } catch(e) {
-    msg.className = 'err'; msg.textContent = '❌ JSON invalide. Vérifie que tu as bien copié toute la config.'; return;
+    msg.className = 'err'; msg.textContent = '❌ Format invalide. Vérifie que tu as bien copié toute la config.'; return;
   }
 
   if (!cfg.apiKey || !cfg.projectId) {
@@ -11490,12 +11504,13 @@ function niLVLoad() {
   if (btn) { btn.classList.remove('on'); btn.textContent = '📄 Résumé PDF du livre'; }
   if (box) { box.classList.remove('on'); box.innerHTML = ''; }
   niLVUpdateCard();
-  var sv = function(id, val){ var el = document.getElementById(id); if (el) el.value = val || ''; };
-  sv('ni-lv-contexte',    LIVRE_ACTIF.contexte    || '');
-  sv('ni-lv-auteurVie',   LIVRE_ACTIF.auteurVie   || '');
-  sv('ni-lv-trajectoire', LIVRE_ACTIF.trajectoire || '');
-  sv('ni-lv-courant',     LIVRE_ACTIF.courant     || '');
-  sv('ni-lv-style',       LIVRE_ACTIF.style       || '');  // Reset scroll
+  var _fn = function(s){ return (s||'').replace(/\\n/g,'\n'); };
+  var sv = function(id, val){ var el = document.getElementById(id); if (el) el.value = _fn(val); };
+  sv('ni-lv-contexte',    LIVRE_ACTIF.contexte);
+  sv('ni-lv-auteurVie',   LIVRE_ACTIF.auteurVie);
+  sv('ni-lv-trajectoire', LIVRE_ACTIF.trajectoire);
+  sv('ni-lv-courant',     LIVRE_ACTIF.courant);
+  sv('ni-lv-style',       LIVRE_ACTIF.style);  // Reset scroll
   var r = document.getElementById('ni-lv-right');
   if (r) r.scrollTop = 0;
 }
@@ -11538,8 +11553,9 @@ function niLVTogglePDF() {
   box.classList.toggle('on', _niLVPdfOn);
   if (_niLVPdfOn && LIVRE_ACTIF) {
     var L = LIVRE_ACTIF;
+    var _fn = function(s){ return (s||'').replace(/\\n/g,'\n'); };
     var line = function(label, val) {
-      return val ? '<div style="margin-bottom:8px;"><div style="font-size:.59rem;font-weight:900;text-transform:uppercase;letter-spacing:.3px;color:#94A3B8;">' + label + '</div><div style="white-space:pre-line;color:#37474F;">' + esc(val) + '</div></div>' : '';
+      return val ? '<div style="margin-bottom:8px;"><div style="font-size:.59rem;font-weight:900;text-transform:uppercase;letter-spacing:.3px;color:#94A3B8;">' + label + '</div><div style="white-space:pre-line;color:#37474F;">' + esc(_fn(val)) + '</div></div>' : '';
     };
     box.innerHTML =
       '<div style="font-weight:900;font-size:.78rem;color:var(--header-bg);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid #D4DCF0;">📚 ' + esc(L.titre || '—') + '</div>' +
@@ -11743,7 +11759,8 @@ function niMLoad() {
   var ta = document.getElementById('ni-m-mots-ta');
   if (ta) ta.value = LIVRE_ACTIF.mots || '';
   var av = document.getElementById('ni-m-avis-ta');
-  if (av) av.value = LIVRE_ACTIF.comprehension || '';
+  var _fnc = function(s){ return (s||'').replace(/\\n/g,'\n'); };
+  if (av) av.value = _fnc(LIVRE_ACTIF.comprehension);
   var th = LIVRE_ACTIF.themes || {};
   ['amour','pouvoir','liberte','identite','societe','nature'].forEach(function(k){
     var el = document.getElementById('ni-m-th-' + k);
