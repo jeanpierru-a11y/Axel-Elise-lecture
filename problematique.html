@@ -1,0 +1,1664 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Machine à Problématiques</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --noir: #0f0e0d;
+  --creme: #f5f1ea;
+  --or: #c9a84c;
+  --or-pale: #f0e6c8;
+  --rouge: #8b2a2a;
+  --bleu: #1a3a5c;
+  --vert: #1e4d3a;
+  --violet: #3d1f5c;
+  --gris: #a09a94;
+  --gris-pale: #e8e4dc;
+  --blanc: #fdfcf9;
+
+  --col-ouverture: #1a3a5c;
+  --col-sujet:     #1e4d3a;
+  --col-operateur: #8b2a2a;
+  --col-tension:   #3d1f5c;
+}
+
+* { box-sizing:border-box; margin:0; padding:0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--noir);
+  color: var(--creme);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── HEADER ── */
+header {
+  padding: 32px 48px 24px;
+  border-bottom: 1px solid rgba(201,168,76,.25);
+  display: flex; align-items: baseline; gap: 20px;
+}
+header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.9rem; font-weight: 700;
+  color: var(--or); letter-spacing: -.01em;
+}
+header p {
+  font-size: .82rem; color: var(--gris);
+  font-style: italic;
+}
+
+/* ── ONGLETS ── */
+.tabs {
+  display: flex; gap: 0;
+  padding: 0 48px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.02);
+}
+.tab {
+  padding: 14px 28px; cursor: pointer;
+  font-size: .8rem; font-weight: 600; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--gris);
+  border-bottom: 2px solid transparent;
+  transition: all .2s; user-select: none;
+}
+.tab:hover { color: var(--creme); }
+.tab.act { color: var(--or); border-bottom-color: var(--or); }
+
+/* ── PANELS ── */
+.panel { display: none; padding: 40px 48px; }
+.panel.act { display: block; }
+
+/* ══════════════════════════════════
+   ONGLET 1 — TAXONOMIE
+══════════════════════════════════ */
+.taxo-intro {
+  font-size: .88rem; color: var(--gris); margin-bottom: 28px;
+  max-width: 640px; line-height: 1.7;
+}
+
+.taxo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.taxo-family {
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 12px; overflow: hidden;
+  cursor: pointer; transition: border-color .2s;
+}
+.taxo-family:hover { border-color: rgba(201,168,76,.5); }
+.taxo-family.open  { border-color: var(--or); }
+
+.taxo-hdr {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 18px;
+  background: rgba(255,255,255,.04);
+}
+.taxo-icon { font-size: 1.3rem; }
+.taxo-name {
+  font-family: 'Playfair Display', serif;
+  font-size: .95rem; font-weight: 700; flex: 1;
+}
+.taxo-arrow {
+  font-size: .7rem; color: var(--gris);
+  transition: transform .2s;
+}
+.taxo-family.open .taxo-arrow { transform: rotate(180deg); }
+
+.taxo-items {
+  display: none; padding: 8px 0 12px;
+}
+.taxo-family.open .taxo-items { display: block; }
+
+.taxo-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 18px; cursor: pointer;
+  font-size: .82rem; line-height: 1.5;
+  color: rgba(245,241,234,.92);
+  transition: background .15s, color .15s;
+  border-left: 3px solid transparent;
+}
+.taxo-item:hover {
+  background: rgba(201,168,76,.1);
+  color: var(--creme);
+  border-left-color: var(--or);
+}
+.taxo-item.chosen {
+  background: rgba(201,168,76,.15);
+  color: var(--or);
+  border-left-color: var(--or);
+}
+.taxo-item-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--gris); flex-shrink: 0;
+}
+.taxo-item.chosen .taxo-item-dot { background: var(--or); }
+
+.taxo-action {
+  margin-top: 28px; display: flex; align-items: center; gap: 16px;
+}
+.taxo-chosen-display {
+  flex: 1; padding: 12px 16px;
+  background: rgba(201,168,76,.08);
+  border: 1px solid rgba(201,168,76,.3);
+  border-radius: 8px; font-size: .82rem;
+  color: var(--or); font-style: italic;
+  min-height: 44px;
+}
+.btn-prim {
+  padding: 11px 24px; border: none; cursor: pointer;
+  background: var(--or); color: var(--noir);
+  font-family: 'DM Sans', sans-serif;
+  font-size: .8rem; font-weight: 700;
+  letter-spacing: .04em; text-transform: uppercase;
+  border-radius: 8px; transition: opacity .15s;
+  white-space: nowrap;
+}
+.btn-prim:hover { opacity: .85; }
+.btn-prim:disabled { opacity: .35; cursor: default; }
+
+/* ══════════════════════════════════
+   ONGLET 2 — LA ROUE
+══════════════════════════════════ */
+.roue-intro {
+  font-size: .88rem; color: var(--gris);
+  margin-bottom: 32px; max-width: 640px; line-height: 1.7;
+}
+
+.roue-machine {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 2fr;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.roue-col {
+  display: flex; flex-direction: column; gap: 8px;
+}
+
+.roue-col-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 14px;
+  border-radius: 8px 8px 0 0;
+  font-size: .68rem; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.roue-col[data-col="ouverture"] .roue-col-hdr { background: var(--col-ouverture); }
+.roue-col[data-col="sujet"]     .roue-col-hdr { background: var(--col-sujet); }
+.roue-col[data-col="operateur"] .roue-col-hdr { background: var(--col-operateur); }
+.roue-col[data-col="tension"]   .roue-col-hdr { background: var(--col-tension); }
+
+.roue-lock {
+  background: none; border: 1px solid rgba(255,255,255,.3);
+  color: #fff; border-radius: 4px; padding: 2px 6px;
+  font-size: .6rem; cursor: pointer; transition: all .15s;
+  white-space: nowrap;
+}
+.roue-lock.locked {
+  background: rgba(255,255,255,.25);
+}
+
+.roue-drum {
+  flex: 1;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 0 0 8px 8px;
+  padding: 14px; min-height: 100px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+
+.roue-val {
+  font-size: .85rem; line-height: 1.5;
+  text-align: center; color: rgba(245,241,234,.95);
+  transition: opacity .15s;
+}
+.roue-val.spin { opacity: 0; }
+
+.roue-col[data-col="ouverture"] .roue-drum { border-top: 2px solid var(--col-ouverture); }
+.roue-col[data-col="sujet"]     .roue-drum { border-top: 2px solid var(--col-sujet); }
+.roue-col[data-col="operateur"] .roue-drum { border-top: 2px solid var(--col-operateur); }
+.roue-col[data-col="tension"]   .roue-drum { border-top: 2px solid var(--col-tension); }
+
+.roue-btns {
+  display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+}
+
+.btn-sec {
+  padding: 10px 20px; cursor: pointer;
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.15);
+  color: var(--creme); border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .8rem; font-weight: 500;
+  transition: background .15s;
+}
+.btn-sec:hover { background: rgba(255,255,255,.13); }
+
+.roue-result {
+  margin-top: 24px;
+  padding: 20px 24px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(201,168,76,.25);
+  border-radius: 12px;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem; line-height: 1.7;
+  color: var(--creme); font-style: italic;
+  min-height: 60px;
+}
+.roue-result span { color: var(--or); }
+.roue-result .ph { color: var(--gris); font-size: .82rem; font-style: normal; font-family: 'DM Sans',sans-serif; }
+
+/* ══════════════════════════════════
+   ONGLET 3 — ATELIER
+══════════════════════════════════ */
+.atelier-zone {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
+}
+
+.atelier-bloc { display: flex; flex-direction: column; gap: 14px; }
+.atelier-label {
+  font-size: .72rem; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--or);
+}
+
+.atelier-ta {
+  width: 100%; padding: 16px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 10px; resize: vertical;
+  font-family: 'Playfair Display', serif;
+  font-size: .95rem; line-height: 1.7;
+  color: var(--creme); min-height: 120px;
+  font-style: italic;
+  transition: border-color .2s;
+}
+.atelier-ta:focus {
+  outline: none;
+  border-color: rgba(201,168,76,.5);
+}
+.atelier-ta::placeholder { color: var(--gris); font-style: italic; }
+
+.atelier-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.atelier-right { display: flex; flex-direction: column; gap: 14px; }
+
+.atelier-reponse {
+  flex: 1; padding: 18px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 10px;
+  font-size: .84rem; line-height: 1.8;
+  color: rgba(245,241,234,.92);
+  min-height: 200px;
+}
+.atelier-reponse .ia-label {
+  font-size: .68rem; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--or); margin-bottom: 10px;
+}
+.atelier-reponse .ia-text { font-style: italic; }
+.atelier-reponse .ph { color: var(--gris); font-size: .8rem; }
+
+.variantes {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.variante {
+  padding: 12px 14px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 8px;
+  font-size: .82rem; line-height: 1.6;
+  color: rgba(245,241,234,.9); font-style: italic;
+  cursor: pointer; transition: border-color .15s, background .15s;
+  font-family: 'Playfair Display', serif;
+}
+.variante:hover {
+  border-color: rgba(201,168,76,.4);
+  background: rgba(201,168,76,.06);
+  color: var(--creme);
+}
+
+/* spinner */
+.spin-anim {
+  display: inline-block; animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Clé API */
+.api-bar {
+  padding: 10px 48px;
+  background: rgba(255,255,255,.03);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  display: flex; align-items: center; gap: 12px;
+  font-size: .75rem; color: var(--gris);
+}
+.api-bar input {
+  flex: 1; max-width: 340px;
+  padding: 6px 10px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 6px; color: var(--creme);
+  font-family: 'DM Mono', monospace; font-size: .72rem;
+}
+.api-bar input:focus { outline: none; border-color: rgba(201,168,76,.4); }
+.api-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #555; flex-shrink: 0;
+}
+.api-dot.ok  { background: #4caf50; }
+.api-dot.err { background: #f44336; }
+
+/* ══════════════════════════════════
+   ONGLET 1 — STRUCTURE + LEXIQUE
+══════════════════════════════════ */
+.struct-section {
+  margin-bottom: 40px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+.struct-section:last-child { border-bottom: none; margin-bottom: 0; }
+
+.struct-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem; font-weight: 700; color: var(--or);
+  margin-bottom: 10px;
+}
+.struct-lead {
+  font-size: .86rem; line-height: 1.75; color: rgba(245,241,234,.88);
+  margin-bottom: 20px; max-width: 700px;
+}
+
+/* Grille 4 colonnes */
+.struct-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr 1.5fr 1.2fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.struct-col {
+  border-radius: 10px; overflow: hidden;
+  display: flex; flex-direction: column;
+}
+.struct-col-hdr {
+  padding: 9px 14px;
+  font-size: .7rem; font-weight: 800; letter-spacing: .08em;
+  text-transform: uppercase; color: #fff;
+}
+.struct-col-ouv .struct-col-hdr { background: var(--col-ouverture); }
+.struct-col-suj .struct-col-hdr { background: var(--col-sujet); }
+.struct-col-op  .struct-col-hdr { background: var(--col-operateur); }
+.struct-col-ten .struct-col-hdr { background: var(--col-tension); }
+
+.struct-col-body {
+  flex: 1;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-top: none;
+  padding: 8px 0;
+}
+.struct-item {
+  padding: 6px 14px; font-size: .8rem;
+  color: rgba(245,241,234,.9); line-height: 1.4;
+  display: flex; justify-content: space-between; align-items: center;
+  border-left: 3px solid transparent;
+}
+.struct-item + .struct-item { border-top: 1px solid rgba(255,255,255,.04); }
+
+/* Opérateurs par force */
+.op-fort   { border-left-color: #4caf50 !important; }
+.op-moyen  { border-left-color: var(--or) !important; }
+.op-faible { border-left-color: #ef5350 !important; opacity: .7; }
+
+.op-badge { font-size: .6rem; font-weight: 700; padding: 1px 6px; border-radius: 10px; white-space: nowrap; }
+.op-fort-badge   { background: rgba(76,175,80,.25);  color: #81c784; }
+.op-moyen-badge  { background: rgba(201,168,76,.25); color: var(--or); }
+.op-faible-badge { background: rgba(239,83,80,.2);   color: #ef9a9a; }
+
+.struct-note {
+  padding: 10px 14px; font-size: .72rem; line-height: 1.6;
+  color: rgba(245,241,234,.65);
+  background: rgba(255,255,255,.02);
+  border: 1px solid rgba(255,255,255,.06);
+  border-top: none; border-radius: 0 0 10px 10px;
+}
+
+/* Exemple assemblé */
+.struct-exemple {
+  padding: 16px 20px;
+  background: rgba(201,168,76,.07);
+  border: 1px solid rgba(201,168,76,.25);
+  border-radius: 10px;
+  font-family: 'Playfair Display', serif;
+  font-size: .95rem; font-style: italic; line-height: 1.8;
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 5px;
+}
+.struct-ex-label {
+  font-family: 'DM Sans', sans-serif; font-size: .68rem;
+  font-style: normal; font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--gris);
+  width: 100%; margin-bottom: 4px;
+}
+.struct-ex-ouv  { color: #64b5f6; }
+.struct-ex-suj  { color: #a5d6a7; }
+.struct-ex-op   { color: #ef9a9a; }
+.struct-ex-ten  { color: #ce93d8; }
+.struct-ex-q    { color: var(--creme); }
+
+/* Analyse lexicale */
+.lex-input-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  margin-bottom: 20px;
+}
+.lex-input-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px;
+  background: rgba(255,255,255,.04);
+  border-radius: 8px; border: 1px solid rgba(255,255,255,.08);
+}
+.lex-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.lex-lbl { font-size: .78rem; font-weight: 600; min-width: 60px; color: rgba(245,241,234,.92); }
+.lex-slider {
+  flex: 1; accent-color: var(--or); cursor: pointer;
+  height: 4px;
+}
+.lex-val { font-family: 'DM Mono', monospace; font-size: .75rem; min-width: 28px; text-align: right; color: var(--or); }
+
+.lex-result {
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 10px; overflow: hidden;
+}
+.lex-result-inner { padding: 18px 20px; }
+.lex-pairs-title, .lex-tensions-title {
+  font-size: .68rem; font-weight: 800; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--or); margin-bottom: 10px;
+}
+.lex-tensions-title { margin-top: 16px; }
+#lex-pairs { display: flex; flex-wrap: wrap; gap: 8px; }
+.lex-pair-chip {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 12px; border-radius: 20px;
+  font-size: .78rem; font-weight: 600;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12);
+}
+.lex-pair-chip .lpc-score {
+  font-family: 'DM Mono', monospace; font-size: .7rem; color: var(--or);
+}
+#lex-tensions { display: flex; flex-direction: column; gap: 7px; }
+.lex-tension-item {
+  padding: 10px 14px;
+  background: rgba(255,255,255,.05);
+  border-radius: 8px; border-left: 3px solid rgba(201,168,76,.5);
+  font-size: .82rem; line-height: 1.5;
+  color: rgba(245,241,234,.92); cursor: pointer;
+  transition: background .15s;
+}
+.lex-tension-item:hover { background: rgba(201,168,76,.1); border-left-color: var(--or); }
+.lex-tension-family { font-size: .65rem; color: var(--gris); font-weight: 700; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 3px; }
+
+/* ══════════════════════════════════
+   ONGLET 4 — EXEMPLES
+══════════════════════════════════ */
+#ex-filters {
+  display: flex; flex-direction: column; gap: 10px;
+  margin-bottom: 20px;
+}
+.ex-filt-grp {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.ex-filt-label {
+  font-size: .68rem; font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--gris); white-space: nowrap;
+  min-width: 54px;
+}
+.ex-filt {
+  padding: 5px 12px; border-radius: 20px; cursor: pointer;
+  font-size: .72rem; font-weight: 500;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  color: rgba(245,241,234,.65);
+  transition: all .15s; white-space: nowrap;
+}
+.ex-filt:hover { background: rgba(255,255,255,.12); color: var(--creme); }
+.ex-filt.act  { background: var(--or); border-color: var(--or); color: var(--noir); font-weight: 700; }
+
+#ex-count {
+  font-size: .72rem; color: var(--gris);
+  margin-bottom: 16px;
+}
+.ex-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  gap: 14px;
+}
+.ex-card {
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 10px; overflow: hidden;
+  transition: border-color .2s;
+}
+.ex-card:hover { border-color: rgba(201,168,76,.3); }
+.ex-book-band {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 14px;
+  font-size: .68rem; font-weight: 700; letter-spacing: .05em;
+  text-transform: uppercase;
+}
+.ex-book-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink:0; }
+.ex-book-name { flex:1; }
+.ex-flaw-badge {
+  padding: 2px 8px; border-radius: 20px;
+  font-size: .62rem; font-weight: 600;
+  background: rgba(255,255,255,.1); color: rgba(255,255,255,.65);
+}
+.ex-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+.ex-formulation {
+  font-family: 'Playfair Display', serif;
+  font-size: .88rem; font-style: italic; line-height: 1.6;
+  color: var(--creme); cursor: pointer;
+  padding: 10px 12px;
+  background: rgba(255,255,255,.04);
+  border-radius: 7px; border-left: 3px solid var(--or);
+  transition: background .15s;
+  position: relative;
+}
+.ex-formulation:hover { background: rgba(201,168,76,.08); }
+.ex-formulation::after {
+  content: '↗ copier dans l\'Atelier';
+  position: absolute; bottom: 5px; right: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .6rem; font-style: normal; color: var(--gris);
+  opacity: 0; transition: opacity .15s;
+}
+.ex-formulation:hover::after { opacity: 1; }
+.ex-analyse-toggle {
+  display: flex; align-items: center; gap: 6px;
+  font-size: .72rem; font-weight: 600; color: var(--gris);
+  cursor: pointer; user-select: none; transition: color .15s;
+}
+.ex-analyse-toggle:hover { color: var(--creme); }
+.ex-analyse-toggle .arr { transition: transform .2s; font-size: .6rem; }
+.ex-analyse-toggle.open .arr { transform: rotate(180deg); }
+.ex-analyse {
+  display: none; padding: 12px 14px;
+  background: rgba(255,255,255,.03);
+  border-radius: 7px; border: 1px solid rgba(255,255,255,.07);
+  font-size: .78rem; line-height: 1.75;
+  color: rgba(245,241,234,.92);
+}
+.ex-analyse.open { display: block; }
+.ex-analyse b { color: var(--or); }
+.ex-analyse i { color: rgba(245,241,234,.6); }
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 14px; overflow: hidden;
+  margin-bottom: 20px;
+  transition: border-color .2s;
+}
+.ex-card:hover { border-color: rgba(201,168,76,.35); }
+
+.ex-book-band {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 20px;
+  font-size: .72rem; font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.ex-book-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.ex-book-name { flex:1; }
+.ex-flaw-badge {
+  padding: 2px 10px; border-radius: 20px;
+  font-size: .65rem; font-weight: 700; letter-spacing: .05em;
+  background: rgba(255,255,255,.12); color: rgba(255,255,255,.7);
+  text-transform: uppercase;
+}
+
+.ex-body { padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
+
+.ex-formulation {
+  font-family: 'Playfair Display', serif;
+  font-size: .95rem; font-style: italic; line-height: 1.7;
+  color: var(--creme); cursor: pointer;
+  padding: 12px 16px;
+  background: rgba(255,255,255,.04);
+  border-radius: 8px; border-left: 3px solid var(--or);
+  transition: background .15s;
+  position: relative;
+}
+.ex-formulation:hover { background: rgba(201,168,76,.08); }
+.ex-formulation::after {
+  content: '↗ copier dans l\'Atelier';
+  position: absolute; bottom: 6px; right: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .62rem; font-style: normal; color: var(--gris);
+  opacity: 0; transition: opacity .15s;
+}
+.ex-formulation:hover::after { opacity: 1; }
+
+.ex-analyse-toggle {
+  display: flex; align-items: center; gap: 8px;
+  font-size: .75rem; font-weight: 600; color: var(--gris);
+  cursor: pointer; user-select: none;
+  transition: color .15s;
+}
+.ex-analyse-toggle:hover { color: var(--creme); }
+.ex-analyse-toggle .arr { transition: transform .2s; font-size: .65rem; }
+.ex-analyse-toggle.open .arr { transform: rotate(180deg); }
+
+.ex-analyse {
+  display: none; padding: 14px 16px;
+  background: rgba(255,255,255,.03);
+  border-radius: 8px; border: 1px solid rgba(255,255,255,.07);
+  font-size: .82rem; line-height: 1.8;
+  color: rgba(245,241,234,.92);
+}
+.ex-analyse.open { display: block; }
+.ex-analyse strong { color: var(--or); }
+.ex-analyse em { color: rgba(245,241,234,.6); }
+.ex-num { color: var(--or); font-weight: 700; }
+
+/* toast */
+#toast {
+  position: fixed; bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--or); color: var(--noir);
+  padding: 10px 20px; border-radius: 8px;
+  font-size: .8rem; font-weight: 700;
+  opacity: 0; transition: all .3s; pointer-events: none; z-index: 999;
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>La Machine à Problématiques</h1>
+  <p>Construire une question littéraire qui tient debout</p>
+</header>
+
+<!-- Barre clé API -->
+<div class="api-bar">
+  <div class="api-dot" id="api-dot"></div>
+  <label for="api-input">Clé Claude API :</label>
+  <input type="password" id="api-input" placeholder="sk-ant-…" oninput="saveKey(this.value)">
+  <span id="api-status">non configurée</span>
+</div>
+
+<!-- Onglets -->
+<div class="tabs">
+  <div class="tab act" onclick="showTab('taxo',this)">① Construire</div>
+  <div class="tab"     onclick="showTab('roue',this)">② La Roue</div>
+  <div class="tab"     onclick="showTab('atelier',this)">③ L'Atelier</div>
+  <div class="tab"     onclick="showTab('exemples',this)">📚 Exemples</div>
+</div>
+
+<!-- ══ ONGLET 1 : TAXONOMIE ══ -->
+<div class="panel act" id="panel-taxo">
+
+  <!-- ── A. LA STRUCTURE ── -->
+  <div class="struct-section">
+    <h2 class="struct-title">La structure d'une problématique</h2>
+    <p class="struct-lead">Une bonne problématique est une <strong>phrase qui s'élève</strong> — elle part d'un fait du texte et ouvre sur une question qui n'a pas de réponse évidente. Elle suit toujours le même squelette :</p>
+
+    <div class="struct-grid">
+      <div class="struct-col struct-col-ouv">
+        <div class="struct-col-hdr">Ouverture</div>
+        <div class="struct-col-body">
+          <div class="struct-item">En quoi</div>
+          <div class="struct-item">Dans quelle mesure</div>
+          <div class="struct-item">Par quel procédé</div>
+          <div class="struct-item">Comment</div>
+          <div class="struct-item">De quelle façon</div>
+          <div class="struct-item">En quel sens peut-on dire que</div>
+        </div>
+        <div class="struct-note">Oriente le regard : vers la <em>forme</em> (procédé), vers le <em>degré</em> (mesure), vers le <em>mécanisme</em> (comment).</div>
+      </div>
+
+      <div class="struct-col struct-col-suj">
+        <div class="struct-col-hdr">Sujet</div>
+        <div class="struct-col-body">
+          <div class="struct-item">l'auteur</div>
+          <div class="struct-item">le personnage principal</div>
+          <div class="struct-item">le narrateur</div>
+          <div class="struct-item">cette scène / ce dénouement</div>
+          <div class="struct-item">le style · le ton · la voix narrative</div>
+          <div class="struct-item">la structure de l'œuvre</div>
+          <div class="struct-item">la parole / le silence des personnages</div>
+          <div class="struct-item">l'espace et le temps · le titre</div>
+        </div>
+        <div class="struct-note">Plus le sujet est précis, plus la problématique est forte. « Le narrateur » > « l'œuvre ».</div>
+      </div>
+
+      <div class="struct-col struct-col-op">
+        <div class="struct-col-hdr">Opérateur</div>
+        <div class="struct-col-body">
+          <div class="struct-item op-fort">révèle <span class="op-badge op-fort-badge">★★★</span></div>
+          <div class="struct-item op-fort">remet en cause <span class="op-badge op-fort-badge">★★★</span></div>
+          <div class="struct-item op-fort">fait vaciller <span class="op-badge op-fort-badge">★★★</span></div>
+          <div class="struct-item op-fort">expose sans résoudre <span class="op-badge op-fort-badge">★★★</span></div>
+          <div class="struct-item op-moyen">interroge <span class="op-badge op-moyen-badge">★★</span></div>
+          <div class="struct-item op-moyen">transforme <span class="op-badge op-moyen-badge">★★</span></div>
+          <div class="struct-item op-moyen">met en tension <span class="op-badge op-moyen-badge">★★</span></div>
+          <div class="struct-item op-moyen">célèbre tout en critiquant <span class="op-badge op-moyen-badge">★★</span></div>
+          <div class="struct-item op-faible">montre <span class="op-badge op-faible-badge">★</span></div>
+          <div class="struct-item op-faible">est une pièce sur <span class="op-badge op-faible-badge">★</span></div>
+          <div class="struct-item op-faible">parle de <span class="op-badge op-faible-badge">★</span></div>
+        </div>
+        <div class="struct-note">
+          <span class="op-badge op-fort-badge">★★★</span> Ouvre une vraie tension — la réponse n'est pas évidente.<br>
+          <span class="op-badge op-moyen-badge">★★</span> Acceptable si le reste est précis.<br>
+          <span class="op-badge op-faible-badge">★</span> Descriptif — ferme la question avant de l'ouvrir.
+        </div>
+      </div>
+
+      <div class="struct-col struct-col-ten">
+        <div class="struct-col-hdr">Tension</div>
+        <div class="struct-col-body" style="font-size:.78rem;color:rgba(245,241,234,.85);line-height:1.6;padding:10px 12px;">
+          C'est le <strong>cœur</strong> de la problématique — le conflit que le texte soulève sans le résoudre.<br><br>
+          Elle vient des <em>familles</em> ci-dessous, ou mieux encore : de tes <em>thèmes lexicaux dominants</em> (voir §C).<br><br>
+          Une bonne tension <strong>résiste</strong> — elle ne se laisse pas répondre par oui ou non, elle oblige à lire.
+        </div>
+        <div class="struct-note">La tension la plus forte vient souvent du <em>conflit entre deux thèmes lexicaux que tu as beaucoup trouvés dans le texte</em>.</div>
+      </div>
+    </div>
+
+    <div class="struct-exemple">
+      <span class="struct-ex-label">Exemple assemblé :</span>
+      <span class="struct-ex-ouv">En quoi</span>
+      <span class="struct-ex-suj">le silence de Junie</span>
+      <span class="struct-ex-op">révèle-t-il</span>
+      <span class="struct-ex-ten">la seule victoire morale possible dans un monde où la vertu est sans pouvoir</span>
+      <span class="struct-ex-q"> ?</span>
+    </div>
+  </div>
+
+  <!-- ── B. ANALYSE LEXICALE ── -->
+  <div class="struct-section">
+    <h2 class="struct-title">Tes thèmes dominants</h2>
+    <p class="struct-lead">Saisis les poids de tes 6 thèmes (issus de ton analyse lexicale). L'outil identifie la paire dominante et te suggère les tensions les plus pertinentes.</p>
+    <div class="lex-input-grid">
+      <div class="lex-input-row" data-theme="amour">
+        <span class="lex-dot" style="background:#AD1457"></span>
+        <span class="lex-lbl">Amour</span>
+        <input type="range" class="lex-slider" min="0" max="100" value="50" oninput="updateLex()">
+        <span class="lex-val">50</span>
+      </div>
+      <div class="lex-input-row" data-theme="pouvoir">
+        <span class="lex-dot" style="background:#C62828"></span>
+        <span class="lex-lbl">Pouvoir</span>
+        <input type="range" class="lex-slider" min="0" max="100" value="50" oninput="updateLex()">
+        <span class="lex-val">50</span>
+      </div>
+      <div class="lex-input-row" data-theme="liberte">
+        <span class="lex-dot" style="background:#1565C0"></span>
+        <span class="lex-lbl">Liberté</span>
+        <input type="range" class="lex-slider" min="0" max="100" value="50" oninput="updateLex()">
+        <span class="lex-val">50</span>
+      </div>
+      <div class="lex-input-row" data-theme="identite">
+        <span class="lex-dot" style="background:#6A1B9A"></span>
+        <span class="lex-lbl">Identité</span>
+        <input type="range" class="lex-slider" min="0" max="100" value="50" oninput="updateLex()">
+        <span class="lex-val">50</span>
+      </div>
+      <div class="lex-input-row" data-theme="societe">
+        <span class="lex-dot" style="background:#E65100"></span>
+        <span class="lex-lbl">Société</span>
+        <input type="range" class="lex-slider" min="0" max="100" value="50" oninput="updateLex()">
+        <span class="lex-val">50</span>
+      </div>
+      <div class="lex-input-row" data-theme="nature">
+        <span class="lex-dot" style="background:#2E7D32"></span>
+        <span class="lex-lbl">Nature</span>
+        <input type="range" class="lex-slider" min="0" max="100" value="50" oninput="updateLex()">
+        <span class="lex-val">50</span>
+      </div>
+    </div>
+    <div id="lex-result" class="lex-result">
+      <div class="lex-result-inner">
+        <div class="lex-pairs-title">Paires dominantes :</div>
+        <div id="lex-pairs"></div>
+        <div class="lex-tensions-title">Tensions suggérées pour ta problématique :</div>
+        <div id="lex-tensions"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── C. TAXONOMIE ── -->
+  <div class="struct-section">
+    <h2 class="struct-title">Familles de tensions</h2>
+    <p class="struct-lead">Choisis la famille qui résonne avec ce que tu ressens en lisant l'œuvre. Un clic sélectionne la tension pour la Roue.</p>
+    <div class="taxo-grid" id="taxo-grid"></div>
+    <div class="taxo-action">
+      <div class="taxo-chosen-display" id="taxo-chosen-display">Aucune tension sélectionnée</div>
+      <button class="btn-prim" id="btn-vers-roue" onclick="versRoue()" disabled>Envoyer vers la Roue →</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══ ONGLET 2 : LA ROUE ══ -->
+<div class="panel" id="panel-roue">
+  <p class="roue-intro">
+    Tire les quatre roues pour assembler une ébauche de problématique.
+    <strong>Verrouille</strong> les colonnes qui te semblent justes, retire les autres.
+    Ce n'est pas une réponse — c'est un point de départ à reformuler dans l'Atelier.
+  </p>
+
+  <div class="roue-machine">
+    <div class="roue-col" data-col="ouverture">
+      <div class="roue-col-hdr">
+        <span>Ouverture</span>
+        <button class="roue-lock" onclick="toggleLock(this,'ouverture')">🔓 libre</button>
+      </div>
+      <div class="roue-drum">
+        <div class="roue-val" id="rv-ouverture">—</div>
+      </div>
+    </div>
+    <div class="roue-col" data-col="sujet">
+      <div class="roue-col-hdr">
+        <span>Sujet</span>
+        <button class="roue-lock" onclick="toggleLock(this,'sujet')">🔓 libre</button>
+      </div>
+      <div class="roue-drum">
+        <div class="roue-val" id="rv-sujet">—</div>
+      </div>
+    </div>
+    <div class="roue-col" data-col="operateur">
+      <div class="roue-col-hdr">
+        <span>Opérateur</span>
+        <button class="roue-lock" onclick="toggleLock(this,'operateur')">🔓 libre</button>
+      </div>
+      <div class="roue-drum">
+        <div class="roue-val" id="rv-operateur">—</div>
+      </div>
+    </div>
+    <div class="roue-col" data-col="tension">
+      <div class="roue-col-hdr">
+        <span>Tension</span>
+        <button class="roue-lock" onclick="toggleLock(this,'tension')">🔓 libre</button>
+      </div>
+      <div class="roue-drum">
+        <div class="roue-val" id="rv-tension">—</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="roue-btns">
+    <button class="btn-prim" onclick="tirer()">🎲 Tirer</button>
+    <button class="btn-sec"  onclick="toutDeverrouiller()">Tout libérer</button>
+    <button class="btn-sec"  onclick="versAtelier()">Envoyer vers l'Atelier →</button>
+  </div>
+
+  <div class="roue-result" id="roue-result">
+    <span class="ph">Lance la roue pour assembler une première ébauche…</span>
+  </div>
+</div>
+
+<!-- ══ ONGLET 3 : ATELIER ══ -->
+<div class="panel" id="panel-atelier">
+  <div class="atelier-zone">
+    <div class="atelier-bloc">
+      <div class="atelier-label">Ta problématique</div>
+      <textarea class="atelier-ta" id="atelier-ta"
+        placeholder="Écris ou colle ici ta problématique — ou envoie-la depuis la Roue…"></textarea>
+      <div style="font-size:.75rem;color:var(--gris);line-height:1.6;">
+        Précise l'œuvre étudiée si tu veux une évaluation personnalisée.
+      </div>
+      <input id="atelier-oeuvre" style="padding:8px 12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:var(--creme);font-family:'DM Sans',sans-serif;font-size:.82rem;width:100%;"
+        placeholder="Titre de l'œuvre (ex : L'Île des esclaves, Marivaux)">
+      <div class="atelier-btns">
+        <button class="btn-prim" onclick="evaluer()">Évaluer avec Claude</button>
+        <button class="btn-sec"  onclick="varianter()">Proposer des variantes</button>
+        <button class="btn-sec"  id="btn-annuler" onclick="annulerAnalyse()"
+          style="display:none;background:rgba(139,42,42,.4);border-color:rgba(139,42,42,.6);">
+          ✕ Annuler
+        </button>
+        <button class="btn-sec"  onclick="atelier_ta.value=''">Effacer</button>
+      </div>
+    </div>
+
+    <div class="atelier-right">
+      <div class="atelier-label" id="atelier-right-label">Réponse de Claude</div>
+      <div class="atelier-reponse" id="atelier-reponse">
+        <div class="ph">La réponse de Claude apparaîtra ici.<br>Tu peux aussi cliquer sur une variante pour la copier dans l'éditeur.</div>
+      </div>
+      <div class="variantes" id="variantes"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ONGLET 4 : EXEMPLES ══ -->
+<div class="panel" id="panel-exemples">
+  <p class="taxo-intro">
+    Ces problématiques ont été rédigées par des élèves — elles ne sont pas fausses, mais elles peuvent être améliorées.
+    Lis chaque formulation, essaie de repérer ce qui accroche <em>avant</em> de lire l'analyse.
+    Clique sur une formulation pour la copier dans l'Atelier et la retravail­ler.
+  </p>
+  <div id="ex-grid"></div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// DONNÉES
+// ══════════════════════════════════════════════════════
+var DATA = {
+  ouverture: [
+    'En quoi',
+    'Dans quelle mesure',
+    'Comment',
+    'Par quel procédé',
+    'En quel sens peut-on dire que',
+    'De quelle façon'
+  ],
+  sujet: [
+    "l'auteur",
+    'le personnage principal',
+    'le narrateur',
+    'cette scène',
+    'ce dénouement',
+    "le style de l'auteur",
+    "la structure de l'œuvre",
+    'le ton adopté',
+    'la parole des personnages',
+    'le silence des personnages',
+    'le regard du lecteur',
+    'la mise en scène',
+    "l'espace et le temps",
+    'les rapports entre personnages',
+    'la voix narrative',
+    'le titre lui-même'
+  ],
+  operateur: [
+    'révèle',
+    'remet en cause',
+    'transforme',
+    'interroge',
+    'constitue',
+    'dénonce',
+    'célèbre tout en critiquant',
+    'fait coexister',
+    'rend visible',
+    'met en tension',
+    'déplace',
+    'retourne',
+    'fait vaciller',
+    'expose sans résoudre'
+  ]
+};
+
+var TAXO = [
+  {
+    nom: 'Apparence / Réalité',
+    icon: '🎭',
+    items: [
+      'la distance entre ce qu\'on montre et ce qu\'on est',
+      'le masque qui finit par devenir un visage',
+      'l\'illusion choisie face à une vérité insupportable',
+      'ce que le lecteur voit et que le personnage ignore',
+      'la voix qui dit une chose et signifie le contraire',
+      'le comique qui cache une angoisse'
+    ]
+  },
+  {
+    nom: 'Pouvoir / Domination',
+    icon: '⚖️',
+    items: [
+      'la révolte qui reproduit l\'ordre qu\'elle combat',
+      'l\'autorité qui tire sa force de ceux qu\'elle écrase',
+      'la frontière entre légitimité et violence',
+      'obéir sans y croire, résister sans pouvoir partir'
+    ]
+  },
+  {
+    nom: 'Liberté / Contrainte',
+    icon: '🔓',
+    items: [
+      'vouloir sans pouvoir, pouvoir sans vouloir',
+      'la liberté qui effraye autant que l\'enfermement',
+      'choisir en sachant ce qu\'on perd',
+      'la règle qu\'on respecte pour mieux la transgresser'
+    ]
+  },
+  {
+    nom: 'Identité / Altérité',
+    icon: '🪞',
+    items: [
+      'qui suis-je quand l\'autre disparaît ou me définit',
+      'l\'individu qui résiste au groupe sans pouvoir le quitter',
+      'devenir autre sans cesser d\'être soi',
+      'reconnaître l\'humain dans celui qu\'on veut nier'
+    ]
+  },
+  {
+    nom: 'Moral / Ambigu',
+    icon: '🌗',
+    items: [
+      'le bien qui produit du mal, le mal qui révèle du bien',
+      'la faute qu\'on ne peut ni assumer ni effacer',
+      'aimer ce qu\'on condamne, condamner ce qu\'on aime',
+      'agir sans savoir si c\'est juste',
+      'la condamnation qui libère'
+    ]
+  },
+  {
+    nom: 'Temps / Transformation',
+    icon: '⏳',
+    items: [
+      'ce qu\'on était avant et ce qu\'on ne peut plus être après',
+      'le passé qui empêche le présent',
+      'l\'instant qui contient toute une vie',
+      'la transformation qui ressemble à une perte'
+    ]
+  },
+  {
+    nom: 'Lecteur / Complicité',
+    icon: '👁️',
+    items: [
+      'le lecteur complice de ce qu\'il condamne',
+      'le silence du lecteur face à ce qui devrait le révolter',
+      'la beauté du style face à la laideur du sujet',
+      'la fin qui contredit tout ce qui précède',
+      'la non-réponse qui oblige le lecteur à trancher'
+    ]
+  }
+];
+
+// ══════════════════════════════════════════════════════
+// ÉTAT
+// ══════════════════════════════════════════════════════
+var state = {
+  taxoChosen: null,
+  locks: { ouverture:false, sujet:false, operateur:false, tension:false },
+  current: { ouverture:'', sujet:'', operateur:'', tension:'' }
+};
+
+// ══════════════════════════════════════════════════════
+// API KEY
+// ══════════════════════════════════════════════════════
+function saveKey(v) {
+  if (v) localStorage.setItem('anthropic_api_key', v);
+  updateDot();
+}
+function getKey() {
+  return localStorage.getItem('anthropic_api_key') || '';
+}
+function updateDot() {
+  var k = getKey();
+  var dot = document.getElementById('api-dot');
+  var st  = document.getElementById('api-status');
+  if (k && k.startsWith('sk-ant-')) {
+    dot.className = 'api-dot ok'; st.textContent = 'configurée';
+  } else if (k) {
+    dot.className = 'api-dot err'; st.textContent = 'format inattendu';
+  } else {
+    dot.className = 'api-dot'; st.textContent = 'non configurée';
+  }
+}
+(function() {
+  var k = getKey();
+  if (k) document.getElementById('api-input').value = k;
+  updateDot();
+})();
+
+// ══════════════════════════════════════════════════════
+// ONGLETS
+// ══════════════════════════════════════════════════════
+function showTab(id, el) {
+  document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('act'); });
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('act'); });
+  document.getElementById('panel-'+id).classList.add('act');
+  el.classList.add('act');
+}
+
+// ══════════════════════════════════════════════════════
+// TAXONOMIE
+// ══════════════════════════════════════════════════════
+function buildTaxo() {
+  var grid = document.getElementById('taxo-grid');
+  grid.innerHTML = '';
+  TAXO.forEach(function(fam, fi) {
+    var card = document.createElement('div');
+    card.className = 'taxo-family';
+    card.innerHTML =
+      '<div class="taxo-hdr" onclick="toggleFam(this.parentNode)">' +
+        '<span class="taxo-icon">' + fam.icon + '</span>' +
+        '<span class="taxo-name">' + fam.nom + '</span>' +
+        '<span class="taxo-arrow">▼</span>' +
+      '</div>' +
+      '<div class="taxo-items">' +
+        fam.items.map(function(item, ii) {
+          return '<div class="taxo-item" onclick="chooseTension(this,\'' +
+            esc(item) + '\')">' +
+            '<div class="taxo-item-dot"></div>' + item + '</div>';
+        }).join('') +
+      '</div>';
+    grid.appendChild(card);
+  });
+}
+
+function toggleFam(card) {
+  card.classList.toggle('open');
+}
+
+function esc(s) {
+  return s.replace(/'/g, "\\'");
+}
+
+function chooseTension(el, val) {
+  document.querySelectorAll('.taxo-item').forEach(function(i){ i.classList.remove('chosen'); });
+  el.classList.add('chosen');
+  state.taxoChosen = val;
+  var d = document.getElementById('taxo-chosen-display');
+  d.textContent = '« ' + val + ' »';
+  document.getElementById('btn-vers-roue').disabled = false;
+}
+
+function versRoue() {
+  if (!state.taxoChosen) return;
+  state.current.tension = state.taxoChosen;
+  state.locks.tension = true;
+  document.getElementById('rv-tension').textContent = state.taxoChosen;
+  // Verrouiller visuellement le bouton tension
+  var btn = document.querySelector('.roue-col[data-col="tension"] .roue-lock');
+  if (btn) { btn.textContent = '🔒 fixé'; btn.classList.add('locked'); }
+  // Tirer les autres
+  ['ouverture','sujet','operateur'].forEach(function(col) {
+    state.locks[col] = false;
+  });
+  // Switcher onglet
+  document.querySelectorAll('.tab')[1].click();
+  tirer();
+}
+
+// ══════════════════════════════════════════════════════
+// ROUE
+// ══════════════════════════════════════════════════════
+function rand(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+var allTensions = [];
+TAXO.forEach(function(f){ allTensions = allTensions.concat(f.items); });
+
+function tirer() {
+  var cols = ['ouverture','sujet','operateur','tension'];
+  var lists = {
+    ouverture: DATA.ouverture,
+    sujet:     DATA.sujet,
+    operateur: DATA.operateur,
+    tension:   allTensions
+  };
+
+  cols.forEach(function(col) {
+    if (state.locks[col]) return;
+    var el = document.getElementById('rv-' + col);
+    el.classList.add('spin');
+    var iters = 0, max = 8 + Math.floor(Math.random()*6);
+    var iv = setInterval(function() {
+      el.textContent = rand(lists[col]);
+      iters++;
+      if (iters >= max) {
+        clearInterval(iv);
+        var chosen = rand(lists[col]);
+        state.current[col] = chosen;
+        el.textContent = chosen;
+        el.classList.remove('spin');
+        assembler();
+      }
+    }, 80);
+  });
+
+  // Si tout est verrouillé, assembler quand même
+  if (cols.every(function(c){ return state.locks[c]; })) assembler();
+}
+
+function assembler() {
+  var o = state.current;
+  if (!o.ouverture || !o.sujet || !o.operateur || !o.tension) return;
+  var result = document.getElementById('roue-result');
+  result.innerHTML =
+    '<span>' + o.ouverture + '</span> ' +
+    '<span style="color:var(--vert,#4caf50)">' + o.sujet + '</span> ' +
+    '<span style="color:#e57373">' + o.operateur + '</span> ' +
+    '<span style="color:#ce93d8">' + o.tension + '</span> ?';
+}
+
+function toggleLock(btn, col) {
+  state.locks[col] = !state.locks[col];
+  if (state.locks[col]) {
+    btn.textContent = '🔒 fixé'; btn.classList.add('locked');
+  } else {
+    btn.textContent = '🔓 libre'; btn.classList.remove('locked');
+  }
+}
+
+function toutDeverrouiller() {
+  ['ouverture','sujet','operateur','tension'].forEach(function(col) {
+    state.locks[col] = false;
+    var btn = document.querySelector('.roue-col[data-col="'+col+'"] .roue-lock');
+    if (btn) { btn.textContent = '🔓 libre'; btn.classList.remove('locked'); }
+  });
+}
+
+function versAtelier() {
+  var o = state.current;
+  var txt = o.ouverture + ' ' + o.sujet + ' ' + o.operateur + ' ' + o.tension + ' ?';
+  document.getElementById('atelier-ta').value = txt;
+  document.querySelectorAll('.tab')[2].click();
+}
+
+// ══════════════════════════════════════════════════════
+// ATELIER — Claude API
+// ══════════════════════════════════════════════════════
+var _currentAbort = null;
+
+function annulerAnalyse() {
+  if (_currentAbort) { _currentAbort.abort(); _currentAbort = null; }
+  document.getElementById('atelier-reponse').innerHTML = '<div class="ph">Analyse annulée.</div>';
+  document.getElementById('variantes').innerHTML = '';
+  document.getElementById('btn-annuler').style.display = 'none';
+}
+
+async function callClaude(prompt) {
+  var key = getKey();
+  if (!key) { toast('Configure ta clé API en haut de page'); return null; }
+  _currentAbort = new AbortController();
+  try {
+    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      signal: _currentAbort.signal,
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    if (!resp.ok) {
+      var errBody = '';
+      try { var j = await resp.json(); errBody = j.error && j.error.message ? j.error.message : JSON.stringify(j); } catch(e){}
+      toast('Erreur API ' + resp.status + (errBody ? ' : ' + errBody.slice(0,80) : ''));
+      return null;
+    }
+    var data = await resp.json();
+    return data.content && data.content[0] && data.content[0].text;
+  } catch(e) {
+    if (e.name === 'AbortError') return null;
+    toast('Erreur réseau : ' + e.message);
+    return null;
+  } finally {
+    _currentAbort = null;
+    document.getElementById('btn-annuler').style.display = 'none';
+  }
+}
+
+async function evaluer() {
+  var ta = document.getElementById('atelier-ta').value.trim();
+  if (!ta) { toast('Écris une problématique d\'abord'); return; }
+  var oeuvre = document.getElementById('atelier-oeuvre').value.trim();
+  var box = document.getElementById('atelier-reponse');
+  box.innerHTML = '<div class="ia-label">Claude analyse…</div><div class="ia-text"><span class="spin-anim">⟳</span></div>';
+  document.getElementById('btn-annuler').style.display = 'inline-flex';
+
+  var prompt = 'Tu es un professeur de lycée en France qui aide une élève à construire une problématique littéraire.' +
+    (oeuvre ? ' L\'œuvre étudiée est : ' + oeuvre + '.' : '') +
+    '\n\nVoici la problématique proposée par l\'élève :\n« ' + ta + ' »\n\n' +
+    'Évalue-la en 3 points courts :\n' +
+    '1. Ce qui fonctionne (la tension identifiée, la pertinence)\n' +
+    '2. Ce qui pourrait poser problème (trop vague, trop fermée, hors sujet, reformulation trop simple)\n' +
+    '3. Une suggestion concrète d\'amélioration d\'une phrase.\n\n' +
+    'Réponds de façon directe et bienveillante, sans jargon excessif. Maximum 150 mots.';
+
+  var text = await callClaude(prompt);
+  if (!text) { box.innerHTML = '<div class="ph">Erreur lors de la réponse.</div>'; return; }
+  box.innerHTML = '<div class="ia-label">📖 Évaluation</div><div class="ia-text">' +
+    text.replace(/\n/g,'<br>') + '</div>';
+}
+
+async function varianter() {
+  var ta = document.getElementById('atelier-ta').value.trim();
+  if (!ta) { toast('Écris une problématique d\'abord'); return; }
+  var oeuvre = document.getElementById('atelier-oeuvre').value.trim();
+  var box = document.getElementById('variantes');
+  box.innerHTML = '<div style="color:var(--gris);font-size:.8rem;padding:8px 0"><span class="spin-anim">⟳</span> Génération…</div>';
+  document.getElementById('btn-annuler').style.display = 'inline-flex';
+  document.getElementById('atelier-right-label').textContent = 'Variantes proposées';
+
+  var prompt = 'Tu es un professeur de lycée en France.' +
+    (oeuvre ? ' L\'œuvre étudiée est : ' + oeuvre + '.' : '') +
+    '\n\nVoici une ébauche de problématique :\n« ' + ta + ' »\n\n' +
+    'Propose exactement 3 variantes reformulées, plus précises ou mieux construites.' +
+    ' Commence chaque variante directement par le texte (pas de numéro, pas de tiret, pas d\'explication).' +
+    ' Sépare chaque variante par une ligne vide.' +
+    ' Maximum 25 mots par variante.';
+
+  var text = await callClaude(prompt);
+  if (!text) { box.innerHTML = ''; return; }
+
+  var lines = text.split(/\n\n+/).map(function(l){ return l.trim(); }).filter(Boolean);
+  box.innerHTML = lines.map(function(l) {
+    return '<div class="variante" onclick="useVariante(this.textContent)">' + l + '</div>';
+  }).join('');
+}
+
+function useVariante(txt) {
+  document.getElementById('atelier-ta').value = txt;
+  toast('Variante copiée dans l\'éditeur');
+}
+
+// ══════════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════════
+var _toastTimer;
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2800);
+}
+
+// ══════════════════════════════════════════════════════
+// EXEMPLES
+// ══════════════════════════════════════════════════════
+var LIVRES_META = {
+  'ile':        { label: "L'Île des esclaves — Marivaux",         court: 'Île des esclaves', couleur: '#1a3a5c' },
+  'caligula':   { label: 'Caligula — Albert Camus',               court: 'Caligula',          couleur: '#8b2a2a' },
+  'valladolid': { label: 'La Controverse de Valladolid — Carrière',court: 'Valladolid',        couleur: '#1e4d3a' },
+  'britannicus':{ label: 'Britannicus — Jean Racine',             court: 'Britannicus',       couleur: '#3d1f5c' }
+};
+var DEFAUTS_META = {
+  'paraphrase':   { label: 'Paraphrase',                  emoji: '🔁' },
+  'fermee':       { label: 'Trop fermée',                 emoji: '🚪' },
+  'vague':        { label: 'Trop vague',                  emoji: '🌫️' },
+  'evidente':     { label: 'Réponse évidente',            emoji: '💡' },
+  'abstraite':    { label: 'Trop abstraite',              emoji: '🌐' },
+  'sans-tension': { label: 'Tension absente',             emoji: '➡️' },
+  'operateur':    { label: 'Bon angle, mauvais opérateur',emoji: '🔧' },
+  'presque':      { label: 'Presque parfaite',            emoji: '✨' }
+};
+var EXEMPLES = [
+  // ═══ L'ÎLE DES ESCLAVES ═══
+  { livre:'ile', defaut:'vague',
+    f:"Dans quelle mesure un lecteur du 21e siècle pourrait trouver matière à une transposition moderne de sa condition ?",
+    a:"<b>✓ Ce qui fonctionne :</b> La tension passé/présent est juste, tu cherches à relier l'œuvre à notre époque.<br><b>✗ Problème :</b> « Sa condition » — de qui ? Arlequin ? Iphicrate ? « Matière à transposition » ne dit rien de précis.<br><b>→ Suggestion :</b> <i>En quoi l'inversion des rôles entre Arlequin et Iphicrate fait-elle de cette pièce une interrogation intemporelle sur la légitimité du pouvoir ?</i>" },
+  { livre:'ile', defaut:'fermee',
+    f:"Est-ce que Marivaux critique vraiment l'esclavage dans cette pièce ?",
+    a:"<b>✓ Ce qui fonctionne :</b> L'intuition d'une ambiguïté est juste — Marivaux ne dénonce pas frontalement.<br><b>✗ Problème :</b> La question appelle oui ou non. Une problématique ne peut pas se refermer avant d'exister.<br><b>→ Suggestion :</b> <i>Par quel procédé Marivaux dénonce-t-il les fondements du pouvoir social tout en maintenant la légèreté du registre comique ?</i>" },
+  { livre:'ile', defaut:'paraphrase',
+    f:"Comment les esclaves prennent-ils la place des maîtres dans L'Île des esclaves ?",
+    a:"<b>✓ Ce qui fonctionne :</b> Tu as bien cerné le dispositif central. C'est précisément le problème.<br><b>✗ Problème :</b> Répondre ne demande que de la mémoire — c'est un résumé, pas une question.<br><b>→ Suggestion :</b> <i>En quoi l'inversion des rôles révèle-t-elle que la domination n'est pas naturelle mais construite ?</i>" },
+  { livre:'ile', defaut:'evidente',
+    f:"Dans quelle mesure l'île est-elle un espace de liberté pour les personnages ?",
+    a:"<b>✓ Ce qui fonctionne :</b> L'espace insulaire comme hétérotopie est une piste structurelle pertinente.<br><b>✗ Problème :</b> La réponse est oui, évidemment : c'est le principe même du dispositif. Rien à débattre.<br><b>→ Suggestion :</b> <i>En quel sens l'île, espace de liberté provisoire, finit-elle par reproduire l'ordre qu'elle prétendait abolir ?</i>" },
+  { livre:'ile', defaut:'sans-tension',
+    f:"En quoi Marivaux est-il un auteur des Lumières dans cette pièce ?",
+    a:"<b>✓ Ce qui fonctionne :</b> Le contexte historique est pertinent en introduction.<br><b>✗ Problème :</b> C'est une question de classement littéraire. Elle n'ouvre aucun conflit, aucune résistance dans le texte.<br><b>→ Suggestion :</b> <i>De quelle façon Marivaux utilise-t-il l'esprit des Lumières pour transformer une comédie en démonstration de la relativité des hiérarchies ?</i>" },
+  { livre:'ile', defaut:'abstraite',
+    f:"Comment la domination engendre-t-elle toujours sa propre contestation ?",
+    a:"<b>✓ Ce qui fonctionne :</b> La tension domination/contestation est exacte pour cette œuvre.<br><b>✗ Problème :</b> Cette formulation pourrait s'appliquer à Marx, Hegel, n'importe quel texte politique. Marivaux a disparu.<br><b>→ Suggestion :</b> <i>En quoi L'Île des esclaves fait-elle de la vengeance d'Arlequin non un renversement durable mais un révélateur des mécanismes du pouvoir ?</i>" },
+  { livre:'ile', defaut:'operateur',
+    f:"Par quel procédé Marivaux montre-t-il que les maîtres sont aussi prisonniers que les esclaves ?",
+    a:"<b>✓ Ce qui fonctionne :</b> La symétrie des prisonniers est une vraie lecture, propre à cette pièce.<br><b>✗ Problème :</b> « Montre-t-il » appelle une liste de procédés stylistiques — c'est un commentaire composé, pas une problématique ouverte.<br><b>→ Suggestion :</b> <i>En quoi la pièce révèle-t-elle que la domination enferme le maître autant que l'esclave, chacun dans un rôle qui le dépasse ?</i>" },
+  { livre:'ile', defaut:'presque',
+    f:"En quoi L'Île des esclaves interroge-t-elle la frontière entre humanité et statut social ?",
+    a:"<b>✓ Ce qui fonctionne :</b> La tension est juste, l'ancrage dans l'œuvre est présent, le verbe est honnête. C'est presque là.<br><b>✗ Problème (léger) :</b> « Humanité et statut social » reste général — laquelle des humanités ? Celle des maîtres, celle des esclaves ?<br><b>→ Suggestion :</b> <i>En quoi L'Île des esclaves démontre-t-elle que l'humanité n'est pas un attribut du rang mais une capacité à reconnaître l'autre ?</i>" },
+  // ═══ CALIGULA ═══
+  { livre:'caligula', defaut:'sans-tension',
+    f:"Dans quelle mesure Caligula est-il un tyran dans la pièce de Camus ?",
+    a:"<b>✓ Ce qui fonctionne :</b> La nuance « dans quelle mesure » montre que tu ne veux pas répondre trop vite.<br><b>✗ Problème :</b> Caligula est clairement un tyran dès la scène 1. Aucune résistance dans le texte à cette lecture.<br><b>→ Suggestion :</b> <i>En quoi Caligula, en choisissant la cruauté comme arme philosophique, oblige-t-il le lecteur à distinguer la révolte lucide de la simple barbarie ?</i>" },
+  { livre:'caligula', defaut:'abstraite',
+    f:"Comment la liberté absolue devient-elle une forme de nihilisme ?",
+    a:"<b>✓ Ce qui fonctionne :</b> La tension liberté/nihilisme est philosophiquement forte et pertinente pour Camus.<br><b>✗ Problème :</b> Cette question pourrait s'appliquer à Dostoïevski, Nietzsche, Sartre. L'œuvre a disparu.<br><b>→ Suggestion :</b> <i>Par quel procédé Camus fait-il de la quête caligulienne de liberté absolue non une victoire mais une autodestruction ?</i>" },
+  { livre:'caligula', defaut:'operateur',
+    f:"En quel sens peut-on dire que Caligula est une pièce sur la solitude du pouvoir ?",
+    a:"<b>✓ Ce qui fonctionne :</b> « La solitude du pouvoir » est une formule forte et juste pour cette pièce.<br><b>✗ Problème :</b> « Est une pièce sur » est l'opérateur le plus plat qui soit — il ouvre un exposé, pas une problématique.<br><b>→ Suggestion :</b> <i>De quelle façon Camus utilise-t-il l'isolement croissant de Caligula pour montrer que la toute-puissance est une condamnation déguisée en victoire ?</i>" },
+  { livre:'caligula', defaut:'fermee',
+    f:"Est-ce que Caligula a raison de vouloir la lune ?",
+    a:"<b>✓ Ce qui fonctionne :</b> La métaphore de la lune est centrale dans la pièce et tu l'as repérée.<br><b>✗ Problème :</b> « A-t-il raison » appelle un jugement moral binaire. Une problématique doit ouvrir, non trancher à l'avance.<br><b>→ Suggestion :</b> <i>En quoi la quête de l'impossible symbolisée par la lune constitue-t-elle chez Caligula moins un délire qu'une logique cohérente poussée jusqu'à l'absurde ?</i>" },
+  { livre:'caligula', defaut:'vague',
+    f:"Dans quelle mesure Caligula cherche-t-il quelque chose d'impossible à atteindre ?",
+    a:"<b>✓ Ce qui fonctionne :</b> L'idée de quête impossible est au cœur de la pièce et de la philosophie de Camus.<br><b>✗ Problème :</b> « Quelque chose d'impossible » — quoi précisément ? La formulation reste si vague qu'elle ne dit rien.<br><b>→ Suggestion :</b> <i>En quoi la révolte de Caligula contre l'absurdité du monde prend-elle la forme d'une destruction qui l'inclut lui-même ?</i>" },
+  { livre:'caligula', defaut:'paraphrase',
+    f:"Comment Caligula utilise-t-il son pouvoir d'empereur pour faire souffrir les autres ?",
+    a:"<b>✓ Ce qui fonctionne :</b> L'observation est exacte — Caligula fait souffrir délibérément.<br><b>✗ Problème :</b> C'est une description de l'intrigue. La question ne demande aucune analyse.<br><b>→ Suggestion :</b> <i>En quoi la cruauté de Caligula n'est-elle pas un dérèglement mais un système philosophique cohérent, celui de l'absurde poussé à son terme ?</i>" },
+  { livre:'caligula', defaut:'evidente',
+    f:"Dans quelle mesure Caligula est-il différent des autres empereurs romains ?",
+    a:"<b>✓ Ce qui fonctionne :</b> La singularité de Caligula est bien une question légitime.<br><b>✗ Problème :</b> C'est une question d'histoire, pas de littérature. Et Camus n'écrit pas sur un Caligula historique mais sur une figure philosophique.<br><b>→ Suggestion :</b> <i>En quoi Camus fait-il du personnage historique de Caligula le porte-voix d'une révolte métaphysique contre l'injustice fondamentale de l'existence ?</i>" },
+  { livre:'caligula', defaut:'presque',
+    f:"De quelle façon Camus fait-il de Caligula une figure à la fois monstrueuse et lucide ?",
+    a:"<b>✓ Ce qui fonctionne :</b> La tension monstre/lucide est exacte et propre à l'œuvre. Très proche.<br><b>✗ Problème (léger) :</b> « À la fois » juxtapose sans articuler — ce qui est fort, c'est que la lucidité <i>produit</i> la monstruosité.<br><b>→ Suggestion :</b> <i>De quelle façon Camus montre-t-il que la lucidité absolue de Caligula est précisément ce qui le conduit à la monstruosité ?</i>" },
+  // ═══ VALLADOLID ═══
+  { livre:'valladolid', defaut:'evidente',
+    f:"Dans quelle mesure le débat de Valladolid pose-t-il la question de l'humanité des Indiens ?",
+    a:"<b>✓ Ce qui fonctionne :</b> Tu as identifié l'enjeu central. C'est exact.<br><b>✗ Problème :</b> C'est exactement ce que le titre annonce. La réponse est « oui, c'est ça ». Rien à débattre.<br><b>→ Suggestion :</b> <i>En quoi la Controverse, en mettant en scène ce débat, révèle-t-elle surtout les angles morts de la pensée européenne du XVIe siècle ?</i>" },
+  { livre:'valladolid', defaut:'vague',
+    f:"Comment Carrière montre-t-il que les deux côtés ont à la fois raison et tort ?",
+    a:"<b>✓ Ce qui fonctionne :</b> Tu as repéré l'ambiguïté morale du texte — c'est une perception juste.<br><b>✗ Problème :</b> « Les deux côtés », « raison et tort » — sur quoi précisément ? La formulation efface les positions construites par le texte.<br><b>→ Suggestion :</b> <i>De quelle façon Carrière construit-il un débat sans vainqueur pour montrer que définir l'humain est une question politique autant que philosophique ?</i>" },
+  { livre:'valladolid', defaut:'paraphrase',
+    f:"Comment Las Casas et Sepúlveda s'affrontent-ils sur la question des Indiens ?",
+    a:"<b>✓ Ce qui fonctionne :</b> Les deux personnages sont identifiés et le sujet est posé.<br><b>✗ Problème :</b> C'est un résumé du dispositif. Répondre ne demande que de se souvenir de qui dit quoi.<br><b>→ Suggestion :</b> <i>En quoi l'affrontement entre Las Casas et Sepúlveda dépasse-t-il le débat théologique pour révéler deux conceptions irréconciliables de ce qu'est un être humain ?</i>" },
+  { livre:'valladolid', defaut:'fermee',
+    f:"Est-ce que Las Casas gagne le débat à la fin ?",
+    a:"<b>✓ Ce qui fonctionne :</b> Tu as senti que la question du vainqueur était posée par le texte — c'est juste.<br><b>✗ Problème :</b> Oui ou non. Et Carrière construit précisément un texte sans vainqueur — ta question est réfutée par l'œuvre elle-même.<br><b>→ Suggestion :</b> <i>En quoi l'absence de vainqueur dans la Controverse constitue-t-elle le véritable message politique de Carrière ?</i>" },
+  { livre:'valladolid', defaut:'sans-tension',
+    f:"Dans quelle mesure la Controverse de Valladolid est-elle une pièce sur la colonisation ?",
+    a:"<b>✓ Ce qui fonctionne :</b> Le contexte historique est bien identifié.<br><b>✗ Problème :</b> La colonisation est le décor — pas la tension. Cette formulation ouvre un cours d'histoire, pas une analyse littéraire.<br><b>→ Suggestion :</b> <i>En quoi Carrière utilise-t-il l'histoire de la colonisation pour mettre en scène une question intemporelle : qui a le droit de décider des frontières de l'humanité ?</i>" },
+  { livre:'valladolid', defaut:'abstraite',
+    f:"Comment la rencontre avec l'Autre remet-elle en cause nos propres certitudes ?",
+    a:"<b>✓ Ce qui fonctionne :</b> La problématique de l'altérité est centrale dans l'œuvre.<br><b>✗ Problème :</b> Cette formulation est un sujet de philo générale. Aucune trace de Carrière, Valladolid, des Indiens.<br><b>→ Suggestion :</b> <i>De quelle façon la présence muette de l'Indien dans le débat constitue-t-elle un troisième argument, plus fort que tous les discours ?</i>" },
+  { livre:'valladolid', defaut:'operateur',
+    f:"En quoi la Controverse de Valladolid est-elle un texte sur la tolérance ?",
+    a:"<b>✓ Ce qui fonctionne :</b> La tolérance est bien une valeur en jeu dans ce texte.<br><b>✗ Problème :</b> « Est un texte sur » colle une étiquette sans ouvrir de tension. C'est l'opérateur le plus faible.<br><b>→ Suggestion :</b> <i>En quoi Carrière fait-il de la question de la tolérance religieuse le masque d'un enjeu plus profond : la définition politique de l'humanité ?</i>" },
+  { livre:'valladolid', defaut:'presque',
+    f:"De quelle façon Carrière utilise-t-il le théâtre pour transformer un débat historique en réflexion sur l'humanité ?",
+    a:"<b>✓ Ce qui fonctionne :</b> L'articulation théâtre/débat/réflexion est pertinente et propre à l'œuvre. Très proche.<br><b>✗ Problème (léger) :</b> « Réflexion sur l'humanité » reste général — laquelle ? La définition, la dignité, les frontières ?<br><b>→ Suggestion :</b> <i>De quelle façon Carrière utilise-t-il les outils du théâtre pour transformer un débat historique en question encore ouverte : qui a le droit de décider qu'un être est humain ?</i>" },
+  // ═══ BRITANNICUS ═══
+  { livre:'britannicus', defaut:'abstraite',
+    f:"En quoi Britannicus est-il une tragédie sur la nature du pouvoir ?",
+    a:"<b>✓ Ce qui fonctionne :</b> Le mot « nature » est prometteur — tu t'interroges sur l'essence du pouvoir.<br><b>✗ Problème :</b> Cette formulation s'applique à Macbeth, Phèdre, Richard III. Ce qui est propre à Racine a disparu.<br><b>→ Suggestion :</b> <i>En quoi Britannicus met-il en scène non un tyran accompli mais la naissance du crime politique — le moment précis où Néron choisit d'être Néron ?</i>" },
+  { livre:'britannicus', defaut:'operateur',
+    f:"Par quel procédé Racine fait-il de Junie une figure de résistance morale face à Néron ?",
+    a:"<b>✓ Ce qui fonctionne :</b> L'angle sur Junie est original et juste — sa résistance silencieuse est centrale.<br><b>✗ Problème :</b> « Par quel procédé » appelle une liste de figures de style — commentaire composé, pas problématique.<br><b>→ Suggestion :</b> <i>En quoi la résistance silencieuse de Junie constitue-t-elle la seule victoire morale de la pièce — et en même temps son plus grand échec ?</i>" },
+  { livre:'britannicus', defaut:'paraphrase',
+    f:"Comment Néron fait-il empoisonner Britannicus pour prendre le pouvoir ?",
+    a:"<b>✓ Ce qui fonctionne :</b> Les faits sont exacts.<br><b>✗ Problème :</b> C'est le résumé du dénouement. Il faut demander ce que ça <i>signifie</i>, pas ce qui <i>arrive</i>.<br><b>→ Suggestion :</b> <i>En quoi le meurtre de Britannicus constitue-t-il chez Racine non l'aboutissement d'une ambition mais le point de non-retour d'une corruption progressive ?</i>" },
+  { livre:'britannicus', defaut:'fermee',
+    f:"Est-ce qu'Agrippine est responsable de la mort de Britannicus ?",
+    a:"<b>✓ Ce qui fonctionne :</b> La responsabilité d'Agrippine est bien une question que le texte pose — elle a formé Néron.<br><b>✗ Problème :</b> La question appelle oui ou non, et ouvre un procès plutôt qu'une réflexion.<br><b>→ Suggestion :</b> <i>En quoi Racine fait-il d'Agrippine à la fois l'instigatrice du monstre qu'est Néron et sa première victime — prisonnière de ce qu'elle a créé ?</i>" },
+  { livre:'britannicus', defaut:'vague',
+    f:"Dans quelle mesure la pièce parle-t-elle des dangers de l'ambition ?",
+    a:"<b>✓ Ce qui fonctionne :</b> L'ambition est bien un moteur dramatique dans la pièce.<br><b>✗ Problème :</b> « Les dangers de l'ambition » est une morale de fable. Laquelle des ambitions ? Celle de qui ? Au nom de quoi ?<br><b>→ Suggestion :</b> <i>De quelle façon Racine montre-t-il que l'ambition de Néron n'est pas un défaut de caractère mais le produit d'un système de pouvoir qui le fabrique malgré lui ?</i>" },
+  { livre:'britannicus', defaut:'sans-tension',
+    f:"En quoi Britannicus est-il une tragédie classique ?",
+    a:"<b>✓ Ce qui fonctionne :</b> La conformité aux règles classiques est vérifiable dans le texte.<br><b>✗ Problème :</b> C'est une question de classification formelle — elle appelle un exposé sur les trois unités, pas une analyse littéraire.<br><b>→ Suggestion :</b> <i>En quoi la rigueur de la forme classique amplifie-t-elle chez Racine le sentiment d'inéluctabilité tragique ?</i>" },
+  { livre:'britannicus', defaut:'evidente',
+    f:"Dans quelle mesure Néron est-il un personnage négatif dans la pièce ?",
+    a:"<b>✓ Ce qui fonctionne :</b> Néron est le centre de la pièce, tu l'as bien identifié.<br><b>✗ Problème :</b> La réponse est évidemment oui. Mais une problématique doit ouvrir sur ce qui résiste à une réponse simple.<br><b>→ Suggestion :</b> <i>En quoi Racine fait-il de Néron un personnage à la fois condamnable et compréhensible — et pourquoi cette ambiguïté est-elle plus troublante qu'une simple figure de méchant ?</i>" },
+  { livre:'britannicus', defaut:'presque',
+    f:"En quoi Britannicus met-il en scène la corruption progressive d'un personnage qui aurait pu être différent ?",
+    a:"<b>✓ Ce qui fonctionne :</b> « Corruption progressive » et « aurait pu être différent » — c'est fort et propre à cette pièce. Très proche.<br><b>✗ Problème (léger) :</b> « Un personnage » — nommer Néron renforcerait l'ancrage, et la tension avec ce qui le contraint manque encore.<br><b>→ Suggestion :</b> <i>En quoi Racine fait-il de Néron non un monstre-né mais un être progressivement corrompu par le pouvoir, le regard de sa mère et l'absence de résistance autour de lui ?</i>" }
+];
+
+var _exFiltreDefaut = 'tous';
+var _exFiltreLibre  = 'tous';
+
+function buildExemples() {
+  var grid = document.getElementById('ex-grid');
+  var bar = '<div id="ex-filters">' +
+    '<div class="ex-filt-grp"><span class="ex-filt-label">Œuvre :</span>' +
+      '<button class="ex-filt act" onclick="exFiltLibre(\'tous\',this)">Toutes</button>' +
+      Object.keys(LIVRES_META).map(function(k){ return '<button class="ex-filt" onclick="exFiltLibre(\''+k+'\',this)">'+LIVRES_META[k].court+'</button>'; }).join('') +
+    '</div>' +
+    '<div class="ex-filt-grp"><span class="ex-filt-label">Défaut :</span>' +
+      '<button class="ex-filt act" onclick="exFiltDefaut(\'tous\',this)">Tous</button>' +
+      Object.keys(DEFAUTS_META).map(function(k){ return '<button class="ex-filt" onclick="exFiltDefaut(\''+k+'\',this)">'+DEFAUTS_META[k].emoji+' '+DEFAUTS_META[k].label+'</button>'; }).join('') +
+    '</div>' +
+  '</div><div id="ex-count"></div><div id="ex-cards" class="ex-cards-grid"></div>';
+  grid.innerHTML = bar;
+  renderExemples();
+}
+
+function exFiltLibre(val, btn) {
+  _exFiltreLibre = val;
+  btn.closest('.ex-filt-grp').querySelectorAll('.ex-filt').forEach(function(b){ b.classList.remove('act'); });
+  btn.classList.add('act'); renderExemples();
+}
+function exFiltDefaut(val, btn) {
+  _exFiltreDefaut = val;
+  btn.closest('.ex-filt-grp').querySelectorAll('.ex-filt').forEach(function(b){ b.classList.remove('act'); });
+  btn.classList.add('act'); renderExemples();
+}
+
+function renderExemples() {
+  var filtered = EXEMPLES.filter(function(ex) {
+    return (_exFiltreLibre==='tous'||ex.livre===_exFiltreLibre) && (_exFiltreDefaut==='tous'||ex.defaut===_exFiltreDefaut);
+  });
+  document.getElementById('ex-count').textContent = filtered.length + ' exemple' + (filtered.length>1?'s':'');
+  document.getElementById('ex-cards').innerHTML = filtered.map(function(ex, i) {
+    var lm=LIVRES_META[ex.livre], dm=DEFAUTS_META[ex.defaut];
+    var uid='ea'+i+ex.livre+ex.defaut;
+    return '<div class="ex-card">'+
+      '<div class="ex-book-band" style="background:'+lm.couleur+'22;border-bottom:1px solid '+lm.couleur+'44">'+
+        '<div class="ex-book-dot" style="background:'+lm.couleur+'"></div>'+
+        '<span class="ex-book-name">'+lm.court+'</span>'+
+        '<span class="ex-flaw-badge">'+dm.emoji+' '+dm.label+'</span>'+
+      '</div>'+
+      '<div class="ex-body">'+
+        '<div class="ex-formulation" onclick="useExemple(\''+esc(ex.f)+'\',\''+esc(lm.label)+'\')" title="Copier dans l\'Atelier">« '+ex.f+' »</div>'+
+        '<div class="ex-analyse-toggle" onclick="toggleAnalyse(this,\''+uid+'\')"><span class="arr">▼</span> <span>Voir l\'analyse</span></div>'+
+        '<div class="ex-analyse" id="'+uid+'">'+ex.a+'</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function toggleAnalyse(toggle, uid) {
+  toggle.classList.toggle('open');
+  var el=document.getElementById(uid); el.classList.toggle('open');
+  toggle.querySelector('span:last-child').textContent = el.classList.contains('open')?'Masquer l\'analyse':'Voir l\'analyse';
+}
+
+function useExemple(formulation, livre) {
+  document.getElementById('atelier-ta').value = formulation;
+  document.getElementById('atelier-oeuvre').value = livre;
+  document.querySelectorAll('.tab')[2].click();
+  toast('Copié dans l\'Atelier');
+}
+// ══════════════════════════════════════════════════════
+// ANALYSE LEXICALE — sliders thèmes
+// ══════════════════════════════════════════════════════
+var LEX_THEMES = [
+  { key:'amour',   label:'Amour',   col:'#AD1457' },
+  { key:'pouvoir', label:'Pouvoir', col:'#C62828' },
+  { key:'liberte', label:'Liberté', col:'#1565C0' },
+  { key:'identite',label:'Identité',col:'#6A1B9A' },
+  { key:'societe', label:'Société', col:'#E65100' },
+  { key:'nature',  label:'Nature',  col:'#2E7D32' }
+];
+
+// Mapping thème → familles de tensions suggérées
+var LEX_MAP = {
+  'amour':   ['Identité / Altérité', 'Moral / Ambigu', 'Temps / Transformation'],
+  'pouvoir': ['Pouvoir / Domination', 'Liberté / Contrainte', 'Moral / Ambigu'],
+  'liberte': ['Liberté / Contrainte', 'Pouvoir / Domination', 'Moral / Ambigu'],
+  'identite':['Identité / Altérité', 'Apparence / Réalité', 'Temps / Transformation'],
+  'societe': ['Pouvoir / Domination', 'Apparence / Réalité', 'Lecteur / Complicité'],
+  'nature':  ['Apparence / Réalité', 'Temps / Transformation', 'Identité / Altérité']
+};
+
+function updateLex() {
+  // Lire les valeurs
+  var vals = {};
+  document.querySelectorAll('.lex-input-row').forEach(function(row) {
+    var sl = row.querySelector('.lex-slider');
+    var vl = row.querySelector('.lex-val');
+    var th = row.dataset.theme;
+    var v  = parseInt(sl.value);
+    vals[th] = v;
+    vl.textContent = v;
+  });
+
+  // Top 3 thèmes
+  var sorted = LEX_THEMES.slice().sort(function(a,b){ return vals[b.key]-vals[a.key]; });
+  var top3 = sorted.slice(0, 3);
+
+  // Paires : top3 combinaisons 2 à 2
+  var pairs = [];
+  for (var i=0; i<top3.length; i++) {
+    for (var j=i+1; j<top3.length; j++) {
+      pairs.push({ a:top3[i], b:top3[j], score: vals[top3[i].key]+vals[top3[j].key] });
+    }
+  }
+  pairs.sort(function(a,b){ return b.score-a.score; });
+
+  // Afficher paires
+  var pairsDiv = document.getElementById('lex-pairs');
+  pairsDiv.innerHTML = pairs.map(function(p) {
+    return '<div class="lex-pair-chip">'+
+      '<span class="lex-dot" style="background:'+p.a.col+'"></span>'+
+      '<span>'+p.a.label+'</span>'+
+      '<span style="color:var(--gris)">×</span>'+
+      '<span class="lex-dot" style="background:'+p.b.col+'"></span>'+
+      '<span>'+p.b.label+'</span>'+
+      '<span class="lpc-score">'+p.score+'</span>'+
+    '</div>';
+  }).join('');
+
+  // Tensions suggérées : familles des 2 thèmes dominants
+  var famSet = {};
+  [top3[0], top3[1]].forEach(function(t) {
+    (LEX_MAP[t.key]||[]).forEach(function(fam) { famSet[fam] = (famSet[fam]||0)+1; });
+  });
+  var famSorted = Object.keys(famSet).sort(function(a,b){ return famSet[b]-famSet[a]; });
+
+  // Récupérer des items de tension dans ces familles
+  var suggestions = [];
+  famSorted.slice(0,3).forEach(function(famName) {
+    var fam = TAXO.find(function(f){ return f.nom === famName; });
+    if (!fam) return;
+    var item = fam.items[Math.floor(Math.random()*fam.items.length)];
+    suggestions.push({ fam: famName, item: item });
+  });
+
+  var tensionsDiv = document.getElementById('lex-tensions');
+  tensionsDiv.innerHTML = suggestions.map(function(s) {
+    return '<div class="lex-tension-item" onclick="chooseTensionFromLex(\''+esc(s.item)+'\')">'+
+      '<div class="lex-tension-family">'+s.fam+'</div>'+
+      s.item +
+    '</div>';
+  }).join('');
+}
+
+function chooseTensionFromLex(val) {
+  state.taxoChosen = val;
+  document.getElementById('taxo-chosen-display').textContent = '« ' + val + ' »';
+  document.getElementById('btn-vers-roue').disabled = false;
+  // Highlight dans la taxo
+  document.querySelectorAll('.taxo-item').forEach(function(i){
+    i.classList.toggle('chosen', i.textContent.trim() === val.trim());
+  });
+  toast('Tension sélectionnée — tu peux l\'envoyer vers la Roue');
+}
+
+// ══════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════
+buildTaxo();
+buildExemples();
+updateLex();
+</script>
+</body>
+</html>

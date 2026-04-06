@@ -321,9 +321,67 @@ body.mode-elise .ni-mi.only-elise{display:flex;}
 /* ── AIDE PROBLÉMATIQUE ── */
 #probl-help-win{z-index:9200;min-width:340px;min-height:260px;width:520px;height:460px;border:1.5px solid #B39DDB;overflow:visible;background:transparent;}
 #probl-help-win.open{display:flex;}
+/* ── Machine à problématiques (wfloat large) ── */
+#probl-machine-win{
+  z-index:9400;width:820px;height:88vh;
+  min-width:400px;min-height:300px;
+  border:1.5px solid #7B1FA2;
+  background:#1a1628;
+  overflow:visible;
+  display:none;flex-direction:column;
+}
+#probl-machine-win.open{display:flex;}
+#probl-machine-hdr{background:linear-gradient(135deg,#4A148C 0%,#7B1FA2 100%);}
+#probl-machine-body{flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0;}
+.pmw-tabs{display:flex;border-bottom:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.2);flex-shrink:0;}
+.pmw-tab{padding:10px 18px;font-size:.75rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:rgba(255,255,255,.5);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;user-select:none;}
+.pmw-tab:hover{color:rgba(255,255,255,.85);}
+.pmw-tab.act{color:#E040FB;border-bottom-color:#E040FB;}
+.pmw-panel{display:none;flex:1;overflow-y:auto;padding:20px 24px;min-height:0;}
+.pmw-panel.act{display:block;}
+/* Structure dans la fenêtre */
+.pmw-struct-grid{display:grid;grid-template-columns:1fr 1.2fr 1.4fr 1.1fr;gap:8px;margin-bottom:16px;}
+.pmw-col{border-radius:8px;overflow:hidden;display:flex;flex-direction:column;}
+.pmw-col-hdr{padding:7px 10px;font-size:.62rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#fff;}
+.pmw-col-body{flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-top:none;padding:6px 0;}
+.pmw-item{padding:5px 10px;font-size:.76rem;color:rgba(255,255,255,.88);line-height:1.4;border-left:2px solid transparent;display:flex;justify-content:space-between;align-items:center;}
+.pmw-item+.pmw-item{border-top:1px solid rgba(255,255,255,.05);}
+.pmw-op-fort  {border-left-color:#66BB6A!important;}
+.pmw-op-moyen {border-left-color:#FFB300!important;}
+.pmw-op-faible{border-left-color:#EF5350!important;opacity:.65;}
+.pmw-badge{font-size:.58rem;font-weight:700;padding:1px 5px;border-radius:8px;white-space:nowrap;}
+.pmw-badge-fort  {background:rgba(102,187,106,.2);color:#A5D6A7;}
+.pmw-badge-moyen {background:rgba(255,179,0,.2);color:#FFE082;}
+.pmw-badge-faible{background:rgba(239,83,80,.2);color:#EF9A9A;}
+.pmw-note{padding:8px 10px;font-size:.68rem;color:rgba(255,255,255,.55);line-height:1.5;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-top:none;border-radius:0 0 8px 8px;}
+.pmw-exemple{margin-top:12px;padding:14px 16px;background:rgba(123,31,162,.15);border:1px solid rgba(123,31,162,.4);border-radius:8px;font-family:Georgia,serif;font-size:.9rem;font-style:italic;line-height:1.7;color:rgba(255,255,255,.92);}
+.pmw-ex-label{font-family:inherit;font-size:.62rem;font-style:normal;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:rgba(255,255,255,.4);display:block;margin-bottom:6px;}
+/* Exemples dans la fenêtre */
+.pmw-book-title{font-size:.7rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:12px;}
+.pmw-probl-card{padding:12px 14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-left:3px solid #7B1FA2;border-radius:7px;margin-bottom:10px;cursor:pointer;transition:background .15s;}
+.pmw-probl-card:hover{background:rgba(123,31,162,.2);border-left-color:#E040FB;}
+.pmw-probl-angle{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#CE93D8;margin-bottom:5px;}
+.pmw-probl-text{font-family:Georgia,serif;font-size:.84rem;font-style:italic;line-height:1.6;color:rgba(255,255,255,.88);}
+.pmw-inject-hint{font-size:.62rem;color:rgba(255,255,255,.35);margin-top:5px;}
+.pmw-open-full{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;padding:10px;background:rgba(123,31,162,.15);border:1px solid rgba(123,31,162,.35);border-radius:8px;font-size:.78rem;color:#CE93D8;cursor:pointer;transition:background .15s;text-decoration:none;}
+.pmw-open-full:hover{background:rgba(123,31,162,.3);}
+/* Bouton 🧩 */
+#btn-probl-machine{
+  background:rgba(123,31,162,.18);border:1px solid rgba(123,31,162,.5);
+  color:#CE93D8;border-radius:8px;padding:5px 11px;cursor:pointer;
+  font-size:.8rem;font-weight:700;transition:all .15s;user-select:none;
+  position:relative;
+}
+#btn-probl-machine:hover{background:rgba(123,31,162,.35);}
+#btn-probl-machine.open{background:rgba(123,31,162,.4);border-color:#7B1FA2;}
+#btn-probl-machine .pmb-hint{
+  display:none;position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);
+  font-size:.58rem;color:rgba(255,255,255,.45);white-space:nowrap;pointer-events:none;
+}
+#btn-probl-machine:active .pmb-hint{display:block;}
 #probl-hw-hdr{background:linear-gradient(135deg,#6A1B9A,#9C27B0);}
-#probl-hw-ttl{font-size:.82rem;font-weight:700;color:#fff;}
-#probl-hw-cls{background:rgba(255,255,255,.22);border:none;color:#fff;font-size:.8rem;font-weight:700;cursor:pointer;padding:4px 8px;border-radius:7px;}
+#probl-hw-ttl{flex:1;font-size:.82rem;font-weight:700;color:#fff;}
+#probl-hw-cls{margin-left:auto;background:rgba(255,255,255,.22);border:none;color:#fff;font-size:.8rem;font-weight:700;cursor:pointer;padding:4px 8px;border-radius:7px;}
 #probl-hw-cls:hover{background:rgba(255,255,255,.45);}
 #probl-hw-filters{display:flex;flex-wrap:wrap;gap:5px;padding:7px 10px;border-bottom:1px solid #E8EAF6;flex-shrink:0;background:#F8F5FF;}
 .phw-filt{font-size:.65rem;padding:2px 8px;border-radius:10px;border:1px solid #CE93D8;background:#fff;color:#6A1B9A;cursor:pointer;transition:all .15s;}
@@ -1212,9 +1270,7 @@ body:not(.ni-on) #aide-drawer{ left:10px; }
   border-radius:0 6px 6px 0;padding:6px 10px;
   margin-bottom:5px;font-size:.75rem;
 }
-/* Le drawer se positionne sur guide-content-wrap */
-body.ni-on.ni-sec-ecrire #guide-content-wrap{position:relative;}
-/* #content n'a plus besoin d'être relatif */
+/* Note : position:relative retiré de guide-content-wrap — clippe les position:fixed sous Chrome */
 </style>
 <style>
 /* ═══════════════════════════════════════════
@@ -1590,6 +1646,7 @@ html.a11y-hc{
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .wfloat-close{
+  margin-left:auto;
   background:rgba(255,255,255,.22);color:#fff;border:none;
   border-radius:8px;padding:5px 9px;cursor:pointer;font-family:inherit;
   display:flex;align-items:center;gap:4px;flex-shrink:0;
@@ -2964,29 +3021,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
       <button class="mots-subtab only-elise" id="etab-commentaire" onclick="showEcrirePanel('commentaire',this)" style="color:#AD1457;">📝 Commentaire litt.</button>
     </div>
     <button id="btn-aide-ecrire" onclick="niAideToggle()" title="Aide pour cet exercice" aria-label="Aide">❓</button>
-  </div>
-
-  <!-- ═══ FENÊTRE D'AIDE FLOTTANTE (ÉCRIRE) ═══ -->
-  <div id="aide-drawer" class="wfloat" aria-label="Aide contextuelle" role="complementary">
-    <!-- Poignées 8 directions -->
-    <div class="wfloat-rh rh-n"  data-win="aide-drawer" data-dir="n"></div>
-    <div class="wfloat-rh rh-s"  data-win="aide-drawer" data-dir="s"></div>
-    <div class="wfloat-rh rh-w"  data-win="aide-drawer" data-dir="w"></div>
-    <div class="wfloat-rh rh-e"  data-win="aide-drawer" data-dir="e"></div>
-    <div class="wfloat-rh rh-nw" data-win="aide-drawer" data-dir="nw"></div>
-    <div class="wfloat-rh rh-ne" data-win="aide-drawer" data-dir="ne"></div>
-    <div class="wfloat-rh rh-sw" data-win="aide-drawer" data-dir="sw"></div>
-    <div class="wfloat-rh rh-se" data-win="aide-drawer" data-dir="se"></div>
-    <!-- Header (drag) -->
-    <div id="aide-drawer-header" class="wfloat-hdr">
-      <div class="wfloat-drag-hint"><span></span><span></span><span></span></div>
-      <span id="aide-drawer-titre" class="wfloat-title">💡 Aide</span>
-      <button id="aide-drawer-close" class="wfloat-close" onclick="niAideClose()" aria-label="Fermer l'aide">
-        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="1" y1="1" x2="10" y2="10"/><line x1="10" y1="1" x2="1" y2="10"/></svg>
-        <span>Fermer</span>
-      </button>
-    </div>
-    <div id="aide-drawer-body"></div>
+    <button id="btn-probl-machine" title="Construire ma problématique (maintenir = plein écran)" aria-label="Machine à problématiques">🧩 Problématique<span class="pmb-hint">maintenir = plein écran</span></button>
   </div>
 
   <div id="content">
@@ -3864,6 +3899,118 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 <!-- ══ MODAL ÉDITION NOM ══ -->
 
 <!-- ── LEXIQUE FENÊTRE FLOTTANTE ── -->
+<!-- ═══ FENÊTRE D'AIDE FLOTTANTE (ÉCRIRE) — hors guide-content-wrap ═══ -->
+<div id="aide-drawer" class="wfloat" aria-label="Aide contextuelle" role="complementary">
+  <!-- Poignées 8 directions -->
+  <div class="wfloat-rh rh-n"  data-win="aide-drawer" data-dir="n"></div>
+  <div class="wfloat-rh rh-s"  data-win="aide-drawer" data-dir="s"></div>
+  <div class="wfloat-rh rh-w"  data-win="aide-drawer" data-dir="w"></div>
+  <div class="wfloat-rh rh-e"  data-win="aide-drawer" data-dir="e"></div>
+  <div class="wfloat-rh rh-nw" data-win="aide-drawer" data-dir="nw"></div>
+  <div class="wfloat-rh rh-ne" data-win="aide-drawer" data-dir="ne"></div>
+  <div class="wfloat-rh rh-sw" data-win="aide-drawer" data-dir="sw"></div>
+  <div class="wfloat-rh rh-se" data-win="aide-drawer" data-dir="se"></div>
+  <!-- Header (drag) -->
+  <div id="aide-drawer-header" class="wfloat-hdr">
+    <div class="wfloat-drag-hint"><span></span><span></span><span></span></div>
+    <span id="aide-drawer-titre" class="wfloat-title">💡 Aide</span>
+    <button id="aide-drawer-close" class="wfloat-close" onclick="niAideClose()" aria-label="Fermer l'aide">
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="1" y1="1" x2="10" y2="10"/><line x1="10" y1="1" x2="1" y2="10"/></svg>
+      <span>Fermer</span>
+    </button>
+  </div>
+  <div id="aide-drawer-body"></div>
+</div>
+
+<!-- ═══ MACHINE À PROBLÉMATIQUES — wfloat large ═══ -->
+<div id="probl-machine-win" class="wfloat">
+  <div class="wfloat-rh rh-n"  data-win="probl-machine-win" data-dir="n"></div>
+  <div class="wfloat-rh rh-s"  data-win="probl-machine-win" data-dir="s"></div>
+  <div class="wfloat-rh rh-w"  data-win="probl-machine-win" data-dir="w"></div>
+  <div class="wfloat-rh rh-e"  data-win="probl-machine-win" data-dir="e"></div>
+  <div class="wfloat-rh rh-nw" data-win="probl-machine-win" data-dir="nw"></div>
+  <div class="wfloat-rh rh-ne" data-win="probl-machine-win" data-dir="ne"></div>
+  <div class="wfloat-rh rh-sw" data-win="probl-machine-win" data-dir="sw"></div>
+  <div class="wfloat-rh rh-se" data-win="probl-machine-win" data-dir="se"></div>
+  <div id="probl-machine-hdr" class="wfloat-hdr">
+    <div class="wfloat-drag-hint"><span></span><span></span><span></span></div>
+    <span class="wfloat-title">🧩 Construire ma problématique</span>
+    <button class="wfloat-close" onclick="closePMW()" aria-label="Fermer">
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="1" y1="1" x2="10" y2="10"/><line x1="10" y1="1" x2="1" y2="10"/></svg>
+      <span>Fermer</span>
+    </button>
+  </div>
+  <div id="probl-machine-body">
+    <div class="pmw-tabs">
+      <div class="pmw-tab act" onclick="pmwTab('structure',this)">Structure</div>
+      <div class="pmw-tab"     onclick="pmwTab('exemples',this)">Exemples du livre</div>
+    </div>
+    <div class="pmw-panel act" id="pmw-panel-structure">
+      <div class="pmw-struct-grid">
+        <div class="pmw-col">
+          <div class="pmw-col-hdr" style="background:#1a3a5c">Ouverture</div>
+          <div class="pmw-col-body">
+            <div class="pmw-item">En quoi</div>
+            <div class="pmw-item">Dans quelle mesure</div>
+            <div class="pmw-item">Par quel procédé</div>
+            <div class="pmw-item">Comment</div>
+            <div class="pmw-item">De quelle façon</div>
+          </div>
+          <div class="pmw-note">Oriente le regard : vers la <em>forme</em>, le <em>degré</em> ou le <em>mécanisme</em>.</div>
+        </div>
+        <div class="pmw-col">
+          <div class="pmw-col-hdr" style="background:#1e4d3a">Sujet</div>
+          <div class="pmw-col-body">
+            <div class="pmw-item">l'auteur</div>
+            <div class="pmw-item">le personnage principal</div>
+            <div class="pmw-item">le narrateur</div>
+            <div class="pmw-item">cette scène / ce dénouement</div>
+            <div class="pmw-item">le style · le ton</div>
+            <div class="pmw-item">la parole / le silence</div>
+            <div class="pmw-item">la structure de l'œuvre</div>
+          </div>
+          <div class="pmw-note">Plus précis = plus fort.<br>« Le silence de Junie » > « l'œuvre ».</div>
+        </div>
+        <div class="pmw-col">
+          <div class="pmw-col-hdr" style="background:#8b2a2a">Opérateur</div>
+          <div class="pmw-col-body">
+            <div class="pmw-item pmw-op-fort">révèle<span class="pmw-badge pmw-badge-fort">★★★</span></div>
+            <div class="pmw-item pmw-op-fort">remet en cause<span class="pmw-badge pmw-badge-fort">★★★</span></div>
+            <div class="pmw-item pmw-op-fort">expose sans résoudre<span class="pmw-badge pmw-badge-fort">★★★</span></div>
+            <div class="pmw-item pmw-op-fort">fait vaciller<span class="pmw-badge pmw-badge-fort">★★★</span></div>
+            <div class="pmw-item pmw-op-moyen">interroge<span class="pmw-badge pmw-badge-moyen">★★</span></div>
+            <div class="pmw-item pmw-op-moyen">transforme<span class="pmw-badge pmw-badge-moyen">★★</span></div>
+            <div class="pmw-item pmw-op-moyen">met en tension<span class="pmw-badge pmw-badge-moyen">★★</span></div>
+            <div class="pmw-item pmw-op-faible">montre<span class="pmw-badge pmw-badge-faible">★</span></div>
+            <div class="pmw-item pmw-op-faible">est une pièce sur<span class="pmw-badge pmw-badge-faible">★</span></div>
+            <div class="pmw-item pmw-op-faible">parle de<span class="pmw-badge pmw-badge-faible">★</span></div>
+          </div>
+          <div class="pmw-note"><span class="pmw-badge pmw-badge-fort">★★★</span> ouvre une vraie tension &nbsp;·&nbsp; <span class="pmw-badge pmw-badge-faible">★</span> ferme la question avant de l'ouvrir.</div>
+        </div>
+        <div class="pmw-col">
+          <div class="pmw-col-hdr" style="background:#3d1f5c">Tension</div>
+          <div class="pmw-col-body" style="padding:10px;">
+            <div style="font-size:.76rem;color:rgba(255,255,255,.82);line-height:1.6;">Le <strong>cœur</strong> de la problématique — le conflit que le texte soulève sans le résoudre.<br><br>Une bonne tension résiste : elle ne se répond pas par oui ou non.</div>
+          </div>
+          <div class="pmw-note">Vient de tes thèmes dominants, ou de la Roue dans la machine complète.</div>
+        </div>
+      </div>
+      <div class="pmw-exemple">
+        <span class="pmw-ex-label">Exemple assemblé</span>
+        <span style="color:#90CAF9">En quoi</span>
+        <span style="color:#A5D6A7"> le silence de Junie </span>
+        <span style="color:#EF9A9A">révèle-t-il</span>
+        <span style="color:#CE93D8"> la seule victoire morale possible dans un monde où la vertu est sans pouvoir</span> ?
+      </div>
+      <a class="pmw-open-full" onclick="openPMWFull()">↗ Ouvrir la machine complète (Roue · Thèmes · Atelier Claude)</a>
+    </div>
+    <div class="pmw-panel" id="pmw-panel-exemples">
+      <div id="pmw-exemples-body"></div>
+      <a class="pmw-open-full" onclick="openPMWFull()">↗ Ouvrir la machine complète</a>
+    </div>
+  </div>
+</div>
+
 <div id="lex-floatwin">
   <div class="rsz rsz-n" data-dir="n"></div>
   <div class="rsz rsz-s" data-dir="s"></div>
@@ -13269,8 +13416,22 @@ function resetAllColors() {
     e.preventDefault();
   }
 
+  // Pointer capture dans un handler pointerdown (pointerId disponible seulement sur PointerEvent)
+  // Doit être déclaré AVANT les listeners mousedown pour s'exécuter en premier
+  document.addEventListener('pointerdown', function(e) {
+    var target = e.target;
+    if (!target) return;
+    var rh  = target.closest && target.closest('.wfloat-rh');
+    var hdr = !rh && target.closest && target.closest('.wfloat-hdr');
+    if ((rh || hdr) && !target.closest('.wfloat-close')) {
+      try { target.setPointerCapture(e.pointerId); } catch(x) {}
+    }
+  }, {passive:false});
+
   function _onMove(e){
     if (!_drag) return;
+    // pointermove et mousemove peuvent tous deux firer — on ignore le doublon
+    if (e.type === 'mousemove' && e.pointerId !== undefined) return; // pointer events actifs : ignorer mousemove redondant
     var cx = e.touches ? e.touches[0].clientX : e.clientX;
     var cy = e.touches ? e.touches[0].clientY : e.clientY;
     var dx = cx - _drag.startX;
@@ -13282,10 +13443,12 @@ function resetAllColors() {
     } else {
       var l=d.origL, t=d.origT, w=d.origW, h=d.origH;
       var dir = d.dir;
+      var rightEdge = d.origL + d.origW;
+      var botEdge   = d.origT + d.origH;
       if (dir.indexOf('e')>=0)  w = d.origW + dx;
       if (dir.indexOf('s')>=0)  h = d.origH + dy;
-      if (dir.indexOf('w')>=0){ l = d.origL + dx; w = d.origW - dx; }
-      if (dir.indexOf('n')>=0){ t = d.origT + dy; h = d.origH - dy; }
+      if (dir.indexOf('w')>=0){ l = Math.max(0, d.origL + dx); w = rightEdge - l; }
+      if (dir.indexOf('n')>=0){ t = Math.max(0, d.origT + dy); h = botEdge   - t; }
       _applyRect(d.el, l, t, w, h);
     }
     e.preventDefault();
@@ -13296,9 +13459,13 @@ function resetAllColors() {
   document.addEventListener('mousedown',  _onDown,  {passive:false});
   document.addEventListener('touchstart', _onDown,  {passive:false});
   document.addEventListener('mousemove',  _onMove,  {passive:false});
+  document.addEventListener('pointermove',_onMove,  {passive:false});
   document.addEventListener('touchmove',  _onMove,  {passive:false});
   document.addEventListener('mouseup',    _onUp);
   document.addEventListener('touchend',   _onUp);
+  document.addEventListener('pointerup',     _onUp);
+  document.addEventListener('pointercancel', _onUp);
+  window.addEventListener('blur', function(){ _drag = null; });
 })();
 
 // Accordéon des groupes dans la fenêtre paramètres
@@ -14747,6 +14914,8 @@ async function niLVPromptA() {
 function _closeAllFloatWins() {
   // Aide contextuelle (Écrire)
   niAideClose();
+  // Machine à problématiques
+  closePMW();
   // Justification thème
   closeLexExpl();
   // Méthodologie
@@ -15001,6 +15170,124 @@ function openProbHelp() {
   }
   win.classList.add('open');
   phwRender();
+}
+
+// ════════════════════════════════════════════════════════
+// MACHINE À PROBLÉMATIQUES — fenêtre flottante + plein écran
+// ════════════════════════════════════════════════════════
+(function(){
+  var btn = null;
+  var _holdTimer = null;
+  var _didLong   = false;
+  var HOLD_MS    = 550;
+
+  function _down(e) {
+    _didLong = false;
+    _holdTimer = setTimeout(function(){
+      _didLong = true;
+      openPMWFull();
+    }, HOLD_MS);
+  }
+  function _up(e) {
+    clearTimeout(_holdTimer);
+    if (!_didLong) openPMW();
+  }
+  function _cancel() { clearTimeout(_holdTimer); }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    btn = document.getElementById('btn-probl-machine');
+    if (!btn) return;
+    btn.addEventListener('mousedown',  _down);
+    btn.addEventListener('mouseup',    _up);
+    btn.addEventListener('mouseleave', _cancel);
+    btn.addEventListener('touchstart', _down,  {passive:true});
+    btn.addEventListener('touchend',   _up);
+    btn.addEventListener('touchcancel',_cancel);
+    // Bloquer le click natif (géré par mouseup)
+    btn.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); });
+  });
+})();
+
+function openPMW() {
+  var win = document.getElementById('probl-machine-win');
+  if (!win) return;
+  // Position initiale
+  if (!win.dataset.positioned) {
+    win.style.left = Math.max(20, (window.innerWidth  - 820) / 2) + 'px';
+    win.style.top  = Math.max(50, (window.innerHeight - window.innerHeight * .88) / 2) + 'px';
+    win.dataset.positioned = '1';
+  }
+  win.classList.add('open');
+  var btn = document.getElementById('btn-probl-machine');
+  if (btn) btn.classList.add('open');
+  // Remplir l'onglet exemples
+  _pmwBuildExemples();
+}
+
+function closePMW() {
+  var win = document.getElementById('probl-machine-win');
+  if (win) win.classList.remove('open');
+  var btn = document.getElementById('btn-probl-machine');
+  if (btn) btn.classList.remove('open');
+}
+
+function pmwTab(id, el) {
+  document.querySelectorAll('.pmw-tab').forEach(function(t){ t.classList.remove('act'); });
+  document.querySelectorAll('.pmw-panel').forEach(function(p){ p.classList.remove('act'); });
+  el.classList.add('act');
+  document.getElementById('pmw-panel-' + id).classList.add('act');
+}
+
+function openPMWFull() {
+  closePMW();
+  window.open('problematique.html', '_blank');
+}
+
+function _pmwBuildExemples() {
+  var body = document.getElementById('pmw-exemples-body');
+  if (!body) return;
+  var L = LIVRE_ACTIF;
+  // Chercher le livre dans _PROBL_BANK
+  var entry = null;
+  if (L) {
+    var titre = (L.titre || '').toLowerCase();
+    _PROBL_BANK.forEach(function(b){
+      if (b.titre.toLowerCase().indexOf(titre.slice(0,6)) >= 0 ||
+          titre.indexOf(b.titre.toLowerCase().slice(0,6)) >= 0) entry = b;
+    });
+  }
+  if (!entry) {
+    body.innerHTML = '<div style="color:rgba(255,255,255,.45);font-size:.8rem;padding:12px;">Ouvre un livre pour voir ses exemples de problématiques.</div>';
+    return;
+  }
+  var html = '<div class="pmw-book-title">' + entry.titre + ' — ' + entry.auteur + '</div>';
+  entry.problematiques.forEach(function(p) {
+    html += '<div class="pmw-probl-card" onclick="_pmwInject(' + JSON.stringify(p.texte) + ')">' +
+      '<div class="pmw-probl-angle">' + p.angle + '</div>' +
+      '<div class="pmw-probl-text">« ' + p.texte + ' »</div>' +
+      '<div class="pmw-inject-hint">↩ cliquer pour insérer</div>' +
+    '</div>';
+  });
+  body.innerHTML = html;
+}
+
+function _pmwInject(texte) {
+  var targets = ['diss2-problematique','lin-intro3','com-problematique-ta'];
+  var ok = false;
+  targets.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && el.offsetParent !== null && !ok) {
+      el.value = texte; el.dispatchEvent(new Event('input')); ok = true;
+    }
+  });
+  if (!ok) {
+    // Fallback : copier dans le presse-papier
+    if (navigator.clipboard) navigator.clipboard.writeText(texte);
+    showToast && showToast('Copié dans le presse-papier', 'ok');
+  } else {
+    closePMW();
+    showToast && showToast('Problématique insérée ✓', 'ok');
+  }
 }
 
 function closeProbHelp() {
