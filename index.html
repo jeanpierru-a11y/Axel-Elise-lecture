@@ -15194,7 +15194,7 @@ function openProbHelp() {
   }
   function _cancel() { clearTimeout(_holdTimer); }
 
-  document.addEventListener('DOMContentLoaded', function(){
+  function _initBtn() {
     btn = document.getElementById('btn-probl-machine');
     if (!btn) return;
     btn.addEventListener('mousedown',  _down);
@@ -15203,9 +15203,11 @@ function openProbHelp() {
     btn.addEventListener('touchstart', _down,  {passive:true});
     btn.addEventListener('touchend',   _up);
     btn.addEventListener('touchcancel',_cancel);
-    // Bloquer le click natif (géré par mouseup)
     btn.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); });
-  });
+  }
+
+  // DOM déjà prêt en bas de page — pas besoin de DOMContentLoaded
+  _initBtn();
 })();
 
 function openPMW() {
