@@ -2161,7 +2161,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 .ni-paire-item{background:#fff;border:1px solid #e2d9f0;border-radius:8px;padding:8px 10px 6px;box-shadow:0 1px 4px rgba(106,27,154,.07);display:flex;flex-direction:column;gap:4px;}
 .ni-paire-ttl{font-size:11px;font-weight:800;display:flex;align-items:center;gap:5px;padding-bottom:5px;border-bottom:1px solid #f0e8f8;}
 .ni-paire-badge{margin-left:auto;font-size:9px;color:#7B5EA7;font-weight:700;background:#f5f0ff;padding:2px 8px;border-radius:8px;white-space:nowrap;}
-.ni-paire-interp{font-size:11px;color:#333;line-height:1.65;padding:3px 0 2px;}
+.ni-paire-interp{font-size:12px;color:#333;line-height:1.65;padding:3px 0 2px;}
 .ni-paire-sep{display:none;}
 .ni-q-hdr-icon.active{background:rgba(106,27,154,.18);}
 .ni-q-hdr-alpha{background:#E0D7F5;color:#4A148C;border:1.5px solid #B39DDB;border-radius:5px;padding:2px 8px;font-size:.62rem;font-weight:800;cursor:pointer;font-family:inherit;flex-shrink:0;line-height:1.4;}
@@ -4155,7 +4155,7 @@ function sauvegarderBiblio() {
 // ════════════════════════════════════════════════════════
 // VERSION — incrémenter à chaque mise à jour des livres démo
 // ════════════════════════════════════════════════════════
-const DEMO_VERSION = 27; // v27 : arg3 dissertation Alice + Adversaire · resize listener ob1/ob2
+const DEMO_VERSION = 28; // v28 : 4 livres Élise (Île des esclaves, Caligula, Valladolid, Britannicus)
 const LIVRES_DEMO = [
   {
     id: 'liv_petit_prince_001',
@@ -5276,6 +5276,824 @@ const LIVRES_DEMO = [
       fiabilite: 85
     }
   }
+,
+  // ── L'ÎLE DES ESCLAVES ───────────────────────────────
+  {
+    id: 'liv_demo_06',
+    titre: "L\u2019\u00cele des esclaves",
+    auteur: 'Marivaux',
+    genre: 'Com\u00e9die philosophique',
+    pages: '80',
+    annee: 'XVIIIe si\u00e8cle \u2014 1725',
+    dateCreation: '06/04/2026',
+    tsCreation: 1744070400000,
+    contexte: "L\u2019\u00cele des esclaves est cr\u00e9\u00e9e \u00e0 la Com\u00e9die-Italienne en 1725. La pi\u00e8ce s\u2019inscrit dans le contexte des Lumi\u00e8res naissantes.\\n\\nMarivaux \u00e9crit dans une soci\u00e9t\u00e9 d\u2019Ancien R\u00e9gime strictement hi\u00e9rarchis\u00e9e. La pi\u00e8ce joue avec ce syst\u00e8me en imaginant une \u00eele utopique o\u00f9 les r\u00f4les sont invers\u00e9s.\\n\\nAu XVIIIe si\u00e8cle, le th\u00e9\u00e2tre est le lieu de la r\u00e9flexion morale et philosophique.",
+    auteurVie: "Pierre de Marivaux (1688\u20131763) est l\u2019un des dramaturges les plus importants du XVIIIe si\u00e8cle fran\u00e7ais.\\n\\nIl collabore avec les Com\u00e9diens-Italiens et d\u00e9veloppe le \u2018marivaudage\u2019.\\n\\nIl est \u00e9lu \u00e0 l\u2019Acad\u00e9mie fran\u00e7aise en 1742.",
+    trajectoire: "L\u2019\u00cele des esclaves (1725) s\u2019inscrit dans une s\u00e9rie de pi\u00e8ces utopiques : L\u2019\u00cele de la raison (1727) et La Colonie (1750).\\n\\nLa pi\u00e8ce conna\u00eet une renaissance au XXe si\u00e8cle quand la lecture politique du th\u00e9\u00e2tre classique devient dominante.",
+    courant: "Marivaux appartient au courant des Lumi\u00e8res dans sa dimension th\u00e9\u00e2trale et morale.\\n\\nOn peut le rapprocher de Voltaire et de Rousseau : m\u00eame questionnement sur la l\u00e9gitimit\u00e9 de la hi\u00e9rarchie sociale.\\n\\nLe th\u00e9\u00e2tre de Marivaux est aussi influenc\u00e9 par la Commedia dell\u2019arte italienne.",
+    style: "Le style de Marivaux est volontairement contrast\u00e9 : Arlequin parle en langage populaire, Iphicrate parle le fran\u00e7ais aristocratique.\\n\\nCe contraste stylistique est une d\u00e9monstration de th\u00e8se : le langage est le produit d\u2019une \u00e9ducation et d\u2019une condition sociale.\\n\\nLa pi\u00e8ce est courte (un seul acte, 11 sc\u00e8nes).",
+    personnages: [
+      {id:'ent_ile_01', nom:'Iphicrate', couleur:'#C62828',
+       notes:"Ma\u00eetre ath\u00e9nien. Autoritaire, condescendant. Son humiliation lui r\u00e9v\u00e8le sa propre arrogance. Arc\u00a0: dominant \u2192 humili\u00e9 \u2192 r\u00e9concili\u00e9."},
+      {id:'ent_ile_02', nom:'Arlequin', couleur:'#1565C0',
+       notes:"Esclave d\u2019Iphicrate. Comique, spontan\u00e9, na\u00efbut lucide. Sur l\u2019\u00eele, devient ma\u00eetre et abuse bri\u00e8vement du r\u00f4le, puis comprend la le\u00e7on."},
+      {id:'ent_ile_03', nom:'Euphrosine', couleur:'#6A1B9A',
+       notes:"Ma\u00eetresse, noble, fi\u00e8re. Elle comprend la le\u00e7on morale la premi\u00e8re et pardonne en premier."},
+      {id:'ent_ile_04', nom:'Cl\u00e9anthis', couleur:'#2E7D32',
+       notes:"Esclave d\u2019Euphrosine. Plus r\u00e9fl\u00e9chie qu\u2019Arlequin. Elle use de son pouvoir temporaire avec finesse \u2014 sc\u00e8ne de la coiffure."},
+      {id:'ent_ile_05', nom:'Trivelin', couleur:'#E65100',
+       notes:"Repr\u00e9sentant des lois de l\u2019\u00eele. Il organise le renversement avec une autorit\u00e9 bienveillante."}
+    ],
+    lieux: [
+      {id:'lx_ile_01', nom:"L\u2019\u00eele des esclaves", couleur:'#2E7D32',
+       notes:"Espace utopique fond\u00e9 par d\u2019anciens esclaves grecs. R\u00e8gles\u00a0: toute noblesse qui y \u00e9choue voit ses esclaves devenir ma\u00eetres."},
+      {id:'lx_ile_02', nom:'La c\u00f4te', couleur:'#1565C0',
+       notes:"Espace de l\u2019arriv\u00e9e. La fronti\u00e8re g\u00e9ographique est aussi une fronti\u00e8re morale."}
+    ],
+    citations: [
+      {id:'cit_ile_01',texte:"Nous sommes ici dans l\u2019\u00eele des esclaves.",ref:'Trivelin, sc.\u00a02',theme:'Soci\u00e9t\u00e9 / Critique',procede:'Annonce solennelle',interpretation:"Trivelin \u00e9nonce la r\u00e8gle de l\u2019\u00eele avec simplicit\u00e9. Pas de rh\u00e9torique, pas de justification. Usage\u00a0: introduction \u00e0 la logique de la pi\u00e8ce.",importance:3},
+      {id:'cit_ile_02',texte:"Ici vos esclaves sont nos ma\u00eetres, et les n\u00f4tres seront les v\u00f4tres.",ref:'Trivelin, sc.\u00a02',theme:'Pouvoir / Domination',procede:'Chiasme',interpretation:"Chiasme parfait\u00a0: le renversement est total et sym\u00e9trique. Usage\u00a0: argument central sur l\u2019in\u00e9galit\u00e9 sociale.",importance:3},
+      {id:'cit_ile_03',texte:"Mon cher ma\u00eetre, je vous demande pardon de toutes les sottises que j\u2019ai faites.",ref:'Arlequin, sc.\u00a011',theme:'Amour / Sentiments',procede:'Demande de pardon',interpretation:"Arlequin choisit l\u2019humanit\u00e9. Le pardon est un acte moral et politique. Usage\u00a0: argument sur la r\u00e9conciliation.",importance:3},
+      {id:'cit_ile_04',texte:"Vous \u00eates trop heureux qu\u2019il ne tienne qu\u2019\u00e0 pardonner.",ref:'Cl\u00e9anthis, sc.\u00a011',theme:'Identit\u00e9 / Qu\u00eate',procede:'Ironie',interpretation:"Cl\u00e9anthis souligne que le pardon est un privil\u00e8ge. Usage\u00a0: nuance dans la lecture de la r\u00e9conciliation finale.",importance:2},
+      {id:'cit_ile_05',texte:"Qu\u2019il est doux de punir un ingrat\u00a0!",ref:'Cl\u00e9anthis, sc.\u00a06',theme:'Pouvoir / Domination',procede:'Exclamation',interpretation:"Cl\u00e9anthis savoure sa revanche. La phrase r\u00e9v\u00e8le ce que le pouvoir fait \u00e0 ceux qui n\u2019y \u00e9taient pas habitu\u00e9s. Usage\u00a0: argument sur la corruption du pouvoir.",importance:2},
+      {id:'cit_ile_06',texte:"Je ne serai point malheureux par ma faute.",ref:'Iphicrate, sc.\u00a01',theme:'Libert\u00e9 / D\u00e9terminisme',procede:'D\u00e9claration de principe',interpretation:"Ironie dramatique\u00a0: c\u2019est pr\u00e9cis\u00e9ment son arrogance qui a produit sa situation. Usage\u00a0: ouverture sur le th\u00e8me du destin.",importance:2}
+    ],
+    comprehension: "L\u2019\u00cele des esclaves est une pi\u00e8ce courte mais dense.\\n\\nLe renversement n\u2019est pas une r\u00e9volution\u00a0: personne ne remet vraiment en question le principe de la hi\u00e9rarchie. Les personnages \u00e9changent les r\u00f4les, apprennent \u00e0 se respecter, puis retournent \u00e0 l\u2019ordre d\u2019origine.\\n\\nCe qui reste apr\u00e8s la r\u00e9conciliation, c\u2019est une conscience\u00a0: les ma\u00eetres ont v\u00e9cu l\u2019humiliation de la servitude.",
+    schemaType: 'moderne',
+    narration: {
+      nar_m1: "Le naufrage. Iphicrate et Arlequin \u00e9chouent sur une \u00eele inconnue. La hi\u00e9rarchie semble intacte \u2014 mais l\u2019espace est \u00e9tranger.",
+      nar_m2: "La d\u00e9couverte de la loi. Trivelin explique la r\u00e8gle\u00a0: les ma\u00eetres deviennent esclaves. Iphicrate r\u00e9siste, Arlequin comprend.",
+      nar_m3: "L\u2019inversion des r\u00f4les. Arlequin prend du galon, Iphicrate doit ob\u00e9ir. Cl\u00e9anthis humilie Euphrosine dans la sc\u00e8ne de la coiffure.",
+      nar_m4: "Le miroir. Trivelin guide chaque personnage \u00e0 regarder dans les yeux celui qu\u2019il a humili\u00e9.",
+      nar_m5: "L\u2019exc\u00e8s des nouveaux ma\u00eetres. Arlequin et Cl\u00e9anthis abusent bri\u00e8vement de leur pouvoir \u2014 reproduisant ce qu\u2019ils avaient subi.",
+      nar_m6: "La r\u00e9sistance et la prise de conscience. Euphrosine comprend la le\u00e7on la premi\u00e8re. Iphicrate commence \u00e0 fl\u00e9chir.",
+      nar_m7: "Le pardon. Euphrosine pardonne. Arlequin pardonne \u00e0 Iphicrate. Cl\u00e9anthis h\u00e9site \u2014 elle a plus souffert.",
+      nar_m8: "Le retour \u00e0 l\u2019ordre. Trivelin lib\u00e8re les quatre personnages. La hi\u00e9rarchie reprend, mais la conscience reste."
+    },
+    redacType: 'argument',
+    redac: {
+      redac_a1: "En 1725, Marivaux pr\u00e9sente \u00e0 la Com\u00e9die-Italienne une pi\u00e8ce courte et d\u00e9rangeante. Deux ma\u00eetres et leurs esclaves font naufrage sur une \u00eele gouvern\u00e9e par une r\u00e8gle simple\u00a0: les r\u00f4les sont invers\u00e9s.",
+      redac_a2: "En vivant dans la peau de l\u2019autre, les personnages d\u00e9couvrent ce que la hi\u00e9rarchie cache\u00a0: les ma\u00eetres ne m\u00e9ritent pas leur statut, les esclaves ne sont pas inf\u00e9rieurs.",
+      redac_a3: "Mais Marivaux ne propose pas la r\u00e9volution. Le renversement est temporaire et p\u00e9dagogique \u2014 il vise \u00e0 corriger les comportements, non \u00e0 d\u00e9truire la hi\u00e9rarchie.",
+      redac_a4: "L\u2019\u00cele des esclaves reste une pi\u00e8ce philosophiquement ambigu\u00eb. Elle critique l\u2019arrogance des ma\u00eetres sans remettre en cause le principe de la ma\u00eetrise."
+    },
+    dissertation: {
+      sujet:  "En quoi L\u2019\u00cele des esclaves est-elle une com\u00e9die philosophique\u00a0?",
+      intro:  "En 1725, Marivaux pr\u00e9sente une pi\u00e8ce d\u2019un seul acte. Deux ma\u00eetres et leurs esclaves font naufrage et d\u00e9couvrent une \u00eele o\u00f9 les r\u00f4les sont invers\u00e9s par loi. La com\u00e9die philosophique unit le rire et la r\u00e9flexion morale.",
+      arg1:   "D\u2019abord, la pi\u00e8ce est bien une com\u00e9die\u00a0: le comique de situation, le comique de langage et le comique de caract\u00e8re produisent un divertissement efficace.",
+      arg2:   "Mais ce rire est au service d\u2019une th\u00e8se\u00a0: la hi\u00e9rarchie sociale est une construction, non une nature.",
+      arg3:   "Cependant, la pi\u00e8ce reste ambigu\u00eb\u00a0: elle ne propose pas la fin de la servitude mais seulement un meilleur traitement.",
+      conclu: "L\u2019\u00cele des esclaves est bien une com\u00e9die philosophique\u00a0: elle utilise le rire comme vecteur d\u2019une r\u00e9flexion sur l\u2019\u00e9galit\u00e9 humaine."
+    },
+    dissertation2: {
+      sujet:         "En quoi L\u2019\u00cele des esclaves est-elle une com\u00e9die philosophique\u00a0?",
+      motsCles:      "\u00ab Com\u00e9die \u00bb = genre th\u00e9\u00e2tral qui produit du rire, d\u00e9nouement heureux. \u00ab Philosophique \u00bb = qui d\u00e9veloppe une th\u00e8se sur la condition humaine.",
+      reformulation: "Comment Marivaux parvient-il \u00e0 faire du rire un outil philosophique pour r\u00e9fl\u00e9chir \u00e0 l\u2019in\u00e9galit\u00e9\u00a0?",
+      typePlan:      "Plan dialectique. I. Une com\u00e9die efficace. II. Une pi\u00e8ce \u00e0 th\u00e8se sur la hi\u00e9rarchie sociale. III. Les limites du projet.",
+      accroche:      "Sur la sc\u00e8ne de la Com\u00e9die-Italienne en 1725, un valet devient ma\u00eetre et un ma\u00eetre devient valet. Le public rit. Mais ce rire cache une question.",
+      introSuite:    "On se demandera comment Marivaux construit une com\u00e9die qui est aussi une d\u00e9monstration philosophique.",
+      p1arg:         "La pi\u00e8ce produit du rire \u00e0 trois niveaux\u00a0: situation, langage, caract\u00e8re.",
+      p1ex:          "Arlequin, devenu \u2018ma\u00eetre\u2019, imite les mani\u00e8res aristocratiques avec maladresse. La sc\u00e8ne de la coiffure reproduit ce qu\u2019Euphrosine faisait subir \u00e0 Cl\u00e9anthis.",
+      p1ana:         "Ce rire n\u2019est pas innocent\u00a0: il cible l\u2019arrogance de classe.",
+      p2arg:         "Le renversement d\u00e9montre une th\u00e8se\u00a0: la hi\u00e9rarchie sociale n\u2019est pas naturelle.",
+      p2ex:          "Trivelin l\u2019explique explicitement\u00a0: l\u2019\u00eele est une utopie p\u00e9dagogique, non anarchiste.",
+      p2ana:         "Marivaux mobilise une id\u00e9e des Lumi\u00e8res\u00a0: l\u2019in\u00e9galit\u00e9 est un accident de l\u2019histoire.",
+      p3arg:         "Mais la pi\u00e8ce ne va pas jusqu\u2019\u00e0 la r\u00e9volution\u00a0: le renversement est temporaire.",
+      p3ex:          "\u00c0 la fin, Arlequin redevient esclave. Iphicrate redevient ma\u00eetre.",
+      p3ana:         "La pi\u00e8ce croit en la transformation individuelle par l\u2019exp\u00e9rience, non en la transformation collective par la loi.",
+      bilan:         "L\u2019\u00cele des esclaves est une com\u00e9die philosophique parce qu\u2019elle utilise toutes les ressources du genre comique pour d\u00e9montrer une th\u00e8se s\u00e9rieuse sur l\u2019in\u00e9galit\u00e9.",
+      reponse:       "Marivaux r\u00e9ussit \u00e0 faire du rire un outil de d\u00e9monstration philosophique en construisant un dispositif dramatique qui est \u00e0 la fois source de comique et argument sur la nature de la hi\u00e9rarchie.",
+      ouverture:     "On peut mettre cette pi\u00e8ce en regard du Jeu de l\u2019amour et du hasard (1730), o\u00f9 le d\u00e9guisement remplit la m\u00eame fonction."
+    },
+    temps2: {
+      ordre:    "Chronologique strict. La pi\u00e8ce se joue en temps r\u00e9el \u2014 une seule journ\u00e9e sur l\u2019\u00eele.",
+      duree:    "Temps condens\u00e9\u00a0: une journ\u00e9e suffit pour que la transformation s\u2019op\u00e8re.",
+      frequence:"Chaque sc\u00e8ne est singulative. La pi\u00e8ce r\u00e9p\u00e8te son motif deux fois (Iphicrate\/Arlequin, puis Euphrosine\/Cl\u00e9anthis).",
+      espace:   "Espace unique\u00a0: l\u2019\u00eele. Espace imaginaire et symbolique\u00a0\u2014 ni le monde grec d\u2019origine, ni le monde r\u00e9el du spectateur."
+    },
+    lineaire: {
+      intro1: "L\u2019\u00cele des esclaves est une com\u00e9die philosophique en un acte et 11 sc\u00e8nes, cr\u00e9\u00e9e \u00e0 la Com\u00e9die-Italienne en 1725.",
+      intro2: "L\u2019extrait \u00e9tudi\u00e9 est la sc\u00e8ne 2 \u2014 la sc\u00e8ne d\u2019exposition philosophique o\u00f9 Trivelin r\u00e9v\u00e8le les r\u00e8gles de l\u2019\u00eele.",
+      intro3: "Par quels proc\u00e9d\u00e9s Marivaux transforme-t-il l\u2019annonce d\u2019une r\u00e8gle en d\u00e9monstration philosophique\u00a0?",
+      intro4: "Ton p\u00e9dagogique pour Trivelin. Ton entre r\u00e9signation et espoir pour Iphicrate. Marquer le chiasme \u2018vos esclaves sont nos ma\u00eetres\u2019.",
+      intro5: "Mvt\u00a01 \u2014 L\u2019annonce de la r\u00e8gle : Trivelin \u00e9nonce la loi \/ Mvt\u00a02 \u2014 La r\u00e9sistance d\u2019Iphicrate \/ Mvt\u00a03 \u2014 La justification philosophique",
+      mvts: [
+        {titre:"Mvt\u00a01 \u2014 L\u2019annonce de la r\u00e8gle",
+         texte:"Trivelin \u00e9nonce simplement le chiasme fondateur.\\n\u2192 Structure grammaticale qui mime le renversement.\\n\u2192 Ton neutre et factuel\u00a0: Trivelin applique une loi, ne se venge pas."},
+        {titre:"Mvt\u00a02 \u2014 La r\u00e9sistance d\u2019Iphicrate",
+         texte:"Iphicrate proteste, invoque son rang, refuse l\u2019humiliation.\\n\u2192 Registre aristocratique trahit sa condition.\\n\u2192 Ironie dramatique\u00a0: plus il r\u00e9siste, plus il prouve qu\u2019il a besoin de la le\u00e7on."},
+        {titre:"Mvt\u00a03 \u2014 La justification philosophique",
+         texte:"Trivelin explique\u00a0: l\u2019\u00eele n\u2019est pas un lieu de vengeance mais de p\u00e9dagogie.\\n\u2192 Vocabulaire moral\u00a0: \u2018corriger\u2019, \u2018humaniser\u2019.\\n\u2192 La le\u00e7on est adress\u00e9e au spectateur autant qu\u2019\u00e0 Iphicrate."}
+      ],
+      conclu1: "Marivaux construit une sc\u00e8ne d\u2019exposition qui est aussi une sc\u00e8ne d\u2019argumentation.",
+      conclu2: "On peut rapprocher ce dispositif du Contrat social de Rousseau (1762)."
+    },
+    commentaire: {
+      amorce: "Au XVIIIe si\u00e8cle, le th\u00e9\u00e2tre devient un lieu de la pens\u00e9e philosophique.",
+      presentation: "Pierre de Marivaux (1688\u20131763) est l\u2019auteur de L\u2019\u00cele des esclaves, com\u00e9die philosophique cr\u00e9\u00e9e en 1725.",
+      problematique: "Comment Marivaux parvient-il \u00e0 faire du dispositif th\u00e9\u00e2tral du renversement un outil de d\u00e9monstration philosophique\u00a0?",
+      plan: "Nous \u00e9tudierons d\u2019abord le renversement comme ressort comique (I), puis les personnages comme arguments (II), enfin la r\u00e9conciliation\u00a0: limite ou sagesse\u00a0? (III).",
+      axes: [
+        {titre:"I \u2014 Le renversement comme ressort comique et philosophique",
+         texte:"Le comique du renversement d\u00e9montre par l\u2019absurde que la domination est arbitraire.\\n\u2192 Comique de situation, de langage, de caract\u00e8re.\\n\u2192 Le chiasme de Trivelin\u00a0: argument grammatical."},
+        {titre:"II \u2014 Les personnages comme arguments",
+         texte:"Chaque personnage est une fonction dans la d\u00e9monstration.\\n\u2192 Trivelin\u00a0= le philosophe bienveillant.\\n\u2192 Arlequin\u00a0= l\u2019humanit\u00e9 spontan\u00e9e qui pardonne en premier."},
+        {titre:"III \u2014 La r\u00e9conciliation\u00a0: limite ou sagesse\u00a0?",
+         texte:"La r\u00e9conciliation est la conclusion morale \u2014 et la limite philosophique.\\n\u2192 La hi\u00e9rarchie n\u2019est pas aboli\u00e9e \u2014 seulement humanis\u00e9e.\\n\u2192 Marivaux croit en la r\u00e9forme morale, non la r\u00e9volution."}
+      ],
+      bilan: "L\u2019\u00cele des esclaves utilise toutes les ressources du genre pour d\u00e9montrer une th\u00e8se sur l\u2019arbitraire de la hi\u00e9rarchie sociale.",
+      ouverture: "On peut mettre cette pi\u00e8ce en regard de La Colonie (1750), autre com\u00e9die utopique de Marivaux."
+    },
+    themes: {
+      amour:    "L\u2019amour est secondaire \u2014 c\u2019est la piti\u00e9, la compassion et le pardon qui l\u2019emportent.",
+      pouvoir:  "Le pouvoir est le sujet central. Arlequin et Cl\u00e9anthis reproduisent bri\u00e8vement les exc\u00e8s qu\u2019ils avaient subis.",
+      liberte:  "La libert\u00e9 sur l\u2019\u00eele est paradoxale\u00a0: les esclaves sont libres, mais soumis aux lois de l\u2019\u00eele.",
+      identite: "L\u2019identit\u00e9 est mise \u00e0 l\u2019\u00e9preuve. Les personnages doivent r\u00e9pondre\u00a0: \u2018qui es-tu sans ton titre\u00a0?\u2019",
+      societe:  "La soci\u00e9t\u00e9 de l\u2019\u00eele est exp\u00e9rimentale. Le verdict\u00a0: la hi\u00e9rarchie produit des comportements inhumains des deux c\u00f4t\u00e9s.",
+      nature:   "La nature est peu pr\u00e9sente. L\u2019\u00eele est un d\u00e9cor philosophique, non un paysage."
+    },
+    lexique: {
+      phases: [
+        {pageDebut:1,  nom:"Le naufrage \u2014 arriv\u00e9e sur l\u2019\u00eele"},
+        {pageDebut:11, nom:"La loi de l\u2019\u00eele \u2014 annonce du renversement"},
+        {pageDebut:21, nom:"Le renversement \u2014 Arlequin prend le pouvoir"},
+        {pageDebut:31, nom:"L\u2019humiliation \u2014 sc\u00e8ne de la coiffure"},
+        {pageDebut:41, nom:"L\u2019exc\u00e8s \u2014 les nouveaux ma\u00eetres abusent"},
+        {pageDebut:51, nom:"La prise de conscience \u2014 Euphrosine comprend"},
+        {pageDebut:61, nom:"Le pardon \u2014 r\u00e9conciliation progressive"},
+        {pageDebut:71, nom:"Le retour \u00e0 l\u2019ordre \u2014 lib\u00e9ration"}
+      ],
+      tranches: [
+        {pageDebut:1,  pageFin:10, amour:30, pouvoir:85, liberte:20, identite:45, societe:80, nature:25},
+        {pageDebut:11, pageFin:20, amour:25, pouvoir:70, liberte:45, identite:60, societe:75, nature:30},
+        {pageDebut:21, pageFin:30, amour:35, pouvoir:40, liberte:80, identite:85, societe:70, nature:20},
+        {pageDebut:31, pageFin:40, amour:30, pouvoir:25, liberte:90, identite:90, societe:65, nature:15},
+        {pageDebut:41, pageFin:50, amour:45, pouvoir:30, liberte:75, identite:80, societe:85, nature:20},
+        {pageDebut:51, pageFin:60, amour:55, pouvoir:45, liberte:65, identite:70, societe:75, nature:25},
+        {pageDebut:61, pageFin:70, amour:70, pouvoir:55, liberte:60, identite:60, societe:70, nature:30},
+        {pageDebut:71, pageFin:80, amour:60, pouvoir:65, liberte:55, identite:50, societe:80, nature:35}
+      ],
+      champLexical: {
+        amour:    [{mot:"pardon",n:18},{mot:"ami",n:14},{mot:"piti\u00e9",n:12},{mot:"tendresse",n:8},{mot:"c\u0153ur",n:7},{mot:"pleurs",n:6}],
+        pouvoir:  [{mot:"ma\u00eetre",n:52},{mot:"esclave",n:48},{mot:"ordre",n:22},{mot:"ob\u00e9ir",n:18},{mot:"servitude",n:12},{mot:"loi",n:10}],
+        liberte:  [{mot:"libre",n:20},{mot:"\u00eele",n:18},{mot:"fuir",n:14},{mot:"partir",n:12},{mot:"contrainte",n:8},{mot:"naufrage",n:6}],
+        identite: [{mot:"r\u00f4le",n:24},{mot:"qui",n:22},{mot:"nom",n:18},{mot:"moi",n:16},{mot:"condition",n:14},{mot:"para\u00eetre",n:10}],
+        societe:  [{mot:"rang",n:28},{mot:"noblesse",n:22},{mot:"in\u00e9galit\u00e9",n:16},{mot:"justice",n:14},{mot:"soci\u00e9t\u00e9",n:12},{mot:"corriger",n:10}],
+        nature:   [{mot:"\u00eele",n:15},{mot:"mer",n:10},{mot:"rivage",n:8},{mot:"c\u00f4te",n:6},{mot:"naufrage",n:5},{mot:"ciel",n:4}]
+      },
+      justifications: {
+        amour: {
+          intro: "Le th\u00e8me Amour dans L\u2019\u00cele des esclaves se manifeste sous la forme du pardon et de la compassion.",
+          mots: {pardon:"Mot central du d\u00e9nouement. Le pardon est un acte politique\u00a0: refuser la vengeance quand on en a le pouvoir.",ami:"Arlequin appelle Iphicrate \u2018mon cher ma\u00eetre\u2019 puis \u2018mon ami\u2019 \u2014 la progression lexicale dit la transformation.",piti\u00e9:"La piti\u00e9 pr\u00e9c\u00e8de le pardon.",tendresse:"Rare\u00a0\u2014 sa raret\u00e9 marque les moments cl\u00e9s de la r\u00e9conciliation.",c\u0153ur:"D\u00e9signe la v\u00e9rit\u00e9 int\u00e9rieure oppos\u00e9e au rang social.",pleurs:"Les larmes d\u2019Euphrosine marquent le tournant de la pi\u00e8ce."}
+        },
+        pouvoir: {
+          intro: "Le th\u00e8me Pouvoir est omnipr\u00e9sent. \u2018Ma\u00eetre\u2019 et \u2018esclave\u2019 sont les mots les plus fr\u00e9quents.",
+          mots: {ma\u00eetre:"Mot qui change de mains dans la pi\u00e8ce.",esclave:"Sym\u00e9trique de \u2018ma\u00eetre\u2019. Quand Arlequin devient ma\u00eetre, le mot change de r\u00e9f\u00e9rent.",ordre:"Iphicrate donne des \u2018ordres\u2019 au d\u00e9but. Ce pouvoir lui \u00e9chappe progressivement.",ob\u00e9ir:"Verbe de la servitude qui passe d\u2019Arlequin \u00e0 Iphicrate.",servitude:"Terme philosophique que Trivelin utilise pour nommer ce que la pi\u00e8ce critique.",loi:"La \u2018loi\u2019 de l\u2019\u00eele distingue le renversement d\u2019une simple r\u00e9bellion."}
+        },
+        liberte: {
+          intro: "Le th\u00e8me Libert\u00e9 dans L\u2019\u00cele des esclaves est paradoxal.",
+          mots: {libre:"Utilis\u00e9 avec ironie par Trivelin.",\u00eele:"Symbole de la libert\u00e9 conditionnelle.",fuir:"Iphicrate veut fuir l\u2019\u00eele \u2014 r\u00e9v\u00e8le qu\u2019il pr\u00e9f\u00e8re la servitude connue.",partir:"Verbe de la r\u00e9sistance d\u2019Iphicrate.",contrainte:"La contrainte de l\u2019\u00eele est \u00e9ducative, non punitive.",naufrage:"Le naufrage est l\u2019\u00e9v\u00e9nement d\u00e9clencheur."}
+        },
+        identite: {
+          intro: "Le th\u00e8me Identit\u00e9 est au c\u0153ur de la pi\u00e8ce.",
+          mots: {r\u00f4le:"Mot cl\u00e9 du th\u00e9\u00e2tre dans le th\u00e9\u00e2tre.",qui:"Pronom interrogatif r\u00e9current.",nom:"Le nom social change. Le nom propre reste.",moi:"Pronom de l\u2019identit\u00e9 profonde.",condition:"La \u2018condition\u2019 sociale est ce que la pi\u00e8ce met \u00e0 l\u2019\u00e9preuve.",para\u00eetre:"L\u2019\u00eele suspend le \u2018para\u00eetre\u2019 pour laisser appara\u00eetre l\u2019\u00eatre."}
+        },
+        societe: {
+          intro: "Le th\u00e8me Soci\u00e9t\u00e9 est l\u2019axe critique de la pi\u00e8ce.",
+          mots: {rang:"Le \u2018rang\u2019 est ce qui justifie la domination.",noblesse:"La noblesse est repr\u00e9sent\u00e9e par Iphicrate et Euphrosine \u2014 et c\u2019est elle qui est humili\u00e9e.",in\u00e9galit\u00e9:"Mot du diagnostic social de Marivaux.",justice:"La \u2018justice\u2019 de l\u2019\u00eele la distingue d\u2019une simple vengeance.",soci\u00e9t\u00e9:"La soci\u00e9t\u00e9 de l\u2019\u00eele est une anti-soci\u00e9t\u00e9.",corriger:"Verbe central. L\u2019objectif n\u2019est pas de punir mais de corriger."}
+        },
+        nature: {
+          intro: "Le th\u00e8me Nature est peu d\u00e9velopp\u00e9.",
+          mots: {\u00eele:"Espace philosophique, non pittoresque.",mer:"Entoure l\u2019\u00eele, l\u2019isole.",rivage:"Moment de la transformation.",c\u00f4te:"Fronti\u00e8re symbolique.",naufrage:"D\u00e9clenche tout.",ciel:"Invoqu\u00e9 dans les moments d\u2019\u00e9motion."}
+        }
+      },
+      paires: [
+        {cles:["pouvoir","liberte"], score:5,
+         interpretation:"Arc invers\u00e9 fondamental\u00a0: Pouvoir s\u2019effondre de 85 \u00e0 25 (phases 1\u21924) quand les esclaves prennent le contr\u00f4le. Libert\u00e9 grimpe en miroir. Deux croisements encadrent le climax."},
+        {cles:["identite","pouvoir"], score:4,
+         interpretation:"Identit\u00e9 monte quand Pouvoir descend. Croisement en phase\u00a03\u00a0: le moment du renversement actif."},
+        {cles:["amour","societe"], score:3,
+         interpretation:"Soci\u00e9t\u00e9 reste \u00e9lev\u00e9. Amour monte dans les derni\u00e8res phases\u00a0\u2014 la r\u00e9conciliation."}
+      ],
+      source: 'modelisation_ia',
+      fiabilite: 82
+    }
+  }
+
+,
+  // ── CALIGULA ─────────────────────────────────────────
+  {
+    id: 'liv_demo_07',
+    titre: 'Caligula',
+    auteur: 'Albert Camus',
+    genre: 'Drame\u00a0/ Th\u00e9\u00e2tre de l\'absurde',
+    pages: '160',
+    annee: 'XXe si\u00e8cle \u2014 1944',
+    dateCreation: '06/04/2026',
+    tsCreation: 1744070400000,
+    contexte: "Caligula est \u00e9crit entre 1937 et 1941, cr\u00e9\u00e9 \u00e0 Paris en 1944 sous l\u2019Occupation.\\n\\nCamus s\u2019appuie sur les Vies des douze C\u00e9sars de Su\u00e9tone, mais transforme profond\u00e9ment le personnage. Son Caligula est un philosophe qui a d\u00e9couvert que les hommes meurent et ne sont pas heureux.\\n\\nLa pi\u00e8ce appartient au cycle de l\u2019Absurde de Camus, avec L\u2019\u00c9tranger et Le Mythe de Sisyphe.",
+    auteurVie: "Albert Camus (1913\u20131960) na\u00eet \u00e0 Mondovi, en Alg\u00e9rie, dans une famille pauvre.\\n\\nIl s\u2019oriente vers le journalisme et le th\u00e9\u00e2tre. C\u2019est \u00e0 Alger, en fondant la troupe du Th\u00e9\u00e2tre du Travail, qu\u2019il commence \u00e0 \u00e9crire Caligula.\\n\\nPrix Nobel de litt\u00e9rature en 1957. Il meurt dans un accident de voiture en 1960.",
+    trajectoire: "Caligula est la premi\u00e8re pi\u00e8ce majeure de Camus.\\n\\nL\u2019\u00c9tranger et Le Mythe de Sisyphe (1942) d\u00e9veloppent la m\u00eame probl\u00e9matique. La Peste (1947) et L\u2019Homme r\u00e9volt\u00e9 (1951) proposeront une autre r\u00e9ponse\u00a0: la solidarit\u00e9 humaine.",
+    courant: "Camus appartient au courant existentialiste-absurde, distinct de l\u2019existentialisme sartrien.\\n\\nLe th\u00e9\u00e2tre de Camus est influenc\u00e9 par la trag\u00e9die grecque et par Nietzsche.\\n\\nLa pi\u00e8ce dialogue avec Sartre (Huis clos, 1944)\u00a0: m\u00eame contexte, m\u00eame question, r\u00e9ponses diff\u00e9rentes.",
+    style: "Le style de Camus oscille entre la langue classique et le dialogue philosophique direct.\\n\\nCaligula parle en aphorismes\u00a0: \u2018Les hommes meurent et ils ne sont pas heureux.\u2019\\n\\nLa structure en 4 actes respecte la forme classique de la trag\u00e9die.",
+    personnages: [
+      {id:'ent_cal_01', nom:'Caligula', couleur:'#C62828',
+       notes:"Empereur romain. Apr\u00e8s la mort de sa s\u0153ur Drusilla, il d\u00e9couvre la v\u00e9rit\u00e9 absurde et d\u00e9cide d\u2019en tirer les cons\u00e9quences jusqu\u2019au bout."},
+      {id:'ent_cal_02', nom:'Cherea', couleur:'#1565C0',
+       notes:"Patricien, ancien ami. Il organise la conjuration non par morale mais par pragmatisme."},
+      {id:'ent_cal_03', nom:'Caesonia', couleur:'#6A1B9A',
+       notes:"Ma\u00eetresse de Caligula. Elle l\u2019aime vraiment. Caligula la tue \u00e0 la fin."},
+      {id:'ent_cal_04', nom:'Helicon', couleur:'#2E7D32',
+       notes:"Affranchi, serviteur fid\u00e8le. Figure de la complicit\u00e9 aveugle."},
+      {id:'ent_cal_05', nom:'Scipio', couleur:'#E65100',
+       notes:"Jeune po\u00e8te, fils d\u2019une victime. Il comprend Caligula mieux que personne."}
+    ],
+    lieux: [
+      {id:'lx_cal_01', nom:'Le palais imp\u00e9rial', couleur:'#C62828',
+       notes:"Espace du pouvoir absolu. Tout se passe dans ce lieu ferm\u00e9, clos sur lui-m\u00eame comme la logique de Caligula."},
+      {id:'lx_cal_02', nom:'La chambre de Drusilla', couleur:'#6A1B9A',
+       notes:"Espace absent. Mais c\u2019est l\u00e0 que Caligula a compris que les \u00eatres aim\u00e9s meurent."}
+    ],
+    citations: [
+      {id:'cit_cal_01',texte:"Les hommes meurent et ils ne sont pas heureux.",ref:'Caligula, Acte\u00a0I',theme:'Identit\u00e9 / Qu\u00eate',procede:'Aphorisme',interpretation:"Phrase-programme de la pi\u00e8ce. Formulation de la v\u00e9rit\u00e9 absurde dans sa forme la plus nue. Usage\u00a0: point de d\u00e9part de toute analyse.",importance:3},
+      {id:'cit_cal_02',texte:"Je veux la lune.",ref:'Caligula, Acte\u00a0I',theme:'Libert\u00e9 / D\u00e9terminisme',procede:'M\u00e9taphore',interpretation:"Caligula demande l\u2019impossible pour tester jusqu\u2019o\u00f9 le pouvoir peut aller. Usage\u00a0: argument sur la logique nihiliste.",importance:3},
+      {id:'cit_cal_03',texte:"Il n\u2019y a qu\u2019une fa\u00e7on de s\u2019\u00e9galer aux dieux\u00a0: \u00eatre aussi cruel qu\u2019eux.",ref:'Caligula, Acte\u00a0II',theme:'Pouvoir / Domination',procede:'Raisonnement par analogie',interpretation:"Caligula justifie sa cruaut\u00e9 par une logique implacable. Usage\u00a0: argument sur le nihilisme.",importance:3},
+      {id:'cit_cal_04',texte:"Si tu ne peux pas \u00eatre libre avec moi, tu ne peux pas l\u2019\u00eatre du tout.",ref:'Caligula, Acte\u00a0III',theme:'Libert\u00e9 / D\u00e9terminisme',procede:'Paradoxe',interpretation:"Caligula red\u00e9finit la libert\u00e9\u00a0: la vraie libert\u00e9 est de s\u2019affranchir de toute morale.",importance:2},
+      {id:'cit_cal_05',texte:"J\u2019ai besoin de la lune, ou du bonheur, ou de l\u2019immortalit\u00e9.",ref:'Caligula, Acte\u00a0I',theme:'Identit\u00e9 / Qu\u00eate',procede:'\u00c9num\u00e9ration',interpretation:"La liste r\u00e9v\u00e8le ce que Caligula cherche vraiment\u00a0: non le pouvoir, mais quelque chose d\u2019absolu.",importance:2},
+      {id:'cit_cal_06',texte:"Caligula est mort. Je suis vivant.",ref:'Caligula, Acte\u00a0IV',theme:'Identit\u00e9 / Qu\u00eate',procede:'Antith\u00e8se',interpretation:"Derni\u00e8res paroles. Il reconna\u00eet son \u00e9chec mais affirme qu\u2019il a exist\u00e9 pleinement. Usage\u00a0: conclusion de toute analyse.",importance:3}
+    ],
+    comprehension: "Caligula est une pi\u00e8ce philosophique d\u00e9guis\u00e9e en drame historique.\\n\\nCaligula choisit la r\u00e9ponse nihiliste\u00a0: puisque tout est absurde, tout est permis. Mais Camus ne valide pas cette r\u00e9ponse.\\n\\nCaligula \u00e9choue\u00a0: il n\u2019a pas trouv\u00e9 la lune. Sa r\u00e9volte est une impasse.",
+    schemaType: 'moderne',
+    narration: {
+      nar_m1: "Mort de Drusilla. Caligula dispara\u00eet apr\u00e8s la mort de sa s\u0153ur bien-aim\u00e9e. Son absence dit sa transformation int\u00e9rieure.",
+      nar_m2: "Le retour et la r\u00e9v\u00e9lation. Caligula revient transform\u00e9. Il annonce la v\u00e9rit\u00e9 absurde. Il veut la lune.",
+      nar_m3: "La terreur commence. Caligula use de son pouvoir de fa\u00e7on arbitraire. Confiscations, meurtres, humiliations.",
+      nar_m4: "Le th\u00e9\u00e2tre du pouvoir. Caligula joue \u00e0 la d\u00e9esse V\u00e9nus, force les patriciens \u00e0 participer.",
+      nar_m5: "La r\u00e9sistance s\u2019organise. Cherea comprend que la conjuration est n\u00e9cessaire.",
+      nar_m6: "La confrontation avec Scipio. Deux intelligences qui se comprennent mais ne peuvent pas coexister.",
+      nar_m7: "La conjuration se resserre. Caligula sait qu\u2019il va mourir. Il tue Caesonia.",
+      nar_m8: "L\u2019assassinat. Les conjur\u00e9s frappent. Caligula crie\u00a0: \u2018Je suis encore vivant.\u2019"
+    },
+    redacType: 'argument',
+    redac: {
+      redac_a1: "En 1944, Camus pr\u00e9sente Caligula. La pi\u00e8ce raconte la transformation d\u2019un empereur apr\u00e8s la mort de sa s\u0153ur\u00a0: de la douleur na\u00eet une logique nihiliste qui conduit \u00e0 la tyrannie absolue.",
+      redac_a2: "Caligula n\u2019est pas fou \u2014 il est logique. Sa pr\u00e9misse\u00a0: les hommes meurent et ne sont pas heureux. Sa conclusion\u00a0: si rien n\u2019a de sens, tout est permis.",
+      redac_a3: "Mais Camus ne valide pas cette r\u00e9ponse. Caligula \u00e9choue sur tous les plans\u00a0: il n\u2019a pas obtenu la lune et a cr\u00e9\u00e9 une souffrance inutile.",
+      redac_a4: "La vraie le\u00e7on de Caligula est n\u00e9gative. L\u2019alternative, Camus la formulera dans La Peste\u00a0: la solidarit\u00e9 humaine comme r\u00e9ponse \u00e0 l\u2019absence de sens."
+    },
+    dissertation: {
+      sujet:  "En quoi Caligula est-il une r\u00e9flexion sur les limites de la libert\u00e9\u00a0?",
+      intro:  "En 1944, Albert Camus pr\u00e9sente Caligula. L\u2019empereur, apr\u00e8s la mort de Drusilla, d\u00e9cide d\u2019user de son pouvoir illimit\u00e9 pour d\u00e9montrer une v\u00e9rit\u00e9 absurde.",
+      arg1:   "D\u2019abord, Caligula pousse la libert\u00e9 \u00e0 son paroxysme\u00a0: son r\u00e8gne est une exp\u00e9rience philosophique sur les cons\u00e9quences de la libert\u00e9 absolue.",
+      arg2:   "Mais cette libert\u00e9 absolue se transforme en son contraire\u00a0: elle asservit les autres et finalement Caligula lui-m\u00eame.",
+      arg3:   "La pi\u00e8ce sugg\u00e8re que la vraie libert\u00e9 suppose des limites morales pour permettre la coexistence.",
+      conclu: "Caligula est une r\u00e9flexion sur l\u2019impossibilit\u00e9 de la libert\u00e9 absolue. En montrant son \u00e9chec, Camus affirme que l\u2019alternative au nihilisme est la solidarit\u00e9."
+    },
+    dissertation2: {
+      sujet:         "En quoi Caligula est-il une r\u00e9flexion sur les limites de la libert\u00e9\u00a0?",
+      motsCles:      "\u00ab R\u00e9flexion \u00bb = question philosophique sans r\u00e9ponse simple. \u00ab Libert\u00e9 \u00bb = double sens\u00a0: politique et philosophique. \u00ab Limites \u00bb = morale, autrui, logique interne.",
+      reformulation: "Comment Camus utilise-t-il Caligula pour montrer que la libert\u00e9 absolue se retourne contre elle-m\u00eame\u00a0?",
+      typePlan:      "Plan dialectique. I. Caligula incarne une libert\u00e9 absolue. II. Cette libert\u00e9 se d\u00e9truit elle-m\u00eame. III. Une autre d\u00e9finition de la libert\u00e9 en creux.",
+      accroche:      "\u2018Les hommes meurent et ils ne sont pas heureux\u2019\u00a0: cette phrase au premier acte est la pr\u00e9misse de toute la pi\u00e8ce.",
+      introSuite:    "Nous nous demanderons comment Camus utilise Caligula pour r\u00e9fl\u00e9chir aux limites de la libert\u00e9.",
+      p1arg:         "Caligula dispose d\u2019une libert\u00e9 absolue et d\u00e9cide d\u2019en user jusqu\u2019au bout.",
+      p1ex:          "Il tue arbitrairement, force les patriciens \u00e0 des humiliations publiques. Dans la sc\u00e8ne de la d\u00e9esse V\u00e9nus, il joue \u00e0 \u00eatre un dieu.",
+      p1ana:         "Cette libert\u00e9 est une exp\u00e9rience philosophique en acte. Si tout est permis, il faut tout essayer.",
+      p2arg:         "Mais cette libert\u00e9 se retourne contre elle-m\u00eame\u00a0: elle isole Caligula et ne lui donne pas ce qu\u2019il cherchait.",
+      p2ex:          "Caligula reconna\u00eet son \u00e9chec\u00a0: \u2018Je n\u2019ai pas pris le chemin qu\u2019il fallait.\u2019",
+      p2ana:         "La libert\u00e9 nihiliste est une impasse\u00a0: elle d\u00e9truit autrui et celui qui l\u2019exerce.",
+      p3arg:         "La pi\u00e8ce sugg\u00e8re une autre libert\u00e9\u00a0: celle qui reconna\u00eet les autres comme limites n\u00e9cessaires.",
+      p3ex:          "Cherea organise la conjuration non par morale mais par n\u00e9cessit\u00e9 pratique.",
+      p3ana:         "La vraie libert\u00e9 \u2014 que Camus d\u00e9veloppera dans L\u2019Homme r\u00e9volt\u00e9 \u2014 est d\u00e9finie par des limites consenties.",
+      bilan:         "Caligula est une d\u00e9monstration par l\u2019absurde que la libert\u00e9 absolue est une impasse.",
+      reponse:       "Camus utilise Caligula pour montrer que la libert\u00e9 sans limite se transforme en esclavage de la logique nihiliste.",
+      ouverture:     "On peut mettre cette pi\u00e8ce en regard de Huis clos de Sartre (1944)\u00a0: m\u00eame interrogation sur la libert\u00e9, r\u00e9ponse diff\u00e9rente."
+    },
+    temps2: {
+      ordre:    "Chronologique avec quelques anachronies l\u00e9g\u00e8res. La pi\u00e8ce commence apr\u00e8s la mort de Drusilla.",
+      duree:    "La pi\u00e8ce couvre plusieurs ann\u00e9es du r\u00e8gne compress\u00e9es. Les sc\u00e8nes cl\u00e9s sont dilat\u00e9es.",
+      frequence:"Les meurtres sont \u00e9voqu\u00e9s au singulier mais valent pour une s\u00e9rie.",
+      espace:   "Espace unique\u00a0: le palais imp\u00e9rial. Espace ferm\u00e9 qui mime l\u2019enfermement de la logique de Caligula."
+    },
+    lineaire: {
+      intro1: "Caligula est un drame en 4 actes d\u2019Albert Camus, cr\u00e9\u00e9 \u00e0 Paris en septembre 1944. Il appartient au cycle de l\u2019Absurde.",
+      intro2: "L\u2019extrait \u00e9tudi\u00e9 est la sc\u00e8ne d\u2019ouverture de l\u2019Acte I \u2014 le retour de Caligula et sa r\u00e9v\u00e9lation aux patriciens.",
+      intro3: "Par quels proc\u00e9d\u00e9s Camus transforme-t-il le retour d\u2019un tyran en r\u00e9v\u00e9lation philosophique\u00a0?",
+      intro4: "Ton calme et d\u00e9finitif pour Caligula. La certitude philosophique est plus d\u00e9rangeante que la fureur.",
+      intro5: "Mvt\u00a01 \u2014 L\u2019absence et le retour \/ Mvt\u00a02 \u2014 La r\u00e9v\u00e9lation \/ Mvt\u00a03 \u2014 L\u2019annonce du programme",
+      mvts: [
+        {titre:"Mvt\u00a01 \u2014 L\u2019absence et le retour",
+         texte:"Les patriciens s\u2019inqui\u00e8tent de l\u2019absence de Caligula.\\n\u2192 Ch\u0153ur quasi-tragique.\\n\u2192 L\u2019attente cr\u00e9e l\u2019attention."},
+        {titre:"Mvt\u00a02 \u2014 La r\u00e9v\u00e9lation",
+         texte:"Caligula revient et formule sa v\u00e9rit\u00e9.\\n\u2192 Aphorisme programmatique.\\n\u2192 Pas de rh\u00e9torique\u00a0: il constate."},
+        {titre:"Mvt\u00a03 \u2014 L\u2019annonce du programme",
+         texte:"Caligula dit qu\u2019il veut la lune.\\n\u2192 M\u00e9taphore du d\u00e9sir absolu.\\n\u2192 Paradoxe\u00a0: un homme qui a tout ne veut que ce qu\u2019il ne peut pas avoir."}
+      ],
+      conclu1: "Camus construit une sc\u00e8ne d\u2019ouverture qui est simultan\u00e9ment un retour dramatique et une r\u00e9v\u00e9lation philosophique.",
+      conclu2: "On peut rapprocher cette sc\u00e8ne du d\u00e9but de L\u2019\u00c9tranger\u00a0: \u2018Aujourd\u2019hui, maman est morte.\u2019"
+    },
+    commentaire: {
+      amorce: "En 1942, Camus publie L\u2019\u00c9tranger et Le Mythe de Sisyphe. Deux ans plus tard, Caligula monte sur sc\u00e8ne.",
+      presentation: "Albert Camus (1913\u20131960) est l\u2019auteur de Caligula, drame en 4 actes cr\u00e9\u00e9 en 1944.",
+      problematique: "Comment Camus fait-il de la tyrannie de Caligula une d\u00e9monstration philosophique sur l\u2019absurde\u00a0?",
+      plan: "Nous \u00e9tudierons Caligula comme philosophe nihiliste (I), puis l\u2019\u00e9chec de la r\u00e9volte (II), enfin la libert\u00e9 solidaire comme horizon (III).",
+      axes: [
+        {titre:"I \u2014 Caligula, philosophe nihiliste",
+         texte:"Caligula n\u2019est pas un monstre irrationnel \u2014 c\u2019est un philosophe.\\n\u2192 La formule programmatique.\\n\u2192 Les aphorismes\u00a0: style philosophique."},
+        {titre:"II \u2014 L\u2019\u00e9chec de la r\u00e9volte nihiliste",
+         texte:"Caligula ne trouve pas la lune.\\n\u2192 L\u2019isolement progressif.\\n\u2192 La reconnaissance finale."},
+        {titre:"III \u2014 La libert\u00e9 solidaire comme horizon",
+         texte:"En montrant l\u2019\u00e9chec de Caligula, Camus esquisse une autre r\u00e9ponse.\\n\u2192 Scipio\u00a0: il comprend mais refuse de suivre.\\n\u2192 La solidarit\u00e9\u00a0: La Peste (1947)."}
+      ],
+      bilan: "Caligula est une d\u00e9monstration philosophique en forme de trag\u00e9die.",
+      ouverture: "On peut mettre Caligula en regard de L\u2019Homme r\u00e9volt\u00e9 (1951)\u00a0: la r\u00e9volte juste est solidaire, non solitaire."
+    },
+    themes: {
+      amour:    "L\u2019amour est omnipr\u00e9sent et douloureux. Caligula aimait Drusilla. Caesonia aime Caligula d\u2019un amour total. Scipio aime Caligula intellectuellement. La logique nihiliste d\u00e9truit tous ces liens.",
+      pouvoir:  "Le pouvoir est le v\u00e9hicule philosophique de Caligula. Il l\u2019utilise comme instrument d\u2019investigation.",
+      liberte:  "La libert\u00e9 est le th\u00e8me central. Caligula incarne la libert\u00e9 absolue \u2014 et d\u00e9montre qu\u2019elle est une impasse.",
+      identite: "L\u2019identit\u00e9 de Caligula est en crise depuis la mort de Drusilla. L\u2019identit\u00e9 ne se construit pas par la destruction.",
+      societe:  "La soci\u00e9t\u00e9 dans Caligula est le patriciat romain. Sa r\u00e9sistance finit par s\u2019organiser par n\u00e9cessit\u00e9.",
+      nature:   "La nature est quasi absente. Seule la lune existe comme symbole\u00a0: l\u2019impossible."
+    },
+    lexique: {
+      phases: [
+        {pageDebut:1,   nom:"La mort de Drusilla \u2014 d\u00e9clencheur"},
+        {pageDebut:21,  nom:"Le retour \u2014 r\u00e9v\u00e9lation de l\u2019absurde"},
+        {pageDebut:41,  nom:"La terreur \u2014 logique nihiliste en acte"},
+        {pageDebut:61,  nom:"Le th\u00e9\u00e2tre du pouvoir \u2014 V\u00e9nus"},
+        {pageDebut:81,  nom:"La r\u00e9sistance \u2014 Cherea organise"},
+        {pageDebut:101, nom:"Scipio \u2014 l\u2019ami qui comprend"},
+        {pageDebut:121, nom:"La conjuration se resserre"},
+        {pageDebut:141, nom:"L\u2019assassinat \u2014 \u2018Je suis encore vivant\u2019"}
+      ],
+      tranches: [
+        {pageDebut:1,   pageFin:20,  amour:85, pouvoir:50, liberte:40, identite:60, societe:45, nature:30},
+        {pageDebut:21,  pageFin:40,  amour:40, pouvoir:75, liberte:65, identite:80, societe:35, nature:20},
+        {pageDebut:41,  pageFin:60,  amour:25, pouvoir:90, liberte:30, identite:75, societe:60, nature:15},
+        {pageDebut:61,  pageFin:80,  amour:35, pouvoir:95, liberte:20, identite:85, societe:55, nature:10},
+        {pageDebut:81,  pageFin:100, amour:30, pouvoir:80, liberte:60, identite:70, societe:65, nature:15},
+        {pageDebut:101, pageFin:120, amour:50, pouvoir:70, liberte:55, identite:90, societe:45, nature:25},
+        {pageDebut:121, pageFin:140, amour:25, pouvoir:75, liberte:50, identite:80, societe:70, nature:20},
+        {pageDebut:141, pageFin:160, amour:20, pouvoir:65, liberte:70, identite:95, societe:60, nature:15}
+      ],
+      champLexical: {
+        amour:    [{mot:"Drusilla",n:28},{mot:"aimer",n:22},{mot:"Caesonia",n:18},{mot:"tendresse",n:10},{mot:"deuil",n:8},{mot:"larmes",n:6}],
+        pouvoir:  [{mot:"C\u00e9sar",n:45},{mot:"imp\u00e9rial",n:30},{mot:"ordre",n:28},{mot:"mourir",n:24},{mot:"tuer",n:22},{mot:"arbitraire",n:14}],
+        liberte:  [{mot:"lune",n:18},{mot:"impossible",n:16},{mot:"vouloir",n:14},{mot:"libre",n:12},{mot:"absurde",n:10},{mot:"tout",n:8}],
+        identite: [{mot:"hommes",n:42},{mot:"v\u00e9rit\u00e9",n:35},{mot:"comprendre",n:28},{mot:"logique",n:22},{mot:"moi",n:18},{mot:"sens",n:16},{mot:"n\u00e9ant",n:12}],
+        societe:  [{mot:"patriciens",n:32},{mot:"Rome",n:28},{mot:"conjuration",n:20},{mot:"r\u00e9sistance",n:16},{mot:"peur",n:14},{mot:"loi",n:10}],
+        nature:   [{mot:"lune",n:12},{mot:"ciel",n:8},{mot:"nuit",n:7},{mot:"\u00e9toiles",n:5},{mot:"soleil",n:4}]
+      },
+      justifications: {
+        amour: {
+          intro: "Le th\u00e8me Amour dans Caligula est domin\u00e9 par la figure de Drusilla \u2014 absente physiquement mais omnipr\u00e9sente symboliquement.",
+          mots: {Drusilla:"La s\u0153ur aim\u00e9e. Sa mort est le traumatisme fondateur.",aimer:"Caligula aimait, et cet amour s\u2019est transform\u00e9 en n\u00e9ant.",Caesonia:"Elle aime Caligula sans illusion. Son amour est une forme de courage.",tendresse:"Rare\u00a0\u2014 marque les moments o\u00f9 la logique c\u00e8de \u00e0 l\u2019humain.",deuil:"Le deuil de Drusilla ne se r\u00e8gle jamais. Il se transforme en philosophie.",larmes:"Les larmes de Scipio marquent la sc\u00e8ne la plus \u00e9mouvante."}
+        },
+        pouvoir: {
+          intro: "Le Pouvoir dans Caligula n\u2019est pas une fin \u2014 c\u2019est un outil d\u2019investigation philosophique.",
+          mots: {C\u00e9sar:"Titre du pouvoir absolu. Aucune loi au-dessus de lui.",imp\u00e9rial:"Adjectif de la toute-puissance.",ordre:"Les ordres de Caligula sont toujours paradoxaux.",mourir:"Verbe central. La mort est l\u2019instrument de d\u00e9monstration.",tuer:"Acte physique de la puissance absolue. Caligula tue sans haine.",arbitraire:"Mot-cl\u00e9 de la philosophie de Caligula."}
+        },
+        liberte: {
+          intro: "La Libert\u00e9 dans Caligula est d\u00e9finie par son exc\u00e8s. La lune est le symbole de l\u2019impossible.",
+          mots: {lune:"Symbole de l\u2019impossible d\u00e9sir.",impossible:"Ce mot d\u00e9finit la qu\u00eate de Caligula.",vouloir:"Verbe de la volont\u00e9 nihiliste. Caligula \u2018veut\u2019 mais le monde ne r\u00e9pond pas.",libre:"Caligula est \u2018libre\u2019 au sens politique mais emprisonn\u00e9 dans sa logique.",absurde:"Mot camussien par excellence.",tout:"Caligula veut \u2018tout\u2019\u00a0\u2014 d\u00e9finition et limite de la libert\u00e9 absolue."}
+        },
+        identite: {
+          intro: "L\u2019Identit\u00e9 est le th\u00e8me dominant. Qui est Caligula apr\u00e8s Drusilla\u00a0?",
+          mots: {hommes:"Mot g\u00e9n\u00e9rique cl\u00e9. Caligula parle des \u2018hommes\u2019 en g\u00e9n\u00e9ral.",v\u00e9rit\u00e9:"Caligula croit avoir trouv\u00e9 la v\u00e9rit\u00e9. Elle est son identit\u00e9 nouvelle.",comprendre:"Verbe de la qu\u00eate intellectuelle.",logique:"L\u2019armure identitaire de Caligula.",moi:"Caligula parle peu \u00e0 la premi\u00e8re personne.",sens:"L\u2019absence de sens est ce que Caligula a d\u00e9couvert.",n\u00e9ant:"Le n\u00e9ant est ce qui reste apr\u00e8s l\u2019absurde."}
+        },
+        societe: {
+          intro: "La Soci\u00e9t\u00e9 dans Caligula est le patriciat romain \u2014 pragmatique, non h\u00e9ro\u00efque.",
+          mots: {patriciens:"La classe qui subit la terreur. Elle r\u00e9siste quand elle n\u2019en peut plus.",Rome:"La cit\u00e9 comme cadre. Elle existe comme menace permanente.",conjuration:"L\u2019organisation de la r\u00e9sistance. Une n\u00e9cessit\u00e9 pratique.",r\u00e9sistance:"Cherea r\u00e9siste non par morale mais par survie.",peur:"La peur structure la soci\u00e9t\u00e9 sous Caligula.",loi:"La loi est suspendue sous Caligula."}
+        },
+        nature: {
+          intro: "La Nature est presque absente. Seule la lune existe comme symbole naturel.",
+          mots: {lune:"Le seul \u00e9l\u00e9ment naturel qui compte.",ciel:"Le ciel est invoqu\u00e9 comme espace de l\u2019impossible absolu.",nuit:"La nuit est le temps de la terreur.",\u00e9toiles:"Repr\u00e9sentent ce qui est au-del\u00e0 de la port\u00e9e humaine.",soleil:"Rare. L\u2019absence dit l\u2019enfermement."}
+        }
+      },
+      paires: [
+        {cles:["pouvoir","amour"], score:5,
+         interpretation:"Arc invers\u00e9 dramatiquement fort\u00a0: Amour part tr\u00e8s haut (85) et s\u2019effondre. Pouvoir monte en miroir. Le croisement en phase\u00a02 dit la transformation de Caligula."},
+        {cles:["identite","liberte"], score:4,
+         interpretation:"Identit\u00e9 domine tout au long. Libert\u00e9 forme un U\u00a0: haute, effondr\u00e9e au c\u0153ur du r\u00e8gne, remonte \u00e0 la fin."},
+        {cles:["amour","societe"], score:3,
+         interpretation:"Amour descend pendant que Soci\u00e9t\u00e9 monte\u00a0: plus Caligula se coupe de l\u2019affectif, plus la r\u00e9sistance s\u2019organise."}
+      ],
+      source: 'modelisation_ia',
+      fiabilite: 80
+    }
+  }
+
+,
+  // ── LA CONTROVERSE DE VALLADOLID ────────────────────
+  {
+    id: 'liv_demo_08',
+    titre: 'La Controverse de Valladolid',
+    auteur: 'Jean-Claude Carri\u00e8re',
+    genre: 'Th\u00e9\u00e2tre\u00a0/ R\u00e9cit historique',
+    pages: '120',
+    annee: 'XXe si\u00e8cle \u2014 1992',
+    dateCreation: '06/04/2026',
+    tsCreation: 1744070400000,
+    contexte: "La Controverse de Valladolid est publi\u00e9e en 1992 pour marquer le 500e anniversaire de la d\u00e9couverte de l\u2019Am\u00e9rique.\\n\\nCarri\u00e8re s\u2019empare d\u2019un fait historique r\u00e9el\u00a0: le d\u00e9bat de Valladolid (1550\u20131551), convoquant la question des Indiens d\u2019Am\u00e9rique ont-ils une \u00e2me ?\\n\\nC\u2019est le premier grand d\u00e9bat occidental sur les droits de l\u2019homme.",
+    auteurVie: "Jean-Claude Carri\u00e8re (1931\u20132021) est l\u2019un des sc\u00e9naristes les plus importants du cin\u00e9ma fran\u00e7ais. Il collabore pendant trente ans avec Luis Bu\u00f1uel.\\n\\nIl traduit des \u0153uvres du sanskrit et s\u2019int\u00e9resse aux grandes questions philosophiques de l\u2019humanit\u00e9.\\n\\nLa Controverse est adapt\u00e9e pour la t\u00e9l\u00e9vision en 1992.",
+    trajectoire: "La pièce s\u2019inscrit dans la r\u00e9flexion philosophique de Carri\u00e8re sur les grandes questions morales.\\n\\nElle a connu un succ\u00e8s durable au th\u00e9\u00e2tre et dans l\u2019enseignement secondaire.",
+    courant: "Carri\u00e8re appartient \u00e0 la tradition du th\u00e9\u00e2tre d\u2019id\u00e9es. On peut le rapprocher de Brecht et de Voltaire.\\n\\nLa pi\u00e8ce est aussi un exercice de rh\u00e9torique\u00a0: les deux camps d\u00e9veloppent un syst\u00e8me argumentatif coh\u00e9rent.",
+    style: "Le style est sobre et direct. Les arguments sont expos\u00e9s clairement.\\n\\nLa structure est celle d\u2019un proc\u00e8s\u00a0: un arbitre, deux d\u00e9fenseurs, des t\u00e9moins.\\n\\nCarri\u00e8re utilise aussi le comique comme technique brechtienne.",
+    personnages: [
+      {id:'ent_vll_01', nom:'Bartolom\u00e9 de Las Casas', couleur:'#1565C0',
+       notes:"\u00c9v\u00eaque dominicain, d\u00e9fenseur des Indiens. Il a v\u00e9cu parmi eux. Argumentaire\u00a0: les Indiens ont une \u00e2me. Personnage de la compassion empirique."},
+      {id:'ent_vll_02', nom:'Juan Gin\u00e9s de Sep\u00falveda', couleur:'#C62828',
+       notes:"Th\u00e9ologien aristot\u00e9licien. Il n\u2019a jamais \u00e9t\u00e9 en Am\u00e9rique. Argumentaire\u00a0: les Indiens sont naturellement inf\u00e9rieurs. Personnage de la logique abstraite."},
+      {id:'ent_vll_03', nom:'Le Cardinal L\u00e9gat', couleur:'#E65100',
+       notes:"Repr\u00e9sentant du pape, arbitre du d\u00e9bat. Il incarne la difficult\u00e9 de juger."},
+      {id:'ent_vll_04', nom:"L\u2019Indien", couleur:'#2E7D32',
+       notes:"Personnage muet puis parlant. Sa pr\u00e9sence physique court-circuite tous les arguments."},
+      {id:'ent_vll_05', nom:"Le Moine", couleur:'#6A1B9A',
+       notes:"Il a v\u00e9cu avec les Indiens et apporte des t\u00e9moignages concrets."}
+    ],
+    lieux: [
+      {id:'lx_vll_01', nom:'La salle du d\u00e9bat, Valladolid', couleur:'#E65100',
+       notes:"Espace clos, solennel. Le d\u00e9bat contraste avec l\u2019immensit\u00e9 du monde am\u00e9ricain."},
+      {id:'lx_vll_02', nom:"L\u2019Am\u00e9rique \u2014 espace imaginaire", couleur:'#2E7D32',
+       notes:"Pr\u00e9sente dans les discours, absente physiquement. L\u2019Am\u00e9rique est un espace de fantasmes."}
+    ],
+    citations: [
+      {id:'cit_vll_01',texte:"Ces Indiens sont des esclaves par nature, comme l\u2019affirme Aristote.",ref:'Sep\u00falveda, sc.\u00a02',theme:'Pouvoir / Domination',procede:'Argument d\u2019autorit\u00e9',interpretation:"Sep\u00falveda mobilise Aristote pour l\u00e9gitimer l\u2019esclavage. Usage\u00a0: argument sur la rh\u00e9torique de la colonisation.",importance:3},
+      {id:'cit_vll_02',texte:"J\u2019ai vu leurs larmes. Cela suffit.",ref:'Las Casas',theme:'Identit\u00e9 / Qu\u00eate',procede:'Argument par le t\u00e9moignage',interpretation:"Las Casas oppose l\u2019exp\u00e9rience directe \u00e0 la th\u00e9orie abstraite. Usage\u00a0: argument sur les limites de la raison pure.",importance:3},
+      {id:'cit_vll_03',texte:"Si ces Indiens n\u2019ont pas d\u2019\u00e2me, nous pouvons en user comme de b\u00eates.",ref:'Sep\u00falveda',theme:'Soci\u00e9t\u00e9 / Critique',procede:'Raisonnement hypoth\u00e9tique',interpretation:"Sep\u00falveda formule la cons\u00e9quence logique de sa th\u00e8se. Usage\u00a0: argument sur la fonction id\u00e9ologique de la th\u00e9ologie.",importance:3},
+      {id:'cit_vll_04',texte:"L\u2019Indien pleure. Il est donc humain.",ref:'Las Casas',theme:'Identit\u00e9 / Qu\u00eate',procede:'Syllogisme par l\u2019\u00e9motion',interpretation:"Syllogisme bas\u00e9 sur l\u2019\u00e9motion. Usage\u00a0: argument sur les limites du rationalisme.",importance:3},
+      {id:'cit_vll_05',texte:"Nous ne parlons pas de leur bonheur. Nous parlons de leur utilit\u00e9.",ref:'Sep\u00falveda',theme:'Pouvoir / Domination',procede:'Distinction lexicale',interpretation:"Sep\u00falveda r\u00e9v\u00e8le la vraie logique coloniale. Usage\u00a0: argument central sur la d\u00e9shumanisation.",importance:3},
+      {id:'cit_vll_06',texte:"La controverse reste ouverte. La question reste enti\u00e8re.",ref:'Le Cardinal',theme:'Libert\u00e9 / D\u00e9terminisme',procede:'Suspension du jugement',interpretation:"Le Cardinal ne tranche pas. Usage\u00a0: conclusion sur l\u2019actualit\u00e9 du d\u00e9bat.",importance:2}
+    ],
+    comprehension: "La Controverse met en sc\u00e8ne un d\u00e9bat dont l\u2019issue est connue \u2014 et pourtant suspendue.\\n\\nLa vraie victoire de Las Casas n\u2019est pas argumentative mais \u00e9motionnelle\u00a0: la pr\u00e9sence physique de l\u2019Indien court-circuite tous les raisonnements abstraits.\\n\\nLa pi\u00e8ce reste d\u2019une actualit\u00e9 troublante.",
+    schemaType: 'moderne',
+    narration: {
+      nar_m1: "Le contexte colonial. L\u2019Am\u00e9rique est d\u00e9couverte depuis 1492. Charles Quint convoque un d\u00e9bat pour l\u00e9gitimer la colonisation.",
+      nar_m2: "Les arguments de Sep\u00falveda. Th\u00e8se aristot\u00e9licienne\u00a0: certains hommes sont naturellement inf\u00e9rieurs.",
+      nar_m3: "Les arguments de Las Casas. Il oppose le t\u00e9moignage direct \u00e0 la th\u00e9orie abstraite.",
+      nar_m4: "L\u2019arriv\u00e9e de l\u2019Indien. Coup de th\u00e9\u00e2tre\u00a0: un Indien est amen\u00e9 dans la salle.",
+      nar_m5: "Le d\u00e9bat th\u00e9ologique. La question se d\u00e9place\u00a0: si les Indiens ont une \u00e2me, faut-il les convertir de force\u00a0?",
+      nar_m6: "Les h\u00e9sitations du Cardinal. L\u2019arbitre est tiraaill\u00e9 entre conscience morale et int\u00e9r\u00eats de la Couronne.",
+      nar_m7: "L\u2019Indienne enceinte. L\u2019abstraction th\u00e9ologique devient r\u00e9alit\u00e9 concr\u00e8te.",
+      nar_m8: "Sans conclusion. Le Cardinal remet la d\u00e9cision. La question reste ouverte."
+    },
+    redacType: 'argument',
+    redac: {
+      redac_a1: "En 1992, Carri\u00e8re ressuscite un d\u00e9bat vieux de quatre si\u00e8cles\u00a0: les Indiens d\u2019Am\u00e9rique ont-ils une \u00e2me\u00a0?",
+      redac_a2: "Sep\u00falveda et Las Casas d\u00e9fendent deux logiques coh\u00e9rentes. Sep\u00falveda raisonne depuis Aristote. Las Casas raisonne depuis l\u2019exp\u00e9rience.",
+      redac_a3: "La pr\u00e9sence de l\u2019Indien dans la salle est le coup de th\u00e9\u00e2tre de Carri\u00e8re. On peut nier l\u2019humanit\u00e9 de l\u2019autre en son absence \u2014 pas en sa pr\u00e9sence.",
+      redac_a4: "La pi\u00e8ce se termine sans verdict. Carri\u00e8re dit\u00a0: la question de l\u2019humanit\u00e9 de l\u2019autre doit \u00eatre pos\u00e9e \u00e0 chaque \u00e9poque."
+    },
+    dissertation: {
+      sujet:  "En quoi La Controverse de Valladolid est-elle un texte qui d\u00e9passe son contexte historique\u00a0?",
+      intro:  "En 1992, Carri\u00e8re ressuscite le d\u00e9bat de Valladolid (1550)\u00a0: les Indiens ont-ils une \u00e2me\u00a0? Cette question r\u00e9sonne au-del\u00e0 de son contexte historique.",
+      arg1:   "D\u2019abord, le d\u00e9bat de Valladolid est un \u00e9v\u00e9nement fondateur\u00a0: le premier grand d\u00e9bat occidental sur les droits de l\u2019homme.",
+      arg2:   "Ensuite, les arguments transcendent leur contexte\u00a0: la logique de la d\u00e9shumanisation de l\u2019autre se retrouve dans tous les grands d\u00e9bats moraux du XXe si\u00e8cle.",
+      arg3:   "Enfin, la conclusion ouverte dit que la question \u2018l\u2019autre est-il humain comme moi\u00a0?\u2019 est une question permanente.",
+      conclu: "La Controverse d\u00e9passe son contexte parce qu\u2019elle pose une question universelle\u00a0: comment d\u00e9finissons-nous l\u2019humanit\u00e9\u00a0?"
+    },
+    dissertation2: {
+      sujet:         "En quoi La Controverse de Valladolid est-elle un texte qui d\u00e9passe son contexte historique\u00a0?",
+      motsCles:      "\u00ab D\u00e9passe \u00bb = va au-del\u00e0 de l\u2019anecdote historique. \u00ab Contexte historique \u00bb = 1550, Espagne, conqu\u00eate.",
+      reformulation: "Comment Carri\u00e8re utilise-t-il un d\u00e9bat historique pour poser une question philosophique universelle\u00a0?",
+      typePlan:      "Plan progressif. I. Ancrage historique. II. Arguments transcendant le contexte. III. La conclusion ouverte comme posture philosophique.",
+      accroche:      "En 1550, des th\u00e9ologiens espagnols d\u00e9battent\u00a0: les Indiens d\u2019Am\u00e9rique ont-ils une \u00e2me\u00a0? Derri\u00e8re cette question se cache la question fondamentale de l\u2019\u00e9thique.",
+      introSuite:    "Nous nous demanderons comment Carri\u00e8re transforme un d\u00e9bat historique en r\u00e9flexion philosophique universelle.",
+      p1arg:         "La pi\u00e8ce s\u2019appuie sur un \u00e9v\u00e9nement historique r\u00e9el.",
+      p1ex:          "Sep\u00falveda et Las Casas sont des personnages historiques. Leurs arguments sont fid\u00e8les aux textes originaux.",
+      p1ana:         "Cet ancrage donne \u00e0 la pi\u00e8ce une cr\u00e9dibilit\u00e9 particuli\u00e8re.",
+      p2arg:         "Mais les arguments de Sep\u00falveda \u2014 la d\u00e9shumanisation par la th\u00e9orie \u2014 se retrouvent dans tous les grands crimes du XXe si\u00e8cle.",
+      p2ex:          "La logique de Sep\u00falveda est la m\u00eame que celle qui a justifi\u00e9 l\u2019esclavage moderne, le colonialisme tardif.",
+      p2ana:         "Carri\u00e8re ne fait pas cette analogie explicitement \u2014 il laisse le spectateur la faire.",
+      p3arg:         "La conclusion ouverte dit que la question reste pos\u00e9e.",
+      p3ex:          "Le Cardinal ne tranche pas. La pi\u00e8ce se termine sans verdict.",
+      p3ana:         "\u00c0 chaque \u00e9poque il faut recommencer le d\u00e9bat de Valladolid.",
+      bilan:         "La Controverse d\u00e9passe son contexte parce qu\u2019elle pose une question philosophique permanente.",
+      reponse:       "Carri\u00e8re transforme le d\u00e9bat en r\u00e9flexion universelle par la conclusion ouverte.",
+      ouverture:     "On peut mettre cette pi\u00e8ce en regard des proc\u00e8s de Nuremberg (1945\u20131946)."
+    },
+    temps2: {
+      ordre:    "Chronologique avec des r\u00e9cits r\u00e9trospectifs \u2014 les t\u00e9moignages de Las Casas sur l\u2019Am\u00e9rique.",
+      duree:    "Le temps dramatique est condens\u00e9\u00a0: une session de d\u00e9bat. L\u2019\u00e9cart entre le temps court et les enjeux long est lui-m\u00eame un argument.",
+      frequence:"Les t\u00e9moignages de Las Casas sont singuliers mais valent pour une s\u00e9rie.",
+      espace:   "Espace unique\u00a0: la salle du d\u00e9bat. L\u2019Am\u00e9rique n\u2019est pr\u00e9sente que dans les discours."
+    },
+    lineaire: {
+      intro1: "La Controverse de Valladolid est une pi\u00e8ce de Jean-Claude Carri\u00e8re, publi\u00e9e en 1992.",
+      intro2: "L\u2019extrait \u00e9tudi\u00e9 est la sc\u00e8ne d\u2019affrontement entre Sep\u00falveda et Las Casas.",
+      intro3: "Par quels proc\u00e9d\u00e9s Carri\u00e8re met-il en sc\u00e8ne un affrontement rh\u00e9torique qui pose une question philosophique\u00a0?",
+      intro4: "Sep\u00falveda\u00a0: ton universitaire, assuré. Las Casas\u00a0: ton du t\u00e9moin, parfois \u00e9mu. Cardinal\u00a0: ton de l\u2019h\u00e9sitation.",
+      intro5: "Mvt\u00a01 \u2014 L\u2019argumentation de Sep\u00falveda \/ Mvt\u00a02 \u2014 La r\u00e9ponse de Las Casas \/ Mvt\u00a03 \u2014 L\u2019h\u00e9sitation du Cardinal",
+      mvts: [
+        {titre:"Mvt\u00a01 \u2014 L\u2019argumentation de Sep\u00falveda",
+         texte:"Sep\u00falveda expose sa th\u00e8se avec la rigueur d\u2019un syllogisme.\\n\u2192 Argument d\u2019autorit\u00e9\u00a0: Aristote est la r\u00e9f\u00e9rence centrale.\\n\u2192 Sa coh\u00e9rence interne est troublante."},
+        {titre:"Mvt\u00a02 \u2014 La r\u00e9ponse de Las Casas",
+         texte:"Las Casas oppose le t\u00e9moignage \u00e0 la th\u00e9orie.\\n\u2192 Le registre de l\u2019\u00e9motion contre le registre de la raison.\\n\u2192 Son argument est plus fort moralement que philosophiquement."},
+        {titre:"Mvt\u00a03 \u2014 L\u2019h\u00e9sitation du Cardinal",
+         texte:"Le Cardinal repr\u00e9sente le spectateur en train d\u2019h\u00e9siter.\\n\u2192 L\u2019h\u00e9sitation comme personnage.\\n\u2192 Le spectateur sort du th\u00e9\u00e2tre avec la question."}
+      ],
+      conclu1: "Carri\u00e8re montre l\u2019impossibilit\u00e9 de d\u00e9finir l\u2019humanit\u00e9 par la raison seule.",
+      conclu2: "On peut rapprocher cet extrait du Discours sur l\u2019origine de l\u2019in\u00e9galit\u00e9 de Rousseau."
+    },
+    commentaire: {
+      amorce: "En 1992, le monde occidental est invit\u00e9 \u00e0 revisiter l\u2019histoire de la conqu\u00eate am\u00e9ricaine.",
+      presentation: "Jean-Claude Carri\u00e8re (1931\u20132021) est l\u2019auteur de La Controverse de Valladolid, publi\u00e9e en 1992.",
+      problematique: "Comment Carri\u00e8re utilise-t-il les outils du th\u00e9\u00e2tre pour transformer un d\u00e9bat historique en r\u00e9flexion sur la d\u00e9finition de l\u2019humanit\u00e9\u00a0?",
+      plan: "Nous \u00e9tudierons le d\u00e9bat comme outil dramatique (I), deux logiques \u00e9galement pr\u00e9sent\u00e9es (II), enfin la question ouverte comme posture philosophique (III).",
+      axes: [
+        {titre:"I \u2014 Le d\u00e9bat comme outil dramatique",
+         texte:"Structure du proc\u00e8s\u00a0: arbitre, d\u00e9fenseurs, t\u00e9moins.\\n\u2192 L\u2019enjeu vital\u00a0: des millions de vies.\\n\u2192 Le coup de th\u00e9\u00e2tre de l\u2019Indien."},
+        {titre:"II \u2014 Deux logiques \u00e9galement pr\u00e9sent\u00e9es",
+         texte:"Carri\u00e8re ne caricature pas Sep\u00falveda.\\n\u2192 Sa th\u00e8se est coh\u00e9rente dans le cadre du XVIe si\u00e8cle.\\n\u2192 La pi\u00e8ce enseigne \u00e0 penser la rh\u00e9torique."},
+        {titre:"III \u2014 La question ouverte",
+         texte:"En refusant de trancher, Carri\u00e8re affirme que la question est permanente.\\n\u2192 L\u2019actualit\u00e9 des arguments de d\u00e9shumanisation.\\n\u2192 La pi\u00e8ce est une invitation \u00e0 continuer le d\u00e9bat."}
+      ],
+      bilan: "La Controverse pose une question universelle \u2014 qui est humain\u00a0? \u2014 sans trancher.",
+      ouverture: "On peut mettre cette pi\u00e8ce en regard de Hannah Arendt et de la \u2018banalit\u00e9 du mal\u2019 (1963)."
+    },
+    themes: {
+      amour:    "L\u2019amour est peu pr\u00e9sent \u2014 mais la compassion l\u2019est. Las Casas aime les Indiens au sens \u00e9vang\u00e9lique.",
+      pouvoir:  "Le pouvoir colonial est le contexte de toute la pi\u00e8ce. Sep\u00falveda est son th\u00e9oricien, Las Casas son critique.",
+      liberte:  "La libert\u00e9 des Indiens est l\u2019enjeu central\u00a0: qui d\u00e9cide de la libert\u00e9 de l\u2019autre\u00a0?",
+      identite: "La question fondamentale\u00a0: qui sont les Indiens\u00a0? La pr\u00e9sence physique de l\u2019Indien rend la question viscerale.",
+      societe:  "La soci\u00e9t\u00e9 coloniale produit les arguments philosophiques qui justifient ses pratiques \u00e9conomiques.",
+      nature:   "La nature am\u00e9ricaine appara\u00eet dans les t\u00e9moignages de Las Casas\u00a0: for\u00eats, rivi\u00e8res, peuples vivant en harmonie."
+    },
+    lexique: {
+      phases: [
+        {pageDebut:1,   nom:"Le contexte colonial \u2014 enjeux du d\u00e9bat"},
+        {pageDebut:16,  nom:"Sep\u00falveda \u2014 la th\u00e8se aristot\u00e9licienne"},
+        {pageDebut:31,  nom:"Las Casas \u2014 le t\u00e9moignage empirique"},
+        {pageDebut:46,  nom:"L\u2019Indien \u2014 pr\u00e9sence physique"},
+        {pageDebut:61,  nom:"Le d\u00e9bat th\u00e9ologique \u2014 \u00e2me et bapt\u00eame"},
+        {pageDebut:76,  nom:"Le Cardinal \u2014 les h\u00e9sitations de l\u2019arbitre"},
+        {pageDebut:91,  nom:"L\u2019Indienne enceinte \u2014 l\u2019humanit\u00e9 concr\u00e8te"},
+        {pageDebut:106, nom:"Sans conclusion \u2014 la question reste ouverte"}
+      ],
+      tranches: [
+        {pageDebut:1,   pageFin:15,  amour:20, pouvoir:75, liberte:30, identite:55, societe:80, nature:40},
+        {pageDebut:16,  pageFin:30,  amour:15, pouvoir:85, liberte:25, identite:70, societe:85, nature:35},
+        {pageDebut:31,  pageFin:45,  amour:35, pouvoir:60, liberte:60, identite:80, societe:75, nature:60},
+        {pageDebut:46,  pageFin:60,  amour:45, pouvoir:50, liberte:65, identite:90, societe:70, nature:50},
+        {pageDebut:61,  pageFin:75,  amour:30, pouvoir:55, liberte:45, identite:85, societe:65, nature:30},
+        {pageDebut:76,  pageFin:90,  amour:25, pouvoir:65, liberte:55, identite:80, societe:75, nature:25},
+        {pageDebut:91,  pageFin:105, amour:55, pouvoir:45, liberte:70, identite:85, societe:70, nature:45},
+        {pageDebut:106, pageFin:120, amour:30, pouvoir:50, liberte:60, identite:90, societe:75, nature:35}
+      ],
+      champLexical: {
+        amour:    [{mot:"compassion",n:18},{mot:"fr\u00e8res",n:14},{mot:"larmes",n:12},{mot:"souffrance",n:10},{mot:"piti\u00e9",n:8},{mot:"mis\u00e9ricorde",n:6}],
+        pouvoir:  [{mot:"Couronne",n:32},{mot:"conqu\u00eate",n:28},{mot:"esclavage",n:24},{mot:"domination",n:18},{mot:"Sep\u00falveda",n:16},{mot:"autorit\u00e9",n:12}],
+        liberte:  [{mot:"libert\u00e9",n:20},{mot:"Indiens",n:18},{mot:"droits",n:16},{mot:"bapt\u00eame",n:12},{mot:"\u00e2me",n:10},{mot:"affranchir",n:8}],
+        identite: [{mot:"humanit\u00e9",n:38},{mot:"\u00e2me",n:32},{mot:"humain",n:28},{mot:"nature",n:22},{mot:"Las Casas",n:18},{mot:"diff\u00e9rent",n:14},{mot:"semblable",n:12}],
+        societe:  [{mot:"Espagne",n:28},{mot:"colonie",n:22},{mot:"\u00c9glise",n:18},{mot:"Cardinal",n:16},{mot:"proc\u00e8s",n:14},{mot:"loi",n:12}],
+        nature:   [{mot:"Am\u00e9rique",n:24},{mot:"for\u00eat",n:16},{mot:"Indiens",n:14},{mot:"terre",n:12},{mot:"rivi\u00e8re",n:8},{mot:"continent",n:6}]
+      },
+      justifications: {
+        amour: {
+          intro: "Le th\u00e8me Amour dans La Controverse se manifeste sous la forme de la compassion et de la fraternit\u00e9 \u00e9vang\u00e9lique.",
+          mots: {compassion:"La compassion de Las Casas est son argument le plus fort \u2014 et le moins rationnel.",fr\u00e8res:"Les Indiens sont des \u2018fr\u00e8res\u2019 dans le vocabulaire \u00e9vang\u00e9lique de Las Casas.",larmes:"Les larmes des Indiens sont la preuve de leur humanit\u00e9 selon Las Casas.",souffrance:"La souffrance des Indiens est le t\u00e9moignage central de Las Casas.",piti\u00e9:"La piti\u00e9 est l\u2019arme exclusive de Las Casas.",mis\u00e9ricorde:"La mis\u00e9ricorde divine s\u2019\u00e9tend-elle aux Indiens\u00a0? Las Casas dit oui."}
+        },
+        pouvoir: {
+          intro: "Le Pouvoir dans La Controverse est colonial et th\u00e9ologique.",
+          mots: {Couronne:"L\u2019autorit\u00e9 politique qui finance la conqu\u00eate.",conqu\u00eate:"Le fait brut que le d\u00e9bat doit justifier.",esclavage:"La pratique qui est en jeu.",domination:"Sep\u00falveda la justifie comme \u2018naturelle\u2019.",Sep\u00falveda:"Il donne une base philosophique \u00e0 un int\u00e9r\u00eat \u00e9conomique.",autorit\u00e9:"Sep\u00falveda accumule les autorit\u00e9s pour l\u00e9gitimer sa th\u00e8se."}
+        },
+        liberte: {
+          intro: "La Libert\u00e9 dans La Controverse est celle des Indiens.",
+          mots: {libert\u00e9:"Las Casas dit que les Indiens sont libres. Sep\u00falveda dit qu\u2019ils ne peuvent pas l\u2019\u00eatre.",Indiens:"Le sujet du d\u00e9bat \u2014 objet de toutes les projections.",droits:"Le d\u00e9bat pr\u00e9figure les droits de l\u2019homme.",bapt\u00eame:"Le bapt\u00eame est-il une lib\u00e9ration ou une violence\u00a0?",\u00e2me:"Avoir une \u00e2me = \u00eatre humain = avoir des droits.",affranchir:"Verbe de la lib\u00e9ration selon Las Casas."}
+        },
+        identite: {
+          intro: "L\u2019Identit\u00e9 est le th\u00e8me fondamental. La pr\u00e9sence de l\u2019Indien rend la question non plus abstraite mais concr\u00e8te.",
+          mots: {humanit\u00e9:"Le mot le plus charg\u00e9. La pi\u00e8ce refuse de r\u00e9pondre d\u00e9finitivement.",\u00e2me:"Crit\u00e8re th\u00e9ologique de l\u2019humanit\u00e9 au XVIe si\u00e8cle.",humain:"La pi\u00e8ce refuse de compl\u00e9ter la phrase une fois pour toutes.",nature:"La \u2018nature\u2019 humaine est ce que Sep\u00falveda pr\u00e9tend d\u00e9finir.",Las:'"Las Casas" dans ce champ repr\u00e9sente la d\u00e9finition inclusive de l\'humanit\u00e9.',diff\u00e9rent:"La diff\u00e9rence culturelle que Sep\u00falveda interpr\u00e8te comme inf\u00e9riorit\u00e9.",semblable:"Mot de la fraternit\u00e9."}
+        },
+        societe: {
+          intro: "La Soci\u00e9t\u00e9 dans La Controverse est l\u2019Espagne coloniale.",
+          mots: {Espagne:"Le cadre national de la domination coloniale.",colonie:"La r\u00e9alit\u00e9 \u00e9conomique que le d\u00e9bat doit l\u00e9gitimer.",\u00c9glise:"L\u2019institution qui l\u00e9gitime la conqu\u00eate.",Cardinal:"L\u2019arbitre institutionnel.",proc\u00e8s:"La forme judiciaire du d\u00e9bat.",loi:"La loi est ce que le d\u00e9bat doit produire \u2014 mais la pi\u00e8ce se termine sans loi."}
+        },
+        nature: {
+          intro: "La Nature dans La Controverse est la nature am\u00e9ricaine \u00e9voqu\u00e9e par Las Casas.",
+          mots: {Am\u00e9rique:"Le continent absent physiquement mais omnipr\u00e9sent dans les discours.",for\u00eat:"Repr\u00e9sente une nature sauvage et riche.",Indiens:"Dans ce th\u00e8me, les Indiens sont per\u00e7us comme partie de leur environnement.",terre:"La terre que les Indiens habitent et cultivent.",rivi\u00e8re:"Espaces de vie des communaut\u00e9s indiennes.",continent:"L\u2019immensit\u00e9 du continent est un argument implicite."}
+        }
+      },
+      paires: [
+        {cles:["identite","pouvoir"], score:5,
+         interpretation:"Arc invers\u00e9 central\u00a0: Pouvoir domine en phases\u00a01-2, Identit\u00e9 monte. Le croisement correspond \u00e0 l\u2019arriv\u00e9e de l\u2019Indien."},
+        {cles:["societe","liberte"], score:4,
+         interpretation:"Soci\u00e9t\u00e9 reste \u00e9lev\u00e9. Libert\u00e9 forme un arc montant vers une reconnaissance possible."},
+        {cles:["amour","pouvoir"], score:3,
+         interpretation:"Amour (compassion de Las Casas) monte quand Pouvoir descend \u2014 notamment aux phases\u00a04 et\u00a07."}
+      ],
+      source: 'modelisation_ia',
+      fiabilite: 78
+    }
+  }
+
+,
+  // ── BRITANNICUS ──────────────────────────────────────
+  {
+    id: 'liv_demo_09',
+    titre: 'Britannicus',
+    auteur: 'Jean Racine',
+    genre: 'Trag\u00e9die classique',
+    pages: '160',
+    annee: 'XVIIe si\u00e8cle \u2014 1669',
+    dateCreation: '06/04/2026',
+    tsCreation: 1744070400000,
+    contexte: "Britannicus est cr\u00e9\u00e9e le 13 d\u00e9cembre 1669. Racine s\u2019appuie sur les Annales de Tacite.\\n\\nAu XVIIe si\u00e8cle, jouer un tyran sur sc\u00e8ne, c\u2019est forcément parler du pouvoir contemporain. Louis XIV r\u00e8gne depuis 1661.\\n\\nBritannicus inaugure chez Racine une p\u00e9riode de trag\u00e9dies politiques.",
+    auteurVie: "Jean Racine (1639\u20131699) est orphelin \u00e0 sept ans et \u00e9lev\u00e9 par les jans\u00e9nistes de Port-Royal.\\n\\nRacine est \u00e0 la fois po\u00e8te et courtisan. Il est \u00e9lu \u00e0 l\u2019Acad\u00e9mie fran\u00e7aise en 1673.\\n\\nApr\u00e8s Ph\u00e8dre (1677), il renonce au th\u00e9\u00e2tre pendant douze ans, sous l\u2019influence du jans\u00e9nisme.",
+    trajectoire: "Britannicus (1669) marque un tournant\u00a0: abandon du sujet grec pour le romain (Tacite), de la trag\u00e9die amoureuse pour la trag\u00e9die politique.\\n\\nElle s\u2019imposera progressivement comme l\u2019une des \u0153uvres les plus solides du r\u00e9pertoire classique.",
+    courant: "Racine appartient au classicisme fran\u00e7ais du XVIIe si\u00e8cle, influenc\u00e9 par le jans\u00e9nisme.\\n\\nLe tragique racinien s\u2019oppose au tragique corn\u00e9lien\u00a0: l\u00e0 o\u00f9 Corneille peint des h\u00e9ros qui triomphent de leurs passions, Racine les montre d\u00e9truits par elles.",
+    style: "La langue de Racine est alexandrine\u00a0\u2014 douze syllabes, rime en couplets.\\n\\nLe style est elliptique et dense\u00a0: les sentiments sont sugg\u00e9r\u00e9s, non exprim\u00e9s directement.\\n\\nNarcisse parle en proverbes cyniques. Burrhus parle en raisonnements construits.",
+    personnages: [
+      {id:'ent_bri_01', nom:'N\u00e9ron', couleur:'#C62828',
+       notes:"Personnage central. 21 ans, encore sous tutelle. La pi\u00e8ce montre sa \u2018premi\u00e8re\u2019 faute \u2014 l\u2019enl\u00e8vement de Junie. \u2018Monstre naissant.\u2019"},
+      {id:'ent_bri_02', nom:'Agrippine', couleur:'#6A1B9A',
+       notes:"M\u00e8re de N\u00e9ron, qui l\u2019a mis sur le tr\u00f4ne. Elle perd son pouvoir sur lui. Personnage de la puissance maternelle d\u00e9poss\u00e9d\u00e9e."},
+      {id:'ent_bri_03', nom:'Junie', couleur:'#1565C0',
+       notes:"Fianc\u00e9e de Britannicus, enlev\u00e9e par N\u00e9ron. Personnage de la puret\u00e9 et de la fid\u00e9lit\u00e9. Fuit dans les Vestales."},
+      {id:'ent_bri_04', nom:'Britannicus', couleur:'#2E7D32',
+       notes:"H\u00e9ritier l\u00e9gitime. Amoureux de Junie. Confiant, na\u00efbut \u2014 c\u2019est ce qui le tue."},
+      {id:'ent_bri_05', nom:'Narcisse', couleur:'#E65100',
+       notes:"Confident de Britannicus, tra\u00eetre au service de N\u00e9ron. Personnage du cynisme pur."},
+      {id:'ent_bri_06', nom:'Burrhus', couleur:'#546E7A',
+       notes:"Pr\u00e9cepteur de N\u00e9ron, honn\u00eate et loyal. Il essaie de retenir N\u00e9ron \u2014 et \u00e9choue."}
+    ],
+    lieux: [
+      {id:'lx_bri_01', nom:'Le palais imp\u00e9rial, Rome', couleur:'#C62828',
+       notes:"Espace unique. Espace du pouvoir et de la surveillance. Tout y est politique."},
+      {id:'lx_bri_02', nom:'Le temple des Vestales', couleur:'#1565C0',
+       notes:"Espace de refuge de Junie. La religion comme dernier refuge de la libert\u00e9."}
+    ],
+    citations: [
+      {id:'cit_bri_01',texte:"Je suis venu ici pour voir et pour vous voir.",ref:'N\u00e9ron, Acte\u00a0II, sc.\u00a02',theme:'Amour / Sentiments',procede:'D\u00e9claration ambigu\u00eb',interpretation:"N\u00e9ron d\u00e9clare son amour. Mais \u2018voir\u2019 dit l\u2019amour et la surveillance. Usage\u00a0: argument sur le pouvoir comme amour perverti.",importance:3},
+      {id:'cit_bri_02',texte:"Rome voit dans son Empereur un tyran qui se l\u00e8ve.",ref:'Agrippine, Acte\u00a0V',theme:'Pouvoir / Domination',procede:'Proph\u00e9tie tragique',interpretation:"Agrippine proph\u00e9tise la tyrannie. \u2018Un tyran qui se l\u00e8ve\u2019 dit la naissance du monstre. Usage\u00a0: argument sur la mont\u00e9e de N\u00e9ron.",importance:3},
+      {id:'cit_bri_03',texte:"J\u2019embrasse mon rival, mais c\u2019est pour l\u2019\u00e9touffer.",ref:'N\u00e9ron, Acte\u00a0IV',theme:'Pouvoir / Domination',procede:'Antith\u00e8se',interpretation:"N\u00e9ron annonce l\u2019empoisonnement. L\u2019antith\u00e8se \u2018embrasser\/\u00e9touffer\u2019 dit la duplicit\u00e9 du tyran. Usage\u00a0: argument sur la trahison.",importance:3},
+      {id:'cit_bri_04',texte:"Qui peut le plus grand, qu\u2019il tente le moindre.",ref:'Narcisse, Acte\u00a0II',theme:'Pouvoir / Domination',procede:'Maxime cynique',interpretation:"Narcisse encourage N\u00e9ron \u00e0 n\u2019avoir aucun scrupule. Maxime du cynisme politique. Usage\u00a0: argument sur la corruption par le conseiller.",importance:2},
+      {id:'cit_bri_05',texte:"Seigneur, vous changez de visage.",ref:'Burrhus \u00e0 N\u00e9ron, Acte\u00a0IV',theme:'Identit\u00e9 / Qu\u00eate',procede:'Observation directe',interpretation:"Burrhus voit la transformation de N\u00e9ron. Usage\u00a0: argument sur le basculement moral.",importance:2},
+      {id:'cit_bri_06',texte:"Tout ce que j\u2019ai fait, j\u2019aurais pu ne pas le faire.",ref:'N\u00e9ron, Acte\u00a0IV',theme:'Libert\u00e9 / D\u00e9terminisme',procede:'R\u00e9flexion m\u00e9ta-morale',interpretation:"N\u00e9ron reconna\u00eet sa libert\u00e9 \u2014 et donc sa responsabilit\u00e9. Moment de lucidit\u00e9 avant le crime. Usage\u00a0: argument sur le libre arbitre.",importance:2}
+    ],
+    comprehension: "Britannicus est une pi\u00e8ce sur la naissance du tyran. N\u00e9ron n\u2019est pas n\u00e9 monstre \u2014 il le devient.\\n\\nLa pi\u00e8ce est aussi une r\u00e9flexion sur l\u2019entourage du tyran. Narcisse pousse N\u00e9ron vers le crime. Burrhus essaie de le retenir \u2014 et \u00e9choue.\\n\\nJunie r\u00e9ussit \u00e0 \u00e9chapper \u00e0 N\u00e9ron\u00a0: non par combat, mais par la fuite dans les Vestales.",
+    schemaType: 'moderne',
+    narration: {
+      nar_m1: "L\u2019enl\u00e8vement de Junie. N\u00e9ron enl\u00e8ve Junie. Agrippine s\u2019alarme. Le d\u00e9s\u00e9quilibre est pos\u00e9.",
+      nar_m2: "Agrippine d\u00e9poss\u00e9d\u00e9e. N\u00e9ron \u00e9carte progressivement sa m\u00e8re du pouvoir.",
+      nar_m3: "N\u00e9ron surveille. Il cache Junie, force Britannicus \u00e0 lui d\u00e9clarer son amour sous ses yeux.",
+      nar_m4: "Britannicus confronte N\u00e9ron. L\u2019affrontement r\u00e9v\u00e8le la brutalit\u00e9 sous le vernis imp\u00e9rial.",
+      nar_m5: "Burrhus plaide pour la cl\u00e9mence. Il rappelle \u00e0 N\u00e9ron que la vraie grandeur est dans la cl\u00e9mence.",
+      nar_m6: "Narcisse manipule N\u00e9ron. Il donne \u00e0 N\u00e9ron les arguments qu\u2019il cherche pour justifier le crime.",
+      nar_m7: "Le banquet fatal. N\u00e9ron tend la main \u00e0 Britannicus. Le poison est pr\u00e9par\u00e9. Britannicus meurt.",
+      nar_m8: "Le d\u00e9nouement. Junie fuit. Narcisse est d\u00e9chir\u00e9 par la foule. Agrippine proph\u00e9tise."
+    },
+    redacType: 'argument',
+    redac: {
+      redac_a1: "En 1669, Racine pr\u00e9sente Britannicus \u2014 la trag\u00e9die de la naissance du tyran. N\u00e9ron commet sa \u2018premi\u00e8re faute\u2019. \u00c0 partir de l\u00e0, plus rien ne le retiendra.",
+      redac_a2: "La trag\u00e9die est celle d\u2019un monde o\u00f9 la confiance est mortelle. Britannicus fait confiance \u00e0 Narcisse, son tra\u00eetre.",
+      redac_a3: "N\u00e9ron ne se fait pas seul. Narcisse l\u2019encourage. Burrhus essaie de le retenir \u2014 mais la voix du cynisme est plus forte.",
+      redac_a4: "Britannicus est une \u0153uvre sur les origines du despotisme. La tyrannie est un processus, non un \u00e9tat."
+    },
+    dissertation: {
+      sujet:  "En quoi Britannicus est-il une trag\u00e9die politique\u00a0?",
+      intro:  "En 1669, Racine pr\u00e9sente Britannicus. N\u00e9ron fait sa \u2018premi\u00e8re faute\u2019 et commence sa transformation. La pi\u00e8ce est-elle un simple drame de cour ou une trag\u00e9die politique\u00a0?",
+      arg1:   "D\u2019abord, la pi\u00e8ce met en sc\u00e8ne les m\u00e9canismes du pouvoir absolu\u00a0: surveillance, manipulation, trahison.",
+      arg2:   "Ensuite, Racine r\u00e9fl\u00e9chit au conseiller\u00a0: Narcisse pousse N\u00e9ron vers le crime, Burrhus essaie de l\u2019en dissuader.",
+      arg3:   "Enfin, la pi\u00e8ce est une r\u00e9flexion sur la bascule du prince vers la tyrannie\u00a0: processus, non \u00e9tat.",
+      conclu: "Britannicus est bien une trag\u00e9die politique\u00a0: elle met en sc\u00e8ne les m\u00e9canismes de naissance du despotisme."
+    },
+    dissertation2: {
+      sujet:         "En quoi Britannicus est-il une trag\u00e9die politique\u00a0?",
+      motsCles:      "\u00ab Trag\u00e9die \u00bb = personnages d\u00e9truits par une force qui les d\u00e9passe. \u00ab Politique \u00bb = organisation et exercice du pouvoir.",
+      reformulation: "Comment Racine utilise-t-il la forme tragique pour r\u00e9fl\u00e9chir aux m\u00e9canismes du pouvoir et \u00e0 la naissance de la tyrannie\u00a0?",
+      typePlan:      "Plan dialectique. I. Trag\u00e9die de cour\u00a0: passions priv\u00e9es. II. Trag\u00e9die politique\u00a0: m\u00e9canismes du pouvoir. III. Trag\u00e9die sur la naissance du despotisme.",
+      accroche:      "En 1669, Racine s\u2019empare de Tacite pour mettre en sc\u00e8ne non pas N\u00e9ron le monstre \u2014 mais N\u00e9ron avant d\u2019\u00eatre le monstre.",
+      introSuite:    "Nous nous demanderons en quoi Britannicus est une trag\u00e9die politique.",
+      p1arg:         "La pi\u00e8ce est d\u2019abord une trag\u00e9die d\u2019amour et de jalousie.",
+      p1ex:          "La sc\u00e8ne d\u2019espionnage (Acte\u00a0III) est un acte de jalousie pure.",
+      p1ana:         "La jalousie de N\u00e9ron a des cons\u00e9quences politiques imm\u00e9diates.",
+      p2arg:         "La pi\u00e8ce met en sc\u00e8ne des m\u00e9canismes politiques pr\u00e9cis.",
+      p2ex:          "Narcisse donne \u00e0 N\u00e9ron les arguments du crime. Burrhus est l\u2019inverse \u2014 et il perd.",
+      p2ana:         "Le destin du prince est co-d\u00e9termin\u00e9 par ceux qui l\u2019entourent.",
+      p3arg:         "Britannicus est surtout une trag\u00e9die sur la naissance du despotisme.",
+      p3ex:          "Racine insiste\u00a0: N\u00e9ron \u00e9tait \u2018bon\u2019 avant la pi\u00e8ce.",
+      p3ana:         "La pi\u00e8ce est une le\u00e7on de science politique\u00a0: comment un prince prometteur devient-il un tyran\u00a0?",
+      bilan:         "Britannicus est une trag\u00e9die politique parce qu\u2019elle met en sc\u00e8ne les m\u00e9canismes du pouvoir avec la rigueur d\u2019un historien.",
+      reponse:       "Racine transforme une histoire priv\u00e9e en r\u00e9flexion politique en montrant comment les passions d\u2019un homme de pouvoir deviennent syst\u00e8mes d\u2019oppression.",
+      ouverture:     "On peut lire Britannicus \u00e0 la lumi\u00e8re du Prince de Machiavel (1513)."
+    },
+    temps2: {
+      ordre:    "Chronologique strict \u2014 r\u00e8gle des trois unit\u00e9s. Une seule journ\u00e9e \u00e0 Rome.",
+      duree:    "Temps condens\u00e9\u00a0: une journ\u00e9e pour une transformation irr\u00e9versible.",
+      frequence:"La pi\u00e8ce d\u00e9crit des \u00e9v\u00e9nements singuliers \u2014 mais ils inaugurent une s\u00e9rie de crimes futurs.",
+      espace:   "Espace unique\u00a0: le palais imp\u00e9rial, une antichambre. Espace de la surveillance."
+    },
+    lineaire: {
+      intro1: "Britannicus est une trag\u00e9die en 5 actes en alexandrins, cr\u00e9\u00e9e en d\u00e9cembre 1669.",
+      intro2: "L\u2019extrait \u00e9tudi\u00e9 est la sc\u00e8ne d\u2019espionnage de l\u2019Acte\u00a0III.",
+      intro3: "Par quels proc\u00e9d\u00e9s Racine transforme-t-il une jalousie amoureuse en d\u00e9monstration du pouvoir tyrannique\u00a0?",
+      intro4: "Junie\u00a0: ton de la contrainte cach\u00e9e. Britannicus\u00a0: ton de la sinc\u00e9rit\u00e9 bless\u00e9e. N\u00e9ron\u00a0: absent\/pr\u00e9sent.",
+      intro5: "Mvt\u00a01 \u2014 La mise en sc\u00e8ne de N\u00e9ron \/ Mvt\u00a02 \u2014 La sc\u00e8ne d\u2019espionnage \/ Mvt\u00a03 \u2014 La r\u00e9v\u00e9lation",
+      mvts: [
+        {titre:"Mvt\u00a01 \u2014 La mise en sc\u00e8ne de N\u00e9ron",
+         texte:"N\u00e9ron place Junie dans une position impossible.\\n\u2192 Le dispositif th\u00e9\u00e2tral dans le th\u00e9\u00e2tre.\\n\u2192 Le pouvoir comme omniscience."},
+        {titre:"Mvt\u00a02 \u2014 La sc\u00e8ne d\u2019espionnage",
+         texte:"Junie parle \u00e0 deux interlocuteurs simultan\u00e9ment.\\n\u2192 Double \u00e9nonciation.\\n\u2192 L\u2019alexandrin racinien porte toute la tension."},
+        {titre:"Mvt\u00a03 \u2014 La r\u00e9v\u00e9lation",
+         texte:"Britannicus comprend qu\u2019il a \u00e9t\u00e9 manipul\u00e9.\\n\u2192 L\u2019anagnorisis tragique.\\n\u2192 L\u2019ironie tragique\u00a0: le spectateur savait depuis le d\u00e9but."}
+      ],
+      conclu1: "Racine transforme une sc\u00e8ne de jalousie en d\u00e9monstration politique.",
+      conclu2: "On peut rapprocher cette sc\u00e8ne de la politique moderne de surveillance."
+    },
+    commentaire: {
+      amorce: "Au XVIIe si\u00e8cle, Corneille domine la sc\u00e8ne. Racine propose une vision radicalement diff\u00e9rente.",
+      presentation: "Jean Racine (1639\u20131699) est l\u2019auteur de Britannicus, trag\u00e9die en 5 actes cr\u00e9\u00e9e en 1669.",
+      problematique: "Comment Racine transforme-t-il la jalousie de N\u00e9ron en instrument politique de domination\u00a0?",
+      plan: "Nous \u00e9tudierons N\u00e9ron comme \u2018monstre naissant\u2019 (I), puis la sc\u00e8ne d\u2019espionnage (II), enfin l\u2019irr\u00e9versibilit\u00e9 de la tyrannie (III).",
+      axes: [
+        {titre:"I \u2014 N\u00e9ron, le \u2018monstre naissant\u2019",
+         texte:"Racine construit N\u00e9ron comme un processus.\\n\u2192 Le N\u00e9ron d\u2019avant la pi\u00e8ce\u00a0: bon et prometteur.\\n\u2192 La mont\u00e9e en puissance\u00a0: chaque acte franchit un seuil."},
+        {titre:"II \u2014 La sc\u00e8ne d\u2019espionnage\u00a0: le pouvoir comme mise en sc\u00e8ne",
+         texte:"N\u00e9ron met en sc\u00e8ne les autres.\\n\u2192 La double \u00e9nonciation de Junie.\\n\u2192 Le voyeurisme du pouvoir."},
+        {titre:"III \u2014 Le d\u00e9nouement\u00a0: l\u2019irr\u00e9versibilit\u00e9",
+         texte:"Une fois la premi\u00e8re faute commise, N\u00e9ron ne peut plus s\u2019arr\u00eater.\\n\u2192 La mort de Britannicus\u00a0: rapide, froide.\\n\u2192 La proph\u00e9tie d\u2019Agrippine."}
+      ],
+      bilan: "Britannicus montre comment la premi\u00e8re faute enclenche une logique irr\u00e9versible de despotisme.",
+      ouverture: "On peut lire Britannicus \u00e0 la lumi\u00e8re de l\u2019Histoire de France\u00a0: une le\u00e7on adress\u00e9e \u00e0 Louis XIV\u00a0?"
+    },
+    themes: {
+      amour:    "L\u2019amour dans Britannicus est multiple et douloureux. N\u00e9ron aime Junie d\u2019un amour possessif. Junie et Britannicus s\u2019aiment \u2014 un amour que le pouvoir brise.",
+      pouvoir:  "Le pouvoir est le th\u00e8me central. Il se conquiert contre Agrippine, se garde par la surveillance, et d\u00e9truit ceux qui l\u2019exercent.",
+      liberte:  "La libert\u00e9 dans Britannicus est ce qu\u2019on perd. La fuite de Junie chez les Vestales est la seule victoire \u2014 par soustraction.",
+      identite: "L\u2019identit\u00e9 est en jeu pour chaque personnage. Qui est N\u00e9ron\u00a0? L\u2019\u00eatre se construit et se d\u00e9construit sous la pression du pouvoir.",
+      societe:  "La soci\u00e9t\u00e9 dans Britannicus est la cour romaine \u2014 espace de concurrence, de surveillance et de trahison.",
+      nature:   "La nature est absente \u2014 la pi\u00e8ce se passe dans un palais ferm\u00e9. Mais la nature humaine \u2014 ses passions corrompues \u2014 est le vrai sujet."
+    },
+    lexique: {
+      phases: [
+        {pageDebut:1,   nom:"L\u2019enl\u00e8vement de Junie \u2014 la premi\u00e8re faute"},
+        {pageDebut:21,  nom:"Agrippine d\u00e9poss\u00e9d\u00e9e \u2014 la m\u00e8re et l\u2019Empereur"},
+        {pageDebut:41,  nom:"La jalousie de N\u00e9ron \u2014 l\u2019espionnage"},
+        {pageDebut:61,  nom:"L\u2019affrontement direct \u2014 N\u00e9ron et Britannicus"},
+        {pageDebut:81,  nom:"Burrhus \u2014 la vertu qui plaide"},
+        {pageDebut:101, nom:"Narcisse \u2014 le cynisme qui convainc"},
+        {pageDebut:121, nom:"Le banquet \u2014 l\u2019empoisonnement"},
+        {pageDebut:141, nom:"Le d\u00e9nouement \u2014 la tyrannie install\u00e9e"}
+      ],
+      tranches: [
+        {pageDebut:1,   pageFin:20,  amour:65, pouvoir:55, liberte:55, identite:45, societe:55, nature:20},
+        {pageDebut:21,  pageFin:40,  amour:50, pouvoir:75, liberte:40, identite:55, societe:65, nature:15},
+        {pageDebut:41,  pageFin:60,  amour:80, pouvoir:70, liberte:30, identite:60, societe:50, nature:10},
+        {pageDebut:61,  pageFin:80,  amour:70, pouvoir:88, liberte:20, identite:65, societe:55, nature:10},
+        {pageDebut:81,  pageFin:100, amour:45, pouvoir:72, liberte:35, identite:60, societe:68, nature:15},
+        {pageDebut:101, pageFin:120, amour:30, pouvoir:92, liberte:25, identite:72, societe:60, nature:10},
+        {pageDebut:121, pageFin:140, amour:35, pouvoir:95, liberte:15, identite:78, societe:55, nature:10},
+        {pageDebut:141, pageFin:160, amour:55, pouvoir:78, liberte:40, identite:82, societe:65, nature:15}
+      ],
+      champLexical: {
+        amour:    [{mot:"Junie",n:42},{mot:"Britannicus",n:38},{mot:"aimer",n:28},{mot:"tendresse",n:14},{mot:"fid\u00e8le",n:10},{mot:"jalousie",n:8}],
+        pouvoir:  [{mot:"N\u00e9ron",n:65},{mot:"C\u00e9sar",n:32},{mot:"Empire",n:28},{mot:"ordre",n:22},{mot:"tyran",n:18},{mot:"dominer",n:12}],
+        liberte:  [{mot:"libre",n:14},{mot:"fuir",n:12},{mot:"prison",n:10},{mot:"Vestales",n:8},{mot:"contrainte",n:7},{mot:"\u00e9chapper",n:6}],
+        identite: [{mot:"monstre",n:18},{mot:"vertu",n:16},{mot:"Rome",n:14},{mot:"qui",n:12},{mot:"nature",n:10},{mot:"changer",n:8}],
+        societe:  [{mot:"Agrippine",n:38},{mot:"cour",n:28},{mot:"Narcisse",n:22},{mot:"trahison",n:16},{mot:"confiance",n:12},{mot:"Burrhus",n:10}],
+        nature:   [{mot:"nuit",n:8},{mot:"ciel",n:6},{mot:"sang",n:5},{mot:"poison",n:4},{mot:"ombre",n:4}]
+      },
+      justifications: {
+        amour: {
+          intro: "L\u2019Amour dans Britannicus est multiple et tragique. N\u00e9ron aime Junie d\u2019un amour possessif qui d\u00e9truit.",
+          mots: {Junie:"L\u2019objet de la passion de N\u00e9ron et de l\u2019amour de Britannicus.",Britannicus:"Amoureux loyal et na\u00efbut. Son amour pour Junie est sa vuln\u00e9rabilit\u00e9.",aimer:"Verbe omnipr\u00e9sent \u2014 mais tous les amours sont tragiques.",tendresse:"Rare dans le monde du pouvoir.",fid\u00e8le:"La fid\u00e9lit\u00e9 de Junie est sa seule arme contre N\u00e9ron.",jalousie:"La jalousie de N\u00e9ron est le moteur tragique."}
+        },
+        pouvoir: {
+          intro: "Le Pouvoir dans Britannicus est le th\u00e8me dominant. Racine montre comment il se conquiert, se garde et se corrompt.",
+          mots: {N\u00e9ron:"Le centre du pouvoir et de la trag\u00e9die.",C\u00e9sar:"Titre du pouvoir absolu.",Empire:"L\u2019espace du pouvoir \u2014 immense, sans limites.",ordre:"Les ordres de N\u00e9ron sont absolus et arbitraires.",tyran:"Mot proph\u00e9tique d\u2019Agrippine.",dominer:"Verbe de la puissance absolue."}
+        },
+        liberte: {
+          intro: "La Libert\u00e9 dans Britannicus est ce qu\u2019on perd.",
+          mots: {libre:"Mot rare \u2014 la libert\u00e9 est ce qui manque \u00e0 tous.",fuir:"La fuite de Junie est le seul acte de r\u00e9sistance qui r\u00e9ussisse.",prison:"Le palais est une prison invisible.",Vestales:"Le seul espace sacr\u00e9 qui prot\u00e8ge de N\u00e9ron.",contrainte:"La contrainte de Junie dans la sc\u00e8ne d\u2019espionnage est la plus cruelle.",\u00e9chapper:"Verbe de la r\u00e9sistance. Junie est la seule \u00e0 r\u00e9ussir."}
+        },
+        identite: {
+          intro: "L\u2019Identit\u00e9 est au c\u0153ur de Britannicus\u00a0: qui est N\u00e9ron\u00a0?",
+          mots: {monstre:"Mot proph\u00e9tique \u2014 Agrippine dit \u2018monstre naissant\u2019.",vertu:"Ce que N\u00e9ron abandonne.",Rome:"La cit\u00e9 comme miroir de l\u2019identit\u00e9 imp\u00e9riale.",qui:"Pronom interrogatif r\u00e9current.",nature:"La \u2018nature\u2019 de N\u00e9ron \u2014 bonne ou mauvaise\u00a0? Elle se fait.",changer:"\u2018Vous changez de visage\u2019, dit Burrhus."}
+        },
+        societe: {
+          intro: "La Soci\u00e9t\u00e9 dans Britannicus est la cour romaine \u2014 espace de trahison et de surveillance.",
+          mots: {Agrippine:"La puissance maternelle d\u00e9poss\u00e9d\u00e9e.",cour:"Espace de la politique de l\u2019apparence.",Narcisse:"Symbole de la trahison syst\u00e9mique.",trahison:"Mot central. Britannicus est trahi par Narcisse.",confiance:"Ce que Britannicus accorde trop vite \u2014 et qui le tue.",Burrhus:"La figure de la loyaut\u00e9 \u2014 qui \u00e9choue."}
+        },
+        nature: {
+          intro: "La Nature est presque absente. Seuls quelques \u00e9l\u00e9ments symboliques\u00a0: nuit, ombre, poison.",
+          mots: {nuit:"Le temps des crimes de N\u00e9ron.",ciel:"Invoqu\u00e9 dans les moments d\u2019\u00e9motion.",sang:"La mort off-sc\u00e8ne dit la violence cach\u00e9e.",poison:"L\u2019instrument du crime. Dit la dissimulation.",ombre:"L\u2019espace de N\u00e9ron \u2014 il surveille dans l\u2019ombre."}
+        }
+      },
+      paires: [
+        {cles:["pouvoir","amour"], score:5,
+         interpretation:"Arc invers\u00e9 fondamental\u00a0: Amour part haut (jalousie intense) et descend. Pouvoir monte sans rel\u00e2che. Croisements en phases\u00a04 et\u00a06\u00a0: la jalousie laisse place au cynisme. L\u2019arc dit la transformation de N\u00e9ron."},
+        {cles:["amour","liberte"], score:4,
+         interpretation:"Amour et Libert\u00e9 montent ensemble (phases\u00a01\u20133) puis s\u2019effondrent. La mort de Britannicus fait dispara\u00eetre les deux. Seule Junie pr\u00e9serve une libert\u00e9."},
+        {cles:["identite","societe"], score:3,
+         interpretation:"Identit\u00e9 monte r\u00e9guli\u00e8rement. Soci\u00e9t\u00e9 d\u00e9cline en phases\u00a07\u20138. La mont\u00e9e de l\u2019Identit\u00e9 face au d\u00e9clin de la Soci\u00e9t\u00e9 dit la solitude croissante du despote."}
+      ],
+      source: 'modelisation_ia',
+      fiabilite: 82
+    }
+  }
+
 ];
 
 function chargerBiblio() {
@@ -7047,12 +7865,12 @@ function _buildLexToileHtml(L) {
   var phaseLegend='';
   if(lex.phases&&lex.phases.length){
     var txtStyle=isModerne
-      ? 'font-size:10px;color:#333;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'
-      : 'font-size:10px;color:#333;line-height:1.35;';
+      ? 'font-size:12px;color:#333;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'
+      : 'font-size:12px;color:#333;line-height:1.35;';
     phaseLegend=lex.phases.map(function(ph,i){
       var lc=LEX_PH_LC[i%LEX_PH_LC.length];
       return '<div style="display:flex;align-items:center;gap:5px;padding:3px 0;border-bottom:1px solid #f0f0f0;">'+
-        '<span style="flex:0 0 18px;height:18px;border-radius:50%;background:'+lc+';display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:#fff;flex-shrink:0;">'+(i+1)+'</span>'+
+        '<span style="flex:0 0 18px;height:18px;border-radius:50%;background:'+lc+';display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#fff;flex-shrink:0;">'+(i+1)+'</span>'+
         '<span style="'+txtStyle+'">'+h(ph.nom)+'</span>'+
         '</div>';
     }).join('');
@@ -12495,9 +13313,9 @@ function updateQ3LexViz() {
     phLgEl.innerHTML=lex.phases.map(function(ph,i){
       var lc=LEX_PH_LC[i%LEX_PH_LC.length];
       return '<div style="display:flex;align-items:center;gap:2px;padding:1px 0;border-bottom:1px solid #f3eeff;white-space:nowrap;">'+
-        '<span style="flex-shrink:0;width:10px;height:10px;border-radius:50%;background:'+lc+';display:inline-flex;align-items:center;justify-content:center;font-size:7px;font-weight:900;color:#fff;">'+(i+1)+'</span>'+
-        '<span style="font-size:9px;color:#444;white-space:nowrap;">p.'+ph.pageDebut+'</span>'+
-        '<span style="font-size:10px;color:#555;font-weight:500;white-space:nowrap;">'+ph.nom+'</span>'+
+        '<span style="flex-shrink:0;width:12px;height:12px;border-radius:50%;background:'+lc+';display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:#fff;">'+(i+1)+'</span>'+
+        '<span style="font-size:11px;color:#444;white-space:nowrap;">p.'+ph.pageDebut+'</span>'+
+        '<span style="font-size:12px;color:#555;font-weight:500;white-space:nowrap;">'+ph.nom+'</span>'+
       '</div>';
     }).join('');
   }
@@ -13866,7 +14684,7 @@ function updateQ3PairesViz() {
       '<span style="flex-shrink:0;width:13px;height:13px;border-radius:50%;background:'+lc+
         ';display:inline-flex;align-items:center;justify-content:center;'+
         'font-size:7.5px;font-weight:900;color:#fff;">'+(i+1)+'</span>'+
-      '<span style="font-size:8px;color:#555;line-height:1.3;">p.'+ph.pageDebut+'\u00a0'+nom+'</span>'+
+      '<span style="font-size:10px;color:#555;line-height:1.3;white-space:nowrap;">p.'+ph.pageDebut+'\u00a0'+nom+'</span>'+
     '</div>';
   }).join('');
 
@@ -13890,7 +14708,7 @@ function updateQ3PairesViz() {
       '<div style="display:flex;gap:8px;align-items:flex-start;margin:3px 0;">'+
         '<div style="flex:1;min-width:0;">'+svg+'</div>'+
         (phases.length ?
-          '<div style="flex:0 0 auto;width:200px;display:flex;flex-direction:column;gap:0;padding-top:1px;">'+
+          '<div style="flex:0 0 auto;width:240px;display:flex;flex-direction:column;gap:0;padding-top:1px;">'+
           phLegHtml+
           '</div>' : '')+
       '</div>'+
