@@ -318,7 +318,26 @@ body.mode-elise .ni-mi.only-elise{display:flex;}
 .aide-section{margin-bottom:8px;}
 .aide-section:last-child{margin-bottom:0;}
 
-/* ── MATRICE DES RELATIONS ── */
+/* ── AIDE PROBLÉMATIQUE ── */
+#probl-help-win{z-index:9200;min-width:340px;min-height:260px;width:520px;height:460px;border:1.5px solid #B39DDB;overflow:visible;background:transparent;}
+#probl-help-win.open{display:flex;}
+#probl-hw-hdr{background:linear-gradient(135deg,#6A1B9A,#9C27B0);}
+#probl-hw-ttl{font-size:.82rem;font-weight:700;color:#fff;}
+#probl-hw-cls{background:rgba(255,255,255,.22);border:none;color:#fff;font-size:.8rem;font-weight:700;cursor:pointer;padding:4px 8px;border-radius:7px;}
+#probl-hw-cls:hover{background:rgba(255,255,255,.45);}
+#probl-hw-filters{display:flex;flex-wrap:wrap;gap:5px;padding:7px 10px;border-bottom:1px solid #E8EAF6;flex-shrink:0;background:#F8F5FF;}
+.phw-filt{font-size:.65rem;padding:2px 8px;border-radius:10px;border:1px solid #CE93D8;background:#fff;color:#6A1B9A;cursor:pointer;transition:all .15s;}
+.phw-filt.on{background:#6A1B9A;color:#fff;border-color:#6A1B9A;}
+#probl-hw-body{flex:1;overflow-y:auto;padding:8px 10px;display:flex;flex-direction:column;gap:8px;background:#fff;}
+.phw-card{border-radius:7px;border:1px solid #E8EAF6;background:#FAFAFA;padding:8px 10px;}
+.phw-book{font-size:.68rem;font-weight:800;color:#6A1B9A;margin-bottom:2px;}
+.phw-meta{font-size:.6rem;color:#888;margin-bottom:5px;}
+.phw-probl{background:#F3E5F5;border-radius:5px;padding:5px 7px;font-size:.69rem;color:#37474F;line-height:1.55;margin-bottom:3px;cursor:pointer;border-left:3px solid #AB47BC;transition:background .12s;}
+.phw-probl:hover{background:#E8D5F0;}
+.phw-probl-angle{font-size:.58rem;color:#AB47BC;font-weight:700;text-transform:uppercase;letter-spacing:.3px;margin-bottom:2px;}
+.phw-inject{font-size:.58rem;color:#00695C;float:right;cursor:pointer;text-decoration:underline;}
+.phw-hidden{display:none;}
+
 .matrice-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:12px;}
 .matrice-table{border-collapse:collapse;font-size:.72rem;min-width:100%;}
 .matrice-table th,.matrice-table td{border:1.5px solid var(--gris2);padding:4px 5px;text-align:center;vertical-align:middle;}
@@ -3379,7 +3398,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
         <div class="card" style="border-top:4px solid #00695C">
           <div class="card-title" style="color:#00695C">② Problématique &amp; Plan</div>
           <div class="struct-zone">
-            <div class="struct-zone-title">❓ Problématique</div>
+            <div class="struct-zone-title" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px;" onclick="openProbHelp()" title="Voir des exemples de problématiques">❓ Problématique</div>
             <div class="struct-zone-hint">Question centrale — ouverte, problématique, pas de réponse par oui/non. Ex. : « Dans quelle mesure… tout en… ? » / « En quoi… bien que… ? »</div>
             <textarea id="diss2-problematique" class="field" rows="3" placeholder="Ex. : Dans quelle mesure le personnage principal est-il à la fois coupable et victime de son époque ?" oninput="saveDiss2()"></textarea>
           </div>
@@ -3562,7 +3581,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
             oninput="if(LIVRE_ACTIF){if(!LIVRE_ACTIF.lineaire)LIVRE_ACTIF.lineaire={};LIVRE_ACTIF.lineaire.intro2=this.value;sauvegarderBiblio();}"
             id="lin-intro2"></textarea>
 
-          <div style="font-size:.73rem;font-weight:700;color:#00838F;margin-bottom:4px;">3. Problématique <span style="font-weight:400;font-style:italic;color:#888;">("Par quels moyens…", "Quels procédés…", "Comment l'écrivain…" → nous montre / révèle / construit…)</span></div>
+          <div style="font-size:.73rem;font-weight:700;color:#00838F;margin-bottom:4px;cursor:pointer;" onclick="openProbHelp()" title="Voir des exemples de problématiques">3. <span style="text-decoration:underline dotted;text-underline-offset:3px;">Problématique</span> <span style="font-weight:400;font-style:italic;color:#888;">("Par quels moyens…", "Quels procédés…", "Comment l'écrivain…" → nous montre / révèle / construit…)</span></div>
           <textarea class="field" rows="2" style="margin-bottom:10px;resize:vertical;" placeholder="Ex : Par quels procédés l'auteur nous montre-t-il que… / Comment l'écrivain construit-il… / Quels moyens stylistiques révèlent…" 
             oninput="if(LIVRE_ACTIF){if(!LIVRE_ACTIF.lineaire)LIVRE_ACTIF.lineaire={};LIVRE_ACTIF.lineaire.intro3=this.value;sauvegarderBiblio();}"
             id="lin-intro3"></textarea>
@@ -3667,7 +3686,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
             oninput="if(LIVRE_ACTIF){if(!LIVRE_ACTIF.commentaire)LIVRE_ACTIF.commentaire={};LIVRE_ACTIF.commentaire.presentation=this.value;sauvegarderBiblio();}"
             id="com-presentation"></textarea>
 
-          <div style="font-size:.73rem;font-weight:700;color:#AD1457;margin-bottom:4px;">3. Problématique <span style="font-weight:400;font-style:italic;color:#888;">(question de sens — jamais descriptive)</span></div>
+          <div style="font-size:.73rem;font-weight:700;color:#AD1457;margin-bottom:4px;cursor:pointer;" onclick="openProbHelp()" title="Voir des exemples de problématiques">3. <span style="text-decoration:underline dotted;text-underline-offset:3px;">Problématique</span> <span style="font-weight:400;font-style:italic;color:#888;">(question de sens — jamais descriptive)</span></div>
           <div style="font-size:.7rem;color:#888;margin-bottom:6px;padding:5px 8px;background:#fff;border-radius:6px;">
             ❌ « Comment l'auteur décrit-il un paysage ? »<br>
             ✅ « Comment la description d'un paysage devient-elle l'occasion d'une méditation existentielle ? »
@@ -4063,6 +4082,33 @@ Retourne UNIQUEMENT un JSON strict, sans aucun texte avant ou après, sans backt
     </div>
     <p style="font-size:.67rem;color:#555;background:#e8f5e9;border-radius:6px;padding:5px 7px;line-height:1.6;"><b>À l'import :</b> les scores sont calculés automatiquement (normalisation densité/max). Si tu as modifié la feuille « Champs lexicaux », le champ lexical et les justifications du livre sont mis à jour en même temps.</p>
   </div>
+</div>
+
+<!-- ══ AIDE PROBLÉMATIQUES ══ -->
+<div id="probl-help-win" class="wfloat">
+  <div class="wfloat-rh rh-n"  data-win="probl-help-win" data-dir="n"></div>
+  <div class="wfloat-rh rh-s"  data-win="probl-help-win" data-dir="s"></div>
+  <div class="wfloat-rh rh-w"  data-win="probl-help-win" data-dir="w"></div>
+  <div class="wfloat-rh rh-e"  data-win="probl-help-win" data-dir="e"></div>
+  <div class="wfloat-rh rh-nw" data-win="probl-help-win" data-dir="nw"></div>
+  <div class="wfloat-rh rh-ne" data-win="probl-help-win" data-dir="ne"></div>
+  <div class="wfloat-rh rh-sw" data-win="probl-help-win" data-dir="sw"></div>
+  <div class="wfloat-rh rh-se" data-win="probl-help-win" data-dir="se"></div>
+  <div id="probl-hw-hdr" class="wfloat-hdr">
+    <span id="probl-hw-ttl">❓ Exemples de problématiques</span>
+    <button id="probl-hw-cls" onclick="closeProbHelp()">✕ Fermer</button>
+  </div>
+  <div id="probl-hw-filters">
+    <button class="phw-filt on" data-genre="tous" onclick="phwFilter(this,'tous')">Tous</button>
+    <button class="phw-filt" data-genre="Roman" onclick="phwFilter(this,'Roman')">Roman</button>
+    <button class="phw-filt" data-genre="Théâtre" onclick="phwFilter(this,'Théâtre')">Théâtre</button>
+    <button class="phw-filt" data-genre="Récit" onclick="phwFilter(this,'Récit')">Récit</button>
+    <button class="phw-filt" data-theme="Identité" onclick="phwFilter(this,'Identité')">Identité</button>
+    <button class="phw-filt" data-theme="Pouvoir" onclick="phwFilter(this,'Pouvoir')">Pouvoir</button>
+    <button class="phw-filt" data-theme="Liberté" onclick="phwFilter(this,'Liberté')">Liberté</button>
+    <button class="phw-filt" data-theme="Société" onclick="phwFilter(this,'Société')">Société</button>
+  </div>
+  <div id="probl-hw-body"></div>
 </div>
 
 <div id="modal-overlay" onclick="closeModal(event)">
@@ -14869,6 +14915,160 @@ window.addEventListener('resize', function(){
     updateQ3LexViz();
   }, 150);
 });
+
+// ════ AIDE PROBLÉMATIQUES ════
+var _PROBL_BANK = [
+  {titre:"L'Île des esclaves",auteur:"Marivaux",annee:1725,genre:"Théâtre",courant:"Lumières",themes:["Société","Liberté","Pouvoir"],
+   problematiques:[
+    {angle:"Philosophique / Sociale",texte:"Dans quelle mesure L'Île des esclaves est-elle une comédie qui, tout en divertissant, démontre que la hiérarchie sociale est arbitraire et réformable ?"},
+    {angle:"Dramaturgique",texte:"En quoi le dispositif du renversement des rôles est-il, chez Marivaux, à la fois source de comique et instrument d'une démonstration philosophique sur l'inégalité ?"},
+    {angle:"Étude de l'extrait",texte:"Par quels procédés Marivaux fait-il de la scène d'exposition une leçon de philosophie politique déguisée en comédie ?"}
+  ]},
+  {titre:"Caligula",auteur:"Albert Camus",annee:1944,genre:"Théâtre",courant:"Existentialisme / Absurde",themes:["Liberté","Pouvoir","Identité"],
+   problematiques:[
+    {angle:"Philosophique",texte:"Dans quelle mesure Caligula est-il une pièce qui, sous les apparences d'un drame historique, démontre les limites de la liberté absolue et l'impasse du nihilisme ?"},
+    {angle:"Tragique / Absurde",texte:"En quoi Caligula incarne-t-il la révolte absurde dans sa forme la plus radicale, et comment Camus montre-t-il que cette révolte est condamnée à l'échec ?"},
+    {angle:"Étude de l'extrait",texte:"Par quels procédés Camus fait-il de la tirade de Caligula une démonstration philosophique sur l'absurde plutôt qu'un simple discours de tyran ?"}
+  ]},
+  {titre:"La Controverse de Valladolid",auteur:"Jean-Claude Carrière",annee:1992,genre:"Théâtre",courant:"Théâtre contemporain",themes:["Société","Pouvoir","Identité"],
+   problematiques:[
+    {angle:"Humaniste / Universelle",texte:"Dans quelle mesure La Controverse de Valladolid, en mettant en scène un débat historique sur l'humanité des Indiens, pose-t-elle une question philosophique toujours actuelle sur les fondements de l'universel ?"},
+    {angle:"Rhétorique",texte:"En quoi la pièce de Carrière transforme-t-elle un débat théologique du XVIe siècle en réflexion sur les mécanismes de la rhétorique et du pouvoir des mots ?"}
+  ]},
+  {titre:"Britannicus",auteur:"Jean Racine",annee:1669,genre:"Théâtre",courant:"Classicisme",themes:["Pouvoir","Identité","Société"],
+   problematiques:[
+    {angle:"Politique / Tragique",texte:"Dans quelle mesure Britannicus est-il une tragédie qui, en représentant la naissance de Néron, analyse les mécanismes psychologiques et politiques de la tyrannie ?"},
+    {angle:"Psychologique",texte:"En quoi la jalousie de Néron est-elle, dans Britannicus, à la fois moteur tragique et révélateur d'une conception du pouvoir fondée sur la possession plutôt que la légitimité ?"},
+    {angle:"Étude de l'extrait",texte:"Par quels procédés Racine fait-il de la scène de la galerie un moment clé où s'accomplit la transformation de Néron en tyran ?"}
+  ]},
+  {titre:"Thérèse Desqueyroux",auteur:"François Mauriac",annee:1927,genre:"Roman",courant:"Roman psychologique",themes:["Liberté","Identité","Société"],
+   problematiques:[
+    {angle:"Moral / Social",texte:"Dans quelle mesure Mauriac parvient-il à transformer une tentative d'empoisonnement en radiographie de l'enfermement féminin, faisant du lecteur un complice de la coupable ?"},
+    {angle:"Narratologique",texte:"En quoi le style indirect libre de Mauriac permet-il de faire de Thérèse un personnage à la fois opaque et familier, coupable et innocent ?"},
+    {angle:"Féministe",texte:"Comment Thérèse Desqueyroux interroge-t-il les contraintes que la société bourgeoise des années 1920 impose aux femmes, au point de transformer le mariage en prison ?"}
+  ]},
+  {titre:"L'Adversaire",auteur:"Emmanuel Carrère",annee:2000,genre:"Récit",courant:"Autofiction / Non-fiction",themes:["Identité","Société","Liberté"],
+   problematiques:[
+    {angle:"Éthique / Littéraire",texte:"Comment un écrivain peut-il raconter ce qui résiste par nature à toute narration — le vide d'une conscience, l'incompréhensible d'un crime — tout en restant fidèle à la réalité des victimes ?"},
+    {angle:"Identitaire",texte:"En quoi L'Adversaire illustre-t-il le vertige d'une identité construite uniquement sur le regard des autres, et les violences auxquelles conduit son effondrement ?"}
+  ]},
+  {titre:"Madame Bovary",auteur:"Gustave Flaubert",annee:1857,genre:"Roman",courant:"Réalisme",themes:["Liberté","Identité","Société"],
+   problematiques:[
+    {angle:"Romantisme vs Réalisme",texte:"Dans quelle mesure Emma Bovary est-elle une victime du romantisme littéraire, et comment Flaubert fait-il de ce conflit entre rêve et réel le moteur tragique du roman ?"},
+    {angle:"Critique sociale",texte:"En quoi Madame Bovary est-il une satire de la bourgeoisie provinciale du XIXe siècle, à travers le portrait d'une femme qui refuse l'ordre établi sans pouvoir le dépasser ?"},
+    {angle:"Stylistique",texte:"Par quels procédés le style indirect libre de Flaubert permet-il d'adhérer à la subjectivité d'Emma tout en maintenant une distance ironique sur ses illusions ?"}
+  ]},
+  {titre:"Bel-Ami",auteur:"Guy de Maupassant",annee:1885,genre:"Roman",courant:"Réalisme / Naturalisme",themes:["Pouvoir","Société","Liberté"],
+   problematiques:[
+    {angle:"Social / Moral",texte:"Dans quelle mesure l'ascension de Duroy dans Bel-Ami constitue-t-elle une critique du monde journalistique et politique de la IIIe République, fondé sur la séduction et le mensonge ?"},
+    {angle:"Psychologique",texte:"En quoi Georges Duroy est-il un personnage qui réussit précisément parce qu'il est vide — et que dit cette réussite de la société qui le propulse ?"}
+  ]},
+  {titre:"L'Étranger",auteur:"Albert Camus",annee:1942,genre:"Roman",courant:"Existentialisme / Absurde",themes:["Identité","Liberté","Société"],
+   problematiques:[
+    {angle:"Philosophique / Absurde",texte:"Dans quelle mesure Meursault est-il un personnage absurde, et comment l'indifférence qui lui vaut d'être condamné révèle-t-elle les conventions hypocrites d'une société qui juge les sentiments plutôt que les actes ?"},
+    {angle:"Narratologique",texte:"En quoi la narration à la première personne de Meursault — neutre, sèche, sans affect apparent — est-elle un choix stylistique qui engage le lecteur dans une lecture morale du roman ?"}
+  ]},
+  {titre:"Phèdre",auteur:"Jean Racine",annee:1677,genre:"Théâtre",courant:"Classicisme",themes:["Liberté","Identité","Pouvoir"],
+   problematiques:[
+    {angle:"Tragique",texte:"Dans quelle mesure Phèdre est-elle une héroïne tragique qui, en refusant le mensonge, choisit la mort comme seule forme de liberté dans un monde où la passion est implacablement coupable ?"},
+    {angle:"Psychologique",texte:"En quoi la passion de Phèdre est-elle un conflit intérieur — entre la volonté morale et la force du désir — que Racine traduit dans une langue à la fois sobre et violente ?"}
+  ]},
+  {titre:"Candide",auteur:"Voltaire",annee:1759,genre:"Récit",courant:"Lumières",themes:["Liberté","Société","Pouvoir"],
+   problematiques:[
+    {angle:"Philosophique / Satirique",texte:"Dans quelle mesure Voltaire utilise-t-il le conte philosophique pour démonter, par l'ironie et l'accumulation de catastrophes, l'optimisme leibnizien et plus largement toute pensée dogmatique ?"},
+    {angle:"Humaniste",texte:"En quoi la conclusion de Candide — « il faut cultiver notre jardin » — constitue-t-elle une réponse pragmatique et désenchantée aux illusions philosophiques du siècle ?"}
+  ]},
+  {titre:"Les Misérables",auteur:"Victor Hugo",annee:1862,genre:"Roman",courant:"Romantisme",themes:["Liberté","Société","Identité"],
+   problematiques:[
+    {angle:"Social / Humaniste",texte:"Dans quelle mesure Les Misérables est-il un roman qui transforme le destin individuel de Jean Valjean en plaidoyer politique pour une société plus juste et plus fraternelle ?"},
+    {angle:"Romanesque",texte:"En quoi la rédemption de Jean Valjean illustre-t-elle la conception hugolienne du roman comme instrument de transformation morale du lecteur ?"}
+  ]},
+  {titre:"Rhinocéros",auteur:"Eugène Ionesco",annee:1959,genre:"Théâtre",courant:"Théâtre de l'absurde",themes:["Liberté","Société","Identité"],
+   problematiques:[
+    {angle:"Politique / Absurde",texte:"Dans quelle mesure Rhinocéros est-il une métaphore du conformisme et des totalitarismes, et comment Ionesco fait-il du grotesque et de l'absurde des armes politiques ?"},
+    {angle:"Identitaire",texte:"En quoi la résistance finale de Bérenger à la rhinocérite illustre-t-elle la question de l'identité individuelle face à la pression du groupe ?"}
+  ]}
+];
+
+var _phwActiveFilt = {genre:'tous', theme:''};
+
+function openProbHelp() {
+  var win = document.getElementById('probl-help-win');
+  if (!win) return;
+  if (!win.style.left) {
+    win.style.left = Math.max(40, (window.innerWidth - 520) / 2) + 'px';
+    win.style.top  = Math.max(60, (window.innerHeight - 460) / 4) + 'px';
+  }
+  win.classList.add('open');
+  phwRender();
+}
+
+function closeProbHelp() {
+  var win = document.getElementById('probl-help-win');
+  if (win) win.classList.remove('open');
+}
+
+function phwFilter(btn, val) {
+  var isTheme = btn.dataset.theme;
+  // Toggle
+  if (isTheme) {
+    var cur = _phwActiveFilt.theme === val;
+    document.querySelectorAll('.phw-filt[data-theme]').forEach(function(b){ b.classList.remove('on'); });
+    _phwActiveFilt.theme = cur ? '' : val;
+    if (!cur) btn.classList.add('on');
+  } else {
+    document.querySelectorAll('.phw-filt[data-genre]').forEach(function(b){ b.classList.remove('on'); });
+    _phwActiveFilt.genre = val;
+    btn.classList.add('on');
+  }
+  phwRender();
+}
+
+function phwRender() {
+  var body = document.getElementById('probl-hw-body');
+  if (!body) return;
+  var html = '';
+  _PROBL_BANK.forEach(function(book) {
+    var matchGenre = _phwActiveFilt.genre === 'tous' || book.genre === _phwActiveFilt.genre;
+    var matchTheme = !_phwActiveFilt.theme || book.themes.indexOf(_phwActiveFilt.theme) !== -1;
+    if (!matchGenre || !matchTheme) return;
+    html += '<div class="phw-card">';
+    html += '<div class="phw-book">' + esc(book.titre) + '</div>';
+    html += '<div class="phw-meta">' + esc(book.auteur) + ' · ' + book.annee + ' · ' + esc(book.genre) + ' · ' + esc(book.courant) + '</div>';
+    book.problematiques.forEach(function(p) {
+      html += '<div class="phw-probl" onclick="phwInject(' + JSON.stringify(p.texte) + ')">';
+      html += '<div class="phw-probl-angle">' + esc(p.angle) + ' <span class="phw-inject">↩ insérer</span></div>';
+      html += esc(p.texte);
+      html += '</div>';
+    });
+    html += '</div>';
+  });
+  if (!html) html = '<div style="color:#aaa;font-size:.72rem;padding:16px;text-align:center;">Aucun résultat pour ce filtre.</div>';
+  body.innerHTML = html;
+}
+
+function phwInject(texte) {
+  // Injecter dans le champ problématique actif (dissertation2 ou analyse linéaire ou commentaire)
+  var targets = ['diss2-problematique','lin-intro3','com-problematique-ta'];
+  var injected = false;
+  targets.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && el.offsetParent !== null && !injected) {
+      el.value = texte;
+      el.dispatchEvent(new Event('input', {bubbles:true}));
+      injected = true;
+    }
+  });
+  if (!injected) {
+    // Fallback : copier dans le presse-papier
+    var ta = document.createElement('textarea');
+    ta.value = texte; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    showToast('Problématique copiée dans le presse-papier', 'ok');
+  } else {
+    showToast('Problématique insérée ✓', 'ok');
+  }
+}
 
 </script>
 
