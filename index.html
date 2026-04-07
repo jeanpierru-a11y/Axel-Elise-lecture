@@ -533,9 +533,11 @@ body.ni-on #guide-content-wrap{margin-left:0;}
 .lc-badge.axel{background:#E3F2FD;color:var(--bleu);}
 .lc-badge.elise{background:#F3E5F5;color:#6A1B9A;}
 .lc-badge.both{background:#E8F5E9;color:#2E7D32;}
-.lc-actions{position:absolute;bottom:12px;right:12px;}
+.lc-actions{display:flex;gap:6px;justify-content:flex-end;margin-top:auto;padding-top:6px;}
 .lc-del{background:#fff;border:2px solid #EF9A9A;color:#c0392b;border-radius:8px;width:34px;height:34px;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .12s;}
 .lc-del:hover,.lc-del:active{background:#FFEBEE;}
+.lc-dup{background:#fff;border:2px solid #90CAF9;color:#1565C0;border-radius:8px;width:34px;height:34px;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .12s;}
+.lc-dup:hover,.lc-dup:active{background:#E3F2FD;}
 .btn-nouveau-grid{
   display:flex;align-items:center;justify-content:center;gap:8px;
   width:100%;padding:14px;border-radius:14px;
@@ -681,6 +683,8 @@ body.ni-on.ni-sec-personnages #guide-content-wrap > #content{display:none !impor
 .btn-clear svg{width:18px;height:18px;pointer-events:none;}
 /* Supprimer item (corbeille) : rouge, action irréversible sur la fiche entière */
 .btn-del{background:#fff;color:#c0392b;border:2px solid #EF9A9A;border-radius:8px;width:36px;height:36px;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .12s,border-color .12s;}
+.btn-dup{background:#fff;color:#1565C0;border:2px solid #90CAF9;border-radius:8px;width:36px;height:36px;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .12s,border-color .12s;}
+.btn-dup:hover{background:#E3F2FD;border-color:#1565C0;}
 .btn-del:active,.btn-del:focus{background:#FFEBEE;border-color:#c0392b;outline:none;}
 .btn-del svg{width:18px;height:18px;pointer-events:none;}
 /* Barre d'outils sous une textarea (micro + effacer) */
@@ -2705,6 +2709,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
         <span id="ni-q-th-source-badge" style="margin-left:5px;flex-shrink:0;"></span>
         <button class="ni-q-hdr-alpha" id="ni-th-pairs-btn" onclick="_q3TogglePaires()" title="Comparer les paires de thèmes" style="display:none;margin-left:10px;">Paires</button>
         <button class="ni-q-hdr-alpha" id="ni-th-pdf-btn" onclick="genererPDF_lex()" title="Exporter la toile en PDF" style="display:none;margin-left:10px;">PDF toile</button>
+        <button class="ni-q-hdr-alpha" id="ni-th-xlsx-btn" onclick="exporterLexiqueExcel()" title="Exporter le lexique en Excel (scores + champs + phases)" style="display:none;margin-left:6px;">📊 Excel</button>
         <div style="flex:1;min-width:0;"></div>
         <div style="display:flex;align-items:center;gap:3px;">
           <button class="ni-q-hdr-icon" id="ni-th-count-btn" onclick="openLexCount()" title="Compter sur texte complet (.txt)" style="display:none;">📄</button>
@@ -6565,9 +6570,14 @@ function renderBiblio() {
       '</div>' +
       '<span class="lc-badge ' + badgeCls + '">' + badgeTxt + '</span>' +
       '<div class="lc-actions">' +
+        (canCreate() ? '<button class="lc-dup btn-dup" title="Dupliquer ce livre"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="17" height="17"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>' : '') +
         (canEdit(livre) ? '<button class="lc-del btn-del" title="Supprimer">' + _SVG_DEL_STR + '</button>' : '') +
       '</div>';
     div.addEventListener('click', function(e){
+      if (e.target.closest('.lc-dup')) {
+        dupliquerLivre(livre.id);
+        return;
+      }
       if (e.target.classList.contains('lc-del')) {
         if (confirm('Supprimer « ' + (livre.titre||'ce livre') + ' » ?')) {
           BIBLIO.livres = BIBLIO.livres.filter(l => l.id !== livre.id);
@@ -7287,6 +7297,24 @@ function supprimerLivre(id) {
   sauvegarderBiblio();
   renderBiblio();
   showToast('Livre supprimé', 'warn');
+}
+
+function dupliquerLivre(id) {
+  if (!canCreate()) { showToast('❌ Tu n\'as pas le droit de créer un livre', 'warn'); return; }
+  const src = BIBLIO.livres.find(l => l.id === id);
+  if (!src) return;
+  // Deep clone via JSON (pas de fonctions dans les données)
+  const clone = JSON.parse(JSON.stringify(src));
+  clone.id = 'liv_' + Date.now().toString(36) + Math.random().toString(36).slice(2,5);
+  clone.ownerId = AUTH_UID || 'unknown';
+  clone.titre = 'Copie — ' + (src.titre || 'Sans titre');
+  const now = new Date();
+  clone.dateCreation = now.toLocaleDateString('fr-FR', {day:'2-digit',month:'2-digit',year:'numeric'});
+  clone.tsCreation = now.getTime();
+  BIBLIO.livres.unshift(clone);
+  sauvegarderBiblio();
+  renderBiblio();
+  showToast('📋 Livre dupliqué : ' + clone.titre, 'ok');
 }
 
 // ════════════════════════════════════════════════════════
@@ -13644,6 +13672,8 @@ function updateQ3LexViz() {
   if(helpBtn) helpBtn.style.display='inline';
   var pdfBtn=document.getElementById('ni-th-pdf-btn');
   if(pdfBtn) pdfBtn.style.display='inline';
+  var xlsxBtn=document.getElementById('ni-th-xlsx-btn');
+  if(xlsxBtn) xlsxBtn.style.display='inline';
   var pairsBtn=document.getElementById('ni-th-pairs-btn');
   if(pairsBtn) pairsBtn.style.display=(lex&&lex.paires&&lex.paires.length)?'inline':'none';
   // Bouton comptage : visible si champLexical défini
@@ -14064,6 +14094,112 @@ function _loadXLSX(cb){
   s.onload=function(){_xlsxLoaded=true;cb();};
   s.onerror=function(){showToast('⚠️ Impossible de charger la bibliothèque Excel (connexion requise)','warn');};
   document.head.appendChild(s);
+}
+
+// ── Export lexique avec données réelles ───────────────────────────────────────
+function exporterLexiqueExcel(){
+  if(!LIVRE_ACTIF){showToast('Aucun livre ouvert','warn');return;}
+  var lex=LIVRE_ACTIF.lexique;
+  if(!lex||!lex.tranches||!lex.tranches.length){showToast('⚠️ Pas de données lexicales à exporter','warn');return;}
+  _loadXLSX(function(){
+    var XLSX=window.XLSX;
+    var phases=lex.phases||[];
+    var tranches=lex.tranches;
+    var champ=lex.champLexical||{};
+    var justifs=lex.justifications||{};
+    var COLORS={amour:'FFAD1457',pouvoir:'FFC62828',liberte:'FF1565C0',identite:'FF6A1B9A',societe:'FFFB8C00',nature:'FF2E7D32'};
+    var BGCOL={amour:'FFFCE4EC',pouvoir:'FFFFEBEE',liberte:'FFE3F2FD',identite:'FFF3E5F5',societe:'FFFFF8E1',nature:'FFE8F5E9'};
+    var LABELS_FR={amour:'Amour',pouvoir:'Pouvoir',liberte:'Liberté',identite:'Identité',societe:'Société',nature:'Nature'};
+    function cell(v,t,s){return {v:v,t:t||'s',s:s||{}};}
+    function hdr(v,rgb,bg){return cell(v,'s',{font:{bold:true,color:{rgb:'FFFFFFFF'}},fill:{fgColor:{rgb:bg||rgb}},alignment:{horizontal:'center',vertical:'center',wrapText:true}});}
+    function numCell(v,bg){return {v:v,t:'n',s:{fill:{fgColor:{rgb:bg||'FFFFFFFF'}},alignment:{horizontal:'center'}}};}
+    function txtCell(v,fg,bg){return cell(v,'s',{font:{color:{rgb:fg||'FF000000'}},fill:{fgColor:{rgb:bg||'FFFFFFFF'}},alignment:{wrapText:true,vertical:'top'}});}
+    var wb=XLSX.utils.book_new();
+
+    // ── FEUILLE 1 : Scores par tranche (données réelles) ──
+    var ws1={};
+    var nbTr=tranches.length;
+    // Ligne 0 : en-têtes colonnes
+    ws1[XLSX.utils.encode_cell({r:0,c:0})]=hdr('Phase','FF37474F','FF546E7A');
+    ws1[XLSX.utils.encode_cell({r:0,c:1})]=hdr('Pages','FF37474F','FF546E7A');
+    LEX_KEYS.forEach(function(k,ki){
+      ws1[XLSX.utils.encode_cell({r:0,c:2+ki})]=hdr(LABELS_FR[k],'FF37474F',COLORS[k]);
+    });
+    // Lignes : une par tranche
+    tranches.forEach(function(tr,ri){
+      var ph=phases[ri]||{};
+      ws1[XLSX.utils.encode_cell({r:ri+1,c:0})]=cell(ph.nom||('Phase '+(ri+1)),'s',{font:{bold:true},fill:{fgColor:{rgb:'FFF5F5F5'}},alignment:{horizontal:'center'}});
+      ws1[XLSX.utils.encode_cell({r:ri+1,c:1})]=cell('p.'+tr.pageDebut+'–'+tr.pageFin,'s',{alignment:{horizontal:'center'}});
+      LEX_KEYS.forEach(function(k,ki){
+        var score=typeof tr[k]==='number'?tr[k]:0;
+        var bg=score>0?BGCOL[k]:'FFFFFFFF';
+        ws1[XLSX.utils.encode_cell({r:ri+1,c:2+ki})]=numCell(score,bg);
+      });
+    });
+    // Ligne totaux / moyennes
+    var totRow=tranches.length+1;
+    ws1[XLSX.utils.encode_cell({r:totRow,c:0})]=cell('MOYENNES','s',{font:{bold:true},fill:{fgColor:{rgb:'FF37474F'}},alignment:{horizontal:'center'}});
+    ws1[XLSX.utils.encode_cell({r:totRow,c:1})]=cell('','s',{fill:{fgColor:{rgb:'FF37474F'}}});
+    LEX_KEYS.forEach(function(k,ki){
+      var vals=tranches.map(function(tr){return typeof tr[k]==='number'?tr[k]:0;});
+      var avg=vals.length?Math.round(vals.reduce(function(a,b){return a+b;},0)/vals.length):0;
+      ws1[XLSX.utils.encode_cell({r:totRow,c:2+ki})]=cell(avg,'n',{font:{bold:true,color:{rgb:'FFFFFFFF'}},fill:{fgColor:{rgb:COLORS[k]}},alignment:{horizontal:'center'}});
+    });
+    ws1['!ref']=XLSX.utils.encode_range({s:{r:0,c:0},e:{r:totRow,c:1+LEX_KEYS.length}});
+    ws1['!cols']=[{wch:20},{wch:12}].concat(LEX_KEYS.map(function(){return {wch:11};}));
+    ws1['!rows']=[{hpt:28}];
+    XLSX.utils.book_append_sheet(wb,ws1,'Scores');
+
+    // ── FEUILLE 2 : Champs lexicaux avec justifications ──
+    var ws2={};
+    ws2[XLSX.utils.encode_cell({r:0,c:0})]=hdr('Thème','FF37474F','FF37474F');
+    ws2[XLSX.utils.encode_cell({r:0,c:1})]=hdr('Mot','FF37474F','FF37474F');
+    ws2[XLSX.utils.encode_cell({r:0,c:2})]=hdr('Occurrences','FF37474F','FF37474F');
+    ws2[XLSX.utils.encode_cell({r:0,c:3})]=hdr('Justification','FF37474F','FF37474F');
+    var r=1;
+    var merges2=[];
+    LEX_KEYS.forEach(function(k){
+      var mots=champ[k]||[];
+      if(!mots.length) return;
+      var themeStartR=r;
+      var motJustifs=(justifs[k]&&justifs[k].mots)||{};
+      mots.forEach(function(m){
+        ws2[XLSX.utils.encode_cell({r:r,c:0})]=cell(LABELS_FR[k],'s',{font:{bold:true,color:{rgb:'FFFFFFFF'}},fill:{fgColor:{rgb:COLORS[k]}},alignment:{horizontal:'center',vertical:'center'}});
+        ws2[XLSX.utils.encode_cell({r:r,c:1})]=cell(m.mot,'s',{font:{color:{rgb:COLORS[k]}},fill:{fgColor:{rgb:BGCOL[k]}},alignment:{horizontal:'center'}});
+        ws2[XLSX.utils.encode_cell({r:r,c:2})]=numCell(m.n||0,BGCOL[k]);
+        var justif=motJustifs[m.mot]||'';
+        ws2[XLSX.utils.encode_cell({r:r,c:3})]=txtCell(justif,'FF333333','FFFFFFFF');
+        r++;
+      });
+      if(mots.length>1) merges2.push({s:{r:themeStartR,c:0},e:{r:r-1,c:0}});
+    });
+    ws2['!ref']=XLSX.utils.encode_range({s:{r:0,c:0},e:{r:Math.max(r,1),c:3}});
+    ws2['!cols']=[{wch:14},{wch:18},{wch:14},{wch:55}];
+    ws2['!merges']=merges2;
+    XLSX.utils.book_append_sheet(wb,ws2,'Champs lexicaux');
+
+    // ── FEUILLE 3 : Phases (récapitulatif) ──
+    var ws3={};
+    ws3[XLSX.utils.encode_cell({r:0,c:0})]=hdr('N°','FF37474F','FF546E7A');
+    ws3[XLSX.utils.encode_cell({r:0,c:1})]=hdr('Nom de la phase','FF37474F','FF546E7A');
+    ws3[XLSX.utils.encode_cell({r:0,c:2})]=hdr('Page début','FF37474F','FF546E7A');
+    ws3[XLSX.utils.encode_cell({r:0,c:3})]=hdr('Page fin','FF37474F','FF546E7A');
+    phases.forEach(function(ph,i){
+      var tr=tranches[i]||{};
+      ws3[XLSX.utils.encode_cell({r:i+1,c:0})]=cell(i+1,'n',{alignment:{horizontal:'center'}});
+      ws3[XLSX.utils.encode_cell({r:i+1,c:1})]=cell(ph.nom||'','s',{font:{bold:true}});
+      ws3[XLSX.utils.encode_cell({r:i+1,c:2})]=cell(tr.pageDebut||ph.pageDebut||'','n',{alignment:{horizontal:'center'}});
+      ws3[XLSX.utils.encode_cell({r:i+1,c:3})]=cell(tr.pageFin||'','n',{alignment:{horizontal:'center'}});
+    });
+    ws3['!ref']=XLSX.utils.encode_range({s:{r:0,c:0},e:{r:Math.max(phases.length,1),c:3}});
+    ws3['!cols']=[{wch:6},{wch:30},{wch:12},{wch:12}];
+    XLSX.utils.book_append_sheet(wb,ws3,'Phases');
+
+    // ── Téléchargement ──
+    var titre=(LIVRE_ACTIF.titre||'Lexique').replace(/[^\w\s\-]/g,'').trim().replace(/\s+/g,'_');
+    XLSX.writeFile(wb, 'Lexique_'+titre+'.xlsx');
+    showToast('📊 Excel téléchargé : Lexique_'+titre+'.xlsx','ok');
+  });
 }
 
 function genererModeleExcel(){
