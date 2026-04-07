@@ -285,7 +285,16 @@ header p {
 }
 .atelier-ta::placeholder { color: var(--gris); font-style: italic; }
 
-.atelier-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn-copy {
+  padding: 10px 16px; cursor: pointer;
+  background: rgba(201,168,76,.15);
+  border: 1px solid rgba(201,168,76,.4);
+  color: var(--or); border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .8rem; font-weight: 700;
+  transition: background .15s;
+}
+.btn-copy:hover { background: rgba(201,168,76,.28); }
 
 .atelier-right { display: flex; flex-direction: column; gap: 14px; }
 
@@ -672,28 +681,182 @@ header p {
   opacity: 0; transition: all .3s; pointer-events: none; z-index: 999;
 }
 #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── Header flex ── */
+header { flex-direction: row; align-items: center; }
+#api-settings-btn:hover { background: rgba(255,255,255,.08); }
+#api-panel { display: none; flex-direction: row; }
+#api-panel.open { display: flex; }
+
+/* ── Atelier redesign ── */
+.atl-welcome {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 18px; margin-bottom: 18px;
+  background: rgba(255,255,255,.03);
+  border-radius: 10px; border-left: 3px solid var(--or);
+}
+.atl-welcome-icon { font-size: 1.1rem; flex-shrink: 0; }
+.atl-welcome-title {
+  font-size: .84rem; color: rgba(245,241,234,.82); line-height: 1.5;
+}
+.atl-field-label {
+  font-size: .65rem; font-weight: 800; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--or); margin-bottom: 2px;
+  display: block;
+}
+
+.atl-write-zone { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+.atl-oeuvre-input {
+  padding: 10px 14px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 8px; color: var(--creme);
+  font-family: 'DM Sans', sans-serif; font-size: .84rem;
+  width: 100%;
+}
+.atl-oeuvre-input:focus { outline: none; border-color: rgba(201,168,76,.4); }
+.atl-oeuvre-input::placeholder { color: var(--gris); }
+
+.atl-ia-path {
+  border-radius: 12px; overflow: hidden; margin-bottom: 12px;
+  border: 1px solid rgba(255,255,255,.1);
+}
+.atl-path-api  { border-color: rgba(123,31,162,.4); }
+.atl-path-chat { border-color: rgba(201,168,76,.3); }
+
+.atl-path-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 18px;
+  background: rgba(255,255,255,.05);
+}
+.atl-path-api  .atl-path-header { background: rgba(123,31,162,.15); }
+.atl-path-chat .atl-path-header { background: rgba(201,168,76,.08); }
+
+.atl-path-icon  { font-size: 1.1rem; }
+.atl-path-title { flex: 1; font-size: .88rem; font-weight: 700; color: var(--creme); }
+.atl-path-badge {
+  font-size: .62rem; font-weight: 700; letter-spacing: .05em;
+  text-transform: uppercase; padding: 3px 8px; border-radius: 10px;
+}
+.atl-badge-api  { background: rgba(123,31,162,.3); color: #CE93D8; }
+.atl-badge-chat { background: rgba(201,168,76,.2); color: var(--or); }
+
+.atl-path-body {
+  padding: 16px 18px; display: flex; flex-direction: column; gap: 10px;
+}
+.atl-path-explain {
+  font-size: .82rem; color: rgba(245,241,234,.82); line-height: 1.6;
+}
+.atl-btn-main {
+  padding: 12px 24px; border: none; cursor: pointer; border-radius: 9px;
+  font-family: 'DM Sans', sans-serif; font-size: .85rem; font-weight: 700;
+  transition: all .15s; align-self: flex-start;
+}
+.atl-path-api  .atl-btn-main { background: #7B1FA2; color: #fff; }
+.atl-path-api  .atl-btn-main:hover { background: #9C27B0; }
+.atl-path-chat .atl-btn-main { background: var(--or); color: var(--noir); }
+.atl-path-chat .atl-btn-main:hover { opacity: .85; }
+
+.atl-btn-sec {
+  padding: 8px 16px; border-radius: 8px; cursor: pointer;
+  background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14);
+  color: rgba(245,241,234,.8); font-family: 'DM Sans', sans-serif;
+  font-size: .78rem; font-weight: 500; align-self: flex-start;
+  transition: background .15s;
+}
+.atl-btn-sec:hover { background: rgba(255,255,255,.14); }
+
+.atl-btn-cancel {
+  padding: 7px 14px; border-radius: 8px; cursor: pointer; border: none;
+  background: rgba(139,42,42,.4); color: #ef9a9a;
+  font-family: 'DM Sans', sans-serif; font-size: .78rem; align-self: flex-start;
+}
+
+.atl-chat-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.atl-btn-chat {
+  padding: 8px 14px; border-radius: 8px; cursor: pointer;
+  background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14);
+  color: rgba(245,241,234,.8); font-family: 'DM Sans', sans-serif;
+  font-size: .78rem; font-weight: 600; transition: background .15s;
+}
+.atl-btn-chat:hover { background: rgba(201,168,76,.15); border-color: rgba(201,168,76,.3); color: var(--or); }
+
+.atl-copy-confirm {
+  font-size: .78rem; color: #A5D6A7; font-weight: 600;
+  padding: 8px 12px; background: rgba(76,175,80,.1); border-radius: 6px;
+}
+.atl-prompt-label {
+  font-size: .65rem; font-weight: 800; letter-spacing: .07em;
+  text-transform: uppercase; color: var(--gris); margin-bottom: 6px;
+}
+.atl-prompt-box {
+  font-family: 'DM Mono', monospace; font-size: .72rem; line-height: 1.65;
+  color: rgba(245,241,234,.78); background: rgba(0,0,0,.25);
+  border: 1px solid rgba(255,255,255,.1); border-radius: 8px;
+  padding: 12px 14px; white-space: pre-wrap; max-height: 160px;
+  overflow-y: auto; margin: 0;
+}
+.atl-api-invite {
+  display: flex; align-items: center; gap: 8px;
+  font-size: .75rem; color: var(--gris); padding: 4px 0;
+}
+.atl-btn-link {
+  background: none; border: none; color: var(--or); cursor: pointer;
+  font-size: .75rem; font-family: 'DM Sans', sans-serif;
+  text-decoration: underline; padding: 0;
+}
+.atl-also-copy { font-size: .75rem; color: var(--gris); margin-top: 4px; }
+.atl-path-unified { border-color: rgba(123,31,162,.3); }
+.atl-path-unified .atl-path-header { background: rgba(123,31,162,.1); }
+.atl-two-btns { display: flex; gap: 10px; }
+.atl-btn-equal {
+  flex: 1; padding: 13px 16px; border: none; border-radius: 10px;
+  cursor: pointer; font-family: 'DM Sans', sans-serif;
+  font-size: .84rem; font-weight: 700; transition: all .15s;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.atl-btn-equal-api  { background: #7B1FA2; color: #fff; }
+.atl-btn-equal-api:hover  { background: #9C27B0; }
+.atl-btn-equal-chat { background: rgba(201,168,76,.2); color: var(--or); border: 1px solid rgba(201,168,76,.4); }
+.atl-btn-equal-chat:hover { background: rgba(201,168,76,.35); }
+
+.atl-response-zone {
+  margin-top: 20px; display: flex; flex-direction: column; gap: 10px;
+}
+.atl-response-label {
+  font-size: .68rem; font-weight: 800; letter-spacing: .07em;
+  text-transform: uppercase; color: #CE93D8;
+}
+
 </style>
 </head>
 <body>
 
 <header>
-  <h1>La Machine à Problématiques</h1>
-  <p>Construire une question littéraire qui tient debout</p>
+  <div style="flex:1">
+    <h1>La Machine à Problématiques</h1>
+    <p>Construire une question littéraire qui tient debout</p>
+  </div>
+  <button id="api-settings-btn" onclick="toggleApiPanel()" title="Configurer la clé API Claude" style="background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:8px;transition:background .15s;">
+    <span id="api-dot" class="api-dot"></span>
+    <span style="font-size:.72rem;color:var(--gris);font-weight:600;" id="api-status-short">Claude</span>
+    <span style="font-size:.85rem;">⚙️</span>
+  </button>
 </header>
-
-<!-- Barre clé API -->
-<div class="api-bar">
-  <div class="api-dot" id="api-dot"></div>
-  <label for="api-input">Clé Claude API :</label>
-  <input type="password" id="api-input" placeholder="sk-ant-…" oninput="saveKey(this.value)">
+<!-- Panneau clé API (caché par défaut) -->
+<div id="api-panel" style="display:none;padding:10px 48px;background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.06);gap:12px;align-items:center;font-size:.75rem;color:var(--gris);">
+  <label for="api-input" style="white-space:nowrap;">Clé Claude (sk-ant-…) :</label>
+  <input type="password" id="api-input" placeholder="sk-ant-…" oninput="saveKey(this.value)"
+    style="flex:1;max-width:340px;padding:6px 10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:6px;color:var(--creme);font-family:'DM Mono',monospace;font-size:.72rem;">
   <span id="api-status">non configurée</span>
+  <a href="https://console.anthropic.com/" target="_blank" style="color:var(--or);font-size:.7rem;">Obtenir une clé gratuite →</a>
 </div>
 
 <!-- Onglets -->
 <div class="tabs">
-  <div class="tab act" onclick="showTab('taxo',this)">① Construire</div>
-  <div class="tab"     onclick="showTab('roue',this)">② La Roue</div>
-  <div class="tab"     onclick="showTab('atelier',this)">③ L'Atelier</div>
+  <div class="tab act" onclick="showTab('taxo',this)">① Comprendre</div>
+  <div class="tab"     onclick="showTab('roue',this)">② S'inspirer</div>
+  <div class="tab"     onclick="showTab('atelier',this)" id="tab-atelier">③ Formuler &amp; tester</div>
   <div class="tab"     onclick="showTab('exemples',this)">📚 Exemples</div>
 </div>
 
@@ -902,36 +1065,73 @@ header p {
 
 <!-- ══ ONGLET 3 : ATELIER ══ -->
 <div class="panel" id="panel-atelier">
-  <div class="atelier-zone">
-    <div class="atelier-bloc">
-      <div class="atelier-label">Ta problématique</div>
-      <textarea class="atelier-ta" id="atelier-ta"
-        placeholder="Écris ou colle ici ta problématique — ou envoie-la depuis la Roue…"></textarea>
-      <div style="font-size:.75rem;color:var(--gris);line-height:1.6;">
-        Précise l'œuvre étudiée si tu veux une évaluation personnalisée.
-      </div>
-      <input id="atelier-oeuvre" style="padding:8px 12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:var(--creme);font-family:'DM Sans',sans-serif;font-size:.82rem;width:100%;"
-        placeholder="Titre de l'œuvre (ex : L'Île des esclaves, Marivaux)">
-      <div class="atelier-btns">
-        <button class="btn-prim" onclick="evaluer()">Évaluer avec Claude</button>
-        <button class="btn-sec"  onclick="varianter()">Proposer des variantes</button>
-        <button class="btn-sec"  id="btn-annuler" onclick="annulerAnalyse()"
-          style="display:none;background:rgba(139,42,42,.4);border-color:rgba(139,42,42,.6);">
-          ✕ Annuler
-        </button>
-        <button class="btn-sec"  onclick="atelier_ta.value=''">Effacer</button>
-      </div>
-    </div>
 
-    <div class="atelier-right">
-      <div class="atelier-label" id="atelier-right-label">Réponse de Claude</div>
-      <div class="atelier-reponse" id="atelier-reponse">
-        <div class="ph">La réponse de Claude apparaîtra ici.<br>Tu peux aussi cliquer sur une variante pour la copier dans l'éditeur.</div>
+  <!-- Message d'accueil compact -->
+  <div class="atl-welcome">
+    <span class="atl-welcome-icon">✍️</span>
+    <span class="atl-welcome-title">Formule ta problématique — même imparfaite, même maladroite, c'est exactement là qu'on apprend.</span>
+  </div>
+
+  <!-- Zone d'écriture -->
+  <div class="atl-write-zone">
+    <label class="atl-field-label" for="atelier-ta">Ta problématique</label>
+    <textarea class="atelier-ta" id="atelier-ta"
+      placeholder="Écris ici… ou envoie une formulation depuis ② S'inspirer.&#10;Ex : « En quoi cette pièce montre-t-elle que… »"></textarea>
+    <input id="atelier-oeuvre" class="atl-oeuvre-input"
+      placeholder="Sur quelle œuvre travailles-tu ? (ex : L'Île des esclaves, Marivaux)">
+  </div>
+
+  <!-- Zone d'aide IA — s'adapte selon la clé -->
+  <div class="atl-ia-zone" id="atl-ia-zone">
+    <div class="atl-ia-path atl-path-unified">
+      <div class="atl-path-header">
+        <span class="atl-path-icon">💡</span>
+        <span class="atl-path-title">Claude peut analyser ta problématique</span>
+        <span class="atl-path-badge atl-badge-api" id="atl-key-badge" style="display:none">clé configurée</span>
       </div>
-      <div class="variantes" id="variantes"></div>
+      <div class="atl-path-body">
+        <div class="atl-two-btns" id="atl-two-btns">
+          <!-- Bouton Claude API (caché si pas de clé) -->
+          <button class="atl-btn-equal atl-btn-equal-api" id="btn-evaluer"
+            onclick="evaluer()" style="display:none">
+            🤖 Via l'API Claude
+          </button>
+          <!-- Bouton Chat IA — toujours visible -->
+          <button class="atl-btn-equal atl-btn-equal-chat"
+            onclick="doCopyAndShow()">
+            💬 Via un chat IA
+          </button>
+        </div>
+        <button class="atl-btn-cancel" id="btn-annuler" onclick="annulerAnalyse()" style="display:none">✕ Annuler</button>
+        <!-- Prompt (affiché au clic sur "Via un chat IA") -->
+        <div id="copy-prompt-preview" style="display:none;margin-top:14px;">
+          <div class="atl-prompt-label">Prompt prêt à coller dans le chat de ton choix :</div>
+          <pre id="copy-prompt-box" class="atl-prompt-box"></pre>
+          <div id="copy-confirm" style="display:none;margin-top:8px;" class="atl-copy-confirm">✓ Copié !</div>
+          <div class="atl-chat-actions" style="margin-top:10px;">
+            <button class="atl-btn-chat" onclick="doCopy();window.open('https://claude.ai/new','_blank')">→ Claude.ai</button>
+            <button class="atl-btn-chat" onclick="doCopy();window.open('https://chat.openai.com/','_blank')">→ ChatGPT</button>
+            <button class="atl-btn-chat" onclick="doCopy();window.open('https://gemini.google.com/','_blank')">→ Gemini</button>
+          </div>
+        </div>
+        <!-- Invitation à configurer la clé si absente -->
+        <div id="atl-api-invite" class="atl-api-invite" style="display:none">
+          <span>Pour activer "Via l'API Claude"</span>
+          <button onclick="toggleApiPanel()" class="atl-btn-link">⚙️ configurer une clé</button>
+        </div>
+      </div>
     </div>
   </div>
+
+  <!-- Zone réponse IA -->
+  <div class="atl-response-zone" id="atl-response-zone" style="display:none">
+    <div class="atl-response-label" id="atelier-right-label">Analyse de Claude</div>
+    <div class="atelier-reponse" id="atelier-reponse"></div>
+    <div class="variantes" id="variantes"></div>
+  </div>
+
 </div>
+
 
 <!-- ══ ONGLET 4 : EXEMPLES ══ -->
 <div class="panel" id="panel-exemples">
@@ -1086,6 +1286,7 @@ var state = {
 function saveKey(v) {
   if (v) localStorage.setItem('anthropic_api_key', v);
   updateDot();
+  _updateAtelierMode();
 }
 function getKey() {
   return localStorage.getItem('anthropic_api_key') || '';
@@ -1094,18 +1295,40 @@ function updateDot() {
   var k = getKey();
   var dot = document.getElementById('api-dot');
   var st  = document.getElementById('api-status');
+  var ss  = document.getElementById('api-status-short');
   if (k && k.startsWith('sk-ant-')) {
-    dot.className = 'api-dot ok'; st.textContent = 'configurée';
+    dot.className = 'api-dot ok';
+    if (st) st.textContent = 'configurée';
+    if (ss) ss.textContent = 'Claude ✓';
   } else if (k) {
-    dot.className = 'api-dot err'; st.textContent = 'format inattendu';
+    dot.className = 'api-dot err';
+    if (st) st.textContent = 'format inattendu';
+    if (ss) ss.textContent = 'Clé invalide';
   } else {
-    dot.className = 'api-dot'; st.textContent = 'non configurée';
+    dot.className = 'api-dot';
+    if (st) st.textContent = 'non configurée';
+    if (ss) ss.textContent = 'Claude';
   }
+}
+function toggleApiPanel() {
+  var p = document.getElementById('api-panel');
+  p.classList.toggle('open');
+}
+function _updateAtelierMode() {
+  var hasKey = getKey().startsWith('sk-ant-');
+  var btnApi  = document.getElementById('btn-evaluer');
+  var badge   = document.getElementById('atl-key-badge');
+  var invite  = document.getElementById('atl-api-invite');
+  if (btnApi)  btnApi.style.display  = hasKey ? 'flex' : 'none';
+  if (badge)   badge.style.display   = hasKey ? 'inline-flex' : 'none';
+  if (invite)  invite.style.display  = hasKey ? 'none' : 'flex';
 }
 (function() {
   var k = getKey();
-  if (k) document.getElementById('api-input').value = k;
+  var inp = document.getElementById('api-input');
+  if (k && inp) inp.value = k;
   updateDot();
+  _updateAtelierMode();
 })();
 
 // ══════════════════════════════════════════════════════
@@ -1116,6 +1339,10 @@ function showTab(id, el) {
   document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('act'); });
   document.getElementById('panel-'+id).classList.add('act');
   el.classList.add('act');
+  if (id === 'atelier') {
+    _updateAtelierMode();
+    _buildCopyPrompt();
+  }
 }
 
 // ══════════════════════════════════════════════════════
@@ -1262,9 +1489,12 @@ var _currentAbort = null;
 
 function annulerAnalyse() {
   if (_currentAbort) { _currentAbort.abort(); _currentAbort = null; }
-  document.getElementById('atelier-reponse').innerHTML = '<div class="ph">Analyse annulée.</div>';
-  document.getElementById('variantes').innerHTML = '';
-  document.getElementById('btn-annuler').style.display = 'none';
+  var box = document.getElementById('atelier-reponse');
+  if (box) box.innerHTML = '<div class="ph">Analyse annulée.</div>';
+  var vr = document.getElementById('variantes');
+  if (vr) vr.innerHTML = '';
+  var ab = document.getElementById('btn-annuler');
+  if (ab) ab.style.display = 'none';
 }
 
 async function callClaude(prompt) {
@@ -1309,8 +1539,12 @@ async function evaluer() {
   var ta = document.getElementById('atelier-ta').value.trim();
   if (!ta) { toast('Écris une problématique d\'abord'); return; }
   var oeuvre = document.getElementById('atelier-oeuvre').value.trim();
+  var rz = document.getElementById('atl-response-zone');
   var box = document.getElementById('atelier-reponse');
-  box.innerHTML = '<div class="ia-label">Claude analyse…</div><div class="ia-text"><span class="spin-anim">⟳</span></div>';
+  if (rz) { rz.style.display = 'flex'; setTimeout(function(){ rz.scrollIntoView({behavior:'smooth', block:'start'}); }, 80); }
+  var lbl = document.getElementById('atelier-right-label');
+  if (lbl) lbl.textContent = 'Claude analyse…';
+  box.innerHTML = '<div class="ia-text"><span class="spin-anim">⟳</span> En cours…</div>';
   document.getElementById('btn-annuler').style.display = 'inline-flex';
 
   var prompt = 'Tu es un professeur de lycée en France qui aide une élève à construire une problématique littéraire.' +
@@ -1324,8 +1558,8 @@ async function evaluer() {
 
   var text = await callClaude(prompt);
   if (!text) { box.innerHTML = '<div class="ph">Erreur lors de la réponse.</div>'; return; }
-  box.innerHTML = '<div class="ia-label">📖 Évaluation</div><div class="ia-text">' +
-    text.replace(/\n/g,'<br>') + '</div>';
+  if (lbl) lbl.textContent = '📖 Analyse de Claude';
+  box.innerHTML = '<div class="ia-text">' + text.replace(/\n/g,'<br>') + '</div>';
 }
 
 async function varianter() {
@@ -1362,7 +1596,70 @@ function useVariante(txt) {
 // ══════════════════════════════════════════════════════
 // UTILS
 // ══════════════════════════════════════════════════════
-var _toastTimer;
+var _copyPanelOpen = false;
+var _toastTimer    = null;
+function showCopySection() {
+  // Bascule vers le bloc sans-clé même si clé présente
+  var wk = document.getElementById('atl-with-key');
+  var nk = document.getElementById('atl-no-key');
+  if (wk) wk.style.display = 'none';
+  if (nk) { nk.style.display = 'block'; _buildCopyPrompt(); nk.scrollIntoView({behavior:'smooth', block:'nearest'}); }
+}
+
+function _buildCopyPrompt() {
+  var probl  = (document.getElementById('atelier-ta').value || '').trim();
+  var oeuvre = (document.getElementById('atelier-oeuvre').value || '').trim() || 'l\'œuvre étudiée';
+  var prompt =
+    'Tu es un professeur de lycée en France spécialisé en littérature.\n' +
+    'Une élève de lycée travaille sur ' + oeuvre + '.\n\n' +
+    'Elle propose cette problématique :\n' +
+    '« ' + (probl || '[colle ta problématique ici]') + ' »\n\n' +
+    'Évalue-la en 3 points courts :\n' +
+    '1. Ce qui fonctionne (la tension identifiée, la pertinence pour l\'œuvre)\n' +
+    '2. Ce qui pose problème (trop vague, trop fermée, hors sujet, paraphrase, réponse évidente…)\n' +
+    '3. Une suggestion d\'amélioration en une phrase, dans le même registre.\n\n' +
+    'Réponds de façon directe et bienveillante, sans jargon excessif. Maximum 150 mots.';
+  var pb = document.getElementById('copy-prompt-box');
+  if (pb) pb.textContent = prompt;
+  var cc = document.getElementById('copy-confirm');
+  if (cc) cc.style.display = 'none';
+}
+
+function doCopyAndShow() {
+  _buildCopyPrompt();
+  var prev = document.getElementById('copy-prompt-preview');
+  if (prev) prev.style.display = 'block';
+  doCopy();
+}
+
+function doCopy() {
+  _buildCopyPrompt();
+  var pb = document.getElementById('copy-prompt-box');
+  if (!pb) return;
+  var txt = pb.textContent;
+  var _showConfirm = function() {
+    var c = document.getElementById('copy-confirm');
+    if (c) { c.style.display = 'block'; setTimeout(function(){ c.style.display='none'; }, 3500); }
+  };
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(txt).then(_showConfirm).catch(function() {
+      var ta = document.createElement('textarea');
+      ta.value = txt; ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); } catch(e){}
+      document.body.removeChild(ta);
+      _showConfirm();
+    });
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = txt; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch(e){}
+    document.body.removeChild(ta);
+    _showConfirm();
+  }
+}
+
 function toast(msg) {
   var t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
