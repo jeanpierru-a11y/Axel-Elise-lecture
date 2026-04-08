@@ -2719,6 +2719,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
         <button class="ni-q-hdr-alpha" id="ni-th-acp-btn" onclick="_q3ToggleACP()" title="Analyse Augmentée — ACP des profils thématiques" style="display:none;margin-left:6px;">🔬 ACP</button>
         <button class="ni-q-hdr-alpha" id="ni-th-pdf-btn" onclick="genererPDF_lex()" title="Exporter la toile en PDF" style="display:none;margin-left:10px;">PDF toile</button>
         <button class="ni-q-hdr-alpha" id="ni-th-pairs-perso-btn" onclick="_q3TogglePairesPerso()" title="Comparer les paires de personnages" style="display:none;margin-left:6px;">👥 Paires perso</button>
+        <button class="ni-q-hdr-alpha" id="ni-th-tb-perso-btn" onclick="_q3ToggleTbPerso()" title="Tableau de bord personnages" style="display:none;margin-left:6px;">📊 Tableau perso</button>
         <button class="ni-q-hdr-alpha" id="ni-th-xlsx-btn" onclick="exporterLexiqueExcel()" title="Exporter le lexique en Excel (scores + champs + phases)" style="display:none;margin-left:6px;">📊 Excel</button>
         <button class="ni-q-hdr-alpha" id="ni-th-json-btn" onclick="exporterJSONComplet()" title="Exporter lexique + scores personnages en JSON (sauvegarde complète)" style="display:none;margin-left:6px;">💾 JSON</button>
         <input type="file" id="ni-th-json-import" accept=".json" style="display:none;" onchange="importerJSONComplet(this)">
@@ -2903,6 +2904,31 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
           <!-- ▌ Paires — hors de ni-q-th-global, enfant direct de ni-q-th-haslex -->
           <div id="ni-q-th-paires" style="display:none;flex:1;overflow-y:auto;min-height:0;padding:4px 6px;flex-direction:column;gap:7px;"></div>
           <div id="ni-q-th-paires-perso" style="display:none;flex:1;overflow-y:auto;min-height:0;padding:4px 6px;flex-direction:column;gap:7px;"></div>
+          <!-- ■ TABLEAU DE BORD PERSONNAGES -->
+          <div id="ni-q-th-tableau-perso" style="display:none;flex:1;flex-direction:column;min-height:0;overflow:hidden;background:#fff;">
+            <!-- Ligne 1 : Radar | Bubble -->
+            <div style="flex:0 0 30vh;display:flex;gap:6px;padding:4px 4px 0;min-height:0;overflow:hidden;">
+              <div style="flex:1;display:flex;flex-direction:column;min-width:0;border:2px solid #9C27B0;border-radius:7px;overflow:hidden;background:#FAFAFE;">
+                <div class="acp-col-hdr">🕸️ Radar superposé <span style="font-weight:400;font-size:.63rem;color:#7B1FA2;">(profils)</span><button onclick="_acpHelp('radar')" style="font-size:.65rem;background:none;border:1px solid #CE93D8;border-radius:50%;width:16px;height:16px;cursor:pointer;color:#9C27B0;padding:0;line-height:1;">?</button></div>
+                <div id="tb-radar" style="flex:1;min-height:0;overflow:hidden;"></div>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;min-width:0;border:2px solid #9C27B0;border-radius:7px;overflow:hidden;background:#FAFAFE;">
+                <div class="acp-col-hdr">🪺 Plan thématique <span style="font-weight:400;font-size:.63rem;color:#7B1FA2;">(X/Y/taille)</span><button onclick="_acpHelp('bubble')" style="font-size:.65rem;background:none;border:1px solid #CE93D8;border-radius:50%;width:16px;height:16px;cursor:pointer;color:#9C27B0;padding:0;line-height:1;">?</button></div>
+                <div id="tb-bubble" style="flex:1;min-height:0;overflow:hidden;"></div>
+              </div>
+            </div>
+            <!-- Ligne 2 : Matrice | Evolution -->
+            <div style="flex:0 0 30vh;display:flex;gap:6px;padding:4px 4px 4px;min-height:0;overflow:hidden;">
+              <div style="flex:1;display:flex;flex-direction:column;min-width:0;border:2px solid #7B1FA2;border-radius:7px;overflow:hidden;background:#FDF8FF;">
+                <div class="acp-col-hdr">🌡️ Matrice d’intensité <span style="font-weight:400;font-size:.63rem;color:#7B1FA2;">(perso×thème)</span><button onclick="_acpHelp('matrice')" style="font-size:.65rem;background:none;border:1px solid #CE93D8;border-radius:50%;width:16px;height:16px;cursor:pointer;color:#9C27B0;padding:0;line-height:1;">?</button></div>
+                <div id="tb-matrice" style="flex:1;min-height:0;overflow:hidden;"></div>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;min-width:0;border:2px solid #7B1FA2;border-radius:7px;overflow:hidden;background:#F8FCF8;">
+                <div class="acp-col-hdr">📈 Évolution par phase <span style="font-weight:400;font-size:.63rem;color:#7B1FA2;">(dynamique)</span><button onclick="_acpHelp('evolution')" style="font-size:.65rem;background:none;border:1px solid #CE93D8;border-radius:50%;width:16px;height:16px;cursor:pointer;color:#9C27B0;padding:0;line-height:1;">?</button></div>
+                <div id="tb-evol" style="flex:1;min-height:0;overflow:hidden;"></div>
+              </div>
+            </div>
+          </div>
 
           <!-- ■ ANALYSE AUGMENTÉE ACP — vue simultanée 3 colonnes -->
           <div id="ni-q-th-acp" style="display:none;flex:1;flex-direction:column;min-height:0;overflow:hidden;background:#fff;">
@@ -4441,7 +4467,7 @@ function sauvegarderBiblio() {
 // ════════════════════════════════════════════════════════
 // VERSION — incrémenter à chaque mise à jour des livres démo
 // ════════════════════════════════════════════════════════
-const DEMO_VERSION = 34; // v34 : scores personnages Caligula réels (profil lexical)
+const DEMO_VERSION = 35; // v35 : scoresParPhase personnages Caligula + Tableau de bord
 const LIVRES_DEMO = [
   {
     id: 'liv_petit_prince_001',
@@ -5797,19 +5823,24 @@ const LIVRES_DEMO = [
     personnages: [
       {id:'ent_cal_01', nom:'Caligula', couleur:'#C62828',
        notes:"Empereur romain. Apr\u00e8s la mort de sa s\u0153ur Drusilla, il d\u00e9couvre la v\u00e9rit\u00e9 absurde et d\u00e9cide d\u2019en tirer les cons\u00e9quences jusqu\u2019au bout.",
-       scores:{amour:19,pouvoir:13,liberte:16,identite:28,societe:8,nature:17}},
+       scores:{amour:19,pouvoir:13,liberte:16,identite:28,societe:8,nature:17},
+       scoresParPhase:{"Exposition":{amour:17,pouvoir:20,liberte:22,identite:20,societe:6,nature:15},"Noeud":{amour:36,pouvoir:7,liberte:10,identite:33,societe:7,nature:7},"Climax":{amour:7,pouvoir:18,liberte:16,identite:23,societe:6,nature:29},"Denouement":{amour:21,pouvoir:5,liberte:13,identite:35,societe:11,nature:14}}},
       {id:'ent_cal_02', nom:'Cherea', couleur:'#1565C0',
        notes:"Patricien, ancien ami. Il organise la conjuration non par morale mais par pragmatisme.",
-       scores:{amour:20,pouvoir:17,liberte:12,identite:31,societe:17,nature:3}},
+       scores:{amour:20,pouvoir:17,liberte:12,identite:31,societe:17,nature:3},
+       scoresParPhase:{"Exposition":{amour:40,pouvoir:40,liberte:0,identite:0,societe:20,nature:0},"Noeud":{amour:23,pouvoir:27,liberte:14,identite:27,societe:9,nature:0},"Climax":{amour:17,pouvoir:0,liberte:22,identite:39,societe:11,nature:11},"Denouement":{amour:14,pouvoir:14,liberte:0,identite:36,societe:36,nature:0}}},
       {id:'ent_cal_03', nom:'Caesonia', couleur:'#6A1B9A',
        notes:"Ma\u00eetresse de Caligula. Elle l\u2019aime vraiment. Caligula la tue \u00e0 la fin.",
-       scores:{amour:25,pouvoir:0,liberte:0,identite:75,societe:0,nature:0}},
+       scores:{amour:25,pouvoir:0,liberte:0,identite:75,societe:0,nature:0},
+       scoresParPhase:{"Exposition":{amour:0,pouvoir:0,liberte:0,identite:0,societe:0,nature:0},"Noeud":{amour:0,pouvoir:0,liberte:0,identite:0,societe:0,nature:0},"Climax":{amour:0,pouvoir:0,liberte:0,identite:0,societe:0,nature:0},"Denouement":{amour:25,pouvoir:0,liberte:0,identite:75,societe:0,nature:0}}},
       {id:'ent_cal_04', nom:'Helicon', couleur:'#2E7D32',
        notes:"Affranchi, serviteur fid\u00e8le. Figure de la complicit\u00e9 aveugle.",
-       scores:{amour:15,pouvoir:18,liberte:21,identite:18,societe:10,nature:18}},
+       scores:{amour:15,pouvoir:18,liberte:21,identite:18,societe:10,nature:18},
+       scoresParPhase:{"Exposition":{amour:21,pouvoir:29,liberte:21,identite:21,societe:0,nature:7},"Noeud":{amour:33,pouvoir:0,liberte:0,identite:67,societe:0,nature:0},"Climax":{amour:0,pouvoir:0,liberte:25,identite:0,societe:25,nature:50},"Denouement":{amour:20,pouvoir:30,liberte:20,identite:20,societe:10,nature:0}}},
       {id:'ent_cal_05', nom:'Scipio', couleur:'#E65100',
        notes:"Jeune po\u00e8te, fils d\u2019une victime. Il comprend Caligula mieux que personne.",
-       scores:{amour:29,pouvoir:11,liberte:11,identite:21,societe:11,nature:18}}
+       scores:{amour:29,pouvoir:11,liberte:11,identite:21,societe:11,nature:18},
+       scoresParPhase:{"Exposition":{amour:46,pouvoir:0,liberte:8,identite:23,societe:0,nature:23},"Noeud":{amour:0,pouvoir:0,liberte:0,identite:0,societe:0,nature:0},"Climax":{amour:8,pouvoir:25,liberte:8,identite:17,societe:25,nature:17},"Denouement":{amour:33,pouvoir:0,liberte:33,identite:33,societe:0,nature:0}}}
     ],
     matrice: {
       'ent_cal_01__ent_cal_02': 'Antagoniste',
@@ -13751,6 +13782,8 @@ function updateQ3LexViz() {
   if(pairsPersoBtn){var persos=(LIVRE_ACTIF&&LIVRE_ACTIF.personnages)||[];
     var hasSc=persos.filter(function(p){return p.scores&&typeof p.scores.amour==='number';}).length>=3;
     pairsPersoBtn.style.display=hasSc?'inline':'none';}
+  var tbPersoBtn=document.getElementById('ni-th-tb-perso-btn');
+  if(tbPersoBtn) tbPersoBtn.style.display=hasSc?'inline':'none';
   // Bouton comptage : visible si champLexical défini
   var countBtn=document.getElementById('ni-th-count-btn');
   if(countBtn) countBtn.style.display=(lex&&lex.champLexical)?'inline':'none';
@@ -16171,8 +16204,15 @@ function exporterJSONComplet() {
   };
   if (lex) payload.lexique = lex;
   if (persos.length) {
+    payload._format = 2;
     payload.scoresPersonnages = {};
-    persos.forEach(function(p) { payload.scoresPersonnages[p.id] = p.scores; });
+    persos.forEach(function(p) {
+      payload.scoresPersonnages[p.id] = {
+        nom: p.nom,
+        scores: p.scores,
+        scoresParPhase: p.scoresParPhase || {}
+      };
+    });
   }
 
   var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
@@ -16201,14 +16241,31 @@ function importerJSONComplet(input) {
         changed = true;
       }
 
-      // Scores personnages
-      if (data.scoresPersonnages) {
-        var ids = Object.keys(data.scoresPersonnages);
-        ids.forEach(function(pid) {
-          var p = (LIVRE_ACTIF.personnages || []).find(function(x) { return x.id === pid; });
-          if (p) {
-            p.scores = data.scoresPersonnages[pid];
-            changed = true;
+      // Scores personnages — formats: v1(id→scores), v2(id→{nom,scores,spp}), extract(name→{scores,spp})
+      function _normN(s){return s.trim().toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
+      var persoSrc = data.scoresPersonnages || null;
+      if(!persoSrc){
+        var fk=Object.keys(data).find(function(k){return !k.startsWith('_')&&data[k]&&typeof data[k]==='object'&&data[k].scores;});
+        if(fk) persoSrc=data;
+      }
+      if (persoSrc) {
+        Object.keys(persoSrc).forEach(function(key) {
+          if(key.startsWith('_')) return;
+          var pdata = persoSrc[key];
+          var isOld = typeof pdata.amour === 'number';
+          var p;
+          if(isOld) {
+            p = (LIVRE_ACTIF.personnages||[]).find(function(x){return x.id===key;});
+            if(p){p.scores=pdata; changed=true;}
+          } else {
+            // new format: match by id or name
+            p = (LIVRE_ACTIF.personnages||[]).find(function(x){return x.id===key;});
+            if(!p) p=(LIVRE_ACTIF.personnages||[]).find(function(x){return _normN(x.nom)===_normN(key);});
+            if(p){
+              if(pdata.scores) p.scores=pdata.scores;
+              if(pdata.scoresParPhase&&Object.keys(pdata.scoresParPhase).length) p.scoresParPhase=pdata.scoresParPhase;
+              changed=true;
+            }
           }
         });
       }
@@ -16362,6 +16419,40 @@ var _ACP_HELP = {
       + 'Deux flèches opposées = thèmes en tension dans l\'œuvre.<br><br>'
       + '💡 Le repère en bas à gauche indique les directions de CP1 (→) et CP2 (↑) pour lire les flèches.'
   },
+  radar: {
+    titre: '🕸️ Radar superposé',
+    texte: '<b>Ce graphique superpose les profils thématiques de tous les personnages.</b><br><br>'
+      + 'Chaque axe représente un thème (0 au centre = absent, bord = dominant). '
+      + 'Plus le polygone d’un personnage est étendu sur un axe, plus ce thème est central dans son discours.<br><br>'
+      + '<b>Comparer les formes :</b> des formes similaires = personnages au registre proche. '
+      + 'Une forme très différente = personnage singulier (cf. Caesonia, quasi réduite à Identité).<br><br>'
+      + '💡 En mode profil normalisé, tous les personnages ont la même « masse » — on lit la répartition, pas le volume.'
+  },
+  bubble: {
+    titre: '🪺 Plan thématique',
+    texte: '<b>Ce graphique positionne chaque personnage dans un plan à 2 dimensions thématiques.</b><br><br>'
+      + 'X et Y sont librement choisis parmi les 6 thèmes. La taille du cercle représente un 3ème thème.<br><br>'
+      + 'Essayez <b>X = Identité / Y = Amour</b> pour voir Caligula isolé en haut à droite. '
+      + 'Essayez <b>X = Pouvoir / Y = Société</b> pour voir l’opposition Caligula / Pacificateurs.<br><br>'
+      + '💡 Un personnage seul dans un quadrant = profil thématique unique dans l’œuvre.'
+  },
+  matrice: {
+    titre: '🌡️ Matrice d’intensité',
+    texte: '<b>Ce tableau montre l’intensité de chaque thème pour chaque personnage.</b><br><br>'
+      + 'Chaque cellule = % du vocabulaire thématique du personnage consacré à ce thème. '
+      + 'Plus la cellule est foncée, plus le thème est dominant.<br><br>'
+      + 'Lecture verticale : qui parle le plus de <b>Pouvoir</b> ? Caligula et Chéréa.<br>'
+      + 'Lecture horizontale : quel thème domine chez <b>Caesonia</b> ? Identité à 75%.<br><br>'
+      + '💡 La matrice complète ce que le radar montre en forme : ici on lit les valeurs exactes.'
+  },
+  evolution: {
+    titre: '📈 Évolution par phase',
+    texte: '<b>Ce graphique montre comment les thèmes ou les personnages évoluent phase par phase.</b><br><br>'
+      + 'Mode <b>Personnage</b> : choisir un personnage, voir ses 6 thèmes évoluer. '
+      + 'Caligula passe d’un profil équilibré (Exposition) à Identité massive (Noeud) puis Nature/Identité (Climax).<br><br>'
+      + 'Mode <b>Thème</b> : choisir un thème, voir comment chaque personnage l’incarne phase par phase.<br><br>'
+      + '💡 Les croisements de courbes sont les moments dramatiques clés — quand un personnage change de registre.'
+  },
   heatmap: {
     titre: '🌡️ Heatmap thématique',
     texte: '<b>Ce tableau montre l\'intensité de chaque thème phase par phase.</b><br><br>'
@@ -16392,6 +16483,216 @@ function _acpHelp(zone) {
   setTimeout(function(){
     document.addEventListener('click', function rm(){ pop.remove(); document.removeEventListener('click',rm); });
   }, 100);
+}
+
+// ── Tableau de bord personnages ───────────────────────────────────────────────
+
+var _q3TbPersoOpen  = false;
+var _tbBubbleX = 'identite', _tbBubbleY = 'amour', _tbBubbleZ = 'pouvoir';
+var _tbEvolMode = 'perso', _tbEvolSel = '';
+
+function _q3ToggleTbPerso() {
+  ['ni-q-th-acp','ni-q-th-paires','ni-q-th-paires-perso'].forEach(function(id){ var el=document.getElementById(id);if(el)el.style.display='none'; });
+  ['ni-th-acp-btn','ni-th-pairs-btn','ni-th-pairs-perso-btn'].forEach(function(id){ var el=document.getElementById(id);if(el)el.classList.remove('active'); });
+  _q3AcpOpen=false;_q3PairesOpen=false;_q3PairesPersoOpen=false;
+  _q3TbPersoOpen=!_q3TbPersoOpen;
+  var glb=document.getElementById('ni-q-th-global');
+  var pan=document.getElementById('ni-q-th-tableau-perso');
+  var mod=document.getElementById('ni-q-th-mode');
+  var btn=document.getElementById('ni-th-tb-perso-btn');
+  if(glb) glb.style.display=_q3TbPersoOpen?'none':'flex';
+  if(mod) mod.style.display=_q3TbPersoOpen?'none':'block';
+  if(pan){ pan.style.display=_q3TbPersoOpen?'flex':'none'; if(_q3TbPersoOpen)_renderTbAll(); }
+  if(btn) btn.classList.toggle('active',_q3TbPersoOpen);
+  if(!_q3TbPersoOpen) updateQ3LexViz();
+}
+
+function _renderTbAll() {
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){
+    var r=document.getElementById('tb-radar'), b=document.getElementById('tb-bubble');
+    var m=document.getElementById('tb-matrice'), e=document.getElementById('tb-evol');
+    if(r)_renderTbRadar(r); if(b)_renderTbBubble(b);
+    if(m)_renderTbMatrice(m); if(e)_renderTbEvolution(e);
+  }); });
+}
+
+function _tbPersos() {
+  return ((LIVRE_ACTIF&&LIVRE_ACTIF.personnages)||[]).filter(function(p){ return p.scores&&typeof p.scores.amour==='number'; });
+}
+function _tbNoData(c){ c.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:.72rem;color:#B39DDB;">Scores non disponibles</div>'; }
+
+// ── 1. Radar superposé ────────────────────────────────────────────────────────
+function _renderTbRadar(container) {
+  container.innerHTML='';
+  var persos=_tbPersos(); if(!persos.length){_tbNoData(container);return;}
+  var W=container.clientWidth||280, H=container.clientHeight||190;
+  if(W<30||H<30)return;
+  var KEYS=LEX_KEYS, n=KEYS.length;
+  var THL=['Amour','Pouvoir','Lib.','Id.','Soc.','Nat.'];
+  var legH=22, cH=H-legH, cx=W/2, cy=cH/2, R=Math.min(cx,cy)-24;
+  function ang(i){ return (i/n)*2*Math.PI-Math.PI/2; }
+  function rx(i,r){ return cx+r*Math.cos(ang(i)); }
+  function ry(i,r){ return cy+r*Math.sin(ang(i)); }
+  function poly(sc){
+    return KEYS.map(function(k,i){ var v=(+(sc[k]||0))/100; return rx(i,R*v).toFixed(1)+','+ry(i,R*v).toFixed(1); }).join(' ');
+  }
+  var s='<svg width="'+W+'" height="'+cH+'">';
+  [25,50,75,100].forEach(function(pct){
+    var pts=KEYS.map(function(_,i){ return rx(i,R*pct/100).toFixed(1)+','+ry(i,R*pct/100).toFixed(1); }).join(' ');
+    s+='<polygon points="'+pts+'" fill="none" stroke="#E8E0F7" stroke-width="1"/>';
+  });
+  KEYS.forEach(function(k,i){
+    s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+rx(i,R).toFixed(1)+'" y2="'+ry(i,R).toFixed(1)+'" stroke="#DDD" stroke-width="1"/>';
+    var lx=rx(i,R+15), ly=ry(i,R+15), a=ang(i);
+    var anc=Math.cos(a)>0.1?'start':Math.cos(a)<-0.1?'end':'middle';
+    s+='<text x="'+lx.toFixed(1)+'" y="'+(ly+3.5).toFixed(1)+'" text-anchor="'+anc+'" font-size="9.5" font-weight="700" fill="'+LEX_COLORS[k]+'">'+THL[i]+'</text>';
+  });
+  persos.forEach(function(p){
+    var clr=p.couleur||'#7B1FA2';
+    s+='<polygon points="'+poly(p.scores)+'" fill="'+clr+'" fill-opacity=".12" stroke="'+clr+'" stroke-width="2"/>';
+    KEYS.forEach(function(k,i){ var v=(+(p.scores[k]||0))/100; s+='<circle cx="'+rx(i,R*v).toFixed(1)+'" cy="'+ry(i,R*v).toFixed(1)+'" r="3" fill="'+clr+'"/>'; });
+  });
+  s+='</svg>';
+  s+='<div style="display:flex;flex-wrap:wrap;gap:2px 8px;padding:2px 6px;border-top:1px solid #EDE7F6;align-items:center;overflow:hidden;">';
+  persos.forEach(function(p){ s+='<span style="font-size:.63rem;font-weight:700;color:'+(p.couleur||'#7B1FA2')+';">\u25cf '+p.nom+'</span>'; });
+  s+='</div>';
+  container.innerHTML=s;
+}
+
+// ── 2. Matrice d'intensité ─────────────────────────────────────────────────────
+function _renderTbMatrice(container) {
+  container.innerHTML='';
+  var persos=_tbPersos(); if(!persos.length){_tbNoData(container);return;}
+  var KEYS=LEX_KEYS;
+  var THL={amour:'Am.',pouvoir:'Pv.',liberte:'Lib.',identite:'Id.',societe:'Soc.',nature:'Nat.'};
+  var s='<div style="overflow:auto;width:100%;height:100%;box-sizing:border-box;padding:4px 6px;">'
+    +'<table style="border-collapse:collapse;font-size:.65rem;width:100%;">'
+    +'<thead><tr><th style="padding:2px 6px;background:#EDE7F6;color:#4A148C;font-weight:900;text-align:left;white-space:nowrap;">Perso</th>';
+  KEYS.forEach(function(k){ s+='<th style="padding:2px 5px;background:#EDE7F6;color:'+LEX_COLORS[k]+';font-weight:800;text-align:center;">'+THL[k]+'</th>'; });
+  s+='</tr></thead><tbody>';
+  persos.forEach(function(p){
+    var clr=p.couleur||'#7B1FA2';
+    s+='<tr><td style="padding:3px 6px;font-weight:700;color:'+clr+';white-space:nowrap;">'+p.nom+'</td>';
+    KEYS.forEach(function(k){
+      var v=+(p.scores[k]||0), op=((v*0.7+10)/100).toFixed(2);
+      s+='<td style="text-align:center;padding:3px 5px;background:'+LEX_BG[k]+';opacity:'+op+';font-weight:'+(v>50?800:400)+';color:#111;">'+v+'</td>';
+    });
+    s+='</tr>';
+  });
+  s+='</tbody></table></div>';
+  container.innerHTML=s;
+}
+
+// ── 3. Plan thématique (bubble chart) ──────────────────────────────────────────
+function _renderTbBubble(container) {
+  container.innerHTML='';
+  var persos=_tbPersos(); if(!persos.length){_tbNoData(container);return;}
+  var KEYS=LEX_KEYS;
+  var THL={amour:'Amour',pouvoir:'Pouvoir',liberte:'Libert\u00e9',identite:'Identit\u00e9',societe:'Soci\u00e9t\u00e9',nature:'Nature'};
+  var kx=_tbBubbleX,ky=_tbBubbleY,kz=_tbBubbleZ, bid='tb-bubble';
+  var ss='font-size:.6rem;border:1px solid #CE93D8;border-radius:3px;padding:0 2px;background:#F3E5F5;color:#4A148C;';
+  function opts(sel){ return KEYS.map(function(k){ return '<option value="'+k+'"'+(k===sel?' selected':'')+'>'+THL[k]+'</option>'; }).join(''); }
+  var ctrlEl=document.createElement('div');
+  ctrlEl.style.cssText='display:flex;align-items:center;gap:5px;padding:2px 6px;background:#FAF5FF;border-bottom:1px solid #EDE7F6;flex:0 0 auto;font-size:.6rem;';
+  ctrlEl.innerHTML='<b style="color:#666;">X</b><select style="'+ss+'" onchange="_tbBubbleX=this.value;_renderTbBubble(document.getElementById(\''+bid+'\'))">'+opts(kx)+'</select>'
+    +'<b style="color:#666;">Y</b><select style="'+ss+'" onchange="_tbBubbleY=this.value;_renderTbBubble(document.getElementById(\''+bid+'\'))">'+opts(ky)+'</select>'
+    +'<b style="color:#666;">\u2295</b><select style="'+ss+'" onchange="_tbBubbleZ=this.value;_renderTbBubble(document.getElementById(\''+bid+'\'))">'+opts(kz)+'</select>'
+    +'<span style="color:#aaa;font-size:.57rem;">(taille)</span>';
+  container.appendChild(ctrlEl);
+  var W=container.clientWidth||280, H=container.clientHeight||190;
+  if(W<30)return;
+  var Hc=26,Hs=Math.max(H-Hc,50),ML=12,MR=10,MT=12,MB=18,CW=W-ML-MR,CH=Hs-MT-MB;
+  var scX=d3.scaleLinear().domain([0,100]).range([0,CW]);
+  var scY=d3.scaleLinear().domain([0,100]).range([CH,0]);
+  var maxZ=d3.max(persos,function(p){return +(p.scores[kz]||0);})||1;
+  var scR=d3.scaleLinear().domain([0,maxZ]).range([7,22]);
+  var svgWrap=document.createElement('div'); svgWrap.style.cssText='flex:1;overflow:hidden;';
+  container.appendChild(svgWrap);
+  container.style.display='flex'; container.style.flexDirection='column';
+  var svg=d3.select(svgWrap).append('svg').attr('width',W).attr('height',Hs);
+  var g=svg.append('g').attr('transform','translate('+ML+','+MT+')');
+  [25,50,75].forEach(function(v){
+    g.append('line').attr('x1',scX(v)).attr('y1',0).attr('x2',scX(v)).attr('y2',CH).attr('stroke','#F0EAFF').attr('stroke-width',1);
+    g.append('line').attr('x1',0).attr('y1',scY(v)).attr('x2',CW).attr('y2',scY(v)).attr('stroke','#F0EAFF').attr('stroke-width',1);
+  });
+  g.append('line').attr('x1',scX(50)).attr('y1',0).attr('x2',scX(50)).attr('y2',CH).attr('stroke','#DDD').attr('stroke-dasharray','3,2').attr('stroke-width',1);
+  g.append('line').attr('x1',0).attr('y1',scY(50)).attr('x2',CW).attr('y2',scY(50)).attr('stroke','#DDD').attr('stroke-dasharray','3,2').attr('stroke-width',1);
+  persos.forEach(function(p){
+    var x=scX(+(p.scores[kx]||0)),y=scY(+(p.scores[ky]||0)),r=scR(+(p.scores[kz]||0)),clr=p.couleur||'#7B1FA2';
+    g.append('circle').attr('cx',x).attr('cy',y).attr('r',r).attr('fill',clr).attr('fill-opacity',0.2).attr('stroke',clr).attr('stroke-width',2);
+    g.append('text').attr('x',x).attr('y',y-r-3).attr('text-anchor','middle').attr('font-size',10).attr('font-weight',700).attr('fill',clr).attr('stroke','#fff').attr('stroke-width',2.5).attr('paint-order','stroke').text(p.nom);
+  });
+  svg.append('text').attr('x',ML+CW/2).attr('y',Hs-2).attr('text-anchor','middle').attr('font-size',9).attr('fill',LEX_COLORS[kx]).attr('font-weight',700).text(THL[kx]);
+  svg.append('text').attr('x',8).attr('y',MT+CH/2).attr('text-anchor','middle').attr('transform','rotate(-90,8,'+(MT+CH/2)+')').attr('font-size',9).attr('fill',LEX_COLORS[ky]).attr('font-weight',700).text(THL[ky]);
+}
+
+// ── 4. Évolution par phase ─────────────────────────────────────────────────────
+function _renderTbEvolution(container) {
+  container.innerHTML='';
+  var persos=_tbPersos();
+  var withPh=persos.filter(function(p){ return p.scoresParPhase&&Object.keys(p.scoresParPhase).length>0; });
+  if(!withPh.length){_tbNoData(container);return;}
+  var KEYS=LEX_KEYS;
+  var THL={amour:'Amour',pouvoir:'Pouvoir',liberte:'Libert\u00e9',identite:'Identit\u00e9',societe:'Soci\u00e9t\u00e9',nature:'Nature'};
+  var phNames=Object.keys(withPh[0].scoresParPhase);
+  var mode=_tbEvolMode, sel=_tbEvolSel, eid='tb-evol';
+  if(mode==='perso'&&(!sel||!withPh.find(function(p){return p.nom===sel;}))) sel=withPh[0].nom;
+  if(mode==='theme'&&(!sel||KEYS.indexOf(sel)<0)) sel='identite';
+  _tbEvolSel=sel;
+  var ss='font-size:.6rem;border:1px solid #CE93D8;border-radius:3px;padding:0 2px;background:#F3E5F5;color:#4A148C;';
+  var mOpts='<option value="perso"'+(mode==='perso'?' selected':'')+'>Personnage</option><option value="theme"'+(mode==='theme'?' selected':'')+'>Th\u00e8me</option>';
+  var sOpts='';
+  if(mode==='perso') withPh.forEach(function(p){sOpts+='<option value="'+p.nom+'"'+(p.nom===sel?' selected':'')+'>'+p.nom+'</option>';});
+  else KEYS.forEach(function(k){sOpts+='<option value="'+k+'"'+(k===sel?' selected':'')+'>'+THL[k]+'</option>';});
+  var ctrlEl=document.createElement('div');
+  ctrlEl.style.cssText='display:flex;align-items:center;gap:5px;padding:2px 6px;background:#F5FFF5;border-bottom:1px solid #EDE7F6;flex:0 0 auto;font-size:.6rem;';
+  ctrlEl.innerHTML='<select style="'+ss+'" onchange="_tbEvolMode=this.value;_tbEvolSel=\'\';_renderTbEvolution(document.getElementById(\''+eid+'\'))">'+mOpts+'</select>'
+    +'<select style="'+ss+'" onchange="_tbEvolSel=this.value;_renderTbEvolution(document.getElementById(\''+eid+'\'))">'+sOpts+'</select>';
+  container.appendChild(ctrlEl);
+  var W=container.clientWidth||280,H=container.clientHeight||190;
+  if(W<30)return;
+  var Hc=26,Hs=Math.max(H-Hc,50),ML=24,MR=8,MT=8,MB=26,CW=W-ML-MR,CH=Hs-MT-MB;
+  var scX=d3.scaleLinear().domain([0,phNames.length-1]).range([0,CW]);
+  var scY=d3.scaleLinear().domain([0,100]).range([CH,0]);
+  var lines=[];
+  var dashes=['','6,3','3,2','8,3','4,2','2,2'];
+  if(mode==='perso'){
+    var pp=withPh.find(function(p){return p.nom===sel;});
+    if(pp) KEYS.forEach(function(k,ki){
+      lines.push({lbl:THL[k],clr:LEX_COLORS[k],dash:ki>2?dashes[ki]:'',vals:phNames.map(function(ph){return +(pp.scoresParPhase[ph]&&pp.scoresParPhase[ph][k]||0);})});
+    });
+  } else {
+    withPh.forEach(function(p,pi){
+      lines.push({lbl:p.nom,clr:p.couleur||'#7B1FA2',dash:pi>0?dashes[pi%6]:'',vals:phNames.map(function(ph){return +(p.scoresParPhase[ph]&&p.scoresParPhase[ph][sel]||0);})});
+    });
+  }
+  var svgWrap=document.createElement('div'); svgWrap.style.cssText='flex:1;overflow:hidden;';
+  container.appendChild(svgWrap);
+  container.style.display='flex'; container.style.flexDirection='column';
+  var svg=d3.select(svgWrap).append('svg').attr('width',W).attr('height',Hs);
+  var g=svg.append('g').attr('transform','translate('+ML+','+MT+')');
+  [25,50,75].forEach(function(v){
+    g.append('line').attr('x1',0).attr('y1',scY(v)).attr('x2',CW).attr('y2',scY(v)).attr('stroke','#EEE').attr('stroke-width',1);
+    g.append('text').attr('x',-3).attr('y',scY(v)+3).attr('text-anchor','end').attr('font-size',8).attr('fill','#BBB').text(v);
+  });
+  phNames.forEach(function(ph,i){
+    g.append('line').attr('x1',scX(i)).attr('y1',0).attr('x2',scX(i)).attr('y2',CH).attr('stroke','#F0EAFF').attr('stroke-width',1);
+    g.append('text').attr('x',scX(i)).attr('y',CH+15).attr('text-anchor','middle').attr('font-size',9).attr('fill','#555').attr('font-weight',700).text(ph.length>8?ph.slice(0,7)+'\u2026':ph);
+  });
+  var lineFn=d3.line().x(function(_,i){return scX(i);}).y(function(d){return scY(d);}).curve(d3.curveMonotoneX);
+  lines.forEach(function(ln){
+    g.append('path').datum(ln.vals).attr('fill','none').attr('stroke',ln.clr).attr('stroke-width',2.2).attr('stroke-dasharray',ln.dash||null).attr('d',lineFn);
+    ln.vals.forEach(function(v,i){ if(v>0)g.append('circle').attr('cx',scX(i)).attr('cy',scY(v)).attr('r',3).attr('fill',ln.clr); });
+  });
+  // Légende compacte
+  var legX=0, legY=CH+MB-8;
+  lines.slice(0,Math.min(lines.length,6)).forEach(function(ln){
+    var lw=ln.lbl.length*5.2+20;
+    if(legX+lw>CW){legX=0;legY+=11;}
+    g.append('line').attr('x1',legX).attr('y1',legY).attr('x2',legX+12).attr('y2',legY).attr('stroke',ln.clr).attr('stroke-width',2).attr('stroke-dasharray',ln.dash||null);
+    g.append('text').attr('x',legX+14).attr('y',legY+3).attr('font-size',8).attr('fill',ln.clr).attr('font-weight',700).text(ln.lbl);
+    legX+=lw;
+  });
 }
 
 </script>
