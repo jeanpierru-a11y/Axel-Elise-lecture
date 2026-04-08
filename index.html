@@ -15828,7 +15828,7 @@ function _acpAxisNames(loadings) {
 function _renderACPBiplot(container, pca, phases, tranches) {
   var W=container.clientWidth||500, H=container.clientHeight||280;
   if(W<30||H<30) return;
-  var BD_M=15; var ML=44+BD_M,MR=12+BD_M,MT=16+BD_M,MB=52,CW=W-ML-MR,CH=H-MT-MB;
+  var BD_M=18; var ML=44+BD_M,MR=12+BD_M,MT=16+BD_M,MB=52,CW=W-ML-MR,CH=H-MT-MB;
   var coords=pca.coords, loadings=pca.loadings, ph=phases||[];
   var DOT_R=8, LOFF=18, LABEL_H=14, MIN_LL=17, MIN_LD=DOT_R+LABEL_H+3;
   var FONT_LBL=12, FONT_AX=11, FONT_NUM=9, FONT_TH=11;
@@ -15856,8 +15856,8 @@ function _renderACPBiplot(container, pca, phases, tranches) {
   var g=svg.append('g').attr('transform','translate('+ML+','+MT+')');
 
   // ── Cadre quadrant : bandes colorées sur les 4 côtés ──────────────────────
-  var BD = 13;
-  var KEYS2=LEX_KEYS, THL2={amour:'Amour',pouvoir:'Pouvoir',liberte:'Libert\u00e9',identite:'Identit\u00e9',societe:'Soci\u00e9t\u00e9',nature:'Nature'};
+  var BD = 16;
+  var KEYS2=LEX_KEYS, THL2={amour:'Amour',pouvoir:'Pouvoir',liberte:'Liberté',identite:'Identité',societe:'Société',nature:'Nature'};
   var l1b=pca.loadings.map(function(l){return l[0];}), l2b=pca.loadings.map(function(l){return l[1];});
   var max1i=0,min1i=0,max2i=0,min2i=0;
   l1b.forEach(function(v,i){if(v>l1b[max1i])max1i=i; if(v<l1b[min1i])min1i=i;});
@@ -15872,28 +15872,27 @@ function _renderACPBiplot(container, pca, phases, tranches) {
   svg.append('rect').attr('x',ML-BD).attr('y',cy0S).attr('width',BD).attr('height',MT+CH-cy0S).attr('fill',LEX_BG[kNeg2]);
   svg.append('rect').attr('x',ML+CW).attr('y',MT).attr('width',BD).attr('height',cy0S-MT).attr('fill',LEX_BG[kPos2]);
   svg.append('rect').attr('x',ML+CW).attr('y',cy0S).attr('width',BD).attr('height',MT+CH-cy0S).attr('fill',LEX_BG[kNeg2]);
-  var fszB=9.5;
-  function bandTxtB(x,y,anc,txt,clr,rot){
-    var t=svg.append('text').attr('x',x).attr('y',y).attr('text-anchor',anc)
-      .attr('font-family','Arial,sans-serif').attr('font-size',fszB).attr('font-weight',700)
+  function bandTxtB(x,y,txt,clr,rot){
+    var t=svg.append('text').attr('x',x).attr('y',y).attr('text-anchor','middle').attr('dominant-baseline','central')
+      .attr('font-family','Arial,sans-serif').attr('font-size',9.5).attr('font-weight',700)
       .attr('fill',clr).attr('stroke','#fff').attr('stroke-width',1.5).attr('paint-order','stroke').text(txt);
     if(rot) t.attr('transform','rotate('+rot+','+x+','+y+')');
   }
-  var tyTop=MT-BD/2+3.5, tyBot=MT+CH+BD/2+3.5;
-  bandTxtB((ML+cx0S)/2,tyTop,'middle','\u2190 '+THL2[kNeg1],LEX_COLORS[kNeg1],null);
-  bandTxtB((cx0S+ML+CW)/2,tyTop,'middle',THL2[kPos1]+' \u2192',LEX_COLORS[kPos1],null);
-  bandTxtB((ML+cx0S)/2,tyBot,'middle','\u2190 '+THL2[kNeg1],LEX_COLORS[kNeg1],null);
-  bandTxtB((cx0S+ML+CW)/2,tyBot,'middle',THL2[kPos1]+' \u2192',LEX_COLORS[kPos1],null);
+  var tyTop=MT-BD/2, tyBot=MT+CH+BD/2;
+  bandTxtB((ML+cx0S)/2,tyTop,'← '+THL2[kNeg1],LEX_COLORS[kNeg1],null);
+  bandTxtB((cx0S+ML+CW)/2,tyTop,THL2[kPos1]+' →',LEX_COLORS[kPos1],null);
+  bandTxtB((ML+cx0S)/2,tyBot,'← '+THL2[kNeg1],LEX_COLORS[kNeg1],null);
+  bandTxtB((cx0S+ML+CW)/2,tyBot,THL2[kPos1]+' →',LEX_COLORS[kPos1],null);
   var txL=ML-BD/2, txR=ML+CW+BD/2;
   var cyTopC=(MT+cy0S)/2, cyBotC=(cy0S+MT+CH)/2;
-  bandTxtB(txL,cyTopC,'middle','\u2191 '+THL2[kPos2],LEX_COLORS[kPos2],-90);
-  bandTxtB(txL,cyBotC,'middle',THL2[kNeg2]+' \u2193',LEX_COLORS[kNeg2],-90);
-  bandTxtB(txR,cyTopC,'middle','\u2191 '+THL2[kPos2],LEX_COLORS[kPos2],90);
-  bandTxtB(txR,cyBotC,'middle',THL2[kNeg2]+' \u2193',LEX_COLORS[kNeg2],90);
-  svg.append('line').attr('x1',ML-BD).attr('y1',MT).attr('x2',ML+CW+BD).attr('y2',MT).attr('stroke','#DDD').attr('stroke-width',0.5);
-  svg.append('line').attr('x1',ML-BD).attr('y1',MT+CH).attr('x2',ML+CW+BD).attr('y2',MT+CH).attr('stroke','#DDD').attr('stroke-width',0.5);
-  svg.append('line').attr('x1',ML).attr('y1',MT-BD).attr('x2',ML).attr('y2',MT+CH+BD).attr('stroke','#DDD').attr('stroke-width',0.5);
-  svg.append('line').attr('x1',ML+CW).attr('y1',MT-BD).attr('x2',ML+CW).attr('y2',MT+CH+BD).attr('stroke','#DDD').attr('stroke-width',0.5);
+  bandTxtB(txL,cyTopC,THL2[kPos2]+' →',LEX_COLORS[kPos2],-90);
+  bandTxtB(txL,cyBotC,'← '+THL2[kNeg2],LEX_COLORS[kNeg2],-90);
+  bandTxtB(txR,cyTopC,'← '+THL2[kPos2],LEX_COLORS[kPos2],90);
+  bandTxtB(txR,cyBotC,THL2[kNeg2]+' →',LEX_COLORS[kNeg2],90);
+  svg.append('line').attr('x1',ML-BD).attr('y1',MT).attr('x2',ML+CW+BD).attr('y2',MT).attr('stroke','#CCC').attr('stroke-width',0.6);
+  svg.append('line').attr('x1',ML-BD).attr('y1',MT+CH).attr('x2',ML+CW+BD).attr('y2',MT+CH).attr('stroke','#CCC').attr('stroke-width',0.6);
+  svg.append('line').attr('x1',ML).attr('y1',MT-BD).attr('x2',ML).attr('y2',MT+CH+BD).attr('stroke','#CCC').attr('stroke-width',0.6);
+  svg.append('line').attr('x1',ML+CW).attr('y1',MT-BD).attr('x2',ML+CW).attr('y2',MT+CH+BD).attr('stroke','#CCC').attr('stroke-width',0.6);
 
   // Grille
   g.append('line').attr('x1',0).attr('y1',cy0).attr('x2',CW).attr('y2',cy0).attr('stroke','#DADADA').attr('stroke-width',1.2);
@@ -15964,24 +15963,6 @@ function _renderACPBiplot(container, pca, phases, tranches) {
       .attr('paint-order','stroke').text(p.label);
   });
 
-  // Repère coin bas-gauche — CP1 horizontal, CP2 vertical
-  var bAL=32, box=svg.append('defs');
-  var rox=6, roy=H-10;
-  box.append('marker').attr('id','bipx-arr').attr('viewBox','0 -3 7 6')
-    .attr('refX',7).attr('refY',0).attr('markerWidth',4).attr('markerHeight',4)
-    .attr('orient','auto').append('path').attr('d','M0,-3L7,0L0,3').attr('fill','#555');
-  svg.append('line').attr('x1',rox).attr('y1',roy).attr('x2',rox+bAL).attr('y2',roy)
-    .attr('stroke','#555').attr('stroke-width',1.5).attr('marker-end','url(#bipx-arr)');
-  svg.append('line').attr('x1',rox).attr('y1',roy).attr('x2',rox).attr('y2',roy-bAL)
-    .attr('stroke','#555').attr('stroke-width',1.5).attr('marker-end','url(#bipx-arr)');
-  svg.append('text').attr('x',rox+bAL+4).attr('y',roy+4)
-    .attr('font-size',8).attr('fill','#555').attr('font-weight',800)
-    .attr('stroke','#fff').attr('stroke-width',2).attr('paint-order','stroke')
-    .text(axN.n1+' ('+pca.explained[0]+'%)');
-  svg.append('text').attr('x',rox+3).attr('y',roy-bAL-4)
-    .attr('font-size',8).attr('fill','#555').attr('font-weight',800)
-    .attr('stroke','#fff').attr('stroke-width',2).attr('paint-order','stroke')
-    .text(axN.n2+' ('+pca.explained[1]+'%)');
 }
 
 
@@ -16000,14 +15981,13 @@ function _renderACPCercle(container, pca) {
   svg.append('line').attr('x1',cx).attr('y1',cy-r-8).attr('x2',cx).attr('y2',cy+r+8).attr('stroke','#DDD').attr('stroke-width',1);
   var defs=svg.append('defs');
   // ── Cadre quadrant du cercle ───────────────────────────────────────────────
-  var BD=13, KEYS2=LEX_KEYS, THL2={amour:'Amour',pouvoir:'Pouvoir',liberte:'Libert\u00e9',identite:'Identit\u00e9',societe:'Soci\u00e9t\u00e9',nature:'Nature'};
+  var BD=16, KEYS2=LEX_KEYS, THL2={amour:'Amour',pouvoir:'Pouvoir',liberte:'Liberté',identite:'Identité',societe:'Société',nature:'Nature'};
   var lc1=pca.loadings.map(function(l){return l[0];}), lc2=pca.loadings.map(function(l){return l[1];});
   var cmax1i=0,cmin1i=0,cmax2i=0,cmin2i=0;
   lc1.forEach(function(v,i){if(v>lc1[cmax1i])cmax1i=i; if(v<lc1[cmin1i])cmin1i=i;});
   lc2.forEach(function(v,i){if(v>lc2[cmax2i])cmax2i=i; if(v<lc2[cmin2i])cmin2i=i;});
   var ckPos1=KEYS2[cmax1i], ckNeg1=KEYS2[cmin1i], ckPos2=KEYS2[cmax2i], ckNeg2=KEYS2[cmin2i];
-  var cbx=cx-r, cby=cy-r, cbw=2*r, cbh=2*r; // bounding box du cercle
-  // Bandes fond
+  var cbx=cx-r, cby=cy-r, cbw=2*r, cbh=2*r;
   svg.append('rect').attr('x',cbx).attr('y',cby-BD).attr('width',cbw/2).attr('height',BD).attr('fill',LEX_BG[ckNeg1]);
   svg.append('rect').attr('x',cbx+cbw/2).attr('y',cby-BD).attr('width',cbw/2).attr('height',BD).attr('fill',LEX_BG[ckPos1]);
   svg.append('rect').attr('x',cbx).attr('y',cby+cbh).attr('width',cbw/2).attr('height',BD).attr('fill',LEX_BG[ckNeg1]);
@@ -16016,25 +15996,22 @@ function _renderACPCercle(container, pca) {
   svg.append('rect').attr('x',cbx-BD).attr('y',cby+cbh/2).attr('width',BD).attr('height',cbh/2).attr('fill',LEX_BG[ckNeg2]);
   svg.append('rect').attr('x',cbx+cbw).attr('y',cby).attr('width',BD).attr('height',cbh/2).attr('fill',LEX_BG[ckPos2]);
   svg.append('rect').attr('x',cbx+cbw).attr('y',cby+cbh/2).attr('width',BD).attr('height',cbh/2).attr('fill',LEX_BG[ckNeg2]);
-  // Labels
-  var fszC=9.5;
-  function ctxt(x,y,anc,txt,clr,rot){
-    var t=svg.append('text').attr('x',x).attr('y',y).attr('text-anchor',anc)
-      .attr('font-family','Arial,sans-serif').attr('font-size',fszC).attr('font-weight',700)
+  function ctxt(x,y,txt,clr,rot){
+    var t=svg.append('text').attr('x',x).attr('y',y).attr('text-anchor','middle').attr('dominant-baseline','central')
+      .attr('font-family','Arial,sans-serif').attr('font-size',9.5).attr('font-weight',700)
       .attr('fill',clr).attr('stroke','#fff').attr('stroke-width',1.5).attr('paint-order','stroke').text(txt);
     if(rot) t.attr('transform','rotate('+rot+','+x+','+y+')');
   }
-  var tyT=cby-BD/2+3.5, tyB=cby+cbh+BD/2+3.5;
-  ctxt(cbx+cbw/4,tyT,'middle','\u2190 '+THL2[ckNeg1],LEX_COLORS[ckNeg1],null);
-  ctxt(cbx+cbw*3/4,tyT,'middle',THL2[ckPos1]+' \u2192',LEX_COLORS[ckPos1],null);
-  ctxt(cbx+cbw/4,tyB,'middle','\u2190 '+THL2[ckNeg1],LEX_COLORS[ckNeg1],null);
-  ctxt(cbx+cbw*3/4,tyB,'middle',THL2[ckPos1]+' \u2192',LEX_COLORS[ckPos1],null);
+  var tyT=cby-BD/2, tyB=cby+cbh+BD/2;
+  ctxt(cbx+cbw/4,tyT,'← '+THL2[ckNeg1],LEX_COLORS[ckNeg1],null);
+  ctxt(cbx+cbw*3/4,tyT,THL2[ckPos1]+' →',LEX_COLORS[ckPos1],null);
+  ctxt(cbx+cbw/4,tyB,'← '+THL2[ckNeg1],LEX_COLORS[ckNeg1],null);
+  ctxt(cbx+cbw*3/4,tyB,THL2[ckPos1]+' →',LEX_COLORS[ckPos1],null);
   var txcL=cbx-BD/2, txcR=cbx+cbw+BD/2;
-  ctxt(txcL,cby+cbh/4,'middle','\u2191 '+THL2[ckPos2],LEX_COLORS[ckPos2],-90);
-  ctxt(txcL,cby+cbh*3/4,'middle',THL2[ckNeg2]+' \u2193',LEX_COLORS[ckNeg2],-90);
-  ctxt(txcR,cby+cbh/4,'middle','\u2191 '+THL2[ckPos2],LEX_COLORS[ckPos2],90);
-  ctxt(txcR,cby+cbh*3/4,'middle',THL2[ckNeg2]+' \u2193',LEX_COLORS[ckNeg2],90);
-
+  ctxt(txcL,cby+cbh/4,THL2[ckPos2]+' →',LEX_COLORS[ckPos2],-90);
+  ctxt(txcL,cby+cbh*3/4,'← '+THL2[ckNeg2],LEX_COLORS[ckNeg2],-90);
+  ctxt(txcR,cby+cbh/4,'← '+THL2[ckPos2],LEX_COLORS[ckPos2],90);
+  ctxt(txcR,cby+cbh*3/4,THL2[ckNeg2]+' →',LEX_COLORS[ckNeg2],90);
   KEYS.forEach(function(k){defs.append('marker').attr('id','cacp-'+k).attr('viewBox','0 -4 8 8').attr('refX',8).attr('refY',0).attr('markerWidth',5).attr('markerHeight',5).attr('orient','auto').append('path').attr('d','M0,-4L8,0L0,4').attr('fill',LEX_COLORS[k]);});
   KEYS.forEach(function(k,i){
     var lx=pca.loadings[i][0], ly=pca.loadings[i][1];
@@ -16045,23 +16022,6 @@ function _renderACPCercle(container, pca) {
     svg.append('text').attr('x',cx+ux*ld).attr('y',cy-uy*ld+3.5).attr('text-anchor',anc).attr('font-size',11).attr('fill',LEX_COLORS[k]).attr('font-weight',700).attr('stroke','#fff').attr('stroke-width',2.5).attr('paint-order','stroke').text(THL[k]);
   });
   var axN=_acpAxisNames(pca.loadings);
-  // ── Repère coin bas-gauche ───────────────────────────────────────────────
-  var cox=6, coy=H-10, cAL=32;
-  defs.append('marker').attr('id','cax-arr').attr('viewBox','0 -3 7 6')
-    .attr('refX',7).attr('refY',0).attr('markerWidth',4).attr('markerHeight',4)
-    .attr('orient','auto').append('path').attr('d','M0,-3L7,0L0,3').attr('fill','#555');
-  svg.append('line').attr('x1',cox).attr('y1',coy).attr('x2',cox+cAL).attr('y2',coy)
-    .attr('stroke','#555').attr('stroke-width',1.5).attr('marker-end','url(#cax-arr)');
-  svg.append('line').attr('x1',cox).attr('y1',coy).attr('x2',cox).attr('y2',coy-cAL)
-    .attr('stroke','#555').attr('stroke-width',1.5).attr('marker-end','url(#cax-arr)');
-  svg.append('text').attr('x',cox+cAL+4).attr('y',coy+4)
-    .attr('font-size',8).attr('fill','#555').attr('font-weight',800)
-    .attr('stroke','#fff').attr('stroke-width',2).attr('paint-order','stroke')
-    .text(axN.n1);
-  svg.append('text').attr('x',cox+3).attr('y',coy-cAL-4)
-    .attr('font-size',8).attr('fill','#555').attr('font-weight',800)
-    .attr('stroke','#fff').attr('stroke-width',2).attr('paint-order','stroke')
-    .text(axN.n2);
 }
 
 // ── Lecture croisée ───────────────────────────────────
@@ -16108,77 +16068,44 @@ function _renderACPStructure(container) {
   var g=svg.append('g').attr('transform','translate('+ML+','+MT+')');
 
   // ── Cadre quadrant : bandes colorées sur les 4 côtés ──────────────────────
-  var BD = 13; // épaisseur des bandes (px)
-  var KEYS2=LEX_KEYS, THL2={amour:'Amour',pouvoir:'Pouvoir',liberte:'Libert\u00e9',identite:'Identit\u00e9',societe:'Soci\u00e9t\u00e9',nature:'Nature'};
-  var l1=pca.loadings.map(function(l){return l[0];}), l2=pca.loadings.map(function(l){return l[1];});
+  var BD = 16;
+  var KEYS2=LEX_KEYS, THL2={amour:'Amour',pouvoir:'Pouvoir',liberte:'Liberté',identite:'Identité',societe:'Société',nature:'Nature'};
+  var l1b=pca.loadings.map(function(l){return l[0];}), l2b=pca.loadings.map(function(l){return l[1];});
   var max1i=0,min1i=0,max2i=0,min2i=0;
-  l1.forEach(function(v,i){if(v>l1[max1i])max1i=i; if(v<l1[min1i])min1i=i;});
-  l2.forEach(function(v,i){if(v>l2[max2i])max2i=i; if(v<l2[min2i])min2i=i;});
+  l1b.forEach(function(v,i){if(v>l1b[max1i])max1i=i; if(v<l1b[min1i])min1i=i;});
+  l2b.forEach(function(v,i){if(v>l2b[max2i])max2i=i; if(v<l2b[min2i])min2i=i;});
   var kPos1=KEYS2[max1i], kNeg1=KEYS2[min1i], kPos2=KEYS2[max2i], kNeg2=KEYS2[min2i];
-  var cx0S=ML+scX(0), cy0S=MT+scY(0); // coordonnées SVG de l'origine
-  // Bandes fond (rectangle coloré, opacity légère)
-  // TOP gauche (négatif CP1)
+  var cx0S=ML+scX(0), cy0S=MT+scY(0);
   svg.append('rect').attr('x',ML).attr('y',MT-BD).attr('width',cx0S-ML).attr('height',BD).attr('fill',LEX_BG[kNeg1]);
-  // TOP droite (positif CP1)
   svg.append('rect').attr('x',cx0S).attr('y',MT-BD).attr('width',ML+CW-cx0S).attr('height',BD).attr('fill',LEX_BG[kPos1]);
-  // BOTTOM gauche
   svg.append('rect').attr('x',ML).attr('y',MT+CH).attr('width',cx0S-ML).attr('height',BD).attr('fill',LEX_BG[kNeg1]);
-  // BOTTOM droite
   svg.append('rect').attr('x',cx0S).attr('y',MT+CH).attr('width',ML+CW-cx0S).attr('height',BD).attr('fill',LEX_BG[kPos1]);
-  // LEFT haut (positif CP2)
   svg.append('rect').attr('x',ML-BD).attr('y',MT).attr('width',BD).attr('height',cy0S-MT).attr('fill',LEX_BG[kPos2]);
-  // LEFT bas (négatif CP2)
   svg.append('rect').attr('x',ML-BD).attr('y',cy0S).attr('width',BD).attr('height',MT+CH-cy0S).attr('fill',LEX_BG[kNeg2]);
-  // RIGHT haut
   svg.append('rect').attr('x',ML+CW).attr('y',MT).attr('width',BD).attr('height',cy0S-MT).attr('fill',LEX_BG[kPos2]);
-  // RIGHT bas
   svg.append('rect').attr('x',ML+CW).attr('y',cy0S).attr('width',BD).attr('height',MT+CH-cy0S).attr('fill',LEX_BG[kNeg2]);
-  // Labels CP1 (haut + bas) — flèche dans le sens de l'accroissement
-  var fszB=9.5;
-  function bandTxt(svgEl,x,y,anchor,txt,clr){
-    svgEl.append('text').attr('x',x).attr('y',y).attr('text-anchor',anchor)
-      .attr('font-family','Arial,sans-serif').attr('font-size',fszB).attr('font-weight',700)
-      .attr('fill',clr).attr('stroke','#fff').attr('stroke-width',1.5).attr('paint-order','stroke')
-      .text(txt);
+  function bandTxtB(x,y,txt,clr,rot){
+    var t=svg.append('text').attr('x',x).attr('y',y).attr('text-anchor','middle').attr('dominant-baseline','central')
+      .attr('font-family','Arial,sans-serif').attr('font-size',9.5).attr('font-weight',700)
+      .attr('fill',clr).attr('stroke','#fff').attr('stroke-width',1.5).attr('paint-order','stroke').text(txt);
+    if(rot) t.attr('transform','rotate('+rot+','+x+','+y+')');
   }
-  // TOP : négatif = gauche → centré entre ML et cx0S; positif = droite
-  var tyTop=MT-BD/2+3.5, tyBot=MT+CH+BD/2+3.5;
-  bandTxt(svg,(ML+cx0S)/2,tyTop,'middle','\u2190 '+THL2[kNeg1],LEX_COLORS[kNeg1]);
-  bandTxt(svg,(cx0S+ML+CW)/2,tyTop,'middle',THL2[kPos1]+' \u2192',LEX_COLORS[kPos1]);
-  bandTxt(svg,(ML+cx0S)/2,tyBot,'middle','\u2190 '+THL2[kNeg1],LEX_COLORS[kNeg1]);
-  bandTxt(svg,(cx0S+ML+CW)/2,tyBot,'middle',THL2[kPos1]+' \u2192',LEX_COLORS[kPos1]);
-  // Labels CP2 (gauche + droite) — texte vertical, flèche ↑ en haut, ↓ en bas
+  var tyTop=MT-BD/2, tyBot=MT+CH+BD/2;
+  bandTxtB((ML+cx0S)/2,tyTop,'← '+THL2[kNeg1],LEX_COLORS[kNeg1],null);
+  bandTxtB((cx0S+ML+CW)/2,tyTop,THL2[kPos1]+' →',LEX_COLORS[kPos1],null);
+  bandTxtB((ML+cx0S)/2,tyBot,'← '+THL2[kNeg1],LEX_COLORS[kNeg1],null);
+  bandTxtB((cx0S+ML+CW)/2,tyBot,THL2[kPos1]+' →',LEX_COLORS[kPos1],null);
   var txL=ML-BD/2, txR=ML+CW+BD/2;
-  // Haut: positif CP2 → flèche ↑ au début du label
-  var cyTopCtr=(MT+cy0S)/2;
-  var cyBotCtr=(cy0S+MT+CH)/2;
-  svg.append('text').attr('x',txL).attr('y',cyTopCtr).attr('text-anchor','middle')
-    .attr('font-family','Arial,sans-serif').attr('font-size',fszB).attr('font-weight',700)
-    .attr('fill',LEX_COLORS[kPos2]).attr('stroke','#fff').attr('stroke-width',1.5).attr('paint-order','stroke')
-    .attr('transform','rotate(-90,'+txL+','+cyTopCtr+')')
-    .text('\u2191 '+THL2[kPos2]);
-  // Bas: négatif CP2 → flèche ↓ à la fin du label
-  svg.append('text').attr('x',txL).attr('y',cyBotCtr).attr('text-anchor','middle')
-    .attr('font-family','Arial,sans-serif').attr('font-size',fszB).attr('font-weight',700)
-    .attr('fill',LEX_COLORS[kNeg2]).attr('stroke','#fff').attr('stroke-width',1.5).attr('paint-order','stroke')
-    .attr('transform','rotate(-90,'+txL+','+cyBotCtr+')')
-    .text(THL2[kNeg2]+' \u2193');
-  // Côté droit (miroir, rotation +90)
-  svg.append('text').attr('x',txR).attr('y',cyTopCtr).attr('text-anchor','middle')
-    .attr('font-family','Arial,sans-serif').attr('font-size',fszB).attr('font-weight',700)
-    .attr('fill',LEX_COLORS[kPos2]).attr('stroke','#fff').attr('stroke-width',1.5).attr('paint-order','stroke')
-    .attr('transform','rotate(90,'+txR+','+cyTopCtr+')')
-    .text('\u2191 '+THL2[kPos2]);
-  svg.append('text').attr('x',txR).attr('y',cyBotCtr).attr('text-anchor','middle')
-    .attr('font-family','Arial,sans-serif').attr('font-size',fszB).attr('font-weight',700)
-    .attr('fill',LEX_COLORS[kNeg2]).attr('stroke','#fff').attr('stroke-width',1.5).attr('paint-order','stroke')
-    .attr('transform','rotate(90,'+txR+','+cyBotCtr+')')
-    .text(THL2[kNeg2]+' \u2193');
-  // Fines lignes de séparation entre bande et zone de dessin
-  svg.append('line').attr('x1',ML-BD).attr('y1',MT).attr('x2',ML+CW+BD).attr('y2',MT).attr('stroke','#DDD').attr('stroke-width',0.5);
-  svg.append('line').attr('x1',ML-BD).attr('y1',MT+CH).attr('x2',ML+CW+BD).attr('y2',MT+CH).attr('stroke','#DDD').attr('stroke-width',0.5);
-  svg.append('line').attr('x1',ML).attr('y1',MT-BD).attr('x2',ML).attr('y2',MT+CH+BD).attr('stroke','#DDD').attr('stroke-width',0.5);
-  svg.append('line').attr('x1',ML+CW).attr('y1',MT-BD).attr('x2',ML+CW).attr('y2',MT+CH+BD).attr('stroke','#DDD').attr('stroke-width',0.5);
+  var cyTopC=(MT+cy0S)/2, cyBotC=(cy0S+MT+CH)/2;
+  bandTxtB(txL,cyTopC,THL2[kPos2]+' →',LEX_COLORS[kPos2],-90);
+  bandTxtB(txL,cyBotC,'← '+THL2[kNeg2],LEX_COLORS[kNeg2],-90);
+  bandTxtB(txR,cyTopC,'← '+THL2[kPos2],LEX_COLORS[kPos2],90);
+  bandTxtB(txR,cyBotC,THL2[kNeg2]+' →',LEX_COLORS[kNeg2],90);
+  svg.append('line').attr('x1',ML-BD).attr('y1',MT).attr('x2',ML+CW+BD).attr('y2',MT).attr('stroke','#CCC').attr('stroke-width',0.6);
+  svg.append('line').attr('x1',ML-BD).attr('y1',MT+CH).attr('x2',ML+CW+BD).attr('y2',MT+CH).attr('stroke','#CCC').attr('stroke-width',0.6);
+  svg.append('line').attr('x1',ML).attr('y1',MT-BD).attr('x2',ML).attr('y2',MT+CH+BD).attr('stroke','#CCC').attr('stroke-width',0.6);
+  svg.append('line').attr('x1',ML+CW).attr('y1',MT-BD).attr('x2',ML+CW).attr('y2',MT+CH+BD).attr('stroke','#CCC').attr('stroke-width',0.6);
+
 
   g.append('line').attr('x1',0).attr('y1',cy0).attr('x2',CW).attr('y2',cy0).attr('stroke','#DADADA').attr('stroke-width',1.2);
   g.append('line').attr('x1',cx0).attr('y1',0).attr('x2',cx0).attr('y2',CH).attr('stroke','#DADADA').attr('stroke-width',1.2);
@@ -16223,24 +16150,6 @@ function _renderACPStructure(container) {
       .attr('fill',p.clr).attr('stroke','#fff').attr('stroke-width',2.5).attr('paint-order','stroke')
       .text(p.label);
   });
-  // Repère coin bas-gauche
-  var sAL=32, sdefs=svg.append('defs');
-  var srox=6, sroy=H-10;
-  sdefs.append('marker').attr('id','strx-arr').attr('viewBox','0 -3 7 6')
-    .attr('refX',7).attr('refY',0).attr('markerWidth',4).attr('markerHeight',4)
-    .attr('orient','auto').append('path').attr('d','M0,-3L7,0L0,3').attr('fill','#555');
-  svg.append('line').attr('x1',srox).attr('y1',sroy).attr('x2',srox+sAL).attr('y2',sroy)
-    .attr('stroke','#555').attr('stroke-width',1.5).attr('marker-end','url(#strx-arr)');
-  svg.append('line').attr('x1',srox).attr('y1',sroy).attr('x2',srox).attr('y2',sroy-sAL)
-    .attr('stroke','#555').attr('stroke-width',1.5).attr('marker-end','url(#strx-arr)');
-  svg.append('text').attr('x',srox+sAL+4).attr('y',sroy+4)
-    .attr('font-size',8).attr('fill','#555').attr('font-weight',800)
-    .attr('stroke','#fff').attr('stroke-width',2).attr('paint-order','stroke')
-    .text(axN.n1+' ('+pca.explained[0]+'%)');
-  svg.append('text').attr('x',srox+3).attr('y',sroy-sAL-4)
-    .attr('font-size',8).attr('fill','#555').attr('font-weight',800)
-    .attr('stroke','#fff').attr('stroke-width',2).attr('paint-order','stroke')
-    .text(axN.n2+' ('+pca.explained[1]+'%)');
   svg.append('text').attr('x',W-4).attr('y',12).attr('text-anchor','end')
     .attr('font-size',8).attr('fill','#BDBDBD').text('Total '+(pca.explained[0]+pca.explained[1])+'%');
 }
