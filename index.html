@@ -15226,6 +15226,7 @@ var _q3PairesOpen = false;
 
 function _q3TogglePaires() {
   if(_q3AcpOpen){ _q3AcpOpen=false; var ab=document.getElementById('ni-th-acp-btn'); if(ab)ab.classList.remove('active'); var ae=document.getElementById('ni-q-th-acp'); if(ae)ae.style.display='none'; }
+  if(_q3PairesPersoOpen){ _q3PairesPersoOpen=false; var ppb=document.getElementById('ni-th-pairs-perso-btn'); if(ppb)ppb.classList.remove('active'); var ppe=document.getElementById('ni-q-th-paires-perso'); if(ppe)ppe.style.display='none'; }
   _q3PairesOpen = !_q3PairesOpen;
   var glb = document.getElementById('ni-q-th-global');
   var pai = document.getElementById('ni-q-th-paires');
