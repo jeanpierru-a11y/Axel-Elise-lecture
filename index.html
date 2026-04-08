@@ -15774,32 +15774,16 @@ function _renderACPBiplot(container, pca, phases, tranches) {
   g.append('line').attr('x1',0).attr('y1',cy0).attr('x2',CW).attr('y2',cy0).attr('stroke','#DADADA').attr('stroke-width',1.2);
   g.append('line').attr('x1',cx0).attr('y1',0).attr('x2',cx0).attr('y2',CH).attr('stroke','#DADADA').attr('stroke-width',1.2);
 
-  // Marqueurs flèches
-  var defs=svg.append('defs');
-  LEX_KEYS.forEach(function(k){
-    defs.append('marker').attr('id','bacp-'+k)
-      .attr('viewBox','0 -5 10 10').attr('refX',10).attr('refY',0)
-      .attr('markerWidth',6).attr('markerHeight',6).attr('orient','auto')
-      .append('path').attr('d','M0,-5L10,0L0,5').attr('fill',LEX_COLORS[k]);
-  });
-
-  // Flèches loading — longueur proportionnelle au loading, max = arrowPx
+  // Pas de flèches loading dans le Plan factoriel — voir Cercle des corrélations
   LEX_KEYS.forEach(function(k,i){
     var lx=loadings[i][0], ly=loadings[i][1];
     var norm=Math.sqrt(lx*lx+ly*ly)||1;
     var ux=lx/norm, uy=ly/norm;
     var ax=cx0+ux*norm*arrowPx, ay=cy0-uy*norm*arrowPx;
+    // Flèche très légère (guide directionnel subtil, sans marker)
     g.append('line').attr('x1',cx0).attr('y1',cy0).attr('x2',ax).attr('y2',ay)
-      .attr('stroke',LEX_COLORS[k]).attr('stroke-width',2)
-      .attr('marker-end','url(#bacp-'+k+')');
-    // Label thème au-delà de la flèche — stroke blanc pour lisibilité (accessibilité)
-    var LEXT=1.25;
-    var lbx=cx0+ux*norm*arrowPx*LEXT, lby=cy0-uy*norm*arrowPx*LEXT;
-    var anc=ux>0.1?'start':ux<-0.1?'end':'middle';
-    g.append('text').attr('x',lbx).attr('y',lby+4).attr('text-anchor',anc)
-      .attr('font-size',FONT_TH).attr('fill',LEX_COLORS[k]).attr('font-weight',800)
-      .attr('stroke','#fff').attr('stroke-width',3).attr('paint-order','stroke')
-      .text(THL[k]);
+      .attr('stroke',LEX_COLORS[k]).attr('stroke-width',0.8).attr('stroke-dasharray','3,4')
+      .attr('opacity',0.35);
   });
 
   // Points + labels
