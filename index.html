@@ -16490,6 +16490,17 @@ function _acpHelp(zone) {
 var _q3TbPersoOpen  = false;
 var _tbBubbleX = 'identite', _tbBubbleY = 'amour', _tbBubbleZ = 'pouvoir';
 var _tbEvolMode = 'perso', _tbEvolSel = '';
+var _tbRadarMode   = 'rel';  // 'rel' = profil normalisé  |  'abs' = poids inter-perso
+var _tbRadarHidden = {};      // {p.id: true} → personnage caché du radar
+
+function _tbRadarToggle(pid) {
+  if(_tbRadarHidden[pid]) delete _tbRadarHidden[pid]; else _tbRadarHidden[pid]=true;
+  var c=document.getElementById('tb-radar'); if(c)_renderTbRadar(c);
+}
+function _tbRadarSetMode(m) {
+  _tbRadarMode=m;
+  var c=document.getElementById('tb-radar'); if(c)_renderTbRadar(c);
+}
 
 function _q3ToggleTbPerso() {
   ['ni-q-th-acp','ni-q-th-paires','ni-q-th-paires-perso'].forEach(function(id){ var el=document.getElementById(id);if(el)el.style.display='none'; });
@@ -16524,37 +16535,76 @@ function _tbNoData(c){ c.innerHTML='<div style="display:flex;align-items:center;
 // ── 1. Radar superposé ────────────────────────────────────────────────────────
 function _renderTbRadar(container) {
   container.innerHTML='';
-  var persos=_tbPersos(); if(!persos.length){_tbNoData(container);return;}
+  var allPersos=_tbPersos(); if(!allPersos.length){_tbNoData(container);return;}
   var W=container.clientWidth||280, H=container.clientHeight||190;
   if(W<30||H<30)return;
-  var KEYS=LEX_KEYS, n=KEYS.length;
+  var KEYS=LEX_KEYS, n=KEYS.length, mode=_tbRadarMode;
   var THL=['Amour','Pouvoir','Lib.','Id.','Soc.','Nat.'];
-  var legH=22, cH=H-legH, cx=W/2, cy=cH/2, R=Math.min(cx,cy)-24;
+  var legH=28, cH=H-legH, cx=W/2, cy=cH/2, R=Math.min(cx,cy)-24;
+
+  // Personnages actifs (non cachés)
+  var persos=allPersos.filter(function(p){ return !_tbRadarHidden[p.id]; });
+  if(!persos.length) persos=allPersos; // si tout est caché, tout montrer quand même
+
+  // Calcul des scores selon le mode
+  var scoresMap={};
+  if(mode==='rel') {
+    // Relatif : profil normalisé (% du rôle, somme=100 par perso)
+    persos.forEach(function(p){ scoresMap[p.id]=p.scores; });
+  } else {
+    // Absolu : poids inter-personnages — max par thème = 100
+    var maxT={};
+    KEYS.forEach(function(k){ maxT[k]=Math.max.apply(null,persos.map(function(p){return +(p.scores[k]||0);}))||1; });
+    persos.forEach(function(p){
+      var sc={};
+      KEYS.forEach(function(k){ sc[k]=(+(p.scores[k]||0))/maxT[k]*100; });
+      scoresMap[p.id]=sc;
+    });
+  }
+
   function ang(i){ return (i/n)*2*Math.PI-Math.PI/2; }
   function rx(i,r){ return cx+r*Math.cos(ang(i)); }
   function ry(i,r){ return cy+r*Math.sin(ang(i)); }
   function poly(sc){
     return KEYS.map(function(k,i){ var v=(+(sc[k]||0))/100; return rx(i,R*v).toFixed(1)+','+ry(i,R*v).toFixed(1); }).join(' ');
   }
+
   var s='<svg width="'+W+'" height="'+cH+'">';
+  // Grille
   [25,50,75,100].forEach(function(pct){
     var pts=KEYS.map(function(_,i){ return rx(i,R*pct/100).toFixed(1)+','+ry(i,R*pct/100).toFixed(1); }).join(' ');
     s+='<polygon points="'+pts+'" fill="none" stroke="#E8E0F7" stroke-width="1"/>';
   });
+  // Axes + labels
   KEYS.forEach(function(k,i){
     s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+rx(i,R).toFixed(1)+'" y2="'+ry(i,R).toFixed(1)+'" stroke="#DDD" stroke-width="1"/>';
     var lx=rx(i,R+15), ly=ry(i,R+15), a=ang(i);
     var anc=Math.cos(a)>0.1?'start':Math.cos(a)<-0.1?'end':'middle';
     s+='<text x="'+lx.toFixed(1)+'" y="'+(ly+3.5).toFixed(1)+'" text-anchor="'+anc+'" font-size="9.5" font-weight="700" fill="'+LEX_COLORS[k]+'">'+THL[i]+'</text>';
   });
+  // Polygones
   persos.forEach(function(p){
-    var clr=p.couleur||'#7B1FA2';
-    s+='<polygon points="'+poly(p.scores)+'" fill="'+clr+'" fill-opacity=".12" stroke="'+clr+'" stroke-width="2"/>';
-    KEYS.forEach(function(k,i){ var v=(+(p.scores[k]||0))/100; s+='<circle cx="'+rx(i,R*v).toFixed(1)+'" cy="'+ry(i,R*v).toFixed(1)+'" r="3" fill="'+clr+'"/>'; });
+    var clr=p.couleur||'#7B1FA2', sc=scoresMap[p.id];
+    s+='<polygon points="'+poly(sc)+'" fill="'+clr+'" fill-opacity=".12" stroke="'+clr+'" stroke-width="2"/>';
+    KEYS.forEach(function(k,i){ var v=(+(sc[k]||0))/100; s+='<circle cx="'+rx(i,R*v).toFixed(1)+'" cy="'+ry(i,R*v).toFixed(1)+'" r="3" fill="'+clr+'"/>'; });
   });
   s+='</svg>';
-  s+='<div style="display:flex;flex-wrap:wrap;gap:2px 8px;padding:2px 6px;border-top:1px solid #EDE7F6;align-items:center;overflow:hidden;">';
-  persos.forEach(function(p){ s+='<span style="font-size:.63rem;font-weight:700;color:'+(p.couleur||'#7B1FA2')+';">\u25cf '+p.nom+'</span>'; });
+
+  // Bandeau légende — mode + noms cliquables
+  var bs='display:flex;flex-wrap:wrap;gap:3px 6px;padding:3px 6px;border-top:1px solid #EDE7F6;align-items:center;overflow:hidden;background:#FAFAFE;';
+  s+='<div style="'+bs+'">';
+  // Boutons mode Rel / Abs
+  var bms='font-size:.6rem;padding:1px 6px;border-radius:3px;cursor:pointer;font-weight:800;border:1px solid #CE93D8;';
+  s+='<button onclick="_tbRadarSetMode(\'rel\')" style="'+bms+';background:'+(mode==='rel'?'#9C27B0':'#F3E5F5')+';color:'+(mode==='rel'?'#fff':'#9C27B0')+';">Rel</button>';
+  s+='<button onclick="_tbRadarSetMode(\'abs\')" style="'+bms+';background:'+(mode==='abs'?'#9C27B0':'#F3E5F5')+';color:'+(mode==='abs'?'#fff':'#9C27B0')+';">Abs</button>';
+  s+='<span style="width:1px;height:14px;background:#DDD;display:inline-block;margin:0 2px;"></span>';
+  // Noms cliquables — grisé si caché
+  allPersos.forEach(function(p){
+    var hidden=!!_tbRadarHidden[p.id];
+    var clr=hidden?'#BBB':(p.couleur||'#7B1FA2');
+    var bg=hidden?'#F0F0F0':'transparent';
+    s+='<button onclick="_tbRadarToggle(\''+p.id+'\')" style="font-size:.63rem;font-weight:700;color:'+clr+';background:'+bg+';border:none;cursor:pointer;padding:1px 3px;border-radius:3px;text-decoration:'+(hidden?'line-through':'none')+';">\u25cf '+p.nom+'</button>';
+  });
   s+='</div>';
   container.innerHTML=s;
 }
