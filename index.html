@@ -2275,7 +2275,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 .acp-tab{padding:5px 13px;font-size:.67rem;font-weight:700;cursor:pointer;border:none;border-bottom:3px solid transparent;background:transparent;color:#7B1FA2;transition:border-color .15s,background .15s;}
 .acp-tab-active{border-bottom:3px solid #7B1FA2;background:#EDE7F6;color:#4A148C;}
 .acp-tab:hover:not(.acp-tab-active){background:#F3E5F5;}
-.acp-col-hdr{flex:0 0 auto;padding:3px 8px;background:#faf8ff;border-bottom:1px solid #EDE7F6;font-size:.66rem;font-weight:800;color:#4A148C;letter-spacing:.3px;white-space:nowrap;}
+.acp-col-hdr{flex:0 0 auto;padding:4px 8px;background:#EDE7F6;border-bottom:2px solid #9C27B0;font-size:.74rem;font-weight:900;color:#4A148C;letter-spacing:.3px;white-space:nowrap;display:flex;align-items:center;justify-content:space-between;}
 #ni-q-th-acp{background:#fff;}
 #acp-variance{border-bottom:1px solid #EDE7F6;}
 
@@ -2915,24 +2915,24 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
               <input type="number" id="acp-ph-to" min="1" max="8" value="8" style="width:32px;font-size:.67rem;text-align:center;border:1px solid #CE93D8;border-radius:4px;padding:1px 2px;" onchange="_renderACPWidget()">
             </div>
             <!-- Ligne 1 : Plan de mouvement | Plan de structure -->
-            <div style="flex:0 0 30vh;display:flex;min-height:0;overflow:hidden;border-bottom:2px solid #EDE7F6;">
-              <div style="flex:1;display:flex;flex-direction:column;min-width:0;border-right:2px solid #9C27B0;background:#FAFAFE;">
-                <div class="acp-col-hdr">🏃 Plan de mouvement <span style="font-weight:400;font-size:.59rem;">(phases)</span></div>
+            <div style="flex:0 0 30vh;display:flex;min-height:0;overflow:hidden;gap:6px;padding:4px 4px 0;">
+              <div style="flex:1;display:flex;flex-direction:column;min-width:0;border:2px solid #9C27B0;border-radius:7px;overflow:hidden;background:#FAFAFE;">
+                <div class="acp-col-hdr">🏃 Plan de mouvement <span style="font-weight:400;font-size:.63rem;color:#7B1FA2;">(phases)</span><button onclick="_acpHelp('mouvement')" style="font-size:.65rem;background:none;border:1px solid #CE93D8;border-radius:50%;width:16px;height:16px;cursor:pointer;color:#9C27B0;padding:0;line-height:1;">?</button></div>
                 <div id="acp-biplot" style="flex:1;min-height:0;overflow:hidden;display:flex;"></div>
               </div>
-              <div style="flex:1;display:flex;flex-direction:column;min-width:0;background:#FAFAFE;">
-                <div class="acp-col-hdr">🧩 Plan de structure <span style="font-weight:400;font-size:.59rem;">(personnages)</span></div>
+              <div style="flex:1;display:flex;flex-direction:column;min-width:0;border:2px solid #9C27B0;border-radius:7px;overflow:hidden;background:#FAFAFE;">
+                <div class="acp-col-hdr">🧩 Plan de structure <span style="font-weight:400;font-size:.63rem;color:#7B1FA2;">(personnages)</span><button onclick="_acpHelp('structure')" style="font-size:.65rem;background:none;border:1px solid #CE93D8;border-radius:50%;width:16px;height:16px;cursor:pointer;color:#9C27B0;padding:0;line-height:1;">?</button></div>
                 <div id="acp-structure" style="flex:1;min-height:0;overflow:hidden;display:flex;align-items:center;justify-content:center;"></div>
               </div>
             </div>
             <!-- Ligne 2 : Cercle des corrélations | Heatmap -->
-            <div style="flex:1;display:flex;min-height:0;overflow:hidden;">
-              <div style="flex:1;display:flex;flex-direction:column;min-width:0;border-right:2px solid #9C27B0;background:#FDF8FF;">
-                <div class="acp-col-hdr">🎯 Cercle des corrélations</div>
+            <div style="flex:0 0 30vh;display:flex;min-height:0;overflow:hidden;gap:6px;padding:4px 4px 4px;">
+              <div style="flex:1;display:flex;flex-direction:column;min-width:0;border:2px solid #7B1FA2;border-radius:7px;overflow:hidden;background:#FDF8FF;">
+                <div class="acp-col-hdr">🎯 Cercle des corrélations<button onclick="_acpHelp('cercle')" style="font-size:.65rem;background:none;border:1px solid #CE93D8;border-radius:50%;width:16px;height:16px;cursor:pointer;color:#9C27B0;padding:0;line-height:1;">?</button></div>
                 <div id="acp-cercle" style="flex:1;min-height:0;overflow:hidden;display:flex;align-items:center;justify-content:center;"></div>
               </div>
-              <div style="flex:1;display:flex;flex-direction:column;min-width:0;background:#F8FCF8;">
-                <div class="acp-col-hdr">🌡️ Heatmap thématique</div>
+              <div style="flex:1;display:flex;flex-direction:column;min-width:0;border:2px solid #7B1FA2;border-radius:7px;overflow:hidden;background:#F8FCF8;">
+                <div class="acp-col-hdr">🌡️ Heatmap thématique<button onclick="_acpHelp('heatmap')" style="font-size:.65rem;background:none;border:1px solid #CE93D8;border-radius:50%;width:16px;height:16px;cursor:pointer;color:#9C27B0;padding:0;line-height:1;">?</button></div>
                 <div id="acp-heatmap" style="flex:1;min-height:0;overflow:auto;padding:4px 6px;"></div>
               </div>
             </div>
@@ -15679,6 +15679,8 @@ function phwInject(texte) {
 
 var _q3AcpOpen = false;
 var _acpActiveTab = 0;
+var _acpPhFrom = 1;
+var _acpPhTo   = 8;
 
 function _q3ToggleACP() {
   _q3AcpOpen = !_q3AcpOpen;
@@ -15865,14 +15867,22 @@ function _renderACPBiplot(container, pca, phases, tranches) {
       .attr('paint-order','stroke').text(p.label);
   });
 
-  // Axes — taille et contraste lisibles
-  svg.append('text').attr('x',ML+CW/2).attr('y',H-6)
-    .attr('text-anchor','middle').attr('font-size',FONT_AX).attr('fill','#333').attr('font-weight',700)
+  // Repère bas-gauche — CP1 horizontal, CP2 vertical
+  var bAL=36, box=svg.append('defs');
+  box.append('marker').attr('id','bipx-arr').attr('viewBox','0 -3 7 6')
+    .attr('refX',7).attr('refY',0).attr('markerWidth',4).attr('markerHeight',4)
+    .attr('orient','auto').append('path').attr('d','M0,-3L7,0L0,3').attr('fill','#555');
+  svg.append('line').attr('x1',ML).attr('y1',H-8).attr('x2',ML+bAL).attr('y2',H-8)
+    .attr('stroke','#555').attr('stroke-width',1.5).attr('marker-end','url(#bipx-arr)');
+  svg.append('line').attr('x1',ML).attr('y1',H-8).attr('x2',ML).attr('y2',H-8-bAL)
+    .attr('stroke','#555').attr('stroke-width',1.5).attr('marker-end','url(#bipx-arr)');
+  svg.append('text').attr('x',ML+bAL+4).attr('y',H-5)
+    .attr('font-size',8.5).attr('fill','#333').attr('font-weight',800)
+    .attr('stroke','#fff').attr('stroke-width',2.5).attr('paint-order','stroke')
     .text(axN.n1+' ('+pca.explained[0]+'%)');
-  svg.append('text').attr('x',14).attr('y',MT+CH/2)
-    .attr('text-anchor','middle')
-    .attr('transform','rotate(-90,14,'+(MT+CH/2)+')')
-    .attr('font-size',FONT_AX).attr('fill','#333').attr('font-weight',700)
+  svg.append('text').attr('x',ML+4).attr('y',H-8-bAL-4)
+    .attr('font-size',8.5).attr('fill','#333').attr('font-weight',800)
+    .attr('stroke','#fff').attr('stroke-width',2.5).attr('paint-order','stroke')
     .text(axN.n2+' ('+pca.explained[1]+'%)');
 }
 
@@ -16005,12 +16015,22 @@ function _renderACPStructure(container) {
       .attr('fill',p.clr).attr('stroke','#fff').attr('stroke-width',3).attr('paint-order','stroke')
       .text(p.label);
   });
-  svg.append('text').attr('x',ML+CW/2).attr('y',H-4)
-    .attr('text-anchor','middle').attr('font-size',FONT_AX).attr('fill','#555').attr('font-weight',700)
+  // Repère bas-gauche
+  var sAL=36, sdefs=svg.append('defs');
+  sdefs.append('marker').attr('id','strx-arr').attr('viewBox','0 -3 7 6')
+    .attr('refX',7).attr('refY',0).attr('markerWidth',4).attr('markerHeight',4)
+    .attr('orient','auto').append('path').attr('d','M0,-3L7,0L0,3').attr('fill','#555');
+  svg.append('line').attr('x1',ML).attr('y1',H-8).attr('x2',ML+sAL).attr('y2',H-8)
+    .attr('stroke','#555').attr('stroke-width',1.5).attr('marker-end','url(#strx-arr)');
+  svg.append('line').attr('x1',ML).attr('y1',H-8).attr('x2',ML).attr('y2',H-8-sAL)
+    .attr('stroke','#555').attr('stroke-width',1.5).attr('marker-end','url(#strx-arr)');
+  svg.append('text').attr('x',ML+sAL+4).attr('y',H-5)
+    .attr('font-size',9).attr('fill','#333').attr('font-weight',800)
+    .attr('stroke','#fff').attr('stroke-width',2.5).attr('paint-order','stroke')
     .text(axN.n1+' ('+pca.explained[0]+'%)');
-  svg.append('text').attr('x',10).attr('y',MT+CH/2)
-    .attr('text-anchor','middle').attr('transform','rotate(-90,10,'+(MT+CH/2)+')')
-    .attr('font-size',FONT_AX).attr('fill','#555').attr('font-weight',700)
+  svg.append('text').attr('x',ML+4).attr('y',H-8-sAL-4)
+    .attr('font-size',9).attr('fill','#333').attr('font-weight',800)
+    .attr('stroke','#fff').attr('stroke-width',2.5).attr('paint-order','stroke')
     .text(axN.n2+' ('+pca.explained[1]+'%)');
   svg.append('text').attr('x',W-4).attr('y',12).attr('text-anchor','end')
     .attr('font-size',8).attr('fill','#BDBDBD').text('Total '+(pca.explained[0]+pca.explained[1])+'%');
@@ -16106,9 +16126,11 @@ function _renderACPWidget() {
   }
   var nPh=(lex.phases&&lex.phases.length)||8;
   var fromEl=document.getElementById('acp-ph-from'), toEl=document.getElementById('acp-ph-to');
-  if(fromEl) fromEl.max=nPh; if(toEl) toEl.max=nPh;
+  if(fromEl){ fromEl.max=nPh; if(fromEl.value!=String(_acpPhFrom)) fromEl.value=_acpPhFrom; }
+  if(toEl){ toEl.max=nPh; if(toEl.value!=String(_acpPhTo)) toEl.value=_acpPhTo; }
   var phFrom=fromEl?Math.max(0,parseInt(fromEl.value||'1')-1):0;
   var phTo=toEl?Math.min(nPh-1,parseInt(toEl.value||String(nPh))-1):(nPh-1);
+  _acpPhFrom=phFrom+1; _acpPhTo=phTo+1;
   if(phFrom>phTo) phTo=phFrom;
   function phIdxOf(t){var page=t.pageDebut,pi=0;(lex.phases||[]).forEach(function(p,i){if(page>=p.pageDebut)pi=i;});return pi;}
   var filtered=lex.tranches.filter(function(t){var pi=phIdxOf(t);return pi>=phFrom&&pi<=phTo;});
@@ -16306,6 +16328,70 @@ function _renderPairesPerso(container) {
     block.appendChild(badge);
     container.appendChild(block);
   });
+}
+
+// ── Aide contextuelle graphiques ACP ─────────────────────────────────────────
+
+var _ACP_HELP = {
+  mouvement: {
+    titre: '🏃 Plan de mouvement',
+    texte: '<b>Ce graphique représente le voyage thématique de l\'œuvre.</b><br><br>'
+      + 'Chaque point est une <b>phase</b> (ou tranche). Deux phases proches ont des profils thématiques similaires. '
+      + 'La trajectoire fléchée ①→②→③… montre comment l\'œuvre se déplace dans l\'espace thématique au fil du récit.<br><br>'
+      + '<b>CP1</b> (axe horizontal) = opposition principale — le thème qui structure le plus l\'œuvre.<br>'
+      + '<b>CP2</b> (axe vertical) = opposition secondaire, orthogonale à CP1.<br><br>'
+      + '💡 Un zigzag prononcé = l\'œuvre oscille entre deux registres (ex. Pouvoir et Amour). '
+      + 'Un déplacement régulier = évolution linéaire du propos.'
+  },
+  structure: {
+    titre: '🧩 Plan de structure',
+    texte: '<b>Ce graphique représente la position thématique de chaque personnage.</b><br><br>'
+      + 'Chaque point est un <b>personnage</b>, positionné selon son profil lexical (% de ses mots dans chaque thème). '
+      + 'Deux personnages proches ont des registres similaires. Deux personnages éloignés s\'opposent thématiquement.<br><br>'
+      + '<b>CP1</b> = axe qui sépare le plus les personnages entre eux.<br>'
+      + '<b>CP2</b> = axe secondaire.<br><br>'
+      + '💡 Un personnage isolé est thématiquement singulier dans l\'œuvre. '
+      + 'Chercher à l\'interpréter : Caesonia isolée = figure de l\'Identité pure face aux autres personnages pluriels ?'
+  },
+  cercle: {
+    titre: '🎯 Cercle des corrélations',
+    texte: '<b>Ce graphique montre comment les thèmes contribuent aux composantes principales.</b><br><br>'
+      + 'Chaque flèche est un <b>thème</b>. Sa direction indique vers quel pôle de CP1/CP2 il pousse. '
+      + 'Sa longueur indique son pouvoir de discrimination : une flèche courte = thème peu structurant.<br><br>'
+      + 'Deux flèches dans la même direction = thèmes corrélés (ils évoluent ensemble). '
+      + 'Deux flèches opposées = thèmes en tension dans l\'œuvre.<br><br>'
+      + '💡 Le repère en bas à gauche indique les directions de CP1 (→) et CP2 (↑) pour lire les flèches.'
+  },
+  heatmap: {
+    titre: '🌡️ Heatmap thématique',
+    texte: '<b>Ce tableau montre l\'intensité de chaque thème phase par phase.</b><br><br>'
+      + 'Chaque cellule = score du thème dans la phase. Plus la cellule est foncée, plus le thème est présent. '
+      + 'Les scores sont comparables horizontalement (entre thèmes d\'une même phase) et verticalement (évolution d\'un thème).<br><br>'
+      + '💡 Repérer les pics (score élevé) et les creux. Un thème qui explose dans une seule phase = moment dramatique clé. '
+      + 'La heatmap confirme visuellement ce que le Plan de mouvement dessine.'
+  }
+};
+
+function _acpHelp(zone) {
+  var h = _ACP_HELP[zone]; if(!h) return;
+  var old = document.getElementById('acp-help-popup');
+  if(old) old.remove();
+  var pop = document.createElement('div');
+  pop.id = 'acp-help-popup';
+  pop.style.cssText = 'position:fixed;z-index:9999;top:50%;left:50%;transform:translate(-50%,-50%);'
+    + 'background:#fff;border:2px solid #9C27B0;border-radius:10px;box-shadow:0 8px 32px rgba(74,20,140,.22);'
+    + 'width:360px;max-width:92vw;padding:16px 18px 14px;font-size:.73rem;line-height:1.7;color:#222;';
+  pop.innerHTML = '<div style="display:flex;align-items:center;margin-bottom:10px;">'
+    + '<span style="flex:1;font-size:.8rem;font-weight:900;color:#4A148C;">'+h.titre+'</span>'
+    + '<button onclick="document.getElementById(\'acp-help-popup\').remove()" '
+    + 'style="background:#EDE7F6;border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;'
+    + 'font-size:.8rem;font-weight:900;color:#6A1B9A;">✕</button></div>'
+    + h.texte;
+  document.body.appendChild(pop);
+  pop.addEventListener('click', function(e){ e.stopPropagation(); });
+  setTimeout(function(){
+    document.addEventListener('click', function rm(){ pop.remove(); document.removeEventListener('click',rm); });
+  }, 100);
 }
 
 </script>
