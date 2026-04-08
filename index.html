@@ -2719,6 +2719,9 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
         <button class="ni-q-hdr-alpha" id="ni-th-acp-btn" onclick="_q3ToggleACP()" title="Analyse Augmentée — ACP des profils thématiques" style="display:none;margin-left:6px;">🔬 ACP</button>
         <button class="ni-q-hdr-alpha" id="ni-th-pdf-btn" onclick="genererPDF_lex()" title="Exporter la toile en PDF" style="display:none;margin-left:10px;">PDF toile</button>
         <button class="ni-q-hdr-alpha" id="ni-th-xlsx-btn" onclick="exporterLexiqueExcel()" title="Exporter le lexique en Excel (scores + champs + phases)" style="display:none;margin-left:6px;">📊 Excel</button>
+        <button class="ni-q-hdr-alpha" id="ni-th-json-btn" onclick="exporterJSONComplet()" title="Exporter lexique + scores personnages en JSON (sauvegarde complète)" style="display:none;margin-left:6px;">💾 JSON</button>
+        <input type="file" id="ni-th-json-import" accept=".json" style="display:none;" onchange="importerJSONComplet(this)">
+        <button class="ni-q-hdr-alpha" id="ni-th-json-import-btn" onclick="document.getElementById('ni-th-json-import').click()" title="Importer un JSON complet (lexique + scores personnages)" style="display:none;margin-left:2px;">📂</button>
         <div style="flex:1;min-width:0;"></div>
         <div style="display:flex;align-items:center;gap:3px;">
           <button class="ni-q-hdr-icon" id="ni-th-count-btn" onclick="openLexCount()" title="Compter sur texte complet (.txt)" style="display:none;">📄</button>
@@ -13734,6 +13737,10 @@ function updateQ3LexViz() {
   if(pdfBtn) pdfBtn.style.display='inline';
   var xlsxBtn=document.getElementById('ni-th-xlsx-btn');
   if(xlsxBtn) xlsxBtn.style.display='inline';
+  var jsonBtn=document.getElementById('ni-th-json-btn');
+  if(jsonBtn) jsonBtn.style.display='inline';
+  var jsonImpBtn=document.getElementById('ni-th-json-import-btn');
+  if(jsonImpBtn) jsonImpBtn.style.display='inline';
   var pairsBtn=document.getElementById('ni-th-pairs-btn');
   if(pairsBtn) pairsBtn.style.display=(lex&&lex.paires&&lex.paires.length)?'inline':'none';
   var acpBtn=document.getElementById('ni-th-acp-btn');
@@ -16117,6 +16124,81 @@ function _renderACPWidget() {
   });});
 }
 
+
+// ── Export JSON complet (lexique + scores personnages) ───────────────────────
+
+function exporterJSONComplet() {
+  if (!LIVRE_ACTIF) { showToast('Aucun livre ouvert', 'warn'); return; }
+  var L = LIVRE_ACTIF;
+  var lex = L.lexique;
+  var persos = (L.personnages || []).filter(function(p) {
+    return p.scores && typeof p.scores.amour === 'number';
+  });
+  if (!lex && !persos.length) { showToast('Aucune donnée à exporter', 'warn'); return; }
+
+  var payload = {
+    _version: 1,
+    _livre: L.titre,
+    _date: new Date().toISOString().slice(0, 10)
+  };
+  if (lex) payload.lexique = lex;
+  if (persos.length) {
+    payload.scoresPersonnages = {};
+    persos.forEach(function(p) { payload.scoresPersonnages[p.id] = p.scores; });
+  }
+
+  var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  var safe = (L.titre || 'lexique').replace(/[^a-z0-9]/gi, '_').slice(0, 40);
+  a.href = url; a.download = safe + '_complet.json'; a.click();
+  URL.revokeObjectURL(url);
+  showToast('💾 JSON exporté : ' + a.download, 'ok');
+}
+
+// ── Import JSON complet ───────────────────────────────────────────────────────
+
+function importerJSONComplet(input) {
+  if (!LIVRE_ACTIF) { showToast('Aucun livre ouvert', 'warn'); return; }
+  var file = input.files[0]; if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var data = JSON.parse(e.target.result);
+      var changed = false;
+
+      // Lexique
+      if (data.lexique && data.lexique.tranches && data.lexique.tranches.length) {
+        LIVRE_ACTIF.lexique = data.lexique;
+        changed = true;
+      }
+
+      // Scores personnages
+      if (data.scoresPersonnages) {
+        var ids = Object.keys(data.scoresPersonnages);
+        ids.forEach(function(pid) {
+          var p = (LIVRE_ACTIF.personnages || []).find(function(x) { return x.id === pid; });
+          if (p) {
+            p.scores = data.scoresPersonnages[pid];
+            changed = true;
+          }
+        });
+      }
+
+      if (!changed) { showToast('⚠️ Aucune donnée reconnue dans ce fichier', 'warn'); return; }
+      sauvegarderBiblio();
+      updateQ3LexViz();
+      var msg = [];
+      if (data.lexique) msg.push('lexique (' + (data.lexique.tranches||[]).length + ' tranches)');
+      if (data.scoresPersonnages) msg.push('scores ' + Object.keys(data.scoresPersonnages).length + ' perso');
+      showToast('📂 Importé : ' + msg.join(' + '), 'ok');
+    } catch(err) {
+      showToast('❌ JSON invalide : ' + err.message, 'err');
+    }
+    input.value = '';
+  };
+  reader.readAsText(file);
+}
 
 </script>
 
