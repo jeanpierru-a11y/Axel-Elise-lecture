@@ -6474,7 +6474,7 @@ function mettreAJourLivresDemo() {
       const majour = JSON.parse(JSON.stringify(demo));
 
       // Champs texte libres : conserver si l'utilisateur a écrit quelque chose
-      const champsTexte = ['temps','mots','comprehension','contexte','auteurVie','trajectoire','courant','style'];
+      const champsTexte = ['titre','auteur','temps','mots','comprehension','contexte','auteurVie','trajectoire','courant','style'];
       champsTexte.forEach(champ => {
         const val = existant[champ];
         if (val && typeof val === 'string' && val.trim() !== '') majour[champ] = val;
@@ -9276,7 +9276,9 @@ function _apresConnexion() {
       var tsRemote = remote.tsMaj || 0;
       var tsLocal  = BIBLIO.tsMaj  || 0;
       if (tsRemote > tsLocal) {
-        BIBLIO = { livres: remote.livres, demoVersion: remote.demoVersion || BIBLIO.demoVersion, tsMaj: tsRemote };
+        var _rIds=new Set((remote.livres||[]).map(function(l){return l.id;}));
+        var _lOnly=(BIBLIO.livres||[]).filter(function(l){return !_rIds.has(l.id);});
+        BIBLIO = { livres: (remote.livres||[]).concat(_lOnly), demoVersion: remote.demoVersion || BIBLIO.demoVersion, tsMaj: tsRemote };
         if ((BIBLIO.demoVersion || 0) < DEMO_VERSION) { mettreAJourLivresDemo(); BIBLIO.demoVersion = DEMO_VERSION; }
         try { localStorage.setItem(_biblioKey(), JSON.stringify(BIBLIO)); } catch(e){}
         renderBiblio();
@@ -9538,7 +9540,9 @@ function fbInit(code, cfg) {
       const tsRemote = remote.tsMaj || 0;
       const tsLocal  = BIBLIO.tsMaj  || 0;
       if (tsRemote > tsLocal) {
-        BIBLIO = { livres: remote.livres, demoVersion: remote.demoVersion || BIBLIO.demoVersion, tsMaj: tsRemote };
+        var _rIds=new Set((remote.livres||[]).map(function(l){return l.id;}));
+        var _lOnly=(BIBLIO.livres||[]).filter(function(l){return !_rIds.has(l.id);});
+        BIBLIO = { livres: (remote.livres||[]).concat(_lOnly), demoVersion: remote.demoVersion || BIBLIO.demoVersion, tsMaj: tsRemote };
         // Appliquer les mises à jour démo si nécessaire
         if ((BIBLIO.demoVersion || 0) < DEMO_VERSION) {
           mettreAJourLivresDemo();
@@ -9616,7 +9620,9 @@ async function fbPull(force) {
     const tsRemote = remote.tsMaj || 0;
     const tsLocal  = BIBLIO.tsMaj  || 0;
     if (force || tsRemote > tsLocal) {
-      BIBLIO = { livres: remote.livres, demoVersion: remote.demoVersion || BIBLIO.demoVersion, tsMaj: tsRemote };
+      var _rIds=new Set((remote.livres||[]).map(function(l){return l.id;}));
+        var _lOnly=(BIBLIO.livres||[]).filter(function(l){return !_rIds.has(l.id);});
+        BIBLIO = { livres: (remote.livres||[]).concat(_lOnly), demoVersion: remote.demoVersion || BIBLIO.demoVersion, tsMaj: tsRemote };
       // Appliquer les mises à jour démo (nouveaux champs lineaire/commentaire, etc.)
       if ((BIBLIO.demoVersion || 0) < DEMO_VERSION) {
         mettreAJourLivresDemo();
