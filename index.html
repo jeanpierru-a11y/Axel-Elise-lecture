@@ -15734,57 +15734,90 @@ function _acpAxisNames(loadings) {
 function _renderACPBiplot(container, pca, phases, tranches) {
   var W=container.clientWidth||500, H=container.clientHeight||280;
   if(W<30||H<30) return;
-  var ML=36,MR=16,MT=20,MB=42,CW=W-ML-MR,CH=H-MT-MB;
+  var ML=44,MR=12,MT=16,MB=52,CW=W-ML-MR,CH=H-MT-MB;
   var coords=pca.coords, loadings=pca.loadings, ph=phases||[];
-  var ARROW_SCALE=1.4, DOT_R=6, LOFF=15, LABEL_H=13, MIN_LL=15, MIN_LD=DOT_R+LABEL_H+2;
+  var DOT_R=8, LOFF=18, LABEL_H=14, MIN_LL=17, MIN_LD=DOT_R+LABEL_H+3;
+  var FONT_LBL=12, FONT_AX=11, FONT_NUM=9, FONT_TH=11;
 
   function phaseOf(tIdx){var page=tranches[tIdx].pageDebut,pi=0;ph.forEach(function(p,i){if(page>=p.pageDebut)pi=i;});return pi;}
-  function phLabel(tIdx){var pi=phaseOf(tIdx);return (ph[pi]&&ph[pi].nom)?(ph[pi].nom):('Ph.'+(pi+1));}
+  function phLabel(tIdx){var pi=phaseOf(tIdx);return (ph[pi]&&ph[pi].nom)?(ph[pi].nom):('Phase '+(pi+1));}
 
-  var allX=coords.map(function(c){return c[0];}).concat(loadings.map(function(l){return l[0]*ARROW_SCALE;}));
-  var allY=coords.map(function(c){return c[1];}).concat(loadings.map(function(l){return l[1]*ARROW_SCALE;}));
-  var xE=d3.extent(allX),yE=d3.extent(allY);
-  var xP=(xE[1]-xE[0])*0.2||0.5, yP=(yE[1]-yE[0])*0.2||0.5;
+  // ── Échelle POINTS uniquement (indépendante des flèches) ──────────────────
+  var xE=d3.extent(coords.map(function(co){return co[0];}));
+  var yE=d3.extent(coords.map(function(co){return co[1];}));
+  var xP=Math.max((xE[1]-xE[0])*0.38,0.8), yP=Math.max((yE[1]-yE[0])*0.38,0.8);
   var scX=d3.scaleLinear().domain([xE[0]-xP,xE[1]+xP]).range([0,CW]);
   var scY=d3.scaleLinear().domain([yE[0]-yP,yE[1]+yP]).range([CH,0]);
+  var cx0=scX(0), cy0=scY(0);
+
+  // ── Flèches : longueur fixe en pixels (ne dépend pas de l'échelle des points) ──
+  var arrowPx=Math.min(CW,CH)*0.36;
+
   var axN=_acpAxisNames(loadings);
   var PH_C=LEX_PH_LC||['#7C4DFF','#00BCD4','#FF6F00','#4CAF50','#E91E63','#2196F3','#FF5722','#795548'];
-  var PH_B=LEX_PH_BG||PH_C.map(function(c){return c+'33';});
+  var PH_B=LEX_PH_BG||PH_C.map(function(clr){return clr+'33';});
   var THL={amour:'Amour',pouvoir:'Pouvoir',liberte:'Libert\u00e9',identite:'Identit\u00e9',societe:'Soci\u00e9t\u00e9',nature:'Nature'};
 
   container.innerHTML='';
   var svg=d3.select(container).append('svg').attr('width',W).attr('height',H);
   var g=svg.append('g').attr('transform','translate('+ML+','+MT+')');
-  var cx0=scX(0),cy0=scY(0);
-  g.append('line').attr('x1',0).attr('y1',cy0).attr('x2',CW).attr('y2',cy0).attr('stroke','#E0E0E0').attr('stroke-width',1);
-  g.append('line').attr('x1',cx0).attr('y1',0).attr('x2',cx0).attr('y2',CH).attr('stroke','#E0E0E0').attr('stroke-width',1);
 
-  // Flèches loading
+  // Grille
+  g.append('line').attr('x1',0).attr('y1',cy0).attr('x2',CW).attr('y2',cy0).attr('stroke','#DADADA').attr('stroke-width',1.2);
+  g.append('line').attr('x1',cx0).attr('y1',0).attr('x2',cx0).attr('y2',CH).attr('stroke','#DADADA').attr('stroke-width',1.2);
+
+  // Marqueurs flèches
   var defs=svg.append('defs');
   LEX_KEYS.forEach(function(k){
-    defs.append('marker').attr('id','bacp-'+k).attr('viewBox','0 -4 8 8').attr('refX',8).attr('refY',0).attr('markerWidth',5).attr('markerHeight',5).attr('orient','auto').append('path').attr('d','M0,-4L8,0L0,4').attr('fill',LEX_COLORS[k]);
-  });
-  LEX_KEYS.forEach(function(k,i){
-    var lx=loadings[i][0]*ARROW_SCALE, ly=loadings[i][1]*ARROW_SCALE;
-    var ax=scX(lx),ay=scY(ly);
-    g.append('line').attr('x1',cx0).attr('y1',cy0).attr('x2',ax).attr('y2',ay).attr('stroke',LEX_COLORS[k]).attr('stroke-width',1.5).attr('marker-end','url(#bacp-'+k+')');
-    var nx=lx*(1+22/Math.sqrt(lx*lx+ly*ly+0.01)), ny=ly*(1+22/Math.sqrt(lx*lx+ly*ly+0.01));
-    var anc=lx>0.08?'start':lx<-0.08?'end':'middle';
-    g.append('text').attr('x',scX(nx)).attr('y',scY(ny)+3.5).attr('text-anchor',anc).attr('font-size',8.5).attr('fill',LEX_COLORS[k]).attr('font-weight',700).text(THL[k]);
+    defs.append('marker').attr('id','bacp-'+k)
+      .attr('viewBox','0 -5 10 10').attr('refX',10).attr('refY',0)
+      .attr('markerWidth',6).attr('markerHeight',6).attr('orient','auto')
+      .append('path').attr('d','M0,-5L10,0L0,5').attr('fill',LEX_COLORS[k]);
   });
 
-  // Points (tranches) avec separateBiplot
-  var pts=coords.map(function(c,i){
-    var px=scX(c[0]),py=scY(c[1]),pi=phaseOf(i);
-    return {px:px,py:py,naturalY:py,y:py,lx:px+(px>=CW/2?LOFF:-LOFF),anchor:px>=CW/2?'start':'end',label:phLabel(i),phIdx:pi,tIdx:i};
+  // Flèches loading — longueur proportionnelle au loading, max = arrowPx
+  LEX_KEYS.forEach(function(k,i){
+    var lx=loadings[i][0], ly=loadings[i][1];
+    var norm=Math.sqrt(lx*lx+ly*ly)||1;
+    var ux=lx/norm, uy=ly/norm;
+    var ax=cx0+ux*norm*arrowPx, ay=cy0-uy*norm*arrowPx;
+    g.append('line').attr('x1',cx0).attr('y1',cy0).attr('x2',ax).attr('y2',ay)
+      .attr('stroke',LEX_COLORS[k]).attr('stroke-width',2)
+      .attr('marker-end','url(#bacp-'+k+')');
+    // Label thème au-delà de la flèche — stroke blanc pour lisibilité (accessibilité)
+    var LEXT=1.25;
+    var lbx=cx0+ux*norm*arrowPx*LEXT, lby=cy0-uy*norm*arrowPx*LEXT;
+    var anc=ux>0.1?'start':ux<-0.1?'end':'middle';
+    g.append('text').attr('x',lbx).attr('y',lby+4).attr('text-anchor',anc)
+      .attr('font-size',FONT_TH).attr('fill',LEX_COLORS[k]).attr('font-weight',800)
+      .attr('stroke','#fff').attr('stroke-width',3).attr('paint-order','stroke')
+      .text(THL[k]);
+  });
+
+  // Points + labels
+  var pts=coords.map(function(co,i){
+    var px=scX(co[0]), py=scY(co[1]), pi=phaseOf(i);
+    return {px:px,py:py,naturalY:py,y:py,
+            lx:px+(px>=CW/2?LOFF:-LOFF),
+            anchor:px>=CW/2?'start':'end',
+            label:phLabel(i),phIdx:pi,tIdx:i};
   });
   function separateBiplot(labels,allDots){
     for(var pass=0;pass<40;pass++){
       var moved=false;
       var byY=[].concat(labels).sort(function(a,b){return a.y-b.y;});
-      for(var ii=0;ii<byY.length-1;ii++){var a=byY[ii],b=byY[ii+1],dy=b.y-a.y;if(dy<MIN_LL){var push=(MIN_LL-dy)/2+0.5;a.y-=push;b.y+=push;moved=true;}}
-      labels.forEach(function(lbl){allDots.forEach(function(dot){if(dot.tIdx===lbl.tIdx)return;var dx=lbl.lx-dot.px,dy=lbl.y-dot.py,d=Math.sqrt(dx*dx+dy*dy);if(d<MIN_LD&&d>0.1){var push=MIN_LD-d;lbl.y+=(Math.abs(dy)>0.1?(dy/d)*push:push);moved=true;}});});
-      labels.forEach(function(l){l.y=Math.max(8,Math.min(CH-8,l.y));});
+      for(var ii=0;ii<byY.length-1;ii++){
+        var la=byY[ii],lb=byY[ii+1],dy=lb.y-la.y;
+        if(dy<MIN_LL){var push=(MIN_LL-dy)/2+0.5;la.y-=push;lb.y+=push;moved=true;}
+      }
+      labels.forEach(function(lbl){
+        allDots.forEach(function(dot){
+          if(dot.tIdx===lbl.tIdx)return;
+          var dx=lbl.lx-dot.px,dy=lbl.y-dot.py,d=Math.sqrt(dx*dx+dy*dy);
+          if(d<MIN_LD&&d>0.1){var push=MIN_LD-d;lbl.y+=(Math.abs(dy)>0.1?(dy/d)*push:push);moved=true;}
+        });
+      });
+      labels.forEach(function(l){l.y=Math.max(10,Math.min(CH-10,l.y));});
       if(!moved) break;
     }
   }
@@ -15792,16 +15825,35 @@ function _renderACPBiplot(container, pca, phases, tranches) {
   separateBiplot(pts.filter(function(p){return p.anchor==='end';}),pts);
 
   pts.forEach(function(p){
-    if(Math.abs(p.y-p.naturalY)>6){var dx=p.lx-p.px,dy=p.y-p.naturalY,dist=Math.sqrt(dx*dx+dy*dy)||1,sx=p.px+(dx/dist)*(DOT_R+1),sy=p.naturalY+(dy/dist)*(DOT_R+1);g.append('line').attr('x1',sx).attr('y1',sy).attr('x2',p.lx).attr('y2',p.y).attr('stroke','#BBB').attr('stroke-width',0.8);}
-    g.append('circle').attr('cx',p.px).attr('cy',p.naturalY).attr('r',DOT_R).attr('fill',PH_B[p.phIdx%PH_B.length]).attr('stroke',PH_C[p.phIdx%PH_C.length]).attr('stroke-width',2.5);
-    g.append('text').attr('x',p.px).attr('y',p.naturalY+4).attr('text-anchor','middle').attr('font-size',7).attr('font-weight',900).attr('fill',PH_C[p.phIdx%PH_C.length]).text(p.tIdx+1);
-    g.append('text').attr('x',p.lx).attr('y',p.y+4).attr('text-anchor',p.anchor).attr('font-size',9).attr('font-weight',700).attr('fill','#333').text(p.label);
+    if(Math.abs(p.y-p.naturalY)>6){
+      var dx=p.lx-p.px,dy=p.y-p.naturalY,dist=Math.sqrt(dx*dx+dy*dy)||1;
+      var sx=p.px+(dx/dist)*(DOT_R+1),sy=p.naturalY+(dy/dist)*(DOT_R+1);
+      g.append('line').attr('x1',sx).attr('y1',sy).attr('x2',p.lx).attr('y2',p.y)
+        .attr('stroke','#999').attr('stroke-width',1);
+    }
+    g.append('circle').attr('cx',p.px).attr('cy',p.naturalY).attr('r',DOT_R)
+      .attr('fill',PH_B[p.phIdx%PH_B.length]).attr('stroke',PH_C[p.phIdx%PH_C.length]).attr('stroke-width',3);
+    g.append('text').attr('x',p.px).attr('y',p.naturalY+FONT_NUM*0.38)
+      .attr('text-anchor','middle').attr('font-size',FONT_NUM).attr('font-weight',900)
+      .attr('fill',PH_C[p.phIdx%PH_C.length]).text(p.tIdx+1);
+    // Label phase — contraste WCAG AA : fond blanc sous le texte
+    g.append('text').attr('x',p.lx).attr('y',p.y+FONT_LBL*0.4)
+      .attr('text-anchor',p.anchor).attr('font-size',FONT_LBL).attr('font-weight',700)
+      .attr('fill','#111').attr('stroke','#fff').attr('stroke-width',3)
+      .attr('paint-order','stroke').text(p.label);
   });
 
-  // Axes libellés
-  svg.append('text').attr('x',ML+CW/2).attr('y',MT+CH+MB-4).attr('text-anchor','middle').attr('font-size',8.5).attr('fill','#888').text('PC1 ('+pca.explained[0]+'%) \u2014 '+axN.n1);
-  svg.append('text').attr('x',10).attr('y',MT+CH/2).attr('text-anchor','middle').attr('transform','rotate(-90,10,'+(MT+CH/2)+')').attr('font-size',8.5).attr('fill','#888').text('PC2 ('+pca.explained[1]+'%) \u2014 '+axN.n2);
+  // Axes — taille et contraste lisibles
+  svg.append('text').attr('x',ML+CW/2).attr('y',H-6)
+    .attr('text-anchor','middle').attr('font-size',FONT_AX).attr('fill','#333').attr('font-weight',700)
+    .text('PC1 ('+pca.explained[0]+'%) \u2014 '+axN.n1);
+  svg.append('text').attr('x',14).attr('y',MT+CH/2)
+    .attr('text-anchor','middle')
+    .attr('transform','rotate(-90,14,'+(MT+CH/2)+')')
+    .attr('font-size',FONT_AX).attr('fill','#333').attr('font-weight',700)
+    .text('PC2 ('+pca.explained[1]+'%)');
 }
+
 
 // ── Cercle des corrélations ───────────────────────────
 
@@ -15827,9 +15879,9 @@ function _renderACPCercle(container, pca) {
     svg.append('text').attr('x',cx+ux*ld).attr('y',cy-uy*ld+3.5).attr('text-anchor',anc).attr('font-size',9.5).attr('fill',LEX_COLORS[k]).attr('font-weight',700).text(THL[k]);
   });
   var axN=_acpAxisNames(pca.loadings);
-  svg.append('text').attr('x',cx+r+10).attr('y',cy+4).attr('font-size',8).attr('fill','#AAA').text('PC1');
-  svg.append('text').attr('x',cx-4).attr('y',cy-r-8).attr('text-anchor','middle').attr('font-size',8).attr('fill','#AAA').text('PC2');
-  svg.append('text').attr('x',cx).attr('y',H-4).attr('text-anchor','middle').attr('font-size',7.5).attr('fill','#BBB').text(axN.n1+' / '+axN.n2);
+  svg.append('text').attr('x',cx+r+10).attr('y',cy+4).attr('font-size',11).attr('fill','#333').attr('font-weight',700).text('PC1');
+  svg.append('text').attr('x',cx-4).attr('y',cy-r-8).attr('text-anchor','middle').attr('font-size',11).attr('fill','#333').attr('font-weight',700).text('PC2');
+  svg.append('text').attr('x',cx).attr('y',H-4).attr('text-anchor','middle').attr('font-size',10).attr('fill','#444').attr('font-weight',600).text(axN.n1+' / '+axN.n2);
 }
 
 // ── Lecture croisée ───────────────────────────────────
