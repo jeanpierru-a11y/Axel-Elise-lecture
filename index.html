@@ -4436,7 +4436,7 @@ function sauvegarderBiblio() {
 // ════════════════════════════════════════════════════════
 // VERSION — incrémenter à chaque mise à jour des livres démo
 // ════════════════════════════════════════════════════════
-const DEMO_VERSION = 33; // v33 : scores thématiques personnages Caligula (Plan de structure)
+const DEMO_VERSION = 34; // v34 : scores personnages Caligula réels (profil lexical)
 const LIVRES_DEMO = [
   {
     id: 'liv_petit_prince_001',
@@ -5792,19 +5792,19 @@ const LIVRES_DEMO = [
     personnages: [
       {id:'ent_cal_01', nom:'Caligula', couleur:'#C62828',
        notes:"Empereur romain. Apr\u00e8s la mort de sa s\u0153ur Drusilla, il d\u00e9couvre la v\u00e9rit\u00e9 absurde et d\u00e9cide d\u2019en tirer les cons\u00e9quences jusqu\u2019au bout.",
-       scores:{amour:78,pouvoir:95,liberte:85,identite:91,societe:52,nature:38}},
+       scores:{amour:19,pouvoir:13,liberte:16,identite:28,societe:8,nature:17}},
       {id:'ent_cal_02', nom:'Cherea', couleur:'#1565C0',
        notes:"Patricien, ancien ami. Il organise la conjuration non par morale mais par pragmatisme.",
-       scores:{amour:31,pouvoir:72,liberte:58,identite:54,societe:74,nature:17}},
+       scores:{amour:20,pouvoir:17,liberte:12,identite:31,societe:17,nature:3}},
       {id:'ent_cal_03', nom:'Caesonia', couleur:'#6A1B9A',
        notes:"Ma\u00eetresse de Caligula. Elle l\u2019aime vraiment. Caligula la tue \u00e0 la fin.",
-       scores:{amour:82,pouvoir:42,liberte:22,identite:48,societe:31,nature:19}},
+       scores:{amour:25,pouvoir:0,liberte:0,identite:75,societe:0,nature:0}},
       {id:'ent_cal_04', nom:'Helicon', couleur:'#2E7D32',
        notes:"Affranchi, serviteur fid\u00e8le. Figure de la complicit\u00e9 aveugle.",
-       scores:{amour:51,pouvoir:58,liberte:38,identite:43,societe:36,nature:22}},
+       scores:{amour:15,pouvoir:18,liberte:21,identite:18,societe:10,nature:18}},
       {id:'ent_cal_05', nom:'Scipio', couleur:'#E65100',
        notes:"Jeune po\u00e8te, fils d\u2019une victime. Il comprend Caligula mieux que personne.",
-       scores:{amour:62,pouvoir:24,liberte:61,identite:53,societe:19,nature:68}}
+       scores:{amour:29,pouvoir:11,liberte:11,identite:21,societe:11,nature:18}}
     ],
     matrice: {
       'ent_cal_01__ent_cal_02': 'Antagoniste',
