@@ -15912,7 +15912,7 @@ function _renderACPBiplot(container, pca, phases, tranches) {
         .attr('stroke','#999').attr('stroke-width',1);
     }
     g.append('circle').attr('cx',p.px).attr('cy',p.naturalY).attr('r',DOT_R)
-      .attr('fill',PH_B[p.phIdx%PH_B.length]).attr('stroke',PH_C[p.phIdx%PH_C.length]).attr('stroke-width',3);
+      .attr('fill',PH_B[p.phIdx%PH_B.length]).attr('stroke',PH_C[p.phIdx%PH_C.length]).attr('stroke-width',1.5);
     g.append('text').attr('x',p.px).attr('y',p.naturalY+FONT_NUM*0.38)
       .attr('text-anchor','middle').attr('font-size',FONT_NUM).attr('font-weight',900)
       .attr('fill',PH_C[p.phIdx%PH_C.length]).text(p.tIdx+1);
@@ -15923,25 +15923,20 @@ function _renderACPBiplot(container, pca, phases, tranches) {
       .attr('paint-order','stroke').text(p.label);
   });
 
-  // Repère GAUCHE — ancré dans la marge gauche du SVG (x=4), centré verticalement sur la zone
-  var bAL=28;
-  var rox=4, roy=MT+CH/2; // centre vertical de la zone de dessin
-  var defs2=svg.append('defs');
-  defs2.append('marker').attr('id','bipx-arr').attr('viewBox','0 -3 7 6')
+  // Repère coin bas-gauche — CP1 horizontal, CP2 vertical
+  var bAL=32, box=svg.append('defs');
+  var rox=6, roy=H-10;
+  box.append('marker').attr('id','bipx-arr').attr('viewBox','0 -3 7 6')
     .attr('refX',7).attr('refY',0).attr('markerWidth',4).attr('markerHeight',4)
     .attr('orient','auto').append('path').attr('d','M0,-3L7,0L0,3').attr('fill','#555');
-  // Flèche horizontale → CP1 (vers la droite)
   svg.append('line').attr('x1',rox).attr('y1',roy).attr('x2',rox+bAL).attr('y2',roy)
     .attr('stroke','#555').attr('stroke-width',1.5).attr('marker-end','url(#bipx-arr)');
-  // Flèche verticale ↑ CP2 (vers le haut)
   svg.append('line').attr('x1',rox).attr('y1',roy).attr('x2',rox).attr('y2',roy-bAL)
     .attr('stroke','#555').attr('stroke-width',1.5).attr('marker-end','url(#bipx-arr)');
-  // Label CP1 — à droite de la flèche horizontale, sur une ligne
-  svg.append('text').attr('x',rox+bAL+3).attr('y',roy+4)
+  svg.append('text').attr('x',rox+bAL+4).attr('y',roy+4)
     .attr('font-size',8).attr('fill','#555').attr('font-weight',800)
     .attr('stroke','#fff').attr('stroke-width',2).attr('paint-order','stroke')
     .text(axN.n1+' ('+pca.explained[0]+'%)');
-  // Label CP2 — au-dessus de la flèche verticale
   svg.append('text').attr('x',rox+3).attr('y',roy-bAL-4)
     .attr('font-size',8).attr('fill','#555').attr('font-weight',800)
     .attr('stroke','#fff').attr('stroke-width',2).attr('paint-order','stroke')
@@ -15970,11 +15965,11 @@ function _renderACPCercle(container, pca) {
     var ad=r*norm, ld=Math.max(r*2/3,Math.min(1.58*ad,r));
     svg.append('line').attr('x1',cx).attr('y1',cy).attr('x2',cx+ux*ad).attr('y2',cy-uy*ad).attr('stroke',LEX_COLORS[k]).attr('stroke-width',2).attr('marker-end','url(#cacp-'+k+')');
     var anc=lx>0.12?'start':lx<-0.12?'end':'middle';
-    svg.append('text').attr('x',cx+ux*ld).attr('y',cy-uy*ld+3.5).attr('text-anchor',anc).attr('font-size',9.5).attr('fill',LEX_COLORS[k]).attr('font-weight',700).text(THL[k]);
+    svg.append('text').attr('x',cx+ux*ld).attr('y',cy-uy*ld+3.5).attr('text-anchor',anc).attr('font-size',11).attr('fill',LEX_COLORS[k]).attr('font-weight',700).attr('stroke','#fff').attr('stroke-width',2.5).attr('paint-order','stroke').text(THL[k]);
   });
   var axN=_acpAxisNames(pca.loadings);
-  // ── Repère GAUCHE — ancré dans la marge gauche, centré verticalement ───────
-  var cox=4, coy=H/2, cAL=28;
+  // ── Repère coin bas-gauche ───────────────────────────────────────────────
+  var cox=6, coy=H-10, cAL=32;
   defs.append('marker').attr('id','cax-arr').attr('viewBox','0 -3 7 6')
     .attr('refX',7).attr('refY',0).attr('markerWidth',4).attr('markerHeight',4)
     .attr('orient','auto').append('path').attr('d','M0,-3L7,0L0,3').attr('fill','#555');
@@ -15982,7 +15977,7 @@ function _renderACPCercle(container, pca) {
     .attr('stroke','#555').attr('stroke-width',1.5).attr('marker-end','url(#cax-arr)');
   svg.append('line').attr('x1',cox).attr('y1',coy).attr('x2',cox).attr('y2',coy-cAL)
     .attr('stroke','#555').attr('stroke-width',1.5).attr('marker-end','url(#cax-arr)');
-  svg.append('text').attr('x',cox+cAL+3).attr('y',coy+4)
+  svg.append('text').attr('x',cox+cAL+4).attr('y',coy+4)
     .attr('font-size',8).attr('fill','#555').attr('font-weight',800)
     .attr('stroke','#fff').attr('stroke-width',2).attr('paint-order','stroke')
     .text(axN.n1);
@@ -16071,15 +16066,15 @@ function _renderACPStructure(container) {
         .attr('x2',p.lx).attr('y2',p.y).attr('stroke','#CCC').attr('stroke-width',1);
     }
     g.append('circle').attr('cx',p.px).attr('cy',p.naturalY).attr('r',DOT_R)
-      .attr('fill',p.clr+'33').attr('stroke',p.clr).attr('stroke-width',3);
+      .attr('fill',p.clr+'33').attr('stroke',p.clr).attr('stroke-width',1.5);
     g.append('text').attr('x',p.lx).attr('y',p.y+FONT_LBL*0.4)
       .attr('text-anchor',p.anchor).attr('font-size',FONT_LBL).attr('font-weight',700)
-      .attr('fill',p.clr).attr('stroke','#fff').attr('stroke-width',3).attr('paint-order','stroke')
+      .attr('fill',p.clr).attr('stroke','#fff').attr('stroke-width',2.5).attr('paint-order','stroke')
       .text(p.label);
   });
-  // Repère GAUCHE — ancré dans la marge gauche, centré sur la zone de dessin
-  var sAL=28, sdefs=svg.append('defs');
-  var srox=4, sroy=MT+CH/2;
+  // Repère coin bas-gauche
+  var sAL=32, sdefs=svg.append('defs');
+  var srox=6, sroy=H-10;
   sdefs.append('marker').attr('id','strx-arr').attr('viewBox','0 -3 7 6')
     .attr('refX',7).attr('refY',0).attr('markerWidth',4).attr('markerHeight',4)
     .attr('orient','auto').append('path').attr('d','M0,-3L7,0L0,3').attr('fill','#555');
@@ -16087,7 +16082,7 @@ function _renderACPStructure(container) {
     .attr('stroke','#555').attr('stroke-width',1.5).attr('marker-end','url(#strx-arr)');
   svg.append('line').attr('x1',srox).attr('y1',sroy).attr('x2',srox).attr('y2',sroy-sAL)
     .attr('stroke','#555').attr('stroke-width',1.5).attr('marker-end','url(#strx-arr)');
-  svg.append('text').attr('x',srox+sAL+3).attr('y',sroy+4)
+  svg.append('text').attr('x',srox+sAL+4).attr('y',sroy+4)
     .attr('font-size',8).attr('fill','#555').attr('font-weight',800)
     .attr('stroke','#fff').attr('stroke-width',2).attr('paint-order','stroke')
     .text(axN.n1+' ('+pca.explained[0]+'%)');
@@ -16143,14 +16138,14 @@ function _renderACPLecture(container, pca, phases, tranches) {
 function _renderACPHeatmap(container, phases, tranches) {
   if(!tranches||!tranches.length){container.innerHTML='<span style="font-size:.65rem;color:#999;padding:6px;">Aucune tranche.</span>';return;}
   var KEYS=LEX_KEYS;
-  var THL={amour:'Am.',pouvoir:'Pv.',liberte:'Lib.',identite:'Id.',societe:'Soc.',nature:'Nat.'};
+  var THL={amour:'Amour',pouvoir:'Pouvoir',liberte:'Liberté',identite:'Identité',societe:'Société',nature:'Nature'};
   var PH_C=typeof LEX_PH_LC!=='undefined'?LEX_PH_LC:['#7C4DFF','#00BCD4','#FF6F00','#4CAF50','#E91E63','#2196F3','#FF5722','#795548'];
   function phIdxOf(t){var page=t.pageDebut,pi=0;(phases||[]).forEach(function(p,i){if(page>=p.pageDebut)pi=i;});return pi;}
   function phName(t){var pi=phIdxOf(t);return (phases&&phases[pi]&&phases[pi].nom)||('Ph.'+(pi+1));}
   var maxV={};KEYS.forEach(function(k){maxV[k]=1;tranches.forEach(function(t){if(+(t[k]||0)>maxV[k])maxV[k]=+(t[k]||0);});});
-  var html='<table style="border-collapse:collapse;font-size:.61rem;min-width:100%;"><thead><tr>';
-  html+='<th style="padding:1px 5px;color:#555;font-weight:700;text-align:left;background:#F3E5F5;white-space:nowrap;">Phase</th>';
-  KEYS.forEach(function(k){html+='<th style="padding:1px 6px;color:'+LEX_COLORS[k]+';font-weight:800;text-align:center;background:#F3E5F5;">'+THL[k]+'</th>';});
+  var html='<table style="border-collapse:collapse;font-size:.65rem;min-width:100%;"><thead><tr>';
+  html+='<th style="padding:2px 6px;color:#555;font-weight:700;text-align:left;background:#F3E5F5;white-space:nowrap;">Phase</th>';
+  KEYS.forEach(function(k){html+='<th style="padding:2px 6px;color:'+LEX_COLORS[k]+';font-weight:800;text-align:center;background:#F3E5F5;white-space:nowrap;">'+THL[k]+'</th>';});
   html+='</tr></thead><tbody>';
   tranches.forEach(function(t,i){
     var pi=phIdxOf(t),name=phName(t),clr=PH_C[pi%PH_C.length];
