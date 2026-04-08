@@ -2905,9 +2905,20 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
           <div id="ni-q-th-paires" style="display:none;flex:1;overflow-y:auto;min-height:0;padding:4px 6px;flex-direction:column;gap:7px;"></div>
           <div id="ni-q-th-paires-perso" style="display:none;flex:1;overflow-y:auto;min-height:0;padding:4px 6px;flex-direction:column;gap:7px;"></div>
           <!-- ■ TABLEAU DE BORD PERSONNAGES -->
-          <div id="ni-q-th-tableau-perso" style="display:none;flex:1;flex-direction:column;min-height:0;overflow:hidden;background:#fff;">
-            <!-- Ligne 1 : Radar | Bubble -->
-            <div style="flex:0 0 30vh;display:flex;gap:6px;padding:4px 4px 0;min-height:0;overflow:hidden;">
+          <div id="ni-q-th-tableau-perso" style="display:none;flex:1;flex-direction:row;min-height:0;overflow:hidden;background:#fff;gap:5px;padding:4px;">
+            <!-- Colonne gauche 67% : Évolution (haut) + Heatmap (bas) -->
+            <div style="flex:0 0 67%;display:flex;flex-direction:column;min-height:0;overflow:hidden;gap:5px;">
+              <div style="flex:1;display:flex;flex-direction:column;min-width:0;border:2px solid #7B1FA2;border-radius:7px;overflow:hidden;background:#F8FCF8;">
+                <div class="acp-col-hdr">📈 Évolution par phase <span style="font-weight:400;font-size:.63rem;color:#7B1FA2;">(dynamique)</span><button onclick="_acpHelp('evolution')" style="font-size:.65rem;background:none;border:1px solid #CE93D8;border-radius:50%;width:16px;height:16px;cursor:pointer;color:#9C27B0;padding:0;line-height:1;">?</button></div>
+                <div id="tb-evol" style="flex:1;min-height:0;overflow:hidden;"></div>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;min-width:0;border:2px solid #7B1FA2;border-radius:7px;overflow:hidden;background:#FDF8FF;">
+                <div class="acp-col-hdr">🌡️ Matrice d'intensité <span style="font-weight:400;font-size:.63rem;color:#7B1FA2;">(perso×thème)</span><button onclick="_acpHelp('matrice')" style="font-size:.65rem;background:none;border:1px solid #CE93D8;border-radius:50%;width:16px;height:16px;cursor:pointer;color:#9C27B0;padding:0;line-height:1;">?</button></div>
+                <div id="tb-matrice" style="flex:1;min-height:0;overflow:hidden;"></div>
+              </div>
+            </div>
+            <!-- Colonne droite 33% : Radar (haut) + Bubble (bas) -->
+            <div style="flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;gap:5px;">
               <div style="flex:1;display:flex;flex-direction:column;min-width:0;border:2px solid #9C27B0;border-radius:7px;overflow:hidden;background:#FAFAFE;">
                 <div class="acp-col-hdr">🕸️ Radar superposé <span style="display:flex;align-items:center;gap:3px;margin-left:auto;"><button id="tb-radar-rel" onclick="_tbRadarSetMode('rel')" style="font-size:.6rem;padding:0 6px;height:16px;border-radius:3px;border:1px solid #CE93D8;cursor:pointer;font-weight:800;background:#9C27B0;color:#fff;">Rel</button><button id="tb-radar-abs" onclick="_tbRadarSetMode('abs')" style="font-size:.6rem;padding:0 6px;height:16px;border-radius:3px;border:1px solid #CE93D8;cursor:pointer;font-weight:800;background:#F3E5F5;color:#9C27B0;">Abs</button><button onclick="_acpHelp('radar')" style="font-size:.65rem;background:none;border:1px solid #CE93D8;border-radius:50%;width:16px;height:16px;cursor:pointer;color:#9C27B0;padding:0;line-height:1;">?</button></span></div>
                 <div id="tb-radar" style="flex:1;min-height:0;overflow:hidden;"></div>
@@ -2915,17 +2926,6 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
               <div style="flex:1;display:flex;flex-direction:column;min-width:0;border:2px solid #9C27B0;border-radius:7px;overflow:hidden;background:#FAFAFE;">
                 <div class="acp-col-hdr">🪺 Plan thématique <span style="font-weight:400;font-size:.63rem;color:#7B1FA2;">(X/Y/taille)</span><button onclick="_acpHelp('bubble')" style="font-size:.65rem;background:none;border:1px solid #CE93D8;border-radius:50%;width:16px;height:16px;cursor:pointer;color:#9C27B0;padding:0;line-height:1;">?</button></div>
                 <div id="tb-bubble" style="flex:1;min-height:0;overflow:hidden;"></div>
-              </div>
-            </div>
-            <!-- Ligne 2 : Matrice | Evolution -->
-            <div style="flex:0 0 30vh;display:flex;gap:6px;padding:4px 4px 4px;min-height:0;overflow:hidden;">
-              <div style="flex:1;display:flex;flex-direction:column;min-width:0;border:2px solid #7B1FA2;border-radius:7px;overflow:hidden;background:#FDF8FF;">
-                <div class="acp-col-hdr">🌡️ Matrice d’intensité <span style="font-weight:400;font-size:.63rem;color:#7B1FA2;">(perso×thème)</span><button onclick="_acpHelp('matrice')" style="font-size:.65rem;background:none;border:1px solid #CE93D8;border-radius:50%;width:16px;height:16px;cursor:pointer;color:#9C27B0;padding:0;line-height:1;">?</button></div>
-                <div id="tb-matrice" style="flex:1;min-height:0;overflow:hidden;"></div>
-              </div>
-              <div style="flex:1;display:flex;flex-direction:column;min-width:0;border:2px solid #7B1FA2;border-radius:7px;overflow:hidden;background:#F8FCF8;">
-                <div class="acp-col-hdr">📈 Évolution par phase <span style="font-weight:400;font-size:.63rem;color:#7B1FA2;">(dynamique)</span><button onclick="_acpHelp('evolution')" style="font-size:.65rem;background:none;border:1px solid #CE93D8;border-radius:50%;width:16px;height:16px;cursor:pointer;color:#9C27B0;padding:0;line-height:1;">?</button></div>
-                <div id="tb-evol" style="flex:1;min-height:0;overflow:hidden;"></div>
               </div>
             </div>
           </div>
@@ -4467,7 +4467,7 @@ function sauvegarderBiblio() {
 // ════════════════════════════════════════════════════════
 // VERSION — incrémenter à chaque mise à jour des livres démo
 // ════════════════════════════════════════════════════════
-const DEMO_VERSION = 35; // v35 : scoresParPhase personnages Caligula + Tableau de bord
+const DEMO_VERSION = 36; // v36 : layout TB (évol+heatmap gauche 67%, radar+bubble droite), Y adaptatif, légende 1 ligne, heatmap max highlight
 const LIVRES_DEMO = [
   {
     id: 'liv_petit_prince_001',
@@ -16614,18 +16614,34 @@ function _renderTbMatrice(container) {
   container.innerHTML='';
   var persos=_tbPersos(); if(!persos.length){_tbNoData(container);return;}
   var KEYS=LEX_KEYS;
-  var THL={amour:'Am.',pouvoir:'Pv.',liberte:'Lib.',identite:'Id.',societe:'Soc.',nature:'Nat.'};
-  var s='<div style="overflow:auto;width:100%;height:100%;box-sizing:border-box;padding:4px 6px;">'
-    +'<table style="border-collapse:collapse;font-size:.65rem;width:100%;">'
-    +'<thead><tr><th style="padding:2px 6px;background:#EDE7F6;color:#4A148C;font-weight:900;text-align:left;white-space:nowrap;">Perso</th>';
-  KEYS.forEach(function(k){ s+='<th style="padding:2px 5px;background:#EDE7F6;color:'+LEX_COLORS[k]+';font-weight:800;text-align:center;">'+THL[k]+'</th>'; });
+  var THL={amour:'Amour',pouvoir:'Pouvoir',liberte:'Liberté',identite:'Identité',societe:'Société',nature:'Nature'};
+  // Composantes rgb de chaque couleur de thème (pour rgba())
+  var LEX_RGB={amour:'173,20,87',pouvoir:'198,40,40',liberte:'21,101,192',identite:'106,27,154',societe:'230,81,0',nature:'46,125,50'};
+  // Calculer le max par colonne (thème) pour highlight
+  var colMax={};
+  KEYS.forEach(function(k){
+    colMax[k]=Math.max.apply(null,persos.map(function(p){return +(p.scores[k]||0);}));
+  });
+  var s='<div style="overflow:auto;width:100%;height:100%;box-sizing:border-box;padding:4px 8px;">'
+    +'<table style="border-collapse:separate;border-spacing:0 2px;font-size:.68rem;width:100%;">'
+    +'<thead><tr><th style="padding:3px 8px;background:#EDE7F6;color:#4A148C;font-weight:900;text-align:left;white-space:nowrap;border-radius:5px 0 0 5px;">Personnage</th>';
+  KEYS.forEach(function(k){
+    s+='<th style="padding:3px 7px;background:#EDE7F6;color:'+LEX_COLORS[k]+';font-weight:800;text-align:center;white-space:nowrap;">'+THL[k]+'</th>';
+  });
   s+='</tr></thead><tbody>';
   persos.forEach(function(p){
     var clr=p.couleur||'#7B1FA2';
-    s+='<tr><td style="padding:3px 6px;font-weight:700;color:'+clr+';white-space:nowrap;">'+p.nom+'</td>';
+    s+='<tr><td style="padding:4px 8px;font-weight:700;color:'+clr+';white-space:nowrap;background:#F9F5FF;border-radius:5px 0 0 5px;">'+p.nom+'</td>';
     KEYS.forEach(function(k){
-      var v=+(p.scores[k]||0), op=((v*0.7+10)/100).toFixed(2);
-      s+='<td style="text-align:center;padding:3px 5px;background:'+LEX_BG[k]+';opacity:'+op+';font-weight:'+(v>50?800:400)+';color:#111;">'+v+'</td>';
+      var v=+(p.scores[k]||0);
+      var isMax=(v>0 && v===colMax[k]);
+      var bgAlpha=isMax?0.78:Math.max(0.10, (v/100)*0.65+0.08);
+      var bg='rgba('+LEX_RGB[k]+','+bgAlpha.toFixed(2)+')';
+      var border=isMax?'2.5px solid '+LEX_COLORS[k]:'1px solid transparent';
+      var fw=isMax?900:(v>50?800:500);
+      var txtClr=isMax?'#1a0030':(v>60?'#222':'#444');
+      var fs=isMax?'.74rem':'.68rem';
+      s+='<td style="text-align:center;padding:4px 7px;background:'+bg+';border:'+border+';font-weight:'+fw+';color:'+txtClr+';font-size:'+fs+';border-radius:4px;transition:background .2s;">'+v+'</td>';
     });
     s+='</tr>';
   });
@@ -16683,29 +16699,26 @@ function _renderTbEvolution(container) {
   var withPh=persos.filter(function(p){ return p.scoresParPhase&&Object.keys(p.scoresParPhase).length>0; });
   if(!withPh.length){_tbNoData(container);return;}
   var KEYS=LEX_KEYS;
-  var THL={amour:'Amour',pouvoir:'Pouvoir',liberte:'Libert\u00e9',identite:'Identit\u00e9',societe:'Soci\u00e9t\u00e9',nature:'Nature'};
+  var THL={amour:'Amour',pouvoir:'Pouvoir',liberte:'Liberté',identite:'Identité',societe:'Société',nature:'Nature'};
   var phNames=Object.keys(withPh[0].scoresParPhase);
   var mode=_tbEvolMode, sel=_tbEvolSel, eid='tb-evol';
   if(mode==='perso'&&(!sel||!withPh.find(function(p){return p.nom===sel;}))) sel=withPh[0].nom;
   if(mode==='theme'&&(!sel||KEYS.indexOf(sel)<0)) sel='identite';
   _tbEvolSel=sel;
   var ss='font-size:.6rem;border:1px solid #CE93D8;border-radius:3px;padding:0 2px;background:#F3E5F5;color:#4A148C;';
-  var mOpts='<option value="perso"'+(mode==='perso'?' selected':'')+'>Personnage</option><option value="theme"'+(mode==='theme'?' selected':'')+'>Th\u00e8me</option>';
+  var mOpts='<option value="perso"'+(mode==='perso'?' selected':'')+'>Personnage</option><option value="theme"'+(mode==='theme'?' selected':'')+'>Thème</option>';
   var sOpts='';
   if(mode==='perso') withPh.forEach(function(p){sOpts+='<option value="'+p.nom+'"'+(p.nom===sel?' selected':'')+'>'+p.nom+'</option>';});
   else KEYS.forEach(function(k){sOpts+='<option value="'+k+'"'+(k===sel?' selected':'')+'>'+THL[k]+'</option>';});
+  // Contrôles
   var ctrlEl=document.createElement('div');
   ctrlEl.style.cssText='display:flex;align-items:center;gap:5px;padding:2px 6px;background:#F5FFF5;border-bottom:1px solid #EDE7F6;flex:0 0 auto;font-size:.6rem;';
-  ctrlEl.innerHTML='<select style="'+ss+'" onchange="_tbEvolMode=this.value;_tbEvolSel=\'\';_renderTbEvolution(document.getElementById(\''+eid+'\'))">'+mOpts+'</select>'
-    +'<select style="'+ss+'" onchange="_tbEvolSel=this.value;_renderTbEvolution(document.getElementById(\''+eid+'\'))">'+sOpts+'</select>';
+  ctrlEl.innerHTML='<select style="'+ss+'" onchange="var v=this.value;_tbEvolMode=v;_tbEvolSel=\'\';_renderTbEvolution(document.getElementById(\''+eid+'\'))">'+mOpts+'</select>'
+    +'<select style="'+ss+'" onchange="var v=this.value;_tbEvolSel=v;_renderTbEvolution(document.getElementById(\''+eid+'\'))">'+sOpts+'</select>';
   container.appendChild(ctrlEl);
-  var W=container.clientWidth||280,H=container.clientHeight||190;
-  if(W<30)return;
-  var Hc=26,Hs=Math.max(H-Hc,50),ML=24,MR=8,MT=8,MB=26,CW=W-ML-MR,CH=Hs-MT-MB;
-  var scX=d3.scaleLinear().domain([0,phNames.length-1]).range([0,CW]);
-  var scY=d3.scaleLinear().domain([0,100]).range([CH,0]);
-  var lines=[];
+  // Construire les séries D'ABORD pour calculer le max réel
   var dashes=['','6,3','3,2','8,3','4,2','2,2'];
+  var lines=[];
   if(mode==='perso'){
     var pp=withPh.find(function(p){return p.nom===sel;});
     if(pp) KEYS.forEach(function(k,ki){
@@ -16716,33 +16729,49 @@ function _renderTbEvolution(container) {
       lines.push({lbl:p.nom,clr:p.couleur||'#7B1FA2',dash:pi>0?dashes[pi%6]:'',vals:phNames.map(function(ph){return +(p.scoresParPhase[ph]&&p.scoresParPhase[ph][sel]||0);})});
     });
   }
-  var svgWrap=document.createElement('div'); svgWrap.style.cssText='flex:1;overflow:hidden;';
+  // Max réel pour l'échelle Y adaptative
+  var maxVal=0;
+  lines.forEach(function(ln){ ln.vals.forEach(function(v){ if(v>maxVal) maxVal=v; }); });
+  var yMax=Math.max(Math.ceil(maxVal*1.12/5)*5, 10); // arrondi au multiple de 5 supérieur, min 10
+  var W=container.clientWidth||280,H=container.clientHeight||190;
+  if(W<30)return;
+  // Réserver la place pour la légende HTML (14px) en bas
+  var legH=18,Hs=Math.max(H-18-legH,40),ML=26,MR=8,MT=8,MB=22,CW=W-ML-MR,CH=Hs-MT-MB;
+  var scX=d3.scaleLinear().domain([0,phNames.length-1]).range([0,CW]);
+  var scY=d3.scaleLinear().domain([0,yMax]).range([CH,0]);
+  var svgWrap=document.createElement('div'); svgWrap.style.cssText='flex:0 0 auto;overflow:hidden;';
   container.appendChild(svgWrap);
   container.style.display='flex'; container.style.flexDirection='column';
   var svg=d3.select(svgWrap).append('svg').attr('width',W).attr('height',Hs);
   var g=svg.append('g').attr('transform','translate('+ML+','+MT+')');
-  [25,50,75].forEach(function(v){
-    g.append('line').attr('x1',0).attr('y1',scY(v)).attr('x2',CW).attr('y2',scY(v)).attr('stroke','#EEE').attr('stroke-width',1);
-    g.append('text').attr('x',-3).attr('y',scY(v)+3).attr('text-anchor','end').attr('font-size',8).attr('fill','#BBB').text(v);
-  });
+  // Grille Y : 4 niveaux lisibles
+  var step=yMax<=20?5:yMax<=50?10:yMax<=100?25:50;
+  for(var gy=step;gy<=yMax;gy+=step){
+    g.append('line').attr('x1',0).attr('y1',scY(gy)).attr('x2',CW).attr('y2',scY(gy)).attr('stroke','#EEE').attr('stroke-width',1);
+    g.append('text').attr('x',-3).attr('y',scY(gy)+3).attr('text-anchor','end').attr('font-size',8).attr('fill','#BBB').text(gy);
+  }
+  // Colonnes phases
   phNames.forEach(function(ph,i){
     g.append('line').attr('x1',scX(i)).attr('y1',0).attr('x2',scX(i)).attr('y2',CH).attr('stroke','#F0EAFF').attr('stroke-width',1);
-    g.append('text').attr('x',scX(i)).attr('y',CH+15).attr('text-anchor','middle').attr('font-size',9).attr('fill','#555').attr('font-weight',700).text(ph.length>8?ph.slice(0,7)+'\u2026':ph);
+    var label=ph.length>8?ph.slice(0,7)+'\u2026':ph;
+    g.append('text').attr('x',scX(i)).attr('y',CH+15).attr('text-anchor','middle').attr('font-size',9).attr('fill','#555').attr('font-weight',700).text(label);
   });
   var lineFn=d3.line().x(function(_,i){return scX(i);}).y(function(d){return scY(d);}).curve(d3.curveMonotoneX);
   lines.forEach(function(ln){
     g.append('path').datum(ln.vals).attr('fill','none').attr('stroke',ln.clr).attr('stroke-width',2.2).attr('stroke-dasharray',ln.dash||null).attr('d',lineFn);
     ln.vals.forEach(function(v,i){ if(v>0)g.append('circle').attr('cx',scX(i)).attr('cy',scY(v)).attr('r',3).attr('fill',ln.clr); });
   });
-  // Légende compacte
-  var legX=0, legY=CH+MB-8;
-  lines.slice(0,Math.min(lines.length,6)).forEach(function(ln){
-    var lw=ln.lbl.length*5.2+20;
-    if(legX+lw>CW){legX=0;legY+=11;}
-    g.append('line').attr('x1',legX).attr('y1',legY).attr('x2',legX+12).attr('y2',legY).attr('stroke',ln.clr).attr('stroke-width',2).attr('stroke-dasharray',ln.dash||null);
-    g.append('text').attr('x',legX+14).attr('y',legY+3).attr('font-size',8).attr('fill',ln.clr).attr('font-weight',700).text(ln.lbl);
-    legX+=lw;
+  // ── Légende HTML sur UNE seule ligne (flex, nowrap) ──────────────────────
+  var legDiv=document.createElement('div');
+  legDiv.style.cssText='flex:0 0 '+legH+'px;display:flex;flex-wrap:nowrap;overflow:hidden;gap:6px;padding:1px 6px;border-top:1px solid #EDE7F6;align-items:center;background:#FAFFFE;';
+  lines.slice(0,6).forEach(function(ln){
+    var item=document.createElement('span');
+    item.style.cssText='display:inline-flex;align-items:center;gap:3px;white-space:nowrap;min-width:0;font-size:.58rem;font-weight:700;color:'+ln.clr+';overflow:hidden;';
+    var svgLine='<svg width="14" height="8" style="flex-shrink:0"><line x1="0" y1="4" x2="13" y2="4" stroke="'+ln.clr+'" stroke-width="2.2"'+(ln.dash?' stroke-dasharray="'+ln.dash+'"':'')+'/></svg>';
+    item.innerHTML=svgLine+'<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+ln.lbl+'</span>';
+    legDiv.appendChild(item);
   });
+  container.appendChild(legDiv);
 }
 
 </script>
