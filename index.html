@@ -2909,7 +2909,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
             <!-- Ligne 1 : Radar | Bubble -->
             <div style="flex:0 0 30vh;display:flex;gap:6px;padding:4px 4px 0;min-height:0;overflow:hidden;">
               <div style="flex:1;display:flex;flex-direction:column;min-width:0;border:2px solid #9C27B0;border-radius:7px;overflow:hidden;background:#FAFAFE;">
-                <div class="acp-col-hdr">🕸️ Radar superposé <span style="font-weight:400;font-size:.63rem;color:#7B1FA2;">(profils)</span><button onclick="_acpHelp('radar')" style="font-size:.65rem;background:none;border:1px solid #CE93D8;border-radius:50%;width:16px;height:16px;cursor:pointer;color:#9C27B0;padding:0;line-height:1;">?</button></div>
+                <div class="acp-col-hdr">🕸️ Radar superposé <span style="display:flex;align-items:center;gap:3px;margin-left:auto;"><button id="tb-radar-rel" onclick="_tbRadarSetMode('rel')" style="font-size:.6rem;padding:0 6px;height:16px;border-radius:3px;border:1px solid #CE93D8;cursor:pointer;font-weight:800;background:#9C27B0;color:#fff;">Rel</button><button id="tb-radar-abs" onclick="_tbRadarSetMode('abs')" style="font-size:.6rem;padding:0 6px;height:16px;border-radius:3px;border:1px solid #CE93D8;cursor:pointer;font-weight:800;background:#F3E5F5;color:#9C27B0;">Abs</button><button onclick="_acpHelp('radar')" style="font-size:.65rem;background:none;border:1px solid #CE93D8;border-radius:50%;width:16px;height:16px;cursor:pointer;color:#9C27B0;padding:0;line-height:1;">?</button></span></div>
                 <div id="tb-radar" style="flex:1;min-height:0;overflow:hidden;"></div>
               </div>
               <div style="flex:1;display:flex;flex-direction:column;min-width:0;border:2px solid #9C27B0;border-radius:7px;overflow:hidden;background:#FAFAFE;">
@@ -16499,6 +16499,9 @@ function _tbRadarToggle(pid) {
 }
 function _tbRadarSetMode(m) {
   _tbRadarMode=m;
+  var rel=document.getElementById('tb-radar-rel'), abs=document.getElementById('tb-radar-abs');
+  if(rel){rel.style.background=m==='rel'?'#9C27B0':'#F3E5F5';rel.style.color=m==='rel'?'#fff':'#9C27B0';}
+  if(abs){abs.style.background=m==='abs'?'#9C27B0':'#F3E5F5';abs.style.color=m==='abs'?'#fff':'#9C27B0';}
   var c=document.getElementById('tb-radar'); if(c)_renderTbRadar(c);
 }
 
@@ -16539,25 +16542,20 @@ function _renderTbRadar(container) {
   var W=container.clientWidth||280, H=container.clientHeight||190;
   if(W<30||H<30)return;
   var KEYS=LEX_KEYS, n=KEYS.length, mode=_tbRadarMode;
-  var THL=['Amour','Pouvoir','Lib.','Id.','Soc.','Nat.'];
-  var legH=28, cH=H-legH, cx=W/2, cy=cH/2, R=Math.min(cx,cy)-24;
+  var THL=['Amour','Pouvoir','Libert\u00e9','Identit\u00e9','Soci\u00e9t\u00e9','Nature'];
+  var legH=26, cH=H-legH, cx=W/2, cy=cH/2, R=Math.min(cx,cy)-32;
 
-  // Personnages actifs (non cachés)
   var persos=allPersos.filter(function(p){ return !_tbRadarHidden[p.id]; });
-  if(!persos.length) persos=allPersos; // si tout est caché, tout montrer quand même
+  if(!persos.length) persos=allPersos;
 
-  // Calcul des scores selon le mode
   var scoresMap={};
   if(mode==='rel') {
-    // Relatif : profil normalisé (% du rôle, somme=100 par perso)
     persos.forEach(function(p){ scoresMap[p.id]=p.scores; });
   } else {
-    // Absolu : poids inter-personnages — max par thème = 100
     var maxT={};
     KEYS.forEach(function(k){ maxT[k]=Math.max.apply(null,persos.map(function(p){return +(p.scores[k]||0);}))||1; });
     persos.forEach(function(p){
-      var sc={};
-      KEYS.forEach(function(k){ sc[k]=(+(p.scores[k]||0))/maxT[k]*100; });
+      var sc={}; KEYS.forEach(function(k){ sc[k]=(+(p.scores[k]||0))/maxT[k]*100; });
       scoresMap[p.id]=sc;
     });
   }
@@ -16570,19 +16568,16 @@ function _renderTbRadar(container) {
   }
 
   var s='<svg width="'+W+'" height="'+cH+'">';
-  // Grille
   [25,50,75,100].forEach(function(pct){
     var pts=KEYS.map(function(_,i){ return rx(i,R*pct/100).toFixed(1)+','+ry(i,R*pct/100).toFixed(1); }).join(' ');
     s+='<polygon points="'+pts+'" fill="none" stroke="#E8E0F7" stroke-width="1"/>';
   });
-  // Axes + labels
   KEYS.forEach(function(k,i){
     s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+rx(i,R).toFixed(1)+'" y2="'+ry(i,R).toFixed(1)+'" stroke="#DDD" stroke-width="1"/>';
-    var lx=rx(i,R+15), ly=ry(i,R+15), a=ang(i);
+    var lx=rx(i,R+18), ly=ry(i,R+18), a=ang(i);
     var anc=Math.cos(a)>0.1?'start':Math.cos(a)<-0.1?'end':'middle';
-    s+='<text x="'+lx.toFixed(1)+'" y="'+(ly+3.5).toFixed(1)+'" text-anchor="'+anc+'" font-size="9.5" font-weight="700" fill="'+LEX_COLORS[k]+'">'+THL[i]+'</text>';
+    s+='<text x="'+lx.toFixed(1)+'" y="'+(ly+3.5).toFixed(1)+'" text-anchor="'+anc+'" font-size="9" font-weight="700" fill="'+LEX_COLORS[k]+'">'+THL[i]+'</text>';
   });
-  // Polygones
   persos.forEach(function(p){
     var clr=p.couleur||'#7B1FA2', sc=scoresMap[p.id];
     s+='<polygon points="'+poly(sc)+'" fill="'+clr+'" fill-opacity=".12" stroke="'+clr+'" stroke-width="2"/>';
@@ -16590,20 +16585,12 @@ function _renderTbRadar(container) {
   });
   s+='</svg>';
 
-  // Bandeau légende — mode + noms cliquables
-  var bs='display:flex;flex-wrap:wrap;gap:3px 6px;padding:3px 6px;border-top:1px solid #EDE7F6;align-items:center;overflow:hidden;background:#FAFAFE;';
-  s+='<div style="'+bs+'">';
-  // Boutons mode Rel / Abs
-  var bms='font-size:.6rem;padding:1px 6px;border-radius:3px;cursor:pointer;font-weight:800;border:1px solid #CE93D8;';
-  s+='<button onclick="_tbRadarSetMode(\'rel\')" style="'+bms+';background:'+(mode==='rel'?'#9C27B0':'#F3E5F5')+';color:'+(mode==='rel'?'#fff':'#9C27B0')+';">Rel</button>';
-  s+='<button onclick="_tbRadarSetMode(\'abs\')" style="'+bms+';background:'+(mode==='abs'?'#9C27B0':'#F3E5F5')+';color:'+(mode==='abs'?'#fff':'#9C27B0')+';">Abs</button>';
-  s+='<span style="width:1px;height:14px;background:#DDD;display:inline-block;margin:0 2px;"></span>';
-  // Noms cliquables — grisé si caché
+  // Légende — noms cliquables uniquement (Rel/Abs dans le bandeau)
+  s+='<div style="display:flex;flex-wrap:wrap;gap:2px 4px;padding:2px 6px;border-top:1px solid #EDE7F6;align-items:center;min-height:'+legH+'px;background:#FAFAFE;">';
   allPersos.forEach(function(p){
     var hidden=!!_tbRadarHidden[p.id];
     var clr=hidden?'#BBB':(p.couleur||'#7B1FA2');
-    var bg=hidden?'#F0F0F0':'transparent';
-    s+='<button onclick="_tbRadarToggle(\''+p.id+'\')" style="font-size:.63rem;font-weight:700;color:'+clr+';background:'+bg+';border:none;cursor:pointer;padding:1px 3px;border-radius:3px;text-decoration:'+(hidden?'line-through':'none')+';">\u25cf '+p.nom+'</button>';
+    s+='<button onclick="_tbRadarToggle(\''+p.id+'\')" style="font-size:.63rem;font-weight:700;color:'+clr+';background:transparent;border:none;cursor:pointer;padding:1px 3px;border-radius:3px;text-decoration:'+(hidden?'line-through':'none')+';">\u25cf '+p.nom+'</button>';
   });
   s+='</div>';
   container.innerHTML=s;
