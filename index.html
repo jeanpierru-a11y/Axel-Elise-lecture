@@ -15263,29 +15263,42 @@ function _findCrossings(tranches, k1, k2) {
 function _buildPairScatter(lex, k1, k2) {
   var tranches = lex.tranches || [], phases = lex.phases || [];
   if (!tranches.length) return '';
-  var W = 400, H = 88;
-  var ML = 24, MR = 4, MT = Math.round(H * 0.19), MB = Math.round(H * 0.17);
-  var CW = W - ML - MR, CH = H - MT - MB;
-  var MP = tranches[tranches.length-1].pageFin || tranches[tranches.length-1].pageDebut;
+  // ── Dimensions adaptatives basées sur le nombre de phases ──────────────────
+  // CR : rayon des cercles de phase — IDENTIQUE dans le scatter (au-dessus) et dans la légende (à droite)
+  var CR   = 9;           // fixe — 9px rayon dans les deux cas
+  var ROW_H = CR * 2 + 3; // hauteur d'une ligne de légende = diamètre + espacement
+  var nPh  = phases.length || 1;
+  // CH = hauteur de la zone 0→100. Contrainte : CH ≥ hauteur de la légende des phases
+  var CH   = Math.max(nPh * ROW_H, 56);
+  var MT   = CR * 2 + 4;  // 22px — espace pour les cercles numérotés au-dessus de la zone
+  var MB   = 14;           // espace en bas pour la légende des 2 thèmes
+  var H    = MT + CH + MB;
+  var W    = 400, ML = 24, MR = 4;
+  var CW   = W - ML - MR;
+  var MP   = tranches[tranches.length-1].pageFin || tranches[tranches.length-1].pageDebut;
   var col1 = LEX_COLORS[k1], col2 = LEX_COLORS[k2];
   function xp(p)  { return ML + (p / MP) * CW; }
   function yv(v)  { return MT + (1 - v / 100) * CH; }
   function xtr(t) { return xp(((t.pageDebut||0) + (t.pageFin||t.pageDebut||0)) / 2); }
   var s = '';
+  // ── Bandes de phase + cercles numérotés au-dessus ────────────────────────
   phases.forEach(function(ph, i) {
     var p2 = phases[i+1] ? phases[i+1].pageDebut - 1 : MP;
     var x1 = xp((ph.pageDebut||1) - 0.5), x2 = xp(p2 + 0.5), mx = (x1 + x2) / 2;
     s += '<rect x="'+x1.toFixed(1)+'" y="'+MT+'" width="'+(x2-x1).toFixed(1)+'" height="'+CH+'" fill="'+LEX_PH_BG[i%LEX_PH_BG.length]+'"/>';
-    var cr = Math.round(Math.min(5, MT * 0.38));
-    s += '<circle cx="'+mx.toFixed(1)+'" cy="'+(MT/2)+'" r="'+cr+'" fill="'+LEX_PH_LC[i%LEX_PH_LC.length]+'"/>';
-    s += '<text x="'+mx.toFixed(1)+'" y="'+(MT/2+cr*0.38)+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="'+Math.round(cr*1.3)+'" font-weight="900" fill="#fff">'+(i+1)+'</text>';
+    // Cercle numéroté — CR=9, font-size=9 (même que la légende à droite)
+    var cy = MT / 2;
+    s += '<circle cx="'+mx.toFixed(1)+'" cy="'+cy.toFixed(1)+'" r="'+CR+'" fill="'+LEX_PH_LC[i%LEX_PH_LC.length]+'"/>';
+    s += '<text x="'+mx.toFixed(1)+'" y="'+(cy+3.5).toFixed(1)+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" font-weight="900" fill="#fff">'+(i+1)+'</text>';
     if (i > 0) s += '<line x1="'+x1.toFixed(1)+'" y1="'+MT+'" x2="'+x1.toFixed(1)+'" y2="'+(MT+CH)+'" stroke="#ccc" stroke-width="0.5" stroke-dasharray="2,2"/>';
   });
+  // ── Grilles Y ────────────────────────────────────────────────────────────
   [0, 50, 100].forEach(function(v) {
     var y = yv(v);
     s += '<line x1="'+ML+'" y1="'+y.toFixed(1)+'" x2="'+(ML+CW)+'" y2="'+y.toFixed(1)+'" stroke="#eee" stroke-width="0.5"/>';
     s += '<text x="'+(ML-3)+'" y="'+(y+3)+'" text-anchor="end" font-family="Arial,sans-serif" font-size="7" fill="#888">'+v+'</text>';
   });
+  // ── Polylignes + points ──────────────────────────────────────────────────
   [k1, k2].forEach(function(k) {
     var col = LEX_COLORS[k];
     var pts = tranches.map(function(tr) { return xtr(tr).toFixed(1)+','+yv(tr[k]||0).toFixed(1); }).join(' ');
@@ -15297,16 +15310,19 @@ function _buildPairScatter(lex, k1, k2) {
       s += '<circle cx="'+xtr(tr).toFixed(1)+'" cy="'+yv(tr[k]||0).toFixed(1)+'" r="3" fill="'+col+'" stroke="#fff" stroke-width="0.8"/>';
     });
   });
+  // ── Croisements ────────────────────────────────────────────────────────
   var crossings = _findCrossings(tranches, k1, k2);
   crossings.forEach(function(cr) {
     var i = cr.idx, t = cr.t;
     var x  = xtr(tranches[i]) * (1-t) + xtr(tranches[i+1]) * t;
-    var vC = ((tranches[i][k1]*(1-t) + tranches[i+1][k1]*t) + (tranches[i][k2]*(1-t) + tranches[i+1][k2]*t)) / 2;
+    var vC = ((tranches[i][k1]*(1-t)+tranches[i+1][k1]*t)+(tranches[i][k2]*(1-t)+tranches[i+1][k2]*t))/2;
     var y  = yv(vC);
     s += '<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="4.5" fill="white" stroke="#555" stroke-width="1.2"/>';
     s += '<text x="'+x.toFixed(1)+'" y="'+(y+2.5).toFixed(1)+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="6" font-weight="900" fill="#555">x</text>';
   });
+  // ── Bordure zone dessin ──────────────────────────────────────────────────
   s += '<rect x="'+ML+'" y="'+MT+'" width="'+CW+'" height="'+CH+'" fill="none" stroke="#ccc" stroke-width="0.6"/>';
+  // ── Légende thèmes en bas ────────────────────────────────────────────────
   var lY = MT + CH + Math.round(MB * 0.78), mid = ML + CW / 2;
   s += '<circle cx="'+(mid-62)+'" cy="'+(lY-2)+'" r="3" fill="'+col1+'"/>';
   s += '<text x="'+(mid-56)+'" y="'+lY+'" font-family="Arial,sans-serif" font-size="8" font-weight="700" fill="'+col1+'">'+LEX_LABELS[k1]+'</text>';
@@ -15320,15 +15336,21 @@ function updateQ3PairesViz() {
   var el = document.getElementById('ni-q-th-paires');
   if (!el || !lex || !lex.paires || !lex.paires.length) return;
   var phases = lex.phases || [];
-  // Légende phases commune à toutes les paires (colonne droite)
+  // ── Largeur légende : calculée depuis le nom de phase le plus long ────────
+  // Formule : cercle(18px) + gap(4px) + "p.XXX NomPhase"(~6.2px/char) + padding(10px), min 120px
+  var maxTextLen = phases.reduce(function(m, ph) {
+    var t = 'p.'+(ph.pageDebut||'') + '\u00a0' + (ph.nom||'');
+    return Math.max(m, t.length);
+  }, 0);
+  var LEG_W = Math.max(120, Math.min(280, Math.ceil(18 + 4 + maxTextLen * 6.2 + 10)));
+  // ── Légende phases : cercles de même taille (CR=9, diam=18px) ─────────────
   var phLegHtml = phases.map(function(ph, i) {
     var lc = LEX_PH_LC[i % LEX_PH_LC.length];
-    var nom = ph.nom || '';
-    return '<div style="display:flex;align-items:center;gap:3px;padding:1px 0;border-bottom:1px solid #f3eeff;">'+
-      '<span style="flex-shrink:0;width:13px;height:13px;border-radius:50%;background:'+lc+
+    return '<div style="display:flex;align-items:center;gap:4px;padding:1px 0;border-bottom:1px solid #f3eeff;">'+
+      '<span style="flex-shrink:0;width:18px;height:18px;border-radius:50%;background:'+lc+
         ';display:inline-flex;align-items:center;justify-content:center;'+
-        'font-size:7.5px;font-weight:900;color:#fff;">'+(i+1)+'</span>'+
-      '<span style="font-size:10px;color:#555;line-height:1.3;white-space:nowrap;">p.'+ph.pageDebut+'\u00a0'+nom+'</span>'+
+        'font-size:9px;font-weight:900;color:#fff;">'+(i+1)+'</span>'+
+      '<span style="font-size:9.5px;color:#555;line-height:1.3;white-space:nowrap;">p.'+(ph.pageDebut||'')+'\u00a0'+(ph.nom||'')+'</span>'+
     '</div>';
   }).join('');
 
@@ -15339,29 +15361,25 @@ function updateQ3PairesViz() {
     var nb = _findCrossings(lex.tranches, k1, k2).length;
     var crTxt = nb === 0 ? 'pas de croisement' : nb + ' croisement'+(nb>1?'s':'');
     return '<div class="ni-paire-item">'+
-      // ── Titre ──
       '<div class="ni-paire-ttl">'+
         '<span style="width:9px;height:9px;border-radius:50%;background:'+col1+';display:inline-block;flex-shrink:0;"></span>'+
         '<span style="color:'+col1+';">'+LEX_LABELS[k1]+'</span>'+
         '<span style="color:#ddd;font-weight:300;margin:0 2px;">/</span>'+
         '<span style="width:9px;height:9px;border-radius:50%;background:'+col2+';display:inline-block;flex-shrink:0;"></span>'+
         '<span style="color:'+col2+';">'+LEX_LABELS[k2]+'</span>'+
-        '<span class="ni-paire-badge">'+crTxt+' · \u2605'+p.score+'/4</span>'+
+        '<span class="ni-paire-badge">'+crTxt+' \u00b7 \u2605'+p.score+'/4</span>'+
       '</div>'+
-      // ── Scatter (flex:1) + Légende phases (colonne droite) ──
       '<div style="display:flex;gap:8px;align-items:flex-start;margin:3px 0;">'+
         '<div style="flex:1;min-width:0;">'+svg+'</div>'+
         (phases.length ?
-          '<div style="flex:0 0 auto;width:240px;display:flex;flex-direction:column;gap:0;padding-top:1px;">'+
+          '<div style="flex:0 0 '+LEG_W+'px;display:flex;flex-direction:column;gap:0;padding-top:1px;">'+
           phLegHtml+
           '</div>' : '')+
       '</div>'+
-      // ── Interprétation ──
       '<div class="ni-paire-interp">'+p.interpretation+'</div>'+
     '</div>';
   }).join('');
 }
-
 // ── Resize listener : re-fige ob1/ob2 si le panneau Mots est visible ──────────
 var _q3ResizeTid = null;
 window.addEventListener('resize', function(){
