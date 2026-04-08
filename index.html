@@ -2275,6 +2275,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 .acp-tab{padding:5px 13px;font-size:.67rem;font-weight:700;cursor:pointer;border:none;border-bottom:3px solid transparent;background:transparent;color:#7B1FA2;transition:border-color .15s,background .15s;}
 .acp-tab-active{border-bottom:3px solid #7B1FA2;background:#EDE7F6;color:#4A148C;}
 .acp-tab:hover:not(.acp-tab-active){background:#F3E5F5;}
+.acp-col-hdr{flex:0 0 auto;padding:3px 8px;background:#faf8ff;border-bottom:1px solid #EDE7F6;font-size:.66rem;font-weight:800;color:#4A148C;letter-spacing:.3px;white-space:nowrap;}
 #ni-q-th-acp{background:#fff;}
 #acp-variance{border-bottom:1px solid #EDE7F6;}
 
@@ -2898,17 +2899,34 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
           <!-- ▌ Paires — hors de ni-q-th-global, enfant direct de ni-q-th-haslex -->
           <div id="ni-q-th-paires" style="display:none;flex:1;overflow-y:auto;min-height:0;padding:4px 6px;flex-direction:column;gap:7px;"></div>
 
-          <!-- ■ ANALYSE AUGMENTÉE ACP — plan factoriel + cercle + lecture -->
+          <!-- ■ ANALYSE AUGMENTÉE ACP — vue simultanée 3 colonnes -->
           <div id="ni-q-th-acp" style="display:none;flex:1;flex-direction:column;min-height:0;overflow:hidden;background:#fff;">
-            <div id="acp-tabs" style="display:flex;gap:0;border-bottom:2px solid #EDE7F6;flex:0 0 auto;background:#faf8ff;">
-              <button class="acp-tab acp-tab-active" onclick="_acpTab(0)">📐 Plan factoriel</button>
-              <button class="acp-tab" onclick="_acpTab(1)">🎯 Cercle corrél.</button>
-              <button class="acp-tab" onclick="_acpTab(2)">📖 Lecture croisée</button>
+            <!-- Bandeau variance + filtre phases + heatmap -->
+            <div style="flex:0 0 auto;display:flex;align-items:center;gap:5px;padding:2px 8px;background:#F3E5F5;border-bottom:1px solid #EDE7F6;overflow:hidden;">
+              <div id="acp-variance" style="flex:1;font-size:.63rem;color:#6A1B9A;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+              <span style="font-size:.61rem;color:#7B1FA2;white-space:nowrap;flex-shrink:0;">Phases</span>
+              <input type="number" id="acp-ph-from" min="1" max="8" value="1" style="width:32px;font-size:.67rem;text-align:center;border:1px solid #CE93D8;border-radius:4px;padding:1px 2px;" onchange="_renderACPWidget()">
+              <span style="font-size:.61rem;color:#7B1FA2;flex-shrink:0;">→</span>
+              <input type="number" id="acp-ph-to" min="1" max="8" value="8" style="width:32px;font-size:.67rem;text-align:center;border:1px solid #CE93D8;border-radius:4px;padding:1px 2px;" onchange="_renderACPWidget()">
+              <button onclick="_acpToggleHeatmap()" title="Heatmap thématique" style="flex-shrink:0;font-size:.62rem;background:#EDE7F6;border:1px solid #CE93D8;border-radius:4px;padding:1px 6px;cursor:pointer;color:#6A1B9A;font-weight:700;">🌡️ Heatmap</button>
             </div>
-            <div id="acp-variance" style="flex:0 0 auto;padding:3px 10px;background:#F3E5F5;font-size:.63rem;color:#6A1B9A;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
-            <div id="acp-biplot"  style="flex:1;min-height:0;overflow:hidden;display:flex;"></div>
-            <div id="acp-cercle"  style="flex:1;min-height:0;overflow:hidden;display:none;flex-direction:row;align-items:center;justify-content:center;"></div>
-            <div id="acp-lecture" style="flex:1;min-height:0;overflow:hidden;display:none;flex-direction:row;gap:0;"></div>
+            <!-- 3 colonnes simultanées -->
+            <div style="flex:1;display:flex;min-height:0;overflow:hidden;">
+              <div style="flex:1;display:flex;flex-direction:column;min-width:0;border-right:2px solid #EDE7F6;">
+                <div class="acp-col-hdr">📐 Plan factoriel</div>
+                <div id="acp-biplot" style="flex:1;min-height:0;overflow:hidden;display:flex;"></div>
+              </div>
+              <div style="flex:0 0 34%;display:flex;flex-direction:column;min-width:0;border-right:2px solid #EDE7F6;">
+                <div class="acp-col-hdr">🎯 Cercle des corrélations</div>
+                <div id="acp-cercle" style="flex:1;min-height:0;overflow:hidden;display:flex;align-items:center;justify-content:center;"></div>
+              </div>
+              <div style="flex:0 0 27%;display:flex;flex-direction:column;min-width:0;">
+                <div class="acp-col-hdr">📖 Lecture croisée</div>
+                <div id="acp-lecture" style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;"></div>
+              </div>
+            </div>
+            <!-- Heatmap — cachée par défaut, s'affiche sous les 3 colonnes -->
+            <div id="acp-heatmap" style="flex:0 0 auto;display:none;border-top:2px solid #EDE7F6;overflow:auto;padding:4px 6px;max-height:150px;background:#FAFAFA;"></div>
           </div>
 
           <!-- ▌ OBJET 3 — Source de données & Traitement -->
@@ -15648,7 +15666,7 @@ function _q3ToggleACP() {
     if (pai) pai.style.display='none';
     if (mod) mod.style.display='none';
     if (acp) acp.style.display='flex';
-    _acpTab(_acpActiveTab);
+    _renderACPWidget();
   } else {
     if (acp) acp.style.display='none';
     updateQ3LexViz();
@@ -15656,17 +15674,7 @@ function _q3ToggleACP() {
   if (btn) btn.classList.toggle('active', _q3AcpOpen);
 }
 
-function _acpTab(n) {
-  _acpActiveTab = n;
-  document.querySelectorAll('.acp-tab').forEach(function(t,i){ t.classList.toggle('acp-tab-active', i===n); });
-  var bp=document.getElementById('acp-biplot');
-  var cc=document.getElementById('acp-cercle');
-  var lc=document.getElementById('acp-lecture');
-  if(bp) bp.style.display = n===0 ? 'flex' : 'none';
-  if(cc) cc.style.display = n===1 ? 'flex' : 'none';
-  if(lc) lc.style.display = n===2 ? 'flex' : 'none';
-  _renderACPWidget(n);
-}
+function _acpTab(n) { _acpActiveTab = n; } // conservé pour compatibilité
 
 // ── Algèbre linéaire — Jacobi 6×6 ────────────────────
 
@@ -15886,56 +15894,116 @@ function _renderACPCercle(container, pca) {
 
 // ── Lecture croisée ───────────────────────────────────
 
+// ── Lecture croisée — cartes pédagogiques (colonne 3, sans mini-biplot) ─────
+
 function _renderACPLecture(container, pca, phases, tranches) {
   container.innerHTML='';
-  var W=container.clientWidth||500, H=container.clientHeight||280;
-  var left=document.createElement('div');
-  left.style.cssText='flex:0 0 55%;min-width:0;overflow:hidden;display:flex;';
-  container.appendChild(left);
-  _renderACPBiplot(left,pca,phases,tranches);
-  var right=document.createElement('div');
-  right.style.cssText='flex:1;min-width:0;overflow-y:auto;padding:8px 10px;display:flex;flex-direction:column;gap:7px;border-left:1px solid #EDE7F6;';
-  container.appendChild(right);
-  var KEYS=LEX_KEYS, THL={amour:'Amour',pouvoir:'Pouvoir',liberte:'Libert\u00e9',identite:'Identit\u00e9',societe:'Soci\u00e9t\u00e9',nature:'Nature'};
+  if(!tranches||!tranches.length) return;
+  var KEYS=LEX_KEYS;
+  var THL={amour:'Amour',pouvoir:'Pouvoir',liberte:'Libert\u00e9',identite:'Identit\u00e9',societe:'Soci\u00e9t\u00e9',nature:'Nature'};
   var axN=_acpAxisNames(pca.loadings), ph=phases||[];
   function phaseOf(tIdx){var page=tranches[tIdx].pageDebut,pi=0;ph.forEach(function(p,i){if(page>=p.pageDebut)pi=i;});return pi;}
-  function phName(tIdx){var pi=phaseOf(tIdx);return (ph[pi]&&ph[pi].nom)||('phase '+(pi+1));}
+  function phName(tIdx){var pi=phaseOf(tIdx);return (ph[pi]&&ph[pi].nom)||('ph.'+(pi+1));}
   var e1=pca.explained[0], e2=pca.explained[1];
-
-  function card(html,col){var d=document.createElement('div');d.style.cssText='background:'+col+';border-radius:7px;padding:7px 9px;font-size:.69rem;color:#222;line-height:1.65;';d.innerHTML=html;right.appendChild(d);}
-
-  card('<b>Axe PC1 ('+e1+'%)</b><br>\u2039\u200a'+axN.n1+'\u200a\u203a<br>'+(e1>=60?'Cet axe concentre la majorit\u00e9 de la variation th\u00e9matique de l\u2019\u0153uvre.':'Variation th\u00e9matique principale de l\u2019\u0153uvre selon cet axe.'),'#EDE7F6');
-  card('<b>Axe PC2 ('+e2+'%)</b><br>\u2039\u200a'+axN.n2+'\u200a\u203a<br>Dynamique secondaire — structure orthogonale \u00e0 PC1.','#E8F5E9');
-
-  // Thèmes dominants
-  var l1s=KEYS.map(function(_,i){return {k:KEYS[i],v:Math.abs(pca.loadings[i][0])};}).sort(function(a,b){return b.v-a.v;});
-  var l2s=KEYS.map(function(_,i){return {k:KEYS[i],v:Math.abs(pca.loadings[i][1])};}).sort(function(a,b){return b.v-a.v;});
-  card('<b>Th\u00e8mes qui structurent PC1 :</b> '+l1s.slice(0,2).map(function(x){return '<span style="color:'+LEX_COLORS[x.k]+';font-weight:800">'+THL[x.k]+'</span>';}).join(' et ')+'<br><b>Th\u00e8mes qui structurent PC2 :</b> '+l2s.slice(0,2).map(function(x){return '<span style="color:'+LEX_COLORS[x.k]+';font-weight:800">'+THL[x.k]+'</span>';}).join(' et '),'#FFF8E1');
-
-  // Tranches extrêmes
+  var l1s=KEYS.map(function(_,i){return{k:KEYS[i],v:Math.abs(pca.loadings[i][0])};}).sort(function(a,b){return b.v-a.v;});
+  var l2s=KEYS.map(function(_,i){return{k:KEYS[i],v:Math.abs(pca.loadings[i][1])};}).sort(function(a,b){return b.v-a.v;});
+  var wrap=document.createElement('div');
+  wrap.style.cssText='padding:5px 7px;display:flex;flex-direction:column;gap:5px;overflow-y:auto;height:100%;box-sizing:border-box;';
+  container.appendChild(wrap);
+  function card(html,col){var d=document.createElement('div');d.style.cssText='background:'+col+';border-radius:6px;padding:5px 7px;font-size:.65rem;color:#222;line-height:1.6;flex:0 0 auto;';d.innerHTML=html;wrap.appendChild(d);}
+  card('<b>PC1 ('+e1+'%)</b><br><span style="color:#555">\u2039\u200a'+axN.n1+'\u200a\u203a</span><br>'+(e1>=60?'Axe dominant de l\u2019\u0153uvre.':'Axe principal.'),'#EDE7F6');
+  card('<b>PC2 ('+e2+'%)</b><br><span style="color:#555">\u2039\u200a'+axN.n2+'\u200a\u203a</span>','#E8F5E9');
+  card('<b>Structurent PC1\u00a0:</b> '+l1s.slice(0,2).map(function(x){return '<span style="color:'+LEX_COLORS[x.k]+';font-weight:800">'+THL[x.k]+'</span>';}).join(' + ')+'<br><b>Structurent PC2\u00a0:</b> '+l2s.slice(0,2).map(function(x){return '<span style="color:'+LEX_COLORS[x.k]+';font-weight:800">'+THL[x.k]+'</span>';}).join(' + '),'#FFF8E1');
   if(pca.coords.length>=2){
     var by1=[].concat(pca.coords.map(function(c,i){return{i:i,v:c[0]};})).sort(function(a,b){return b.v-a.v;});
     var hi=by1[0],lo=by1[by1.length-1];
-    card('<b>Tranche '+( hi.i+1)+' ('+phName(hi.i)+')</b> — p\u00f4le positif PC1 : concentration \u00e9lev\u00e9e de '+THL[l1s[0].k]+'.<br><b>Tranche '+(lo.i+1)+' ('+phName(lo.i)+')</b> — p\u00f4le n\u00e9gatif PC1 : '+THL[l1s[l1s.length-1].k]+' pr\u00e9dominant.','#E3F2FD');
+    card('P\u00f4le+\u00a0PC1\u00a0: <b>tr.'+(hi.i+1)+'</b> ('+phName(hi.i)+')<br>P\u00f4le\u2212\u00a0PC1\u00a0: <b>tr.'+(lo.i+1)+'</b> ('+phName(lo.i)+')','#E3F2FD');
+    var phDom={};
+    tranches.forEach(function(t,i){
+      var pi=phaseOf(i);
+      if(!phDom[pi]){phDom[pi]={name:phName(i),maxK:'',maxV:-1};}
+      KEYS.forEach(function(k){var v=+(t[k]||0);if(v>phDom[pi].maxV){phDom[pi].maxV=v;phDom[pi].maxK=k;}});
+    });
+    var domHtml='<b>Dominante / phase\u00a0:</b><br>';
+    Object.keys(phDom).sort(function(a,b){return+a-+b;}).forEach(function(pi){
+      var d=phDom[pi];
+      if(d.maxK) domHtml+='<span style="font-size:.62rem">\u2023\u00a0'+d.name+' \u2192 <span style="color:'+LEX_COLORS[d.maxK]+';font-weight:800">'+THL[d.maxK]+'</span></span><br>';
+    });
+    card(domHtml,'#FAFAFA');
   }
 }
 
-// ── Dispatcher principal ──────────────────────────────
+// ── Heatmap thématique ────────────────────────────────
 
-function _renderACPWidget(tab) {
+function _renderACPHeatmap(container, phases, tranches) {
+  if(!tranches||!tranches.length){container.innerHTML='<span style="font-size:.65rem;color:#999;padding:6px;">Aucune tranche.</span>';return;}
+  var KEYS=LEX_KEYS;
+  var THL={amour:'Am.',pouvoir:'Pv.',liberte:'Lib.',identite:'Id.',societe:'Soc.',nature:'Nat.'};
+  var PH_C=typeof LEX_PH_LC!=='undefined'?LEX_PH_LC:['#7C4DFF','#00BCD4','#FF6F00','#4CAF50','#E91E63','#2196F3','#FF5722','#795548'];
+  function phIdxOf(t){var page=t.pageDebut,pi=0;(phases||[]).forEach(function(p,i){if(page>=p.pageDebut)pi=i;});return pi;}
+  function phName(t){var pi=phIdxOf(t);return (phases&&phases[pi]&&phases[pi].nom)||('Ph.'+(pi+1));}
+  var maxV={};KEYS.forEach(function(k){maxV[k]=1;tranches.forEach(function(t){if(+(t[k]||0)>maxV[k])maxV[k]=+(t[k]||0);});});
+  var html='<table style="border-collapse:collapse;font-size:.61rem;min-width:100%;"><thead><tr>';
+  html+='<th style="padding:1px 5px;color:#555;font-weight:700;text-align:left;background:#F3E5F5;white-space:nowrap;">Phase</th>';
+  KEYS.forEach(function(k){html+='<th style="padding:1px 6px;color:'+LEX_COLORS[k]+';font-weight:800;text-align:center;background:#F3E5F5;">'+THL[k]+'</th>';});
+  html+='</tr></thead><tbody>';
+  tranches.forEach(function(t,i){
+    var pi=phIdxOf(t),name=phName(t),clr=PH_C[pi%PH_C.length];
+    html+='<tr><td style="padding:1px 5px;white-space:nowrap;color:'+clr+';font-weight:700;font-size:.60rem;">'+name+'</td>';
+    KEYS.forEach(function(k){
+      var v=+(t[k]||0),mx=maxV[k],pct=v/mx;
+      var bg=LEX_BG[k];
+      html+='<td style="text-align:center;padding:1px 4px;background:'+bg+';opacity:'+(Math.round(pct*75+15)/100)+';font-weight:'+(pct>0.6?800:400)+';color:#222;">'+v+'</td>';
+    });
+    html+='</tr>';
+  });
+  html+='</tbody></table>';
+  container.innerHTML=html;
+}
+
+function _acpToggleHeatmap() {
+  var hm=document.getElementById('acp-heatmap');
+  if(!hm) return;
+  if(hm.style.display==='none') {
+    hm.style.display='block';
+    var L=LIVRE_ACTIF, lex=L&&L.lexique;
+    if(lex&&lex.tranches) _renderACPHeatmap(hm,lex.phases,lex.tranches);
+  } else {
+    hm.style.display='none';
+  }
+}
+
+// ── Dispatcher principal — vue simultanée 3 colonnes ─────────────────────
+
+function _renderACPWidget() {
   var L=LIVRE_ACTIF, lex=L&&L.lexique;
   var v=document.getElementById('acp-variance');
   if(!lex||!Array.isArray(lex.tranches)||lex.tranches.length<3){
     if(v) v.textContent='Analyse indisponible \u2014 minimum 3 tranches requises.';
     return;
   }
-  var t=(tab===undefined)?_acpActiveTab:tab;
-  var pca=_acpCompute(lex.tranches);
-  if(v) v.textContent='Variance expliqu\u00e9e\u00a0: PC1\u00a0=\u00a0'+pca.explained[0]+'%\u00a0\u00b7\u00a0PC2\u00a0=\u00a0'+pca.explained[1]+'%\u00a0\u00b7\u00a0Total\u00a0=\u00a0'+(pca.explained[0]+pca.explained[1])+'%';
+  var nPh=(lex.phases&&lex.phases.length)||8;
+  var fromEl=document.getElementById('acp-ph-from'), toEl=document.getElementById('acp-ph-to');
+  if(fromEl) fromEl.max=nPh; if(toEl) toEl.max=nPh;
+  var phFrom=fromEl?Math.max(0,parseInt(fromEl.value||'1')-1):0;
+  var phTo=toEl?Math.min(nPh-1,parseInt(toEl.value||String(nPh))-1):(nPh-1);
+  if(phFrom>phTo) phTo=phFrom;
+  function phIdxOf(t){var page=t.pageDebut,pi=0;(lex.phases||[]).forEach(function(p,i){if(page>=p.pageDebut)pi=i;});return pi;}
+  var filtered=lex.tranches.filter(function(t){var pi=phIdxOf(t);return pi>=phFrom&&pi<=phTo;});
+  if(filtered.length<3) filtered=lex.tranches;
+  var filtPh=lex.phases?lex.phases.slice(phFrom,phTo+1):lex.phases;
+  var pca=_acpCompute(filtered);
+  var suf=filtered.length<lex.tranches.length?' \u00b7 Filtr.\u00a0: '+filtered.length+'/'+lex.tranches.length+' tr.':'';
+  if(v) v.textContent='Variance\u00a0: PC1\u00a0=\u00a0'+pca.explained[0]+'%\u00a0\u00b7\u00a0PC2\u00a0=\u00a0'+pca.explained[1]+'%\u00a0\u00b7\u00a0Total\u00a0='+(pca.explained[0]+pca.explained[1])+'%'+suf;
   requestAnimationFrame(function(){requestAnimationFrame(function(){
-    if(t===0){var el=document.getElementById('acp-biplot');if(el)_renderACPBiplot(el,pca,lex.phases,lex.tranches);}
-    if(t===1){var el2=document.getElementById('acp-cercle');if(el2)_renderACPCercle(el2,pca);}
-    if(t===2){var el3=document.getElementById('acp-lecture');if(el3)_renderACPLecture(el3,pca,lex.phases,lex.tranches);}
+    var el=document.getElementById('acp-biplot');
+    var el2=document.getElementById('acp-cercle');
+    var el3=document.getElementById('acp-lecture');
+    if(el) _renderACPBiplot(el,pca,filtPh,filtered);
+    if(el2) _renderACPCercle(el2,pca);
+    if(el3) _renderACPLecture(el3,pca,filtPh,filtered);
+    var hm=document.getElementById('acp-heatmap');
+    if(hm&&hm.style.display!=='none') _renderACPHeatmap(hm,lex.phases,filtered);
   });});
 }
 
