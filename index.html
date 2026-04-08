@@ -2911,7 +2911,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
               <button onclick="_acpToggleHeatmap()" title="Heatmap thématique" style="flex-shrink:0;font-size:.62rem;background:#EDE7F6;border:1px solid #CE93D8;border-radius:4px;padding:1px 6px;cursor:pointer;color:#6A1B9A;font-weight:700;">🌡️ Heatmap</button>
             </div>
             <!-- 3 colonnes simultanées -->
-            <div style="flex:1;display:flex;min-height:0;overflow:hidden;">
+            <div style="flex:0 0 38vh;display:flex;min-height:0;overflow:hidden;">
               <div style="flex:1;display:flex;flex-direction:column;min-width:0;border-right:2px solid #EDE7F6;">
                 <div class="acp-col-hdr">📐 Plan factoriel</div>
                 <div id="acp-biplot" style="flex:1;min-height:0;overflow:hidden;display:flex;"></div>
@@ -15838,12 +15838,12 @@ function _renderACPBiplot(container, pca, phases, tranches) {
   // Axes — taille et contraste lisibles
   svg.append('text').attr('x',ML+CW/2).attr('y',H-6)
     .attr('text-anchor','middle').attr('font-size',FONT_AX).attr('fill','#333').attr('font-weight',700)
-    .text('PC1 ('+pca.explained[0]+'%) \u2014 '+axN.n1);
+    .text(axN.n1+' ('+pca.explained[0]+'%)');
   svg.append('text').attr('x',14).attr('y',MT+CH/2)
     .attr('text-anchor','middle')
     .attr('transform','rotate(-90,14,'+(MT+CH/2)+')')
     .attr('font-size',FONT_AX).attr('fill','#333').attr('font-weight',700)
-    .text('PC2 ('+pca.explained[1]+'%)');
+    .text(axN.n2+' ('+pca.explained[1]+'%)');
 }
 
 
@@ -15871,8 +15871,8 @@ function _renderACPCercle(container, pca) {
     svg.append('text').attr('x',cx+ux*ld).attr('y',cy-uy*ld+3.5).attr('text-anchor',anc).attr('font-size',9.5).attr('fill',LEX_COLORS[k]).attr('font-weight',700).text(THL[k]);
   });
   var axN=_acpAxisNames(pca.loadings);
-  svg.append('text').attr('x',cx+r+10).attr('y',cy+4).attr('font-size',11).attr('fill','#333').attr('font-weight',700).text('PC1');
-  svg.append('text').attr('x',cx-4).attr('y',cy-r-8).attr('text-anchor','middle').attr('font-size',11).attr('fill','#333').attr('font-weight',700).text('PC2');
+  svg.append('text').attr('x',cx+r+10).attr('y',cy+4).attr('font-size',11).attr('fill','#333').attr('font-weight',700).text('CP1');
+  svg.append('text').attr('x',cx-4).attr('y',cy-r-8).attr('text-anchor','middle').attr('font-size',11).attr('fill','#333').attr('font-weight',700).text('CP2');
   svg.append('text').attr('x',cx).attr('y',H-4).attr('text-anchor','middle').attr('font-size',10).attr('fill','#444').attr('font-weight',600).text(axN.n1+' / '+axN.n2);
 }
 
@@ -15895,13 +15895,13 @@ function _renderACPLecture(container, pca, phases, tranches) {
   wrap.style.cssText='padding:5px 7px;display:flex;flex-direction:column;gap:5px;overflow-y:auto;height:100%;box-sizing:border-box;';
   container.appendChild(wrap);
   function card(html,col){var d=document.createElement('div');d.style.cssText='background:'+col+';border-radius:6px;padding:5px 7px;font-size:.65rem;color:#222;line-height:1.6;flex:0 0 auto;';d.innerHTML=html;wrap.appendChild(d);}
-  card('<b>PC1 ('+e1+'%)</b><br><span style="color:#555">\u2039\u200a'+axN.n1+'\u200a\u203a</span><br>'+(e1>=60?'Axe dominant de l\u2019\u0153uvre.':'Axe principal.'),'#EDE7F6');
-  card('<b>PC2 ('+e2+'%)</b><br><span style="color:#555">\u2039\u200a'+axN.n2+'\u200a\u203a</span>','#E8F5E9');
-  card('<b>Structurent PC1\u00a0:</b> '+l1s.slice(0,2).map(function(x){return '<span style="color:'+LEX_COLORS[x.k]+';font-weight:800">'+THL[x.k]+'</span>';}).join(' + ')+'<br><b>Structurent PC2\u00a0:</b> '+l2s.slice(0,2).map(function(x){return '<span style="color:'+LEX_COLORS[x.k]+';font-weight:800">'+THL[x.k]+'</span>';}).join(' + '),'#FFF8E1');
+  card('<b>'+axN.n1+' ('+e1+'%)</b><br><span style="color:#555">'+(e1>=60?'Axe dominant de l\u2019\u0153uvre.':'Axe structurant principal.')+'</span>','#EDE7F6');
+  card('<b>'+axN.n2+' ('+e2+'%)</b><br><span style="color:#555">Dynamique secondaire.</span>','#E8F5E9');
+  card('<b>CP1 — th\u00e8mes moteurs\u00a0:</b> '+l1s.slice(0,2).map(function(x){return '<span style="color:'+LEX_COLORS[x.k]+';font-weight:800">'+THL[x.k]+'</span>';}).join(' + ')+'<br><b>CP2 — th\u00e8mes moteurs\u00a0:</b> '+l2s.slice(0,2).map(function(x){return '<span style="color:'+LEX_COLORS[x.k]+';font-weight:800">'+THL[x.k]+'</span>';}).join(' + '),'#FFF8E1');
   if(pca.coords.length>=2){
     var by1=[].concat(pca.coords.map(function(c,i){return{i:i,v:c[0]};})).sort(function(a,b){return b.v-a.v;});
     var hi=by1[0],lo=by1[by1.length-1];
-    card('P\u00f4le+\u00a0PC1\u00a0: <b>tr.'+(hi.i+1)+'</b> ('+phName(hi.i)+')<br>P\u00f4le\u2212\u00a0PC1\u00a0: <b>tr.'+(lo.i+1)+'</b> ('+phName(lo.i)+')','#E3F2FD');
+    card('\u2191 '+axN.n1+'\u00a0: <b>tr.'+(hi.i+1)+'</b> ('+phName(hi.i)+')<br>\u2193 '+axN.n1+'\u00a0: <b>tr.'+(lo.i+1)+'</b> ('+phName(lo.i)+')','#E3F2FD');
     var phDom={};
     tranches.forEach(function(t,i){
       var pi=phaseOf(i);
@@ -15977,8 +15977,9 @@ function _renderACPWidget() {
   if(filtered.length<3) filtered=lex.tranches;
   var filtPh=lex.phases?lex.phases.slice(phFrom,phTo+1):lex.phases;
   var pca=_acpCompute(filtered);
+  var axNames=_acpAxisNames(pca.loadings);
   var suf=filtered.length<lex.tranches.length?' \u00b7 Filtr.\u00a0: '+filtered.length+'/'+lex.tranches.length+' tr.':'';
-  if(v) v.textContent='Variance\u00a0: PC1\u00a0=\u00a0'+pca.explained[0]+'%\u00a0\u00b7\u00a0PC2\u00a0=\u00a0'+pca.explained[1]+'%\u00a0\u00b7\u00a0Total\u00a0='+(pca.explained[0]+pca.explained[1])+'%'+suf;
+  if(v) v.textContent='CP1\u00a0: '+axNames.n1+' ('+pca.explained[0]+'%)\u00a0\u00b7\u00a0CP2\u00a0: '+axNames.n2+' ('+pca.explained[1]+'%)\u00a0\u00b7\u00a0Total\u00a0='+(pca.explained[0]+pca.explained[1])+'%'+suf;
   requestAnimationFrame(function(){requestAnimationFrame(function(){
     var el=document.getElementById('acp-biplot');
     var el2=document.getElementById('acp-cercle');
