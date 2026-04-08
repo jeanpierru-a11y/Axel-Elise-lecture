@@ -16563,14 +16563,27 @@ function _renderTbRadar(container) {
   function ang(i){ return (i/n)*2*Math.PI-Math.PI/2; }
   function rx(i,r){ return cx+r*Math.cos(ang(i)); }
   function ry(i,r){ return cy+r*Math.sin(ang(i)); }
+  // ── Échelle adaptative : sugMax calculé sur les persos VISIBLES uniquement ──
+  var rawMax=0;
+  persos.forEach(function(p){
+    var sc=scoresMap[p.id];
+    KEYS.forEach(function(k){ var v=+(sc[k]||0); if(v>rawMax) rawMax=v; });
+  });
+  // Arrondir au multiple de 5 supérieur avec 12% de marge
+  var sugMax=Math.max(5, Math.ceil(rawMax*1.12/5)*5);
+
   function poly(sc){
-    return KEYS.map(function(k,i){ var v=(+(sc[k]||0))/100; return rx(i,R*v).toFixed(1)+','+ry(i,R*v).toFixed(1); }).join(' ');
+    return KEYS.map(function(k,i){ var v=(+(sc[k]||0))/sugMax; return rx(i,R*v).toFixed(1)+','+ry(i,R*v).toFixed(1); }).join(' ');
   }
 
   var s='<svg width="'+W+'" height="'+cH+'">';
-  [25,50,75,100].forEach(function(pct){
-    var pts=KEYS.map(function(_,i){ return rx(i,R*pct/100).toFixed(1)+','+ry(i,R*pct/100).toFixed(1); }).join(' ');
+  // Grille 4 anneaux à sugMax/4, sugMax/2, 3*sugMax/4, sugMax
+  [1,2,3,4].forEach(function(q){
+    var pct=q/4;
+    var pts=KEYS.map(function(_,i){ return rx(i,R*pct).toFixed(1)+','+ry(i,R*pct).toFixed(1); }).join(' ');
     s+='<polygon points="'+pts+'" fill="none" stroke="#E8E0F7" stroke-width="1"/>';
+    // Valeur sur l'anneau
+    s+='<text x="'+(cx+2)+'" y="'+(cy-R*pct+3).toFixed(1)+'" font-size="7.5" fill="#CCC">'+Math.round(sugMax*pct)+'</text>';
   });
   KEYS.forEach(function(k,i){
     s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+rx(i,R).toFixed(1)+'" y2="'+ry(i,R).toFixed(1)+'" stroke="#DDD" stroke-width="1"/>';
@@ -16581,7 +16594,7 @@ function _renderTbRadar(container) {
   persos.forEach(function(p){
     var clr=p.couleur||'#7B1FA2', sc=scoresMap[p.id];
     s+='<polygon points="'+poly(sc)+'" fill="'+clr+'" fill-opacity=".12" stroke="'+clr+'" stroke-width="2"/>';
-    KEYS.forEach(function(k,i){ var v=(+(sc[k]||0))/100; s+='<circle cx="'+rx(i,R*v).toFixed(1)+'" cy="'+ry(i,R*v).toFixed(1)+'" r="3" fill="'+clr+'"/>'; });
+    KEYS.forEach(function(k,i){ var v=(+(sc[k]||0))/sugMax; s+='<circle cx="'+rx(i,R*v).toFixed(1)+'" cy="'+ry(i,R*v).toFixed(1)+'" r="3" fill="'+clr+'"/>'; });
   });
   s+='</svg>';
 
