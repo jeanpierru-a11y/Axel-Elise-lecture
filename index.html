@@ -4436,7 +4436,7 @@ function sauvegarderBiblio() {
 // ════════════════════════════════════════════════════════
 // VERSION — incrémenter à chaque mise à jour des livres démo
 // ════════════════════════════════════════════════════════
-const DEMO_VERSION = 32; // v32 : matrices relations inter-personnages pour les 4 livres Élise
+const DEMO_VERSION = 33; // v33 : scores thématiques personnages Caligula (Plan de structure)
 const LIVRES_DEMO = [
   {
     id: 'liv_petit_prince_001',
@@ -5791,15 +5791,20 @@ const LIVRES_DEMO = [
     style: "Le style de Camus oscille entre la langue classique et le dialogue philosophique direct.\n\nCaligula parle en aphorismes\u00a0: \u2018Les hommes meurent et ils ne sont pas heureux.\u2019\n\nLa structure en 4 actes respecte la forme classique de la trag\u00e9die.",
     personnages: [
       {id:'ent_cal_01', nom:'Caligula', couleur:'#C62828',
-       notes:"Empereur romain. Apr\u00e8s la mort de sa s\u0153ur Drusilla, il d\u00e9couvre la v\u00e9rit\u00e9 absurde et d\u00e9cide d\u2019en tirer les cons\u00e9quences jusqu\u2019au bout."},
+       notes:"Empereur romain. Apr\u00e8s la mort de sa s\u0153ur Drusilla, il d\u00e9couvre la v\u00e9rit\u00e9 absurde et d\u00e9cide d\u2019en tirer les cons\u00e9quences jusqu\u2019au bout.",
+       scores:{amour:78,pouvoir:95,liberte:85,identite:91,societe:52,nature:38}},
       {id:'ent_cal_02', nom:'Cherea', couleur:'#1565C0',
-       notes:"Patricien, ancien ami. Il organise la conjuration non par morale mais par pragmatisme."},
+       notes:"Patricien, ancien ami. Il organise la conjuration non par morale mais par pragmatisme.",
+       scores:{amour:31,pouvoir:72,liberte:58,identite:54,societe:74,nature:17}},
       {id:'ent_cal_03', nom:'Caesonia', couleur:'#6A1B9A',
-       notes:"Ma\u00eetresse de Caligula. Elle l\u2019aime vraiment. Caligula la tue \u00e0 la fin."},
+       notes:"Ma\u00eetresse de Caligula. Elle l\u2019aime vraiment. Caligula la tue \u00e0 la fin.",
+       scores:{amour:82,pouvoir:42,liberte:22,identite:48,societe:31,nature:19}},
       {id:'ent_cal_04', nom:'Helicon', couleur:'#2E7D32',
-       notes:"Affranchi, serviteur fid\u00e8le. Figure de la complicit\u00e9 aveugle."},
+       notes:"Affranchi, serviteur fid\u00e8le. Figure de la complicit\u00e9 aveugle.",
+       scores:{amour:51,pouvoir:58,liberte:38,identite:43,societe:36,nature:22}},
       {id:'ent_cal_05', nom:'Scipio', couleur:'#E65100',
-       notes:"Jeune po\u00e8te, fils d\u2019une victime. Il comprend Caligula mieux que personne."}
+       notes:"Jeune po\u00e8te, fils d\u2019une victime. Il comprend Caligula mieux que personne.",
+       scores:{amour:62,pouvoir:24,liberte:61,identite:53,societe:19,nature:68}}
     ],
     matrice: {
       'ent_cal_01__ent_cal_02': 'Antagoniste',
@@ -15877,9 +15882,23 @@ function _renderACPCercle(container, pca) {
     svg.append('text').attr('x',cx+ux*ld).attr('y',cy-uy*ld+3.5).attr('text-anchor',anc).attr('font-size',9.5).attr('fill',LEX_COLORS[k]).attr('font-weight',700).text(THL[k]);
   });
   var axN=_acpAxisNames(pca.loadings);
-  svg.append('text').attr('x',cx+r+10).attr('y',cy+4).attr('font-size',11).attr('fill','#333').attr('font-weight',700).text('CP1');
-  svg.append('text').attr('x',cx-4).attr('y',cy-r-8).attr('text-anchor','middle').attr('font-size',11).attr('fill','#333').attr('font-weight',700).text('CP2');
-  svg.append('text').attr('x',cx).attr('y',H-4).attr('text-anchor','middle').attr('font-size',10).attr('fill','#444').attr('font-weight',600).text(axN.n1+' / '+axN.n2);
+  // ── Repère orthonormé bas-gauche — CP1 horizontal, CP2 vertical ──────────
+  var ox=12, oy=H-12, AL=38;
+  defs.append('marker').attr('id','cax-arr').attr('viewBox','0 -3 7 6')
+    .attr('refX',7).attr('refY',0).attr('markerWidth',4).attr('markerHeight',4)
+    .attr('orient','auto').append('path').attr('d','M0,-3L7,0L0,3').attr('fill','#555');
+  svg.append('line').attr('x1',ox).attr('y1',oy).attr('x2',ox+AL).attr('y2',oy)
+    .attr('stroke','#555').attr('stroke-width',1.5).attr('marker-end','url(#cax-arr)');
+  svg.append('line').attr('x1',ox).attr('y1',oy).attr('x2',ox).attr('y2',oy-AL)
+    .attr('stroke','#555').attr('stroke-width',1.5).attr('marker-end','url(#cax-arr)');
+  svg.append('text').attr('x',ox+AL+5).attr('y',oy+4)
+    .attr('font-size',8.5).attr('fill','#333').attr('font-weight',800)
+    .attr('stroke','#fff').attr('stroke-width',2.5).attr('paint-order','stroke')
+    .text(axN.n1);
+  svg.append('text').attr('x',ox+5).attr('y',oy-AL-4)
+    .attr('font-size',8.5).attr('fill','#333').attr('font-weight',800)
+    .attr('stroke','#fff').attr('stroke-width',2.5).attr('paint-order','stroke')
+    .text(axN.n2);
 }
 
 // ── Lecture croisée ───────────────────────────────────
@@ -15890,20 +15909,92 @@ function _renderACPStructure(container) {
   container.innerHTML='';
   var L=LIVRE_ACTIF;
   var persos=(L&&L.personnages)||[];
-  var hasScores=persos.some(function(p){return p.scores&&typeof p.scores.amour==='number';});
-  if(!hasScores||persos.length<2){
+  var withScores=persos.filter(function(p){return p.scores&&typeof p.scores.amour==='number';});
+  if(withScores.length<3){
     var ph=document.createElement('div');
     ph.style.cssText='text-align:center;color:#B39DDB;font-size:.67rem;padding:14px 10px;line-height:1.75;';
-    ph.innerHTML='<div style="font-size:1.3rem;margin-bottom:6px;">🧩</div>'
-      +'<b style="color:#7B1FA2;font-size:.72rem;">Plan de structure</b><br>'
-      +'<span style="color:#9E9E9E;">Positionnement des personnages<br>dans l\u2019espace th\u00e9matique</span><br><br>'
-      +'<span style="font-size:.60rem;color:#CE93D8;line-height:1.5;">'
-      +'Ajouter un champ <code>scores</code><br>'
-      +'\u00e0 chaque personnage pour activer</span>';
+    ph.innerHTML='<div style="font-size:1.4rem;margin-bottom:6px;">&#x1F9E9;</div>'
+      +'<b style="color:#7B1FA2;">Plan de structure</b><br>'
+      +'<span style="color:#9E9E9E;font-size:.62rem;">Scores th\u00e9matiques non disponibles</span>';
     container.appendChild(ph);
     return;
   }
-  // ACP sur personnages — à venir
+  // ── ACP sur les personnages ─────────────────────────────────────────────
+  var KEYS=LEX_KEYS;
+  var trP=withScores.map(function(p){
+    var row={pageDebut:0};
+    KEYS.forEach(function(k){row[k]=+(p.scores[k]||0);});
+    return row;
+  });
+  var pca=_acpCompute(trP);
+  var axN=_acpAxisNames(pca.loadings);
+  var W=container.clientWidth||380, H=container.clientHeight||260;
+  if(W<30||H<30) return;
+  var ML=16,MR=10,MT=10,MB=42,CW=W-ML-MR,CH=H-MT-MB;
+  var coords=pca.coords;
+  var DOT_R=8,LOFF=16,MIN_LL=16,MIN_LD=21;
+  var FONT_LBL=11,FONT_AX=9;
+  var xE=d3.extent(coords.map(function(c){return c[0];}));
+  var yE=d3.extent(coords.map(function(c){return c[1];}));
+  var xP=Math.max((xE[1]-xE[0])*0.44,0.8),yP=Math.max((yE[1]-yE[0])*0.44,0.8);
+  var scX=d3.scaleLinear().domain([xE[0]-xP,xE[1]+xP]).range([0,CW]);
+  var scY=d3.scaleLinear().domain([yE[0]-yP,yE[1]+yP]).range([CH,0]);
+  var cx0=scX(0),cy0=scY(0);
+  container.innerHTML='';
+  var svg=d3.select(container).append('svg').attr('width',W).attr('height',H);
+  var g=svg.append('g').attr('transform','translate('+ML+','+MT+')');
+  g.append('line').attr('x1',0).attr('y1',cy0).attr('x2',CW).attr('y2',cy0).attr('stroke','#DADADA').attr('stroke-width',1.2);
+  g.append('line').attr('x1',cx0).attr('y1',0).attr('x2',cx0).attr('y2',CH).attr('stroke','#DADADA').attr('stroke-width',1.2);
+  var pts=coords.map(function(co,i){
+    var p=withScores[i],px=scX(co[0]),py=scY(co[1]);
+    return {px:px,py:py,naturalY:py,y:py,
+            lx:px+(px>=CW/2?LOFF:-LOFF),
+            anchor:px>=CW/2?'start':'end',
+            label:p.nom,clr:p.couleur||'#7B1FA2',idx:i};
+  });
+  function sepS(labels,allDots){
+    for(var pass=0;pass<40;pass++){
+      var moved=false;
+      var byY=[].concat(labels).sort(function(a,b){return a.y-b.y;});
+      for(var ii=0;ii<byY.length-1;ii++){
+        var la=byY[ii],lb=byY[ii+1],ddy=lb.y-la.y;
+        if(ddy<MIN_LL){var push=(MIN_LL-ddy)/2+0.5;la.y-=push;lb.y+=push;moved=true;}
+      }
+      labels.forEach(function(lbl){
+        allDots.forEach(function(dot){
+          if(dot.idx===lbl.idx)return;
+          var ddx=lbl.lx-dot.px,ddy2=lbl.y-dot.py,dd=Math.sqrt(ddx*ddx+ddy2*ddy2);
+          if(dd<MIN_LD&&dd>0.1){var push=MIN_LD-dd;lbl.y+=(Math.abs(ddy2)>0.1?(ddy2/dd)*push:push);moved=true;}
+        });
+      });
+      labels.forEach(function(l){l.y=Math.max(10,Math.min(CH-10,l.y));});
+      if(!moved)break;
+    }
+  }
+  sepS(pts.filter(function(p){return p.anchor==='start';}),pts);
+  sepS(pts.filter(function(p){return p.anchor==='end';}),pts);
+  pts.forEach(function(p){
+    if(Math.abs(p.y-p.naturalY)>5){
+      var ddx=p.lx-p.px,ddy=p.y-p.naturalY,dist=Math.sqrt(ddx*ddx+ddy*ddy)||1;
+      g.append('line').attr('x1',p.px+(ddx/dist)*(DOT_R+1)).attr('y1',p.naturalY+(ddy/dist)*(DOT_R+1))
+        .attr('x2',p.lx).attr('y2',p.y).attr('stroke','#CCC').attr('stroke-width',1);
+    }
+    g.append('circle').attr('cx',p.px).attr('cy',p.naturalY).attr('r',DOT_R)
+      .attr('fill',p.clr+'33').attr('stroke',p.clr).attr('stroke-width',3);
+    g.append('text').attr('x',p.lx).attr('y',p.y+FONT_LBL*0.4)
+      .attr('text-anchor',p.anchor).attr('font-size',FONT_LBL).attr('font-weight',700)
+      .attr('fill',p.clr).attr('stroke','#fff').attr('stroke-width',3).attr('paint-order','stroke')
+      .text(p.label);
+  });
+  svg.append('text').attr('x',ML+CW/2).attr('y',H-4)
+    .attr('text-anchor','middle').attr('font-size',FONT_AX).attr('fill','#555').attr('font-weight',700)
+    .text(axN.n1+' ('+pca.explained[0]+'%)');
+  svg.append('text').attr('x',10).attr('y',MT+CH/2)
+    .attr('text-anchor','middle').attr('transform','rotate(-90,10,'+(MT+CH/2)+')')
+    .attr('font-size',FONT_AX).attr('fill','#555').attr('font-weight',700)
+    .text(axN.n2+' ('+pca.explained[1]+'%)');
+  svg.append('text').attr('x',W-4).attr('y',12).attr('text-anchor','end')
+    .attr('font-size',8).attr('fill','#BDBDBD').text('Total '+(pca.explained[0]+pca.explained[1])+'%');
 }
 
 // ── Lecture croisée — cartes pédagogiques (colonne 3, sans mini-biplot) ─────
