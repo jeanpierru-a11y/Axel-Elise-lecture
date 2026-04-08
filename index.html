@@ -2718,6 +2718,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
         <button class="ni-q-hdr-alpha" id="ni-th-pairs-btn" onclick="_q3TogglePaires()" title="Comparer les paires de thèmes" style="display:none;margin-left:10px;">Paires</button>
         <button class="ni-q-hdr-alpha" id="ni-th-acp-btn" onclick="_q3ToggleACP()" title="Analyse Augmentée — ACP des profils thématiques" style="display:none;margin-left:6px;">🔬 ACP</button>
         <button class="ni-q-hdr-alpha" id="ni-th-pdf-btn" onclick="genererPDF_lex()" title="Exporter la toile en PDF" style="display:none;margin-left:10px;">PDF toile</button>
+        <button class="ni-q-hdr-alpha" id="ni-th-pairs-perso-btn" onclick="_q3TogglePairesPerso()" title="Comparer les paires de personnages" style="display:none;margin-left:6px;">👥 Paires perso</button>
         <button class="ni-q-hdr-alpha" id="ni-th-xlsx-btn" onclick="exporterLexiqueExcel()" title="Exporter le lexique en Excel (scores + champs + phases)" style="display:none;margin-left:6px;">📊 Excel</button>
         <button class="ni-q-hdr-alpha" id="ni-th-json-btn" onclick="exporterJSONComplet()" title="Exporter lexique + scores personnages en JSON (sauvegarde complète)" style="display:none;margin-left:6px;">💾 JSON</button>
         <input type="file" id="ni-th-json-import" accept=".json" style="display:none;" onchange="importerJSONComplet(this)">
@@ -2901,6 +2902,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 
           <!-- ▌ Paires — hors de ni-q-th-global, enfant direct de ni-q-th-haslex -->
           <div id="ni-q-th-paires" style="display:none;flex:1;overflow-y:auto;min-height:0;padding:4px 6px;flex-direction:column;gap:7px;"></div>
+          <div id="ni-q-th-paires-perso" style="display:none;flex:1;overflow-y:auto;min-height:0;padding:4px 6px;flex-direction:column;gap:7px;"></div>
 
           <!-- ■ ANALYSE AUGMENTÉE ACP — vue simultanée 3 colonnes -->
           <div id="ni-q-th-acp" style="display:none;flex:1;flex-direction:column;min-height:0;overflow:hidden;background:#fff;">
@@ -2913,25 +2915,25 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
               <input type="number" id="acp-ph-to" min="1" max="8" value="8" style="width:32px;font-size:.67rem;text-align:center;border:1px solid #CE93D8;border-radius:4px;padding:1px 2px;" onchange="_renderACPWidget()">
             </div>
             <!-- Ligne 1 : Plan de mouvement | Plan de structure -->
-            <div style="flex:0 0 52%;display:flex;min-height:0;overflow:hidden;border-bottom:2px solid #EDE7F6;">
-              <div style="flex:1;display:flex;flex-direction:column;min-width:0;border-right:2px solid #EDE7F6;">
+            <div style="flex:0 0 30vh;display:flex;min-height:0;overflow:hidden;border-bottom:2px solid #EDE7F6;">
+              <div style="flex:1;display:flex;flex-direction:column;min-width:0;border-right:2px solid #9C27B0;background:#FAFAFE;">
                 <div class="acp-col-hdr">🏃 Plan de mouvement <span style="font-weight:400;font-size:.59rem;">(phases)</span></div>
                 <div id="acp-biplot" style="flex:1;min-height:0;overflow:hidden;display:flex;"></div>
               </div>
-              <div style="flex:1;display:flex;flex-direction:column;min-width:0;">
+              <div style="flex:1;display:flex;flex-direction:column;min-width:0;background:#FAFAFE;">
                 <div class="acp-col-hdr">🧩 Plan de structure <span style="font-weight:400;font-size:.59rem;">(personnages)</span></div>
                 <div id="acp-structure" style="flex:1;min-height:0;overflow:hidden;display:flex;align-items:center;justify-content:center;"></div>
               </div>
             </div>
             <!-- Ligne 2 : Cercle des corrélations | Heatmap -->
             <div style="flex:1;display:flex;min-height:0;overflow:hidden;">
-              <div style="flex:1;display:flex;flex-direction:column;min-width:0;border-right:2px solid #EDE7F6;">
+              <div style="flex:1;display:flex;flex-direction:column;min-width:0;border-right:2px solid #9C27B0;background:#FDF8FF;">
                 <div class="acp-col-hdr">🎯 Cercle des corrélations</div>
                 <div id="acp-cercle" style="flex:1;min-height:0;overflow:hidden;display:flex;align-items:center;justify-content:center;"></div>
               </div>
-              <div style="flex:1;display:flex;flex-direction:column;min-width:0;">
+              <div style="flex:1;display:flex;flex-direction:column;min-width:0;background:#F8FCF8;">
                 <div class="acp-col-hdr">🌡️ Heatmap thématique</div>
-                <div id="acp-heatmap" style="flex:1;min-height:0;overflow:auto;padding:4px 6px;background:#FAFAFA;"></div>
+                <div id="acp-heatmap" style="flex:1;min-height:0;overflow:auto;padding:4px 6px;"></div>
               </div>
             </div>
           </div>
@@ -13745,6 +13747,10 @@ function updateQ3LexViz() {
   if(pairsBtn) pairsBtn.style.display=(lex&&lex.paires&&lex.paires.length)?'inline':'none';
   var acpBtn=document.getElementById('ni-th-acp-btn');
   if(acpBtn) acpBtn.style.display=(lex&&lex.tranches&&lex.tranches.length>=3)?'inline':'none';
+  var pairsPersoBtn=document.getElementById('ni-th-pairs-perso-btn');
+  if(pairsPersoBtn){var persos=(LIVRE_ACTIF&&LIVRE_ACTIF.personnages)||[];
+    var hasSc=persos.filter(function(p){return p.scores&&typeof p.scores.amour==='number';}).length>=3;
+    pairsPersoBtn.style.display=hasSc?'inline':'none';}
   // Bouton comptage : visible si champLexical défini
   var countBtn=document.getElementById('ni-th-count-btn');
   if(countBtn) countBtn.style.display=(lex&&lex.champLexical)?'inline':'none';
@@ -15945,8 +15951,8 @@ function _renderACPStructure(container) {
   if(W<30||H<30) return;
   var ML=16,MR=10,MT=10,MB=42,CW=W-ML-MR,CH=H-MT-MB;
   var coords=pca.coords;
-  var DOT_R=8,LOFF=16,MIN_LL=16,MIN_LD=21;
-  var FONT_LBL=11,FONT_AX=9;
+  var DOT_R=8,LOFF=18,MIN_LL=17,MIN_LD=22;
+  var FONT_LBL=13,FONT_AX=11;
   var xE=d3.extent(coords.map(function(c){return c[0];}));
   var yE=d3.extent(coords.map(function(c){return c[1];}));
   var xP=Math.max((xE[1]-xE[0])*0.44,0.8),yP=Math.max((yE[1]-yE[0])*0.44,0.8);
@@ -16198,6 +16204,108 @@ function importerJSONComplet(input) {
     input.value = '';
   };
   reader.readAsText(file);
+}
+
+// ── Paires personnages ────────────────────────────────────────────────────────
+
+var _q3PairesPersoOpen = false;
+
+function _q3TogglePairesPerso() {
+  if(_q3AcpOpen){ _q3AcpOpen=false; var ab=document.getElementById('ni-th-acp-btn'); if(ab)ab.classList.remove('active'); var ae=document.getElementById('ni-q-th-acp'); if(ae)ae.style.display='none'; }
+  if(_q3PairesOpen){ _q3PairesOpen=false; var pb=document.getElementById('ni-th-pairs-btn'); if(pb)pb.classList.remove('active'); var pe=document.getElementById('ni-q-th-paires'); if(pe)pe.style.display='none'; }
+  _q3PairesPersoOpen = !_q3PairesPersoOpen;
+  var glb=document.getElementById('ni-q-th-global');
+  var pan=document.getElementById('ni-q-th-paires-perso');
+  var mod=document.getElementById('ni-q-th-mode');
+  var btn=document.getElementById('ni-th-pairs-perso-btn');
+  if(glb) glb.style.display=_q3PairesPersoOpen?'none':'flex';
+  if(mod) mod.style.display=_q3PairesPersoOpen?'none':'block';
+  if(pan){ pan.style.display=_q3PairesPersoOpen?'flex':'none'; if(_q3PairesPersoOpen) _renderPairesPerso(pan); }
+  if(btn) btn.classList.toggle('active',_q3PairesPersoOpen);
+  if(!_q3PairesPersoOpen) updateQ3LexViz();
+}
+
+function _renderPairesPerso(container) {
+  container.innerHTML='';
+  var L=LIVRE_ACTIF; if(!L) return;
+  var persos=(L.personnages||[]).filter(function(p){return p.scores&&typeof p.scores.amour==='number';});
+  var KEYS=LEX_KEYS;
+  var THL={amour:'Amour',pouvoir:'Pouvoir',liberte:'Lib\u00e9rt\u00e9',identite:'Identit\u00e9',societe:'Soci\u00e9t\u00e9',nature:'Nature'};
+  if(persos.length<2){
+    container.innerHTML='<div style="padding:12px;font-size:.72rem;color:#999;">Au moins 2 personnages avec scores requis.</div>';
+    return;
+  }
+  // Construire toutes les paires de personnages
+  var pairs=[];
+  for(var i=0;i<persos.length-1;i++) for(var j=i+1;j<persos.length;j++) pairs.push([persos[i],persos[j]]);
+
+  pairs.forEach(function(pair) {
+    var pA=pair[0], pB=pair[1];
+    var block=document.createElement('div');
+    block.style.cssText='background:#fff;border-radius:9px;border:1px solid #E8E0F8;box-shadow:0 1px 4px rgba(74,20,140,.07);padding:8px 10px 6px;flex:0 0 auto;';
+    // En-tête
+    var hdr=document.createElement('div');
+    hdr.style.cssText='display:flex;align-items:center;gap:8px;margin-bottom:4px;';
+    hdr.innerHTML='<span style="font-size:.73rem;font-weight:800;color:'+pA.couleur+'">'+pA.nom+'</span>'
+      +'<span style="font-size:.65rem;color:#aaa;">/</span>'
+      +'<span style="font-size:.73rem;font-weight:800;color:'+pB.couleur+'">'+pB.nom+'</span>';
+    block.appendChild(hdr);
+    // Scatter radar en SVG
+    var W=420, H=90, ML=28, MR=6, MT=12, MB=20, CW=W-ML-MR, CH=H-MT-MB;
+    var maxV=100;
+    var svg='<svg width="'+W+'" height="'+H+'" style="display:block;max-width:100%;">';
+    // Fonds thèmes
+    KEYS.forEach(function(k,i){
+      var x=ML+i*(CW/KEYS.length), w2=CW/KEYS.length;
+      svg+='<rect x="'+x.toFixed(1)+'" y="'+MT+'" width="'+w2.toFixed(1)+'" height="'+CH+'" fill="'+LEX_BG[k]+'" opacity=".6"/>';
+    });
+    // Axe 0 et 100
+    svg+='<line x1="'+ML+'" y1="'+(MT+CH)+'" x2="'+(ML+CW)+'" y2="'+(MT+CH)+'" stroke="#ddd" stroke-width="1"/>';
+    svg+='<line x1="'+ML+'" y1="'+MT+'" x2="'+(ML+CW)+'" y2="'+MT+'" stroke="#eee" stroke-width="1" stroke-dasharray="3,3"/>';
+    // Mi-hauteur
+    svg+='<line x1="'+ML+'" y1="'+(MT+CH/2)+'" x2="'+(ML+CW)+'" y2="'+(MT+CH/2)+'" stroke="#eee" stroke-width="1" stroke-dasharray="3,3"/>';
+    // Courbe A
+    var ptA=KEYS.map(function(k,i){var x=ML+(i+0.5)*(CW/KEYS.length);var y=MT+(1-(+(pA.scores[k]||0))/maxV)*CH;return {x:x,y:y};});
+    var ptB=KEYS.map(function(k,i){var x=ML+(i+0.5)*(CW/KEYS.length);var y=MT+(1-(+(pB.scores[k]||0))/maxV)*CH;return {x:x,y:y};});
+    // Croisements entre A et B
+    var crossX=[];
+    for(var ci=0;ci<KEYS.length-1;ci++){
+      var d1=+(pA.scores[KEYS[ci]]||0)-(+(pB.scores[KEYS[ci]]||0));
+      var d2=+(pA.scores[KEYS[ci+1]]||0)-(+(pB.scores[KEYS[ci+1]]||0));
+      if(d1*d2<0){
+        var t2=Math.abs(d1)/(Math.abs(d1)+Math.abs(d2));
+        var cx2=ptA[ci].x+(ptA[ci+1].x-ptA[ci].x)*t2;
+        var cy2=ptA[ci].y+(ptA[ci+1].y-ptA[ci].y)*t2;
+        crossX.push({x:cx2,y:cy2});
+      }
+    }
+    var polyA=ptA.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ');
+    var polyB=ptB.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ');
+    svg+='<polyline points="'+polyA+'" fill="none" stroke="'+pA.couleur+'" stroke-width="2.5"/>';
+    svg+='<polyline points="'+polyB+'" fill="none" stroke="'+pB.couleur+'" stroke-width="2" stroke-dasharray="6,3"/>';
+    // Points
+    ptA.forEach(function(p){svg+='<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="3.5" fill="'+pA.couleur+'"/>';});
+    ptB.forEach(function(p){svg+='<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="3.5" fill="'+pB.couleur+'" stroke="#fff" stroke-width="1.5"/>';});
+    // Croisements
+    crossX.forEach(function(p){svg+='<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="5" fill="none" stroke="#888" stroke-width="1.5"/>';});
+    // Labels axes X
+    KEYS.forEach(function(k,i){
+      var x=ML+(i+0.5)*(CW/KEYS.length);
+      svg+='<text x="'+x.toFixed(1)+'" y="'+(H-3)+'" text-anchor="middle" font-size="8.5" fill="'+LEX_COLORS[k]+'" font-weight="700">'+THL[k]+'</text>';
+    });
+    svg+='</svg>';
+    var svgEl=document.createElement('div'); svgEl.innerHTML=svg; block.appendChild(svgEl);
+    // Badge croisements + mini analyse
+    var nCross=crossX.length;
+    var badge=document.createElement('div');
+    badge.style.cssText='display:flex;align-items:center;gap:6px;margin-top:3px;';
+    badge.innerHTML='<span style="font-size:.64rem;color:#888;">'+(nCross===0?'aucun croisement':nCross+' croisement'+(nCross>1?'s':''))+' &nbsp;·&nbsp;</span>';
+    // Thème où l'écart est le plus grand
+    var maxDiff=0, maxK=''; KEYS.forEach(function(k){var d=Math.abs((+(pA.scores[k]||0))-(+(pB.scores[k]||0)));if(d>maxDiff){maxDiff=d;maxK=k;}});
+    if(maxK){badge.innerHTML+='<span style="font-size:.64rem;color:#555;">Écart max : <span style="color:'+LEX_COLORS[maxK]+';font-weight:800">'+THL[maxK]+'</span> (+'+maxDiff+')</span>';}
+    block.appendChild(badge);
+    container.appendChild(block);
+  });
 }
 
 </script>
