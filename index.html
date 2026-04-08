@@ -2908,25 +2908,29 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
               <input type="number" id="acp-ph-from" min="1" max="8" value="1" style="width:32px;font-size:.67rem;text-align:center;border:1px solid #CE93D8;border-radius:4px;padding:1px 2px;" onchange="_renderACPWidget()">
               <span style="font-size:.61rem;color:#7B1FA2;flex-shrink:0;">→</span>
               <input type="number" id="acp-ph-to" min="1" max="8" value="8" style="width:32px;font-size:.67rem;text-align:center;border:1px solid #CE93D8;border-radius:4px;padding:1px 2px;" onchange="_renderACPWidget()">
-              <button onclick="_acpToggleHeatmap()" title="Heatmap thématique" style="flex-shrink:0;font-size:.62rem;background:#EDE7F6;border:1px solid #CE93D8;border-radius:4px;padding:1px 6px;cursor:pointer;color:#6A1B9A;font-weight:700;">🌡️ Heatmap</button>
             </div>
-            <!-- 3 colonnes simultanées -->
-            <div style="flex:0 0 38vh;display:flex;min-height:0;overflow:hidden;">
+            <!-- Ligne 1 : Plan de mouvement | Plan de structure -->
+            <div style="flex:0 0 52%;display:flex;min-height:0;overflow:hidden;border-bottom:2px solid #EDE7F6;">
               <div style="flex:1;display:flex;flex-direction:column;min-width:0;border-right:2px solid #EDE7F6;">
-                <div class="acp-col-hdr">📐 Plan factoriel</div>
+                <div class="acp-col-hdr">🏃 Plan de mouvement <span style="font-weight:400;font-size:.59rem;">(phases)</span></div>
                 <div id="acp-biplot" style="flex:1;min-height:0;overflow:hidden;display:flex;"></div>
               </div>
-              <div style="flex:0 0 34%;display:flex;flex-direction:column;min-width:0;border-right:2px solid #EDE7F6;">
+              <div style="flex:1;display:flex;flex-direction:column;min-width:0;">
+                <div class="acp-col-hdr">🧩 Plan de structure <span style="font-weight:400;font-size:.59rem;">(personnages)</span></div>
+                <div id="acp-structure" style="flex:1;min-height:0;overflow:hidden;display:flex;align-items:center;justify-content:center;"></div>
+              </div>
+            </div>
+            <!-- Ligne 2 : Cercle des corrélations | Heatmap -->
+            <div style="flex:1;display:flex;min-height:0;overflow:hidden;">
+              <div style="flex:1;display:flex;flex-direction:column;min-width:0;border-right:2px solid #EDE7F6;">
                 <div class="acp-col-hdr">🎯 Cercle des corrélations</div>
                 <div id="acp-cercle" style="flex:1;min-height:0;overflow:hidden;display:flex;align-items:center;justify-content:center;"></div>
               </div>
-              <div style="flex:0 0 27%;display:flex;flex-direction:column;min-width:0;">
-                <div class="acp-col-hdr">📖 Lecture croisée</div>
-                <div id="acp-lecture" style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;"></div>
+              <div style="flex:1;display:flex;flex-direction:column;min-width:0;">
+                <div class="acp-col-hdr">🌡️ Heatmap thématique</div>
+                <div id="acp-heatmap" style="flex:1;min-height:0;overflow:auto;padding:4px 6px;background:#FAFAFA;"></div>
               </div>
             </div>
-            <!-- Heatmap — cachée par défaut, s'affiche sous les 3 colonnes -->
-            <div id="acp-heatmap" style="flex:0 0 auto;display:none;border-top:2px solid #EDE7F6;overflow:auto;padding:4px 6px;max-height:150px;background:#FAFAFA;"></div>
           </div>
 
           <!-- ▌ OBJET 3 — Source de données & Traitement -->
@@ -15758,8 +15762,6 @@ function _renderACPBiplot(container, pca, phases, tranches) {
   var scY=d3.scaleLinear().domain([yE[0]-yP,yE[1]+yP]).range([CH,0]);
   var cx0=scX(0), cy0=scY(0);
 
-  // ── Flèches : longueur fixe en pixels (ne dépend pas de l'échelle des points) ──
-  var arrowPx=Math.min(CW,CH)*0.36;
 
   var axN=_acpAxisNames(loadings);
   var PH_C=LEX_PH_LC||['#7C4DFF','#00BCD4','#FF6F00','#4CAF50','#E91E63','#2196F3','#FF5722','#795548'];
@@ -15773,18 +15775,6 @@ function _renderACPBiplot(container, pca, phases, tranches) {
   // Grille
   g.append('line').attr('x1',0).attr('y1',cy0).attr('x2',CW).attr('y2',cy0).attr('stroke','#DADADA').attr('stroke-width',1.2);
   g.append('line').attr('x1',cx0).attr('y1',0).attr('x2',cx0).attr('y2',CH).attr('stroke','#DADADA').attr('stroke-width',1.2);
-
-  // Pas de flèches loading dans le Plan factoriel — voir Cercle des corrélations
-  LEX_KEYS.forEach(function(k,i){
-    var lx=loadings[i][0], ly=loadings[i][1];
-    var norm=Math.sqrt(lx*lx+ly*ly)||1;
-    var ux=lx/norm, uy=ly/norm;
-    var ax=cx0+ux*norm*arrowPx, ay=cy0-uy*norm*arrowPx;
-    // Flèche très légère (guide directionnel subtil, sans marker)
-    g.append('line').attr('x1',cx0).attr('y1',cy0).attr('x2',ax).attr('y2',ay)
-      .attr('stroke',LEX_COLORS[k]).attr('stroke-width',0.8).attr('stroke-dasharray','3,4')
-      .attr('opacity',0.35);
-  });
 
   // Points + labels
   var pts=coords.map(function(co,i){
@@ -15815,6 +15805,22 @@ function _renderACPBiplot(container, pca, phases, tranches) {
   }
   separateBiplot(pts.filter(function(p){return p.anchor==='start';}),pts);
   separateBiplot(pts.filter(function(p){return p.anchor==='end';}),pts);
+
+  // ── Trajectoire chronologique ①→②→③→… ──────────────────
+  svg.append('defs').append('marker').attr('id','traj-arr')
+    .attr('viewBox','0 -4 8 8').attr('refX',7).attr('refY',0)
+    .attr('markerWidth',5).attr('markerHeight',5).attr('orient','auto')
+    .append('path').attr('d','M0,-4L8,0L0,4').attr('fill','#7B1FA2');
+  for(var ti=0;ti<pts.length-1;ti++){
+    var pa=pts[ti], pb=pts[ti+1];
+    var tdx=pb.px-pa.px, tdy=pb.naturalY-pa.naturalY;
+    var td=Math.sqrt(tdx*tdx+tdy*tdy)||1;
+    var tsx=pa.px+(tdx/td)*(DOT_R+2), tsy=pa.naturalY+(tdy/td)*(DOT_R+2);
+    var tex=pb.px-(tdx/td)*(DOT_R+7), tey=pb.naturalY-(tdy/td)*(DOT_R+7);
+    g.append('line').attr('x1',tsx).attr('y1',tsy).attr('x2',tex).attr('y2',tey)
+      .attr('stroke','#9C27B0').attr('stroke-width',1.8).attr('opacity',0.55)
+      .attr('marker-end','url(#traj-arr)');
+  }
 
   pts.forEach(function(p){
     if(Math.abs(p.y-p.naturalY)>6){
@@ -15877,6 +15883,28 @@ function _renderACPCercle(container, pca) {
 }
 
 // ── Lecture croisée ───────────────────────────────────
+
+// ── Plan de structure — personnages dans l'espace thématique ────────────────
+
+function _renderACPStructure(container) {
+  container.innerHTML='';
+  var L=LIVRE_ACTIF;
+  var persos=(L&&L.personnages)||[];
+  var hasScores=persos.some(function(p){return p.scores&&typeof p.scores.amour==='number';});
+  if(!hasScores||persos.length<2){
+    var ph=document.createElement('div');
+    ph.style.cssText='text-align:center;color:#B39DDB;font-size:.67rem;padding:14px 10px;line-height:1.75;';
+    ph.innerHTML='<div style="font-size:1.3rem;margin-bottom:6px;">🧩</div>'
+      +'<b style="color:#7B1FA2;font-size:.72rem;">Plan de structure</b><br>'
+      +'<span style="color:#9E9E9E;">Positionnement des personnages<br>dans l\u2019espace th\u00e9matique</span><br><br>'
+      +'<span style="font-size:.60rem;color:#CE93D8;line-height:1.5;">'
+      +'Ajouter un champ <code>scores</code><br>'
+      +'\u00e0 chaque personnage pour activer</span>';
+    container.appendChild(ph);
+    return;
+  }
+  // ACP sur personnages — à venir
+}
 
 // ── Lecture croisée — cartes pédagogiques (colonne 3, sans mini-biplot) ─────
 
@@ -15983,12 +16011,12 @@ function _renderACPWidget() {
   requestAnimationFrame(function(){requestAnimationFrame(function(){
     var el=document.getElementById('acp-biplot');
     var el2=document.getElementById('acp-cercle');
-    var el3=document.getElementById('acp-lecture');
+    var el3=document.getElementById('acp-structure');
+    var hm=document.getElementById('acp-heatmap');
     if(el) _renderACPBiplot(el,pca,filtPh,filtered);
     if(el2) _renderACPCercle(el2,pca);
-    if(el3) _renderACPLecture(el3,pca,filtPh,filtered);
-    var hm=document.getElementById('acp-heatmap');
-    if(hm&&hm.style.display!=='none') _renderACPHeatmap(hm,lex.phases,filtered);
+    if(el3) _renderACPStructure(el3);
+    if(hm) _renderACPHeatmap(hm,lex.phases,filtered);
   });});
 }
 
