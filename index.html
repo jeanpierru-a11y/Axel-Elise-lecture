@@ -15735,17 +15735,17 @@ var _acpPhFrom = 1;
 var _acpPhTo   = 8;
 
 function _q3ToggleACP() {
+  // Fermer tous les autres panels exclusifs
+  if(_q3PairesOpen){ _q3PairesOpen=false; var pb=document.getElementById('ni-th-pairs-btn'); if(pb)pb.classList.remove('active'); var pe=document.getElementById('ni-q-th-paires'); if(pe)pe.style.display='none'; }
+  if(_q3PairesPersoOpen){ _q3PairesPersoOpen=false; var ppb=document.getElementById('ni-th-pairs-perso-btn'); if(ppb)ppb.classList.remove('active'); var ppe=document.getElementById('ni-q-th-paires-perso'); if(ppe)ppe.style.display='none'; }
+  if(_q3TbPersoOpen){ _q3TbPersoOpen=false; var tb=document.getElementById('ni-th-tb-perso-btn'); if(tb)tb.classList.remove('active'); var tbp=document.getElementById('ni-q-th-tableau-perso'); if(tbp)tbp.style.display='none'; }
   _q3AcpOpen = !_q3AcpOpen;
   var glb = document.getElementById('ni-q-th-global');
-  var pai = document.getElementById('ni-q-th-paires');
   var acp = document.getElementById('ni-q-th-acp');
   var mod = document.getElementById('ni-q-th-mode');
   var btn = document.getElementById('ni-th-acp-btn');
-  var paiBtn = document.getElementById('ni-th-pairs-btn');
   if (_q3AcpOpen) {
-    if (_q3PairesOpen) { _q3PairesOpen=false; if(paiBtn) paiBtn.classList.remove('active'); }
     if (glb) glb.style.display='none';
-    if (pai) pai.style.display='none';
     if (mod) mod.style.display='none';
     if (acp) acp.style.display='flex';
     _renderACPWidget();
@@ -15805,17 +15805,21 @@ function _acpCompute(tranches) {
 }
 
 function _acpAxisNames(loadings) {
+  // Labels lisibles dans le sens de l'axe : MinThème → MaxThème
+  // Le label MinThème est sur le côté négatif (gauche/bas), MaxThème sur le côté positif (droite/haut)
   var TL={amour:'Amour',pouvoir:'Pouvoir',liberte:'Libert\u00e9',identite:'Identit\u00e9',societe:'Soci\u00e9t\u00e9',nature:'Nature'};
   var KEYS=LEX_KEYS;
   var l1=loadings.map(function(l){return l[0];});
   var same1=l1.every(function(v){return v>=0;})||l1.every(function(v){return v<=0;});
   var n1, max1=0, min1=0;
   l1.forEach(function(v,i){if(v>l1[max1])max1=i; if(v<l1[min1])min1=i;});
-  n1=same1?'Volume de pr\u00e9sence':TL[KEYS[max1]]+' \u2194 '+TL[KEYS[min1]];
+  // Min → Max : lire de gauche à droite = aller dans le sens de la flèche du repère
+  n1=same1?'Volume de pr\u00e9sence':TL[KEYS[min1]]+' \u2192 '+TL[KEYS[max1]];
   var l2=loadings.map(function(l){return l[1];});
   var max2=0,min2=0;
   l2.forEach(function(v,i){if(v>l2[max2])max2=i; if(v<l2[min2])min2=i;});
-  var n2=TL[KEYS[max2]]+' \u2194 '+TL[KEYS[min2]];
+  // Idem pour axe vertical : Min en bas → Max en haut
+  var n2=TL[KEYS[min2]]+' \u2192 '+TL[KEYS[max2]];
   return {n1:n1,n2:n2};
 }
 
@@ -15919,22 +15923,28 @@ function _renderACPBiplot(container, pca, phases, tranches) {
       .attr('paint-order','stroke').text(p.label);
   });
 
-  // Repère bas-gauche — CP1 horizontal, CP2 vertical
-  var bAL=36, box=svg.append('defs');
-  box.append('marker').attr('id','bipx-arr').attr('viewBox','0 -3 7 6')
+  // Repère GAUCHE — ancré dans la marge gauche du SVG (x=4), centré verticalement sur la zone
+  var bAL=28;
+  var rox=4, roy=MT+CH/2; // centre vertical de la zone de dessin
+  var defs2=svg.append('defs');
+  defs2.append('marker').attr('id','bipx-arr').attr('viewBox','0 -3 7 6')
     .attr('refX',7).attr('refY',0).attr('markerWidth',4).attr('markerHeight',4)
     .attr('orient','auto').append('path').attr('d','M0,-3L7,0L0,3').attr('fill','#555');
-  svg.append('line').attr('x1',ML).attr('y1',H-8).attr('x2',ML+bAL).attr('y2',H-8)
+  // Flèche horizontale → CP1 (vers la droite)
+  svg.append('line').attr('x1',rox).attr('y1',roy).attr('x2',rox+bAL).attr('y2',roy)
     .attr('stroke','#555').attr('stroke-width',1.5).attr('marker-end','url(#bipx-arr)');
-  svg.append('line').attr('x1',ML).attr('y1',H-8).attr('x2',ML).attr('y2',H-8-bAL)
+  // Flèche verticale ↑ CP2 (vers le haut)
+  svg.append('line').attr('x1',rox).attr('y1',roy).attr('x2',rox).attr('y2',roy-bAL)
     .attr('stroke','#555').attr('stroke-width',1.5).attr('marker-end','url(#bipx-arr)');
-  svg.append('text').attr('x',ML+bAL+4).attr('y',H-5)
-    .attr('font-size',8.5).attr('fill','#333').attr('font-weight',800)
-    .attr('stroke','#fff').attr('stroke-width',2.5).attr('paint-order','stroke')
+  // Label CP1 — à droite de la flèche horizontale, sur une ligne
+  svg.append('text').attr('x',rox+bAL+3).attr('y',roy+4)
+    .attr('font-size',8).attr('fill','#555').attr('font-weight',800)
+    .attr('stroke','#fff').attr('stroke-width',2).attr('paint-order','stroke')
     .text(axN.n1+' ('+pca.explained[0]+'%)');
-  svg.append('text').attr('x',ML+4).attr('y',H-8-bAL-4)
-    .attr('font-size',8.5).attr('fill','#333').attr('font-weight',800)
-    .attr('stroke','#fff').attr('stroke-width',2.5).attr('paint-order','stroke')
+  // Label CP2 — au-dessus de la flèche verticale
+  svg.append('text').attr('x',rox+3).attr('y',roy-bAL-4)
+    .attr('font-size',8).attr('fill','#555').attr('font-weight',800)
+    .attr('stroke','#fff').attr('stroke-width',2).attr('paint-order','stroke')
     .text(axN.n2+' ('+pca.explained[1]+'%)');
 }
 
@@ -15963,22 +15973,22 @@ function _renderACPCercle(container, pca) {
     svg.append('text').attr('x',cx+ux*ld).attr('y',cy-uy*ld+3.5).attr('text-anchor',anc).attr('font-size',9.5).attr('fill',LEX_COLORS[k]).attr('font-weight',700).text(THL[k]);
   });
   var axN=_acpAxisNames(pca.loadings);
-  // ── Repère orthonormé bas-gauche — CP1 horizontal, CP2 vertical ──────────
-  var ox=12, oy=H-12, AL=38;
+  // ── Repère GAUCHE — ancré dans la marge gauche, centré verticalement ───────
+  var cox=4, coy=H/2, cAL=28;
   defs.append('marker').attr('id','cax-arr').attr('viewBox','0 -3 7 6')
     .attr('refX',7).attr('refY',0).attr('markerWidth',4).attr('markerHeight',4)
     .attr('orient','auto').append('path').attr('d','M0,-3L7,0L0,3').attr('fill','#555');
-  svg.append('line').attr('x1',ox).attr('y1',oy).attr('x2',ox+AL).attr('y2',oy)
+  svg.append('line').attr('x1',cox).attr('y1',coy).attr('x2',cox+cAL).attr('y2',coy)
     .attr('stroke','#555').attr('stroke-width',1.5).attr('marker-end','url(#cax-arr)');
-  svg.append('line').attr('x1',ox).attr('y1',oy).attr('x2',ox).attr('y2',oy-AL)
+  svg.append('line').attr('x1',cox).attr('y1',coy).attr('x2',cox).attr('y2',coy-cAL)
     .attr('stroke','#555').attr('stroke-width',1.5).attr('marker-end','url(#cax-arr)');
-  svg.append('text').attr('x',ox+AL+5).attr('y',oy+4)
-    .attr('font-size',8.5).attr('fill','#333').attr('font-weight',800)
-    .attr('stroke','#fff').attr('stroke-width',2.5).attr('paint-order','stroke')
+  svg.append('text').attr('x',cox+cAL+3).attr('y',coy+4)
+    .attr('font-size',8).attr('fill','#555').attr('font-weight',800)
+    .attr('stroke','#fff').attr('stroke-width',2).attr('paint-order','stroke')
     .text(axN.n1);
-  svg.append('text').attr('x',ox+5).attr('y',oy-AL-4)
-    .attr('font-size',8.5).attr('fill','#333').attr('font-weight',800)
-    .attr('stroke','#fff').attr('stroke-width',2.5).attr('paint-order','stroke')
+  svg.append('text').attr('x',cox+3).attr('y',coy-cAL-4)
+    .attr('font-size',8).attr('fill','#555').attr('font-weight',800)
+    .attr('stroke','#fff').attr('stroke-width',2).attr('paint-order','stroke')
     .text(axN.n2);
 }
 
@@ -16067,22 +16077,23 @@ function _renderACPStructure(container) {
       .attr('fill',p.clr).attr('stroke','#fff').attr('stroke-width',3).attr('paint-order','stroke')
       .text(p.label);
   });
-  // Repère bas-gauche
-  var sAL=36, sdefs=svg.append('defs');
+  // Repère GAUCHE — ancré dans la marge gauche, centré sur la zone de dessin
+  var sAL=28, sdefs=svg.append('defs');
+  var srox=4, sroy=MT+CH/2;
   sdefs.append('marker').attr('id','strx-arr').attr('viewBox','0 -3 7 6')
     .attr('refX',7).attr('refY',0).attr('markerWidth',4).attr('markerHeight',4)
     .attr('orient','auto').append('path').attr('d','M0,-3L7,0L0,3').attr('fill','#555');
-  svg.append('line').attr('x1',ML).attr('y1',H-8).attr('x2',ML+sAL).attr('y2',H-8)
+  svg.append('line').attr('x1',srox).attr('y1',sroy).attr('x2',srox+sAL).attr('y2',sroy)
     .attr('stroke','#555').attr('stroke-width',1.5).attr('marker-end','url(#strx-arr)');
-  svg.append('line').attr('x1',ML).attr('y1',H-8).attr('x2',ML).attr('y2',H-8-sAL)
+  svg.append('line').attr('x1',srox).attr('y1',sroy).attr('x2',srox).attr('y2',sroy-sAL)
     .attr('stroke','#555').attr('stroke-width',1.5).attr('marker-end','url(#strx-arr)');
-  svg.append('text').attr('x',ML+sAL+4).attr('y',H-5)
-    .attr('font-size',9).attr('fill','#333').attr('font-weight',800)
-    .attr('stroke','#fff').attr('stroke-width',2.5).attr('paint-order','stroke')
+  svg.append('text').attr('x',srox+sAL+3).attr('y',sroy+4)
+    .attr('font-size',8).attr('fill','#555').attr('font-weight',800)
+    .attr('stroke','#fff').attr('stroke-width',2).attr('paint-order','stroke')
     .text(axN.n1+' ('+pca.explained[0]+'%)');
-  svg.append('text').attr('x',ML+4).attr('y',H-8-sAL-4)
-    .attr('font-size',9).attr('fill','#333').attr('font-weight',800)
-    .attr('stroke','#fff').attr('stroke-width',2.5).attr('paint-order','stroke')
+  svg.append('text').attr('x',srox+3).attr('y',sroy-sAL-4)
+    .attr('font-size',8).attr('fill','#555').attr('font-weight',800)
+    .attr('stroke','#fff').attr('stroke-width',2).attr('paint-order','stroke')
     .text(axN.n2+' ('+pca.explained[1]+'%)');
   svg.append('text').attr('x',W-4).attr('y',12).attr('text-anchor','end')
     .attr('font-size',8).attr('fill','#BDBDBD').text('Total '+(pca.explained[0]+pca.explained[1])+'%');
@@ -16178,6 +16189,9 @@ function _renderACPWidget() {
   }
   var nPh=(lex.phases&&lex.phases.length)||8;
   var fromEl=document.getElementById('acp-ph-from'), toEl=document.getElementById('acp-ph-to');
+  // Clamper les variables aux phases réelles du livre actif
+  if(_acpPhTo>nPh) _acpPhTo=nPh;
+  if(_acpPhFrom>nPh) _acpPhFrom=1;
   if(fromEl){ fromEl.max=nPh; if(fromEl.value!=String(_acpPhFrom)) fromEl.value=_acpPhFrom; }
   if(toEl){ toEl.max=nPh; if(toEl.value!=String(_acpPhTo)) toEl.value=_acpPhTo; }
   var phFrom=fromEl?Math.max(0,parseInt(fromEl.value||'1')-1):0;
@@ -16311,6 +16325,7 @@ var _q3PairesPersoOpen = false;
 function _q3TogglePairesPerso() {
   if(_q3AcpOpen){ _q3AcpOpen=false; var ab=document.getElementById('ni-th-acp-btn'); if(ab)ab.classList.remove('active'); var ae=document.getElementById('ni-q-th-acp'); if(ae)ae.style.display='none'; }
   if(_q3PairesOpen){ _q3PairesOpen=false; var pb=document.getElementById('ni-th-pairs-btn'); if(pb)pb.classList.remove('active'); var pe=document.getElementById('ni-q-th-paires'); if(pe)pe.style.display='none'; }
+  if(_q3TbPersoOpen){ _q3TbPersoOpen=false; var tb=document.getElementById('ni-th-tb-perso-btn'); if(tb)tb.classList.remove('active'); var tbp=document.getElementById('ni-q-th-tableau-perso'); if(tbp)tbp.style.display='none'; }
   _q3PairesPersoOpen = !_q3PairesPersoOpen;
   var glb=document.getElementById('ni-q-th-global');
   var pan=document.getElementById('ni-q-th-paires-perso');
