@@ -16514,27 +16514,44 @@ function _q3TogglePairesPerso() {
 function _renderPairesPerso(container) {
   container.innerHTML='';
   var L=LIVRE_ACTIF; if(!L) return;
-  var persos=(L.personnages||[]).filter(function(p){return p.scores&&typeof p.scores.amour==='number';});
+  // Accepter les persos qui ont des scores plats OU scoresParPhase
+  var allP=(L.personnages||[]);
+  var persos=allP.filter(function(p){
+    var hasFlat=p.scores&&typeof p.scores.amour==='number';
+    var hasSPP=p.scoresParPhase&&Object.keys(p.scoresParPhase).length>0;
+    // Si scoresParPhase disponible mais pas scores plats → construire les scores plats
+    if(hasSPP&&!hasFlat){
+      var keys=LEX_KEYS, sc={};
+      var phKeys=Object.keys(p.scoresParPhase);
+      keys.forEach(function(k){
+        var sum=0;
+        phKeys.forEach(function(ph){sum+=+(p.scoresParPhase[ph]&&p.scoresParPhase[ph][k]||0);});
+        sc[k]=phKeys.length?Math.round(sum/phKeys.length):0;
+      });
+      p.scores=sc;
+      return true;
+    }
+    return hasFlat;
+  });
   var KEYS=LEX_KEYS;
   var THL={amour:'Amour',pouvoir:'Pouvoir',liberte:'Lib\u00e9rt\u00e9',identite:'Identit\u00e9',societe:'Soci\u00e9t\u00e9',nature:'Nature'};
   if(persos.length<2){
-    container.innerHTML='<div style="padding:12px;font-size:.72rem;color:#999;">Au moins 2 personnages avec scores requis.</div>';
+    container.innerHTML='<div style="padding:14px 12px;font-size:.78rem;font-weight:700;color:#E65100;background:#FFF3E0;border-radius:8px;border:1px solid #FFCC80;">Pas assez de personnages avec scores (besoin de 2 min).<br><small style="font-weight:400;color:#888;">Importer un JSON avec \u00ab\u00a0scores\u00a0\u00bb ou \u00ab\u00a0scoresParPhase\u00a0\u00bb pour activer cette vue.</small></div>';
     return;
   }
   var pairs=[];
   for(var i=0;i<persos.length-1;i++) for(var j=i+1;j<persos.length;j++) pairs.push([persos[i],persos[j]]);
-  // Stocker les paires pour les callbacks de thème
   _ppPairsData=pairs;
   pairs.forEach(function(pair,pi) {
     var pA=pair[0], pB=pair[1];
-    // Thème par défaut = écart global max
     var maxD=0, defKey=KEYS[0];
     KEYS.forEach(function(k){var d=Math.abs((+(pA.scores[k]||0))-(+(pB.scores[k]||0)));if(d>maxD){maxD=d;defKey=k;}});
     var card=document.createElement('div');
     card.id='ppcard_'+pi;
     card.style.cssText='background:#fff;border-radius:9px;border:1px solid #E8E0F8;box-shadow:0 1px 4px rgba(74,20,140,.07);padding:8px 10px 6px;flex:0 0 auto;';
     container.appendChild(card);
-    _ppRenderCard(pi, defKey);
+    try{ _ppRenderCard(pi, defKey); }
+    catch(e){ card.innerHTML='<div style="color:red;font-size:.7rem;padding:6px;">Erreur rendu: '+e.message+'</div>'; }
   });
 }
 
@@ -16558,6 +16575,7 @@ function _ppRenderCard(pi, activeKey) {
     scB=phNames.map(function(ph){return +(pB.scoresParPhase[ph][activeKey]||0);});
   } else {
     // Fallback : scores globaux sur les thèmes
+    hasSPP=false;
     phNames=KEYS.map(function(k){return THL[k];});
     scA=KEYS.map(function(k){return +(pA.scores[k]||0);});
     scB=KEYS.map(function(k){return +(pB.scores[k]||0);});
