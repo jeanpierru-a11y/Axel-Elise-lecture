@@ -17374,11 +17374,18 @@ function openRaisonnementIA() {
       + '</div>';
   }
   html += '</div>';
+  var win = document.getElementById('lex-expl-win');
+  if (!win) return;
   var body = document.getElementById('lex-expl-body');
   if (body) body.innerHTML = html;
   var ttl = document.getElementById('lex-expl-ttl');
-  if (ttl) ttl.textContent = '✦ Raisonnement IA';
-  openLexDetail();
+  if (ttl) { ttl.textContent = '✦ Raisonnement IA'; ttl.style.color = '#283593'; }
+  var hdr = document.getElementById('lex-expl-hdr');
+  if (hdr) hdr.style.background = '#E8EAF6';
+  win.style.display = 'flex';
+  win.style.transform = 'none';
+  win.style.left = (Math.max(20, window.innerWidth / 2 - 260)) + 'px';
+  win.style.top = '80px';
 }
 
 </script>
