@@ -15842,6 +15842,8 @@ function _q3ToggleACP() {
     if (acp) acp.style.display='flex';
     _renderACPWidget();
   } else {
+    if (glb) glb.style.display='flex';
+    if (mod) mod.style.display='block';
     if (acp) acp.style.display='none';
     updateQ3LexViz();
   }
@@ -16495,6 +16497,22 @@ function importerJSONComplet(input) {
 
 var _q3PairesPersoOpen = false;
 var _q3TbPersoOpen = false;
+
+function _q3ToggleTbPerso() {
+  if(_q3AcpOpen){ _q3AcpOpen=false; var ab=document.getElementById('ni-th-acp-btn'); if(ab)ab.classList.remove('active'); var ae=document.getElementById('ni-q-th-acp'); if(ae)ae.style.display='none'; }
+  if(_q3PairesOpen){ _q3PairesOpen=false; var pb=document.getElementById('ni-th-pairs-btn'); if(pb)pb.classList.remove('active'); var pe=document.getElementById('ni-q-th-paires'); if(pe)pe.style.display='none'; }
+  if(_q3PairesPersoOpen){ _q3PairesPersoOpen=false; var ppb=document.getElementById('ni-th-pairs-perso-btn'); if(ppb)ppb.classList.remove('active'); var ppe=document.getElementById('ni-q-th-paires-perso'); if(ppe)ppe.style.display='none'; }
+  _q3TbPersoOpen = !_q3TbPersoOpen;
+  var glb=document.getElementById('ni-q-th-global');
+  var tbp=document.getElementById('ni-q-th-tableau-perso');
+  var mod=document.getElementById('ni-q-th-mode');
+  var btn=document.getElementById('ni-th-tb-perso-btn');
+  if(glb) glb.style.display=_q3TbPersoOpen?'none':'flex';
+  if(mod) mod.style.display=_q3TbPersoOpen?'none':'block';
+  if(tbp){ tbp.style.display=_q3TbPersoOpen?'flex':'none'; if(_q3TbPersoOpen) _renderTbAll(); }
+  if(btn) btn.classList.toggle('active',_q3TbPersoOpen);
+  if(!_q3TbPersoOpen) updateQ3LexViz();
+}
 
 function _q3TogglePairesPerso() {
   if(_q3AcpOpen){ _q3AcpOpen=false; var ab=document.getElementById('ni-th-acp-btn'); if(ab)ab.classList.remove('active'); var ae=document.getElementById('ni-q-th-acp'); if(ae)ae.style.display='none'; }
