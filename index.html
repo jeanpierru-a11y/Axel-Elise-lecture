@@ -2726,7 +2726,8 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
         <button class="ni-q-hdr-alpha" id="ni-th-json-btn" onclick="exporterJSONComplet()" title="Exporter lexique + scores personnages en JSON (sauvegarde complète)" style="display:none;margin-left:6px;">💾 JSON</button>
         <input type="file" id="ni-th-json-import" accept=".json" style="display:none;" onchange="importerJSONComplet(this)">
         <button class="ni-q-hdr-alpha" id="ni-th-json-import-btn" onclick="document.getElementById('ni-th-json-import').click()" title="Importer un JSON complet (lexique + scores personnages)" style="display:none;margin-left:2px;">
-        <button class="ni-q-hdr-alpha" id="ni-th-ia-btn" onclick="analyserAvecIA()" title="Analyser avec l'IA (paires, quadrants, commentaires)" style="display:none;margin-left:8px;background:#4A148C;color:#fff;border-color:#7B1FA2;">✨ IA</button>📂</button>
+        <button class="ni-q-hdr-alpha" id="ni-th-ia-btn" onclick="analyserAvecIA()" title="Analyser avec l'IA (paires, quadrants, commentaires)" style="display:none;margin-left:8px;background:#4A148C;color:#fff;border-color:#7B1FA2;">✨ IA</button>
+        <button class="ni-q-hdr-alpha" id="ni-th-raison-btn" onclick="openRaisonnementIA()" title="Raisonnement IA référencé — comment l'IA a raisonné, zone par zone" style="display:none;margin-left:4px;background:#E8EAF6;color:#283593;border-color:#9FA8DA;">✦ Raison.</button>📂</button>
         <div style="flex:1;min-width:0;"></div>
         <div style="display:flex;align-items:center;gap:3px;">
           <button class="ni-q-hdr-icon" id="ni-th-count-btn" onclick="openLexCount()" title="Compter sur texte complet (.txt)" style="display:none;">📄</button>
@@ -4474,7 +4475,7 @@ function sauvegarderBiblio() {
 // ════════════════════════════════════════════════════════
 // VERSION — incrémenter à chaque mise à jour des livres démo
 // ════════════════════════════════════════════════════════
-const DEMO_VERSION = 37; // v37 : bandes quadrant ACP, reset paires localStorage
+const DEMO_VERSION = 38; // v38 : relationsLabel littéraires 4 livres Élise + raisonnementIA zones §§
 const LIVRES_DEMO = [
   {
     id: 'liv_petit_prince_001',
@@ -5635,6 +5636,18 @@ const LIVRES_DEMO = [
       'ent_ile_05__ent_ile_03': 'Mentor',
       'ent_ile_05__ent_ile_04': 'Mentor'
     },
+    relationsLabel: {
+      'ent_ile_01__ent_ile_02': "Maître humilié",
+      'ent_ile_02__ent_ile_01': "Prend sa revanche",
+      'ent_ile_03__ent_ile_04': "Maîtresse rabaissée",
+      'ent_ile_04__ent_ile_03': "Esclave libérée",
+      'ent_ile_02__ent_ile_04': "Compagnons d’îlot",
+      'ent_ile_01__ent_ile_03': "Maîtres solidaires",
+      'ent_ile_05__ent_ile_01': "Arbitre de justice",
+      'ent_ile_05__ent_ile_02': "Arbitre de justice",
+      'ent_ile_05__ent_ile_03': "Arbitre de justice",
+      'ent_ile_05__ent_ile_04': "Arbitre de justice"
+    },
     lieux: [
       {id:'lx_ile_01', nom:"L\u2019\u00eele des esclaves", couleur:'#2E7D32',
        notes:"Espace utopique fond\u00e9 par d\u2019anciens esclaves grecs. R\u00e8gles\u00a0: toute noblesse qui y \u00e9choue voit ses esclaves devenir ma\u00eetres."},
@@ -5860,6 +5873,17 @@ const LIVRES_DEMO = [
       'ent_cal_05__ent_cal_01': 'Rival(e)',
       'ent_cal_02__ent_cal_05': 'Ami(e)'
     },
+    relationsLabel: {
+      'ent_cal_01__ent_cal_02': "Face à son juge",
+      'ent_cal_02__ent_cal_01': "Conspire contre lui",
+      'ent_cal_01__ent_cal_03': "Aime et tue",
+      'ent_cal_03__ent_cal_01': "Amour absolu",
+      'ent_cal_01__ent_cal_04': "Instrument fidèle",
+      'ent_cal_04__ent_cal_01': "Serviteur loyal",
+      'ent_cal_01__ent_cal_05': "Père tyrannique",
+      'ent_cal_05__ent_cal_01': "Fascine et fuit",
+      'ent_cal_02__ent_cal_05': "Alliés résistants"
+    },
     lieux: [
       {id:'lx_cal_01', nom:'Le palais imp\u00e9rial', couleur:'#C62828',
        notes:"Espace du pouvoir absolu. Tout se passe dans ce lieu ferm\u00e9, clos sur lui-m\u00eame comme la logique de Caligula."},
@@ -6073,6 +6097,15 @@ const LIVRES_DEMO = [
       'ent_vll_03__ent_vll_01': 'Mentor',
       'ent_vll_03__ent_vll_02': 'Mentor',
       'ent_vll_05__ent_vll_04': 'Protecteur/trice'
+    },
+    relationsLabel: {
+      'ent_vll_01__ent_vll_02': "Adversaire direct",
+      'ent_vll_02__ent_vll_01': "Adversaire direct",
+      'ent_vll_01__ent_vll_04': "Défend sa dignité",
+      'ent_vll_02__ent_vll_04': "Nie son humanité",
+      'ent_vll_03__ent_vll_01': "Juge impartial",
+      'ent_vll_03__ent_vll_02': "Juge impartial",
+      'ent_vll_05__ent_vll_04': "Témoin silencieux"
     },
     lieux: [
       {id:'lx_vll_01', nom:'La salle du d\u00e9bat, Valladolid', couleur:'#E65100',
@@ -6292,6 +6325,18 @@ const LIVRES_DEMO = [
       'ent_bri_05__ent_bri_01': 'Complice',
       'ent_bri_05__ent_bri_04': 'Ennemi(e)',
       'ent_bri_06__ent_bri_01': 'Mentor'
+    },
+    relationsLabel: {
+      'ent_bri_01__ent_bri_04': "Rival éliminé",
+      'ent_bri_04__ent_bri_01': "Rival dépossédé",
+      'ent_bri_01__ent_bri_03': "Amour possessif",
+      'ent_bri_04__ent_bri_03': "Amour vrai",
+      'ent_bri_03__ent_bri_04': "Amour partagé",
+      'ent_bri_01__ent_bri_02': "Se libère d’elle",
+      'ent_bri_02__ent_bri_01': "Mère possessive",
+      'ent_bri_05__ent_bri_01': "Flatteur de Néron",
+      'ent_bri_05__ent_bri_04': "Traître dissimulé",
+      'ent_bri_06__ent_bri_01': "Conseille la vertu"
     },
     lieux: [
       {id:'lx_bri_01', nom:'Le palais imp\u00e9rial, Rome', couleur:'#C62828',
@@ -6533,6 +6578,8 @@ function mettreAJourLivresDemo() {
       };
 
       if (aVraiContenu(existant.matrice))   majour.matrice   = existant.matrice;
+      // relationsLabel : démo prime toujours (libellés littéraires curatés)
+      // on ne conserve pas la version utilisateur pour ne pas perdre la curation
       if (aVraiContenu(existant.narration)) majour.narration = existant.narration;
 
       // Citations : conserver si l'utilisateur en a créé avec du contenu réel
@@ -8460,6 +8507,26 @@ h3{font-size:.85rem;font-weight:800;color:${couleur};margin:12px 0 5px;}
 .footer{margin-top:20px;padding-top:8px;border-top:1px solid #eee;font-size:.65rem;color:#aaa;text-align:center;}
 ${styleExtra||''}
 @media print{body{padding:0;max-width:100%;}@page{margin:1.4cm;}}
+
+/* ── ZONES §§ — Raisonnement IA référencé ─────────────────────────── */
+.ia-zref{display:inline-block;font-family:monospace;font-size:.72rem;font-weight:700;
+  padding:1px 6px;border-radius:3px;vertical-align:middle;margin:0 1px;
+  cursor:default;line-height:1.5;white-space:nowrap;}
+.ia-zref-ctx  {background:#C8E6C9;color:#1B5E20}
+.ia-zref-arc  {background:#BBDEFB;color:#0D47A1}
+.ia-zref-cit  {background:#FCE4EC;color:#880E4F}
+.ia-zref-lex  {background:#EDE7F6;color:#311B92}
+.ia-zref-per  {background:#FFF9C4;color:#795548}
+.ia-zref-lx   {background:#E0F7FA;color:#006064}
+.ia-zref-acp  {background:#FFCCBC;color:#BF360C}
+.ia-zref-pair {background:#F3E5F5;color:#6A1B9A}
+.ia-zref-duo  {background:#FFCCBC;color:#BF360C}
+.ia-zref-ecr  {background:#E8F5E9;color:#1B5E20;border:1px solid #A5D6A7}
+#ia-raison-win{background:#F9F4FE;border:1.5px solid #CE93D8;border-radius:10px;
+  padding:12px 14px;max-height:370px;overflow-y:auto;margin-top:4px;}
+.ia-raison-para{font-size:.88rem;line-height:1.85;color:#1a1a2e;margin-bottom:10px;}
+.ia-raison-focus{font-size:.72rem;color:#7B1FA2;border-top:1px solid #E1D4F0;
+  margin-top:10px;padding-top:8px;font-style:italic;}
 </style></head><body>
 <button onclick="window.print()" style="background:${_phb};color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:12px;cursor:pointer;margin-bottom:14px;font-family:inherit;">🖨️ Imprimer / PDF</button>
 ${contenuHTML}
@@ -11515,12 +11582,13 @@ function niRenderGraph(){
   svg.selectAll('*').remove();
   var W=box.clientWidth||300,H=box.clientHeight||180;
   var matrice=niGetMatrice();
+  var relLbl = (LIVRE_ACTIF && LIVRE_ACTIF.relationsLabel) || {};
   var links=[];
   Object.keys(matrice).forEach(function(k){
     if(!matrice[k]||matrice[k]==='—')return;
     var pts=k.split('__');
     var s=persos.find(function(p){return p.id===pts[0];}),t=persos.find(function(p){return p.id===pts[1];});
-    if(s&&t)links.push({source:s.id,target:t.id,lbl:matrice[k]});
+    if(s&&t)links.push({source:s.id,target:t.id,lbl:relLbl[k]||matrice[k], typ:matrice[k]});
   });
   // Détecter les paires réciproques (A→B et B→A)
   var recipSet={};
@@ -11577,9 +11645,10 @@ function niRenderGraph(){
     .attr('fill','none').attr('stroke','#B0BEC5').attr('stroke-width',1.5)
     .attr('marker-end','url(#niarr)');
   var lt=lG.selectAll('text').data(links).enter().append('text')
-    .attr('text-anchor','middle').attr('font-size','7px').attr('font-family','inherit')
+    .attr('text-anchor','middle').attr('font-size','6.5px').attr('font-family','inherit')
     .attr('fill','#546E7A').attr('dy','-3px')
-    .text(function(d){return d.lbl.substring(0,13);});
+    .text(function(d){return d.lbl.length > 18 ? d.lbl.substring(0,16)+'\u2026' : d.lbl;})
+    .append('title').text(function(d){ return d.lbl + (d.typ && d.typ !== d.lbl ? ' (' + d.typ + ')' : ''); });
 
   // Découper le nom en mots pour affichage sur 2 lignes max
   function splitName(nom){
@@ -13797,6 +13866,8 @@ function updateQ3LexViz() {
   // Badge source
   var iaBtn=document.getElementById('ni-th-ia-btn');
   if(iaBtn) iaBtn.style.display=(lex&&lex.tranches&&lex.tranches.length>=3)?'inline':'none';
+  var raisonBtn=document.getElementById('ni-th-raison-btn');
+  if(raisonBtn) raisonBtn.style.display=(lex&&lex.raisonnementIA)?'inline':'none';
   var badge=document.getElementById('ni-q-th-source-badge');
   if(badge){
     badge.className='';
@@ -16993,12 +17064,16 @@ async function analyserAvecIA() {
     return row;
   });
 
+  // Inventaire des zones §§ disponibles
+  var zonesInv = _buildZoneInventory(LIVRE_ACTIF);
+
   var prompt = 'Tu analyses l\u0027\u0153uvre "' + titre + '" de ' + auteur + '.\n\n'
     + 'DONN\u00c9ES (scores 0-100) :\n'
     + 'Th\u00e8mes : am=Amour, po=Pouvoir, li=Libert\u00e9, id=Identit\u00e9, so=Soci\u00e9t\u00e9, na=Nature\n'
     + 'Tranches : ' + JSON.stringify(tranches) + '\n'
     + 'Phases : ' + phases.join(' | ') + '\n'
     + (persos.length ? 'Personnages : ' + JSON.stringify(persos) + '\n' : '')
+    + '\nZones §§ disponibles pour le raisonnement : ' + zonesInv.join(', ') + '\n'
     + '\nG\u00e9n\u00e8re un JSON avec cette structure exacte (tous les champs) :\n'
     + '{\n'
     + '  "paires": [\n'
@@ -17018,6 +17093,13 @@ async function analyserAvecIA() {
     + '  "quadrants": {\n'
     + '    "planMouvement": {"hg":"titre court 2-3 mots","hd":"titre","bg":"titre","bd":"titre"},\n'
     + '    "planStructure": {"hg":"titre","hd":"titre","bg":"titre","bd":"titre"}\n'
+    + '  },\n'
+    + '  "raisonnement": {\n'
+    + '    "paragraphes": [\n'
+    + '      "4 \u00e0 5 paragraphes courts (1-3 phrases). Dans chaque phrase, cite les zones consult\u00e9es avec la notation §§xxx (ex: §§lex_identite, §§arc_4/8, §§per_01, §§acp_biplot). Montre POURQUOI tu passes d\u0027une zone \u00e0 la suivante. Termine par un lien vers ce qu\u0027Elise pourrait en faire dans sa r\u00e9daction.",\n'
+    + '      "..."\n'
+    + '    ],\n'
+    + '    "focus": ["liste ordonn\u00e9e des identifiants de zones consult\u00e9es, sans §§, ex: lex_identite, arc_8/8, acp_biplot..."]\n'
     + '  }\n'
     + '}\n'
     + 'R\u00e8gles : paires th\u00e9matiques = 2 \u00e0 4 paires les plus r\u00e9v\u00e9latrices de l\u0027\u0153uvre. '
@@ -17025,6 +17107,7 @@ async function analyserAvecIA() {
     + 'pairesPerso = toutes les paires de personnages pertinentes (max 6). '
     + 'quadrants : hg=haut-gauche, hd=haut-droite, bg=bas-gauche, bd=bas-droite. '
     + 'Titres de quadrants : expressions \u00e9vocatrices du registre litt\u00e9raire (ex: "Tyrannie nihiliste", "Puret\u00e9 po\u00e9tique"). '
+    + 'raisonnement.paragraphes : 4-5 paragraphes, niveau lyc\u00e9e, utilise §§xxx pour TOUTES les r\u00e9f\u00e9rences de zones. '
     + 'IMPORTANT : r\u00e9ponds UNIQUEMENT avec le JSON, sans texte avant ni apr\u00e8s.';
 
   try {
@@ -17078,6 +17161,16 @@ async function analyserAvecIA() {
       L.quadrantsIA = result.quadrants;
     }
 
+    // Raisonnement référencé (zones §§)
+    if (result.raisonnement && Array.isArray(result.raisonnement.paragraphes)) {
+      L.raisonnementIA = {
+        paragraphes: result.raisonnement.paragraphes,
+        focus: Array.isArray(result.raisonnement.focus) ? result.raisonnement.focus : []
+      };
+      var raisonBtn = document.getElementById('ni-th-raison-btn');
+      if (raisonBtn) raisonBtn.style.display = 'inline';
+    }
+
     // Marquer source IA si ce n'est pas déjà un comptage exhaustif
     if (L.source !== 'comptage_exhaustif') {
       L.source = 'modelisation_ia';
@@ -17116,6 +17209,97 @@ async function analyserAvecIA() {
   }
 }
 
+
+
+// ════════════════════════════════════════════════════════════════════════════
+// ZONES §§ — Inventaire et rendu du raisonnement IA référencé
+// ════════════════════════════════════════════════════════════════════════════
+
+// Construit la liste des zones §§ disponibles pour le livre actif
+function _buildZoneInventory(L) {
+  var zones = [];
+  if (L.contexte || L.auteurVie || L.courant) zones.push('ctx_auteur');
+  var lex = L.lexique || {};
+  var phases = lex.phases || [];
+  var nbPh = phases.length;
+  phases.forEach(function(p, i) { zones.push('arc_' + (i+1) + '/' + nbPh); });
+  // Tranches : une zone par thème significatif par phase
+  (lex.tranches || []).forEach(function(t, i) {
+    LEX_KEYS.forEach(function(k) { if ((t[k]||0) > 0) zones.push('lex_' + k + '·ph' + (i+1)); });
+  });
+  // Citations
+  (L.citations || []).forEach(function(c, i) {
+    var id = 'cit_' + String(i+1).padStart(2,'0');
+    if (c.theme) id += '·' + c.theme.slice(0,8);
+    zones.push(id);
+  });
+  // Personnages
+  (L.personnages || []).forEach(function(p, i) {
+    zones.push('per_' + String(i+1).padStart(2,'0'));
+  });
+  // ACP et paires
+  if (lex.tranches && lex.tranches.length >= 3) {
+    zones.push('acp_biplot'); zones.push('acp_cercle'); zones.push('acp_heatmap');
+  }
+  (lex.paires || []).forEach(function(p) {
+    if (p.cles && p.cles.length === 2) zones.push('pair_' + p.cles.join('·'));
+  });
+  (lex.pairesPerso || []).forEach(function(pp, i) {
+    zones.push('duo_per' + String((i*2)+1).padStart(2,'0') + '·per' + String((i*2)+2).padStart(2,'0'));
+  });
+  // Zones écr_ remplies par l'élève
+  var diss = L.dissertation2 || {};
+  ['problematique','plan','arg1','arg2','arg3','intro','conclu'].forEach(function(k) {
+    if (diss[k] && diss[k].length > 5) zones.push('écr_diss·' + k);
+  });
+  if (L.comprehension && L.comprehension.length > 5) zones.push('écr_comprehension');
+  if (L.mots && L.mots.length > 5) zones.push('écr_mots');
+  return zones;
+}
+
+// Convertit §§lex_identite·ph4 → <span class="ia-zref ia-zref-lex">lex_identite·ph4</span>
+function _renderZoneRefs(html) {
+  var FAM = {
+    ctx:'ctx', arc:'arc', cit:'cit', lex:'lex', per:'per',
+    lx:'lx', acp:'acp', pair:'pair', duo:'duo'
+  };
+  // 'écr' = 'écr'
+  return html.replace(/§§([a-zéà_·\/0-9]+)/g, function(m, zid) {
+    var prefix = zid.split('_')[0].split('·')[0];
+    if (prefix === 'écr' || prefix === 'ecr') prefix = 'ecr';
+    var cls = FAM[prefix] || 'lex';
+    return '<span class="ia-zref ia-zref-' + cls + '">' + zid + '</span>';
+  });
+}
+
+// Ouvre lex-expl-win avec le raisonnement IA référencé
+function openRaisonnementIA() {
+  var L = LIVRE_ACTIF;
+  if (!L || !L.lexique || !L.lexique.raisonnementIA) {
+    showToast('Lance d’abord ✨ IA pour générer le raisonnement', 'warn'); return;
+  }
+  var r = L.lexique.raisonnementIA;
+  var html = '<h4 style="color:#283593;font-size:.85rem;font-weight:800;margin:0 0 10px;display:flex;align-items:center;gap:6px;">'
+    + '<span style="font-size:1rem">✦</span> Raisonnement IA — <em style="font-weight:400">' + esc(L.titre || '') + '</em></h4>';
+  html += '<div id="ia-raison-win">';
+  (r.paragraphes || []).forEach(function(para) {
+    if (!para || !para.trim()) return;
+    // esc() d'abord, puis on rend les refs (esc ne touche pas §§)
+    html += '<div class="ia-raison-para">' + _renderZoneRefs(esc(para)) + '</div>';
+  });
+  if (r.focus && r.focus.length) {
+    html += '<div class="ia-raison-focus">'
+      + '<strong>Zones consultées dans l’ordre&nbsp;:</strong> '
+      + r.focus.map(function(z) { return '<span class="ia-zref ia-zref-lex" style="font-size:.68rem;">' + esc(z) + '</span>'; }).join(' → ')
+      + '</div>';
+  }
+  html += '</div>';
+  var body = document.getElementById('lex-expl-body');
+  if (body) body.innerHTML = html;
+  var ttl = document.getElementById('lex-expl-ttl');
+  if (ttl) ttl.textContent = '✦ Raisonnement IA';
+  openLexDetail();
+}
 
 </script>
 
