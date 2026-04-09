@@ -16749,6 +16749,11 @@ function _ppRenderCard(pi, activeKey) {
 
 var _tbRadarMode   = 'rel';   // 'rel' = profil normalisé | 'abs' = poids absolu
 var _tbRadarHidden = {};      // {persoId: true} → personnages masqués du radar
+var _tbBubbleX     = 'identite';
+var _tbBubbleY     = 'amour';
+var _tbBubbleZ     = 'pouvoir';
+var _tbEvolMode    = 'perso'; // 'perso' | 'theme'
+var _tbEvolSel     = '';      // nom du perso ou clé du thème sélectionné
 
 function _tbRadarSetMode(m) {
   _tbRadarMode = m;
@@ -16767,15 +16772,12 @@ function _renderTbAll() {
   function _doRender() {
     var r=document.getElementById('tb-radar'), b=document.getElementById('tb-bubble');
     var m=document.getElementById('tb-matrice'), e=document.getElementById('tb-evol');
-    // Vérifier que les containers ont des dimensions réelles
     var h=(r&&r.clientHeight)||0;
-    if(h<10){
-      // Dimensions pas encore calculées — retry après 80ms
-      setTimeout(_doRender, 80);
-      return;
-    }
-    if(r)_renderTbRadar(r); if(b)_renderTbBubble(b);
-    if(m)_renderTbMatrice(m); if(e)_renderTbEvolution(e);
+    if(h<10){ setTimeout(_doRender, 80); return; }
+    if(r) try{_renderTbRadar(r);}catch(ex){r.innerHTML='<div style="color:red;font-size:.7rem;padding:6px;">Radar: '+ex.message+'</div>';}
+    if(b) try{_renderTbBubble(b);}catch(ex){b.innerHTML='<div style="color:red;font-size:.7rem;padding:6px;">Bubble: '+ex.message+'</div>';}
+    if(m) try{_renderTbMatrice(m);}catch(ex){m.innerHTML='<div style="color:red;font-size:.7rem;padding:6px;">Matrice: '+ex.message+'</div>';}
+    if(e) try{_renderTbEvolution(e);}catch(ex){e.innerHTML='<div style="color:red;font-size:.7rem;padding:6px;">Evol: '+ex.message+'</div>';}
     _updateACPCommentaires();
   }
   requestAnimationFrame(function(){ requestAnimationFrame(_doRender); });
