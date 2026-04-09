@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Analyse Augmentée — Guide de Lecture Axel &amp; Élise</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Source+Sans+3:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --v:#4A148C;--v2:#6A1B9A;--lilas:#F3E5F5;--lilas2:#EDE7F6;
+  --rose:#AD1457;--or:#F57F17;--bleu:#1565C0;--bleu2:#E3F2FD;
+  --vert:#2E7D32;--vert2:#E8F5E9;--teal:#00838F;--teal2:#E0F7FA;
+  --orange:#E65100;--orange2:#FBE9E7;
+  --amour:#AD1457;--pouvoir:#C62828;--liberte:#1565C0;
+  --identite:#6A1B9A;--societe:#E65100;--nature:#2E7D32;
+  --texte:#1a1a2e;--gris:#5a5a7a;--gris2:#e8e4f0;--gris3:#f5f3fa;
+  --fond:#faf8fd;--blanc:#fff;
+  --serif:'Playfair Display',Georgia,serif;
+  --sans:'Source Sans 3',system-ui,sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--fond);color:var(--texte);line-height:1.6}
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:900;background:rgba(74,20,140,.96);
+  backdrop-filter:blur(8px);display:flex;align-items:center;gap:0;padding:0 20px;height:46px;
+  border-bottom:1px solid rgba(255,255,255,.12)}
+.brand{font-family:var(--serif);font-weight:700;color:#fff;font-size:1rem;
+  margin-right:18px;white-space:nowrap;flex-shrink:0}
+nav a{color:rgba(255,255,255,.78);text-decoration:none;font-size:.78rem;font-weight:600;
+  padding:0 10px;height:46px;display:flex;align-items:center;white-space:nowrap;
+  border-bottom:2px solid transparent;transition:color .2s,border-color .2s}
+nav a:hover{color:#fff;border-bottom-color:rgba(255,255,255,.5)}
+.pb-btn{margin-left:auto;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);
+  color:#fff;padding:5px 14px;border-radius:20px;font-size:.78rem;cursor:pointer;
+  font-family:var(--sans);font-weight:600}
+.pb-btn:hover{background:rgba(255,255,255,.25)}
+/* SECTIONS */
+.sec{padding:60px 40px;max-width:960px;margin:0 auto}
+.sec-wide{padding:60px 40px;max-width:1100px;margin:0 auto}
+.stag{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--v);background:var(--lilas);
+  padding:3px 12px;border-radius:20px;margin-bottom:12px}
+h2{font-family:var(--serif);font-size:2rem;font-weight:700;margin-bottom:16px;
+  line-height:1.2;color:var(--texte)}
+h2 em{font-style:italic;color:var(--rose)}
+h3{font-family:var(--serif);font-size:1.3rem;font-weight:700;color:var(--v);margin-bottom:8px}
+.lead{font-size:1.05rem;color:var(--gris);max-width:720px;margin-bottom:28px;font-weight:300}
+.band{background:linear-gradient(135deg,var(--v),#1a0a3e);padding:60px 40px;color:#fff}
+.band .stag{background:rgba(255,255,255,.15);color:rgba(255,255,255,.9)}
+.band h2{color:#fff}
+.band h2 em{color:#CE93D8}
+.band .lead{color:rgba(255,255,255,.75)}
+.hl{background:linear-gradient(135deg,var(--lilas),#f0e8ff);border-radius:12px;
+  padding:24px 28px;margin:24px 0;border-left:4px solid var(--v)}
+.quote{border-left:3px solid var(--rose);padding:12px 20px;
+  font-family:var(--serif);font-style:italic;font-size:1.1rem;color:var(--v);
+  background:var(--lilas);border-radius:0 8px 8px 0;margin:20px 0}
+/* GRILLES */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:24px 0}
+.card{background:var(--blanc);border-radius:12px;padding:20px;
+  border:1px solid var(--gris2);box-shadow:0 2px 8px rgba(74,20,140,.06)}
+.card-ico{font-size:1.6rem;margin-bottom:8px}
+.card h4{font-size:.95rem;font-weight:700;margin-bottom:6px;color:var(--v)}
+.card p{font-size:.85rem;color:var(--gris);line-height:1.5}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin:24px 0;align-items:start}
+.two-a{display:grid;grid-template-columns:1.5fr 1fr;gap:28px;margin:24px 0;align-items:start}
+.two-b{display:grid;grid-template-columns:1fr 1.5fr;gap:28px;margin:24px 0;align-items:start}
+/* SVG frames */
+.svgframe{background:var(--blanc);border:1px solid var(--gris2);border-radius:12px;
+  overflow:hidden;box-shadow:0 4px 20px rgba(74,20,140,.1)}
+/* ANNOTATIONS */
+.annos{display:flex;flex-direction:column;gap:14px}
+.ai{display:flex;gap:12px;align-items:flex-start}
+.an{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:.85rem;font-weight:700;color:#fff;flex-shrink:0}
+.al{font-size:.85rem;font-weight:700;margin-bottom:2px;color:var(--texte)}
+.at{font-size:.82rem;color:var(--gris);line-height:1.4}
+/* PARCOURS */
+.parcours{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin:32px 0;position:relative}
+.etape{padding:16px 12px;border-radius:0;position:relative;text-align:center}
+.etape:first-child{border-radius:12px 0 0 12px}
+.etape:last-child{border-radius:0 12px 12px 0}
+.etape-num{font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  opacity:.7;margin-bottom:6px}
+.etape-titre{font-size:.85rem;font-weight:700;margin-bottom:6px;line-height:1.2}
+.etape-desc{font-size:.75rem;opacity:.8;line-height:1.35}
+.etape-arrow{position:absolute;right:-10px;top:50%;transform:translateY(-50%);
+  z-index:2;font-size:1.2rem;color:var(--gris)}
+/* ZONES */
+.zone-ex{background:var(--blanc);border:1px solid var(--gris2);border-radius:10px;
+  padding:16px 18px;margin-bottom:10px}
+.zone-id{font-family:var(--mono);font-size:.82rem;font-weight:700;padding:2px 8px;
+  border-radius:4px;display:inline-block;margin-bottom:4px}
+.zone-desc{font-size:.85rem;color:var(--gris);line-height:1.4}
+/* RAISONNEMENT IA */
+.ia-rais{background:#F9F4FE;border:1.5px solid #CE93D8;border-radius:12px;
+  padding:22px 24px;margin:24px 0}
+.ia-rais h4{font-size:.85rem;font-weight:700;color:var(--v);margin-bottom:10px;
+  letter-spacing:.05em;text-transform:uppercase}
+.ia-rais p{font-size:.95rem;line-height:1.8;color:var(--texte)}
+.ref{display:inline-block;font-family:var(--mono);font-size:.78rem;font-weight:700;
+  padding:1px 6px;border-radius:3px;margin:0 2px;vertical-align:middle}
+.ref-ctx{background:#C8E6C9;color:#1B5E20}
+.ref-arc{background:#BBDEFB;color:#0D47A1}
+.ref-cit{background:#FCE4EC;color:#880E4F}
+.ref-lex{background:#EDE7F6;color:#311B92}
+.ref-per{background:#FFF9C4;color:#795548}
+.ref-lx{background:#E0F7FA;color:#006064}
+.ref-acp{background:#FFCCBC;color:#BF360C}
+.ref-pair{background:#F3E5F5;color:#6A1B9A}
+.ref-duo{background:#FFCCBC;color:#BF360C}
+.ref-ecr{background:#E8F5E9;color:#1B5E20}
+.ia-focus{font-size:.78rem;color:var(--gris);border-top:1px solid #E1D4F0;
+  padding-top:8px;margin-top:8px;font-style:italic}
+/* PROGRESSION */
+.niveaux{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:24px 0}
+.niv{border-radius:10px;padding:16px;border:1px solid var(--gris2);position:relative}
+.niv-num{font-size:1.8rem;font-weight:900;font-family:var(--serif);
+  opacity:.15;position:absolute;top:8px;right:12px}
+.niv-titre{font-size:.88rem;font-weight:700;margin-bottom:8px}
+.niv-desc{font-size:.8rem;color:var(--gris);line-height:1.4}
+/* ROADMAP */
+.rm{list-style:none;margin:20px 0}
+.rm li{display:flex;gap:12px;align-items:flex-start;padding:10px 0;
+  border-bottom:1px solid var(--gris2)}
+.rm li:last-child{border-bottom:none}
+.rm-ico{font-size:1rem;flex-shrink:0;width:24px;text-align:center;margin-top:1px}
+.rm-txt strong{display:block;font-size:.9rem;font-weight:700;margin-bottom:2px}
+.rm-txt span{font-size:.82rem;color:var(--gris)}
+/* COUVERTURE */
+#cov{min-height:100vh;background:linear-gradient(145deg,#1a0a3e 0%,#4A148C 45%,#880E4F 100%);
+  display:flex;align-items:center;justify-content:center;text-align:center;padding:80px 40px 60px}
+.cov-i{max-width:700px}
+.ctag{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.18em;
+  text-transform:uppercase;color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.25);
+  padding:5px 18px;border-radius:20px;margin-bottom:28px}
+.ctitle{font-family:var(--serif);font-size:3.5rem;font-weight:900;color:#fff;
+  line-height:1.05;margin-bottom:16px}
+.ctitle span{color:#CE93D8}
+.csub{font-family:var(--serif);font-style:italic;font-size:1.25rem;
+  color:rgba(255,255,255,.7);margin-bottom:32px}
+.cline{width:60px;height:3px;background:var(--rose);margin:0 auto 32px;border-radius:2px}
+.cmeta{font-size:.82rem;color:rgba(255,255,255,.5);letter-spacing:.06em}
+.cusers{display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+.cpill{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+  color:rgba(255,255,255,.85);padding:6px 18px;border-radius:20px;font-size:.85rem;font-weight:600}
+/* PRINT */
+@media print{nav{display:none}#cov{min-height:auto;padding:40px}
+  .ctitle{font-size:2.5rem}.sec,.sec-wide{padding:30px 20px}
+  @page{margin:1.5cm}}
+/* RESPONSIVE */
+@media(max-width:700px){
+  .parcours{grid-template-columns:1fr;gap:8px}
+  .etape:first-child,.etape:last-child{border-radius:8px}
+  .etape{border-radius:8px}
+  .two,.two-a,.two-b{grid-template-columns:1fr}
+  .niveaux{grid-template-columns:1fr 1fr}
+  .ctitle{font-size:2.4rem}
+  nav a{display:none}
+}
+/* SEPARATEURS */
+.sep-wave{height:4px;background:linear-gradient(90deg,var(--v),var(--rose),var(--or),var(--vert));
+  border:none;margin:0;opacity:.3}
+</style>
+</head>
+<body>
+
+<nav class="np">
+  <span class="brand">Analyse Augmentée</span>
+  <a href="#parcours">Parcours</a>
+  <a href="#outils">Outils</a>
+  <a href="#zones">Zones</a>
+  <a href="#ia-raisonne">L'IA raisonne</a>
+  <a href="#progression">Ta progression</a>
+  <a href="#horizon">Horizon</a>
+  <button class="pb-btn np" onclick="window.print()">🖨️ Imprimer</button>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════ COUVERTURE -->
+<section id="cov">
+  <div class="cov-i">
+    <div class="ctag">Guide de Lecture · Axel &amp; Élise · Vision pédagogique</div>
+    <h1 class="ctitle">Analyse<br><span>Augmentée</span></h1>
+    <p class="csub">Un regard différent sur la littérature</p>
+    <div class="cline"></div>
+    <p style="color:rgba(255,255,255,.65);font-size:.95rem;max-width:500px;margin:0 auto 24px;line-height:1.7">
+      Ce document explique comment les outils d'analyse littéraire deviennent, avec l'aide de l'IA, 
+      un vrai compagnon de pensée — pas juste un calculateur.
+    </p>
+    <div class="cusers">
+      <div class="cpill">📖 Élise · lycée</div>
+      <div class="cpill">📚 Axel · collège</div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep-wave">
+
+<!-- ═══════════════════════════════════════════════════════ PARCOURS -->
+<section id="parcours" class="sec-wide">
+  <div class="stag">01 — Le parcours complet</div>
+  <h2>Cinq étapes, <em>un seul voyage</em></h2>
+  <p class="lead">
+    Lire un livre avec ce guide, c'est traverser cinq étapes pensées ensemble. 
+    Chacune prépare la suivante. L'analyse augmentée occupe la troisième étape — 
+    mais elle est nourrie par tout ce qui précède.
+  </p>
+
+  <div class="parcours">
+    <div class="etape" style="background:#E8F5E9;color:#1B5E20">
+      <div class="etape-num">Étape 1</div>
+      <div class="etape-titre">Avant-lecture</div>
+      <div class="etape-desc">Contexte · auteur · époque · objectifs</div>
+      <div class="etape-arrow">→</div>
+    </div>
+    <div class="etape" style="background:#E3F2FD;color:#0D47A1">
+      <div class="etape-num">Étape 2</div>
+      <div class="etape-titre">Lecture active</div>
+      <div class="etape-desc">Citations · personnages · lieux · avis</div>
+      <div class="etape-arrow">→</div>
+    </div>
+    <div class="etape" style="background:#EDE7F6;color:#311B92;border:2px solid #9C27B0">
+      <div class="etape-num">Étape 3</div>
+      <div class="etape-titre" style="font-size:1rem">✦ Analyse augmentée</div>
+      <div class="etape-desc">Toile · ACP · paires · profils</div>
+      <div class="etape-arrow">→</div>
+    </div>
+    <div class="etape" style="background:#FFF9C4;color:#795548">
+      <div class="etape-num">Étape 3.5</div>
+      <div class="etape-titre">Passerelle</div>
+      <div class="etape-desc">Que retenir pour écrire&nbsp;?</div>
+      <div class="etape-arrow">→</div>
+    </div>
+    <div class="etape" style="background:#FBE9E7;color:#BF360C;border-radius:0 12px 12px 0">
+      <div class="etape-num">Étape 4</div>
+      <div class="etape-titre">Écriture accompagnée</div>
+      <div class="etape-desc">Dissertation · commentaire · linéaire</div>
+    </div>
+  </div>
+
+  <div class="hl">
+    <strong style="color:var(--v)">Ce qui rend l'analyse augmentée unique</strong> — elle n'est pas séparée de la lecture. 
+    Tout ce que tu as noté, tagué, cité pendant l'étape 2 devient la matière première des calculs de l'étape 3. 
+    Et tout ce que l'analyse révèle devient le carburant de l'écriture en étape 4. 
+    Les cinq étapes forment un seul flux de pensée.
+  </div>
+</section>
+
+<hr class="sep-wave">
+
+<!-- ═══════════════════════════════════════════════════════ LES OUTILS -->
+<section id="outils" class="sec-wide">
+  <div class="stag">02 — Les outils</div>
+  <h2>Quatre façons de <em>voir ce qu'on ne voit pas</em></h2>
+  <p class="lead">
+    Chaque outil de l'analyse augmentée révèle quelque chose d'invisible à la lecture simple. 
+    Ensemble, ils donnent une image à la fois quantitative et qualitative de l'œuvre.
+  </p>
+
+  <!-- RADAR -->
+  <div class="two-a" style="margin-bottom:40px;align-items:center">
+    <div class="svgframe">
+      <svg viewBox="0 0 420 360" xmlns="http://www.w3.org/2000/svg" width="100%">
+        <rect width="420" height="360" fill="#FAFAFA"/>
+        <text x="210" y="22" text-anchor="middle" font-family="'Source Sans 3',sans-serif" font-size="13" font-weight="700" fill="#4A148C">Toile thématique — Caligula</text>
+        <!-- échelle -->
+        <g font-family="'Source Sans 3',sans-serif" font-size="8" fill="#CCC" text-anchor="middle">
+          <text x="210" y="158">25</text>
+          <text x="210" y="133">50</text>
+          <text x="210" y="108">75</text>
+          <text x="210" y="62">100</text>
+        </g>
+        <!-- grilles R=100, 75, 50, 25 -->
+        <g stroke="#E8E4F0" stroke-width="0.6" fill="none">
+          <polygon points="210,60 297,110 297,210 210,260 123,210 123,110"/>
+          <polygon points="210,85 275,122 275,198 210,235 145,198 145,122"/>
+          <polygon points="210,110 253,135 253,185 210,210 167,185 167,135"/>
+          <polygon points="210,135 232,148 232,172 210,185 188,172 188,148"/>
+        </g>
+        <!-- axes depuis le centre -->
+        <g stroke="#DDD" stroke-width="0.6">
+          <line x1="210" y1="160" x2="210" y2="60"/>
+          <line x1="210" y1="160" x2="297" y2="110"/>
+          <line x1="210" y1="160" x2="297" y2="210"/>
+          <line x1="210" y1="160" x2="210" y2="260"/>
+          <line x1="210" y1="160" x2="123" y2="210"/>
+          <line x1="210" y1="160" x2="123" y2="110"/>
+        </g>
+        <!-- données Caligula — scores réels : Id86 Li55 So37 Na40 Po41 Am83 -->
+        <polygon points="210,74 258,132 242,178 210,200 174,180 138,118"
+          fill="rgba(106,27,154,0.12)" stroke="#6A1B9A" stroke-width="1.8"/>
+        <!-- points de données -->
+        <circle cx="210" cy="74"  r="4" fill="#6A1B9A" stroke="#fff" stroke-width="1.5"/>
+        <circle cx="258" cy="132" r="4" fill="#1565C0" stroke="#fff" stroke-width="1.5"/>
+        <circle cx="242" cy="178" r="4" fill="#E65100" stroke="#fff" stroke-width="1.5"/>
+        <circle cx="210" cy="200" r="4" fill="#2E7D32" stroke="#fff" stroke-width="1.5"/>
+        <circle cx="174" cy="180" r="4" fill="#C62828" stroke="#fff" stroke-width="1.5"/>
+        <circle cx="138" cy="118" r="4" fill="#AD1457" stroke="#fff" stroke-width="1.5"/>
+        <!-- labels thèmes + scores (R=115) -->
+        <text x="210" y="45"  text-anchor="middle" font-family="'Source Sans 3',sans-serif" font-size="10" font-weight="700" fill="#6A1B9A">Identité</text>
+        <text x="210" y="56"  text-anchor="middle" font-family="'Source Sans 3',sans-serif" font-size="9"  font-weight="900" fill="#6A1B9A">86</text>
+        <text x="312" y="102" font-family="'Source Sans 3',sans-serif" font-size="10" font-weight="700" fill="#1565C0">Liberté</text>
+        <text x="312" y="114" font-family="'Source Sans 3',sans-serif" font-size="9"  font-weight="900" fill="#1565C0">55</text>
+        <text x="312" y="218" font-family="'Source Sans 3',sans-serif" font-size="10" font-weight="700" fill="#E65100">Société</text>
+        <text x="312" y="229" font-family="'Source Sans 3',sans-serif" font-size="9"  font-weight="900" fill="#E65100">37</text>
+        <text x="210" y="276" text-anchor="middle" font-family="'Source Sans 3',sans-serif" font-size="10" font-weight="700" fill="#2E7D32">Nature</text>
+        <text x="210" y="287" text-anchor="middle" font-family="'Source Sans 3',sans-serif" font-size="9"  font-weight="900" fill="#2E7D32">40</text>
+        <text x="108" y="218" text-anchor="end" font-family="'Source Sans 3',sans-serif" font-size="10" font-weight="700" fill="#C62828">Pouvoir</text>
+        <text x="108" y="229" text-anchor="end" font-family="'Source Sans 3',sans-serif" font-size="9"  font-weight="900" fill="#C62828">41</text>
+        <text x="108" y="102" text-anchor="end" font-family="'Source Sans 3',sans-serif" font-size="10" font-weight="700" fill="#AD1457">Amour</text>
+        <text x="108" y="113" text-anchor="end" font-family="'Source Sans 3',sans-serif" font-size="9"  font-weight="900" fill="#AD1457">83</text>
+        <!-- légende -->
+        <rect x="20" y="308" width="380" height="1" fill="#E8E4F0"/>
+        <text x="210" y="326" text-anchor="middle" font-family="'Source Sans 3',sans-serif" font-size="10" fill="#888" font-style="italic">La surface du polygone révèle l'empreinte thématique de l'œuvre</text>
+        <text x="210" y="342" text-anchor="middle" font-family="'Source Sans 3',sans-serif" font-size="10" fill="#888" font-style="italic">Plus un axe est étiré, plus ce thème est présent</text>
+      </svg>
+    </div>
+    <div class="annos">
+      <h3>La toile thématique</h3>
+      <p style="font-size:.88rem;color:var(--gris);margin-bottom:16px;line-height:1.5">
+        Six thèmes mesurés sur toute l'œuvre : Identité, Amour, Liberté, Pouvoir, Société, Nature. 
+        Le radar montre d'un coup d'œil quelle "empreinte" a le livre.
+      </p>
+      <div class="ai">
+        <span class="an" style="background:var(--identite)">①</span>
+        <div><div class="al">Dominante immédiate</div>
+        <div class="at">Identité à 86 saute aux yeux. La question "qui suis-je ?" est au cœur de Caligula.</div></div>
+      </div>
+      <div class="ai">
+        <span class="an" style="background:var(--amour)">②</span>
+        <div><div class="al">Surprise révélée</div>
+        <div class="at">Amour à 83 — surprenant pour une tragédie du pouvoir. Ça vaut la peine de creuser.</div></div>
+      </div>
+      <div class="ai">
+        <span class="an" style="background:var(--v)">③</span>
+        <div><div class="al">Ce qu'on ne voit pas à la lecture</div>
+        <div class="at">Nature à 40 seulement — le palais est un huis-clos total, coupé du monde.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACP -->
+  <div style="background:linear-gradient(135deg,#1a0a3e,#311B92);border-radius:16px;padding:32px;margin:32px 0;color:#fff">
+    <h3 style="color:#CE93D8;margin-bottom:8px">L'ACP — Analyse en composantes principales</h3>
+    <p style="font-size:.9rem;color:rgba(255,255,255,.7);margin-bottom:24px;max-width:600px;line-height:1.6">
+      Un outil de mathématicien mis au service de la littérature. Il place chaque personnage dans un espace à deux dimensions selon son profil thématique. Les personnages similaires sont proches. Les opposés sont éloignés.
+    </p>
+    <div class="two">
+      <div>
+        <div style="background:rgba(255,255,255,.08);border-radius:10px;padding:16px">
+          <svg viewBox="0 0 300 260" xmlns="http://www.w3.org/2000/svg" width="100%">
+            <!-- axes -->
+            <line x1="150" y1="20" x2="150" y2="240" stroke="rgba(255,255,255,.3)" stroke-width="0.8"/>
+            <line x1="20" y1="130" x2="280" y2="130" stroke="rgba(255,255,255,.3)" stroke-width="0.8"/>
+            <!-- bandes quadrant -->
+            <rect x="20" y="20" width="130" height="110" fill="rgba(173,20,87,.08)" rx="4"/>
+            <rect x="150" y="20" width="130" height="110" fill="rgba(21,101,192,.08)" rx="4"/>
+            <rect x="20" y="130" width="130" height="110" fill="rgba(46,125,50,.08)" rx="4"/>
+            <rect x="150" y="130" width="130" height="110" fill="rgba(198,40,40,.08)" rx="4"/>
+            <!-- labels quadrants -->
+            <text x="30" y="36" font-family="'Source Sans 3',sans-serif" font-size="8" fill="rgba(255,255,255,.3)">Amour · Identité</text>
+            <text x="160" y="36" font-family="'Source Sans 3',sans-serif" font-size="8" fill="rgba(255,255,255,.3)">Liberté · Pouvoir</text>
+            <text x="30" y="230" font-family="'Source Sans 3',sans-serif" font-size="8" fill="rgba(255,255,255,.3)">Nature · Société</text>
+            <!-- personnages -->
+            <circle cx="190" cy="72" r="18" fill="rgba(106,27,154,.6)" stroke="#CE93D8" stroke-width="1.5"/>
+            <text x="190" y="72" text-anchor="middle" dominant-baseline="central" font-family="'Source Sans 3',sans-serif" font-size="9" font-weight="700" fill="#fff">Cal.</text>
+            <circle cx="95" cy="88" r="14" fill="rgba(21,101,192,.5)" stroke="#90CAF9" stroke-width="1.5"/>
+            <text x="95" y="88" text-anchor="middle" dominant-baseline="central" font-family="'Source Sans 3',sans-serif" font-size="9" font-weight="700" fill="#fff">Chér.</text>
+            <circle cx="230" cy="168" r="12" fill="rgba(198,40,40,.5)" stroke="#EF9A9A" stroke-width="1.5"/>
+            <text x="230" y="168" text-anchor="middle" dominant-baseline="central" font-family="'Source Sans 3',sans-serif" font-size="9" font-weight="700" fill="#fff">Hél.</text>
+            <!-- Caesonia isolée -->
+            <circle cx="62" cy="195" r="12" fill="rgba(230,81,0,.5)" stroke="#FFCC80" stroke-width="2" stroke-dasharray="3 2"/>
+            <text x="62" y="195" text-anchor="middle" dominant-baseline="central" font-family="'Source Sans 3',sans-serif" font-size="9" font-weight="700" fill="#fff">Cae.</text>
+            <text x="62" y="215" text-anchor="middle" font-family="'Source Sans 3',sans-serif" font-size="8" fill="#FFCC80" font-style="italic">isolée</text>
+            <!-- flèche opposition -->
+            <line x1="108" y1="95" x2="172" y2="80" stroke="rgba(255,255,255,.35)" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#aw)"/>
+            <defs><marker id="aw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="1.5"/></marker></defs>
+            <text x="140" y="80" text-anchor="middle" font-family="'Source Sans 3',sans-serif" font-size="7.5" fill="rgba(255,255,255,.4)" font-style="italic">opposition</text>
+          </svg>
+        </div>
+        <p style="font-size:.8rem;color:rgba(255,255,255,.5);text-align:center;margin-top:8px;font-style:italic">Biplot — positions relatives des personnages</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div style="background:rgba(255,255,255,.08);border-radius:8px;padding:14px">
+          <div style="font-size:.82rem;font-weight:700;color:#CE93D8;margin-bottom:6px">Ce que révèle le biplot</div>
+          <div style="font-size:.82rem;color:rgba(255,255,255,.7);line-height:1.5">
+            Caligula et Chéréa dans des quadrants opposés — ils incarnent deux réponses contradictoires à la même question. Caesonia, isolée, est une présence dramatique à part entière.
+          </div>
+        </div>
+        <div style="background:rgba(255,255,255,.08);border-radius:8px;padding:14px">
+          <div style="font-size:.82rem;font-weight:700;color:#90CAF9;margin-bottom:6px">Le cercle des corrélations</div>
+          <div style="font-size:.82rem;color:rgba(255,255,255,.7);line-height:1.5">
+            Montre quels thèmes évoluent <em>ensemble</em>. Si Liberté et Pouvoir sont proches, c'est que dans ce livre, l'un ne va pas sans l'autre.
+          </div>
+        </div>
+        <div style="background:rgba(255,255,255,.08);border-radius:8px;padding:14px">
+          <div style="font-size:.82rem;font-weight:700;color:#FFCC80;margin-bottom:6px">L'évolution par phase</div>
+          <div style="font-size:.82rem;color:rgba(255,255,255,.7);line-height:1.5">
+            Le même biplot, phase par phase. On voit les personnages se rapprocher, s'éloigner, basculer. Le mouvement dramatique devient visible.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAIRES ET DUOS -->
+  <div class="two" style="margin-top:32px">
+    <div>
+      <div class="svgframe">
+        <svg viewBox="0 0 360 220" xmlns="http://www.w3.org/2000/svg" width="100%">
+          <rect width="360" height="220" fill="#FAFAFA"/>
+          <text x="180" y="22" text-anchor="middle" font-family="'Source Sans 3',sans-serif" font-size="12" font-weight="700" fill="#4A148C">pair_identite · liberte</text>
+          <!-- axes -->
+          <line x1="35" y1="170" x2="335" y2="170" stroke="#DDD" stroke-width="0.8"/>
+          <line x1="35" y1="30" x2="35" y2="170" stroke="#DDD" stroke-width="0.8"/>
+          <!-- graduations -->
+          <g font-family="'Source Sans 3',sans-serif" font-size="8.5" fill="#AAA" text-anchor="middle">
+            <text x="68" y="183">1</text><text x="101" y="183">2</text><text x="134" y="183">3</text>
+            <text x="167" y="183">4</text><text x="200" y="183">5</text><text x="233" y="183">6</text>
+            <text x="266" y="183">7</text><text x="299" y="183">8</text>
+          </g>
+          <text x="185" y="200" text-anchor="middle" font-family="'Source Sans 3',sans-serif" font-size="9" fill="#AAA">phases de l'arc narratif</text>
+          <!-- Identité curve -->
+          <polyline points="68,55 101,62 134,68 167,90 200,75 233,95 266,100 299,145"
+            fill="none" stroke="#6A1B9A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- Liberté curve -->
+          <polyline points="68,130 101,120 134,105 167,60 200,70 233,108 266,125 299,130"
+            fill="none" stroke="#1565C0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5 3"/>
+          <!-- intersection marker -->
+          <circle cx="183" cy="73" r="5" fill="none" stroke="#F57F17" stroke-width="1.5"/>
+          <text x="195" y="65" font-family="'Source Sans 3',sans-serif" font-size="9" fill="#F57F17" font-style="italic">croisement</text>
+          <!-- légende -->
+          <rect x="40" y="38" width="10" height="3" fill="#6A1B9A" rx="1"/>
+          <text x="55" y="42" font-family="'Source Sans 3',sans-serif" font-size="9" fill="#6A1B9A">Identité</text>
+          <line x1="40" y1="52" x2="50" y2="52" stroke="#1565C0" stroke-width="2" stroke-dasharray="4 2"/>
+          <text x="55" y="55" font-family="'Source Sans 3',sans-serif" font-size="9" fill="#1565C0">Liberté</text>
+        </svg>
+      </div>
+      <p style="font-size:.82rem;color:var(--gris);margin-top:8px;text-align:center;font-style:italic">
+        <strong style="color:var(--v)">pair_</strong> — deux thèmes en regard
+      </p>
+    </div>
+    <div>
+      <div class="svgframe">
+        <svg viewBox="0 0 360 220" xmlns="http://www.w3.org/2000/svg" width="100%">
+          <rect width="360" height="220" fill="#FAFAFA"/>
+          <text x="180" y="22" text-anchor="middle" font-family="'Source Sans 3',sans-serif" font-size="12" font-weight="700" fill="#BF360C">duo_per01·per02 — Caligula · Chéréa</text>
+          <!-- axes -->
+          <line x1="35" y1="170" x2="335" y2="170" stroke="#DDD" stroke-width="0.8"/>
+          <line x1="35" y1="30" x2="35" y2="170" stroke="#DDD" stroke-width="0.8"/>
+          <!-- label axe Y -->
+          <text x="20" y="100" text-anchor="middle" font-family="'Source Sans 3',sans-serif" font-size="9" fill="#6A1B9A" font-weight="700" transform="rotate(-90,20,100)">score Identité</text>
+          <!-- graduations -->
+          <g font-family="'Source Sans 3',sans-serif" font-size="8.5" fill="#AAA" text-anchor="middle">
+            <text x="68" y="183">1</text><text x="101" y="183">2</text><text x="134" y="183">3</text>
+            <text x="167" y="183">4</text><text x="200" y="183">5</text><text x="233" y="183">6</text>
+            <text x="266" y="183">7</text><text x="299" y="183">8</text>
+          </g>
+          <text x="185" y="200" text-anchor="middle" font-family="'Source Sans 3',sans-serif" font-size="9" fill="#AAA">phases de l'arc narratif</text>
+          <!-- Caligula -->
+          <polyline points="68,80 101,72 134,65 167,48 200,60 233,85 266,110 299,150"
+            fill="none" stroke="#6A1B9A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- Chéréa -->
+          <polyline points="68,130 101,125 134,118 167,120 200,115 233,108 266,100 299,95"
+            fill="none" stroke="#1565C0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5 3"/>
+          <!-- écart maximal -->
+          <line x1="167" y1="48" x2="167" y2="120" stroke="#F57F17" stroke-width="1" stroke-dasharray="3 2"/>
+          <text x="172" y="85" font-family="'Source Sans 3',sans-serif" font-size="9" fill="#F57F17" font-style="italic">écart max</text>
+          <!-- légende -->
+          <rect x="40" y="38" width="10" height="3" fill="#6A1B9A" rx="1"/>
+          <text x="55" y="42" font-family="'Source Sans 3',sans-serif" font-size="9" fill="#6A1B9A">Caligula</text>
+          <line x1="40" y1="52" x2="50" y2="52" stroke="#1565C0" stroke-width="2" stroke-dasharray="4 2"/>
+          <text x="55" y="55" font-family="'Source Sans 3',sans-serif" font-size="9" fill="#1565C0">Chéréa</text>
+        </svg>
+      </div>
+      <p style="font-size:.82rem;color:var(--gris);margin-top:8px;text-align:center;font-style:italic">
+        <strong style="color:#BF360C">duo_</strong> — deux personnages en regard
+      </p>
+    </div>
+  </div>
+
+  <div class="hl" style="margin-top:8px">
+    La différence entre une <strong>paire</strong> et un <strong>duo</strong> ? 
+    Une paire compare deux <em>forces thématiques</em> dans le livre. 
+    Un duo compare deux <em>voix dramatiques</em> — deux personnages dont les trajectoires se répondent. 
+    Même outil visuel, regards différents.
+  </div>
+</section>
+
+<hr class="sep-wave">
+
+<!-- ═══════════════════════════════════════════════════════ ZONES -->
+<section id="zones" class="sec">
+  <div class="stag">03 — Le système de zones</div>
+  <h2>Chaque information <em>a un numéro</em></h2>
+  <p class="lead">
+    Pour que l'IA puisse montrer son raisonnement, chaque "morceau" d'information 
+    agrégée sur le livre reçoit un identifiant stable. Un peu comme les références dans 
+    un article scientifique — sauf qu'ici, c'est la littérature.
+  </p>
+
+  <div class="two">
+    <div>
+      <div style="margin-bottom:12px">
+        <div class="zone-ex">
+          <span class="zone-id" style="background:#C8E6C9;color:#1B5E20">ctx_auteur</span>
+          <div class="zone-desc">Biographie et positionnement littéraire de Camus</div>
+        </div>
+        <div class="zone-ex">
+          <span class="zone-id" style="background:#BBDEFB;color:#0D47A1">arc_4/8</span>
+          <div class="zone-desc">Phase 4 du schéma moderne en 8 parties — le basculement</div>
+        </div>
+        <div class="zone-ex">
+          <span class="zone-id" style="background:#FCE4EC;color:#880E4F">cit_07·Liberté</span>
+          <div class="zone-desc">"Je suis libre enfin" — taggée thème Liberté</div>
+        </div>
+        <div class="zone-ex">
+          <span class="zone-id" style="background:#EDE7F6;color:#311B92">lex_identite·ph4</span>
+          <div class="zone-desc">Score du thème Identité à la phase 4</div>
+        </div>
+        <div class="zone-ex">
+          <span class="zone-id" style="background:#FFF9C4;color:#795548">per_01·quad</span>
+          <div class="zone-desc">Position de Caligula dans le quadrant ACP</div>
+        </div>
+        <div class="zone-ex">
+          <span class="zone-id" style="background:#FFCCBC;color:#BF360C">duo_per01·per02</span>
+          <div class="zone-desc">Face-à-face Caligula · Chéréa sur l'arc — label affiché</div>
+        </div>
+        <div class="zone-ex" style="border-color:#A5D6A7;border-width:2px;background:#F1F8F1">
+          <div style="font-size:.8rem;font-weight:700;color:var(--vert);margin-bottom:8px;display:flex;align-items:center;gap:6px">
+            <span class="zone-id" style="background:#C8E6C9;color:#1B5E20">écr_</span>
+            Ce qu'Élise a écrit — la seule zone produite par le lecteur
+          </div>
+          <!-- Lecture active -->
+          <div style="font-size:.78rem;color:#555;margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.06em">Lecture active</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+            <span class="zone-id" style="background:#C8E6C9;color:#1B5E20;font-size:.72rem">écr_avis</span>
+            <span class="zone-id" style="background:#C8E6C9;color:#1B5E20;font-size:.72rem">écr_comprehension</span>
+            <span class="zone-id" style="background:#C8E6C9;color:#1B5E20;font-size:.72rem">écr_mots</span>
+          </div>
+          <!-- Dissertation -->
+          <div style="font-size:.78rem;color:#555;margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.06em">Dissertation</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+            <span class="zone-id" style="background:#C8E6C9;color:#1B5E20;font-size:.72rem">écr_diss·problematique</span>
+            <span class="zone-id" style="background:#C8E6C9;color:#1B5E20;font-size:.72rem">écr_diss·plan</span>
+            <span class="zone-id" style="background:#C8E6C9;color:#1B5E20;font-size:.72rem">écr_diss·arg1</span>
+            <span class="zone-id" style="background:#C8E6C9;color:#1B5E20;font-size:.72rem">écr_diss·arg2</span>
+            <span class="zone-id" style="background:#C8E6C9;color:#1B5E20;font-size:.72rem">écr_diss·arg3</span>
+            <span class="zone-id" style="background:#C8E6C9;color:#1B5E20;font-size:.72rem">écr_diss·intro</span>
+            <span class="zone-id" style="background:#C8E6C9;color:#1B5E20;font-size:.72rem">écr_diss·conclu</span>
+          </div>
+          <!-- Analyse linéaire -->
+          <div style="font-size:.78rem;color:#555;margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.06em">Analyse linéaire</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+            <span class="zone-id" style="background:#C8E6C9;color:#1B5E20;font-size:.72rem">écr_lin·intro</span>
+            <span class="zone-id" style="background:#C8E6C9;color:#1B5E20;font-size:.72rem">écr_lin·mvt1</span>
+            <span class="zone-id" style="background:#C8E6C9;color:#1B5E20;font-size:.72rem">écr_lin·mvt2</span>
+            <span class="zone-id" style="background:#C8E6C9;color:#1B5E20;font-size:.72rem">écr_lin·mvt3</span>
+            <span class="zone-id" style="background:#C8E6C9;color:#1B5E20;font-size:.72rem">écr_lin·conclu</span>
+          </div>
+          <!-- Commentaire composé -->
+          <div style="font-size:.78rem;color:#555;margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.06em">Commentaire composé</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+            <span class="zone-id" style="background:#C8E6C9;color:#1B5E20;font-size:.72rem">écr_com·problematique</span>
+            <span class="zone-id" style="background:#C8E6C9;color:#1B5E20;font-size:.72rem">écr_com·axe1</span>
+            <span class="zone-id" style="background:#C8E6C9;color:#1B5E20;font-size:.72rem">écr_com·axe2</span>
+            <span class="zone-id" style="background:#C8E6C9;color:#1B5E20;font-size:.72rem">écr_com·bilan</span>
+          </div>
+          <!-- Rédaction + Résumé -->
+          <div style="font-size:.78rem;color:#555;margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.06em">Rédaction · Résumé</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <span class="zone-id" style="background:#C8E6C9;color:#1B5E20;font-size:.72rem">écr_red·texte</span>
+            <span class="zone-id" style="background:#C8E6C9;color:#1B5E20;font-size:.72rem">écr_res·texte</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="hl" style="margin-bottom:16px">
+        <strong style="color:var(--v)">Pourquoi des identifiants ?</strong><br><br>
+        Parce que l'IA doit pouvoir dire <em>"j'ai regardé ici, puis là, puis j'ai croisé avec cela"</em>. 
+        Sans adresses stables, son raisonnement reste opaque. 
+        Avec ces identifiants, il devient lisible — et imitable.
+      </div>
+      <div style="background:var(--blanc);border:1px solid var(--gris2);border-radius:10px;padding:16px">
+        <div style="font-size:.85rem;font-weight:700;color:var(--v);margin-bottom:10px">Les familles de zones</div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:.82rem">
+          <div style="display:flex;gap:8px;align-items:center">
+            <span style="background:#C8E6C9;color:#1B5E20;padding:1px 8px;border-radius:3px;font-family:var(--mono);font-size:.75rem;min-width:50px">ctx_</span>
+            <span style="color:var(--gris)">Contexte du livre</span>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span style="background:#BBDEFB;color:#0D47A1;padding:1px 8px;border-radius:3px;font-family:var(--mono);font-size:.75rem;min-width:50px">arc_</span>
+            <span style="color:var(--gris)">Arc narratif (N/T encode le schéma)</span>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span style="background:#FCE4EC;color:#880E4F;padding:1px 8px;border-radius:3px;font-family:var(--mono);font-size:.75rem;min-width:50px">cit_</span>
+            <span style="color:var(--gris)">Citations numérotées</span>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span style="background:#EDE7F6;color:#311B92;padding:1px 8px;border-radius:3px;font-family:var(--mono);font-size:.75rem;min-width:50px">lex_</span>
+            <span style="color:var(--gris)">Scores lexicaux par thème</span>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span style="background:#FFF9C4;color:#795548;padding:1px 8px;border-radius:3px;font-family:var(--mono);font-size:.75rem;min-width:50px">per_</span>
+            <span style="color:var(--gris)">Personnages et profils</span>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span style="background:#E0F7FA;color:#006064;padding:1px 8px;border-radius:3px;font-family:var(--mono);font-size:.75rem;min-width:50px">lx_</span>
+            <span style="color:var(--gris)">Lieux et fonctions dramatiques</span>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span style="background:#FFCCBC;color:#BF360C;padding:1px 8px;border-radius:3px;font-family:var(--mono);font-size:.75rem;min-width:50px">acp_</span>
+            <span style="color:var(--gris)">Éléments de l'ACP</span>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span style="background:#F3E5F5;color:#6A1B9A;padding:1px 8px;border-radius:3px;font-family:var(--mono);font-size:.75rem;min-width:50px">pair_</span>
+            <span style="color:var(--gris)">Paires de thèmes comparés</span>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span style="background:#FFCCBC;color:#BF360C;padding:1px 8px;border-radius:3px;font-family:var(--mono);font-size:.75rem;min-width:50px">duo_</span>
+            <span style="color:var(--gris)">Face-à-face entre personnages</span>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;border-top:1px solid var(--gris2);padding-top:6px;margin-top:2px">
+            <span style="background:#C8E6C9;color:#1B5E20;padding:1px 8px;border-radius:3px;font-family:var(--mono);font-size:.75rem;min-width:50px">écr_</span>
+            <span style="color:var(--vert);font-weight:600">Ce qu'Élise a écrit — zone unique</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep-wave">
+
+<!-- ═══════════════════════════════════════════════════════ IA RAISONNE -->
+<section id="ia-raisonne" class="band">
+  <div class="sec-wide" style="padding:0">
+    <div class="stag">04 — L'IA montre où elle regarde</div>
+    <h2>Un raisonnement <em>visible et imitable</em></h2>
+    <p class="lead">
+      L'IA ne dit pas juste "Identité est le thème dominant". Elle explique <em>comment</em> 
+      elle est arrivée à cette conclusion — et sur quelles zones elle a posé les yeux, dans quel ordre. 
+      C'est exactement ce qu'on apprend à faire en littérature.
+    </p>
+
+    <div class="ia-rais">
+      <h4>✦ Réflexion IA référencée — Caligula (Camus)</h4>
+      <p>
+        Je commence par le radar global 
+        <span class="ref ref-lex">lex_identite</span> (score 86 — dominant). 
+        Mais un score global ne suffit pas : je regarde <em>quand</em> ce thème vacille. 
+        <span class="ref ref-arc">arc_8/8</span> montre un effondrement final 
+        que le radar seul ne révèle pas.
+      </p>
+      <br>
+      <p>
+        Je vais aux citations pour confirmer. 
+        <span class="ref ref-cit">cit_07·Liberté</span> — 
+        "je suis libre enfin" — est dite au moment de mourir. 
+        La liberté et la mort coïncident. Je croise avec 
+        <span class="ref ref-lex">lex_liberte·ph4</span> : 
+        Liberté culmine exactement en <span class="ref ref-arc">arc_4/8</span>, 
+        au sommet de la tyrannie. 
+        Ce n'est pas une coïncidence — c'est une contradiction qui mérite d'être argumentée.
+      </p>
+      <br>
+      <p>
+        Sur les personnages : <span class="ref ref-acp">acp_biplot</span> 
+        place <span class="ref ref-per">per_01</span> (Caligula) 
+        et <span class="ref ref-per">per_02</span> (Chéréa) dans des quadrants opposés. 
+        <span class="ref ref-duo">duo_per01·per02</span> 
+        (Caligula · Chéréa) montre que leurs trajectoires se croisent exactement en 
+        <span class="ref ref-arc">arc_4/8</span>. 
+        Et <span class="ref ref-acp">acp_cercle</span> isole Caesonia — 
+        aucun autre personnage ne lui ressemble. Ce n'est pas un détail.
+      </p>
+      <br>
+      <p>
+        Tu as écrit dans <span class="ref ref-ecr">écr_diss·problematique</span> 
+        que Caligula "cherche une liberté impossible". 
+        <span class="ref ref-lex">lex_liberte·ph4</span> + 
+        <span class="ref ref-arc">arc_8/8</span> te donnent raison. 
+        Mais est-ce que <span class="ref ref-ecr">écr_diss·arg2</span> 
+        exploite le renversement de <span class="ref ref-arc">arc_4/8</span> ?
+      </p>
+      <div class="ia-focus">
+        Zones consultées dans l'ordre : lex_identite → arc_8/8 → cit_07 → lex_liberte·ph4 → arc_4/8 → acp_biplot → duo_per01·per02 → acp_cercle → écr_diss (réponse à ce qu'Élise a construit)
+      </div>
+    </div>
+
+    <div class="quote" style="background:rgba(255,255,255,.08);border-left-color:#CE93D8;color:rgba(255,255,255,.85)">
+      "Ce n'est pas ce que l'IA conclut qui est précieux. C'est l'ordre dans lequel elle regarde — 
+      et pourquoi."
+    </div>
+  </div>
+</section>
+
+<hr class="sep-wave">
+
+<!-- ═══════════════════════════════════════════════════════ PROGRESSION -->
+<section id="progression" class="sec">
+  <div class="stag">05 — Ta progression, Élise</div>
+  <h2>De l'accompagnement <em>à l'autonomie</em></h2>
+  <p class="lead">
+    L'analyse augmentée n'est pas un outil qu'on utilise pareil toute sa vie. 
+    Il y a quatre niveaux — et chaque niveau te donne plus de liberté.
+  </p>
+
+  <div class="niveaux">
+    <div class="niv" style="background:var(--lilas);border-color:#CE93D8">
+      <div class="niv-num">1</div>
+      <div class="niv-titre" style="color:var(--v)">L'IA fait le tour</div>
+      <div class="niv-desc">
+        Tu lis le raisonnement référencé de l'IA. Tu vois quelles zones elle consulte, dans quel ordre, 
+        pourquoi elle croise telle citation avec tel score. Tu observes.
+      </div>
+    </div>
+    <div class="niv" style="background:var(--bleu2);border-color:#90CAF9">
+      <div class="niv-num">2</div>
+      <div class="niv-titre" style="color:var(--bleu)">Tu choisis les zones</div>
+      <div class="niv-desc">
+        Tu sélectionnes les zones que tu veux que l'IA examine. 
+        "Regarde arc_4/8 et cit_07 — est-ce qu'il y a un lien ?" 
+        L'IA répond, mais c'est toi qui orientes.
+      </div>
+    </div>
+    <div class="niv" style="background:var(--vert2);border-color:#A5D6A7">
+      <div class="niv-num">3</div>
+      <div class="niv-titre" style="color:var(--vert)">Tu proposes des liens</div>
+      <div class="niv-desc">
+        Tu formules toi-même une connexion entre zones — "je pense que lex_liberte·ph4 explique cit_07". 
+        L'IA commente, confirme, ou nuance. Tu raisonnes, elle vérifie.
+      </div>
+    </div>
+    <div class="niv" style="background:#FBE9E7;border-color:#FFAB91">
+      <div class="niv-num">4</div>
+      <div class="niv-titre" style="color:var(--orange)">Tu construis avant d'écrire</div>
+      <div class="niv-desc">
+        Avant de rédiger, tu constitues ta propre liste de zones-clés. 
+        Tu relies les observations à ta problématique 
+        <span style="font-family:var(--mono);font-size:.78rem;background:#FFCCBC;color:#BF360C;padding:1px 5px;border-radius:3px">écr_diss·problematique</span>. 
+        L'IA devient un filet de sécurité, pas une béquille.
+      </div>
+    </div>
+  </div>
+
+  <div class="hl">
+    <strong>La zone <span style="font-family:var(--mono);font-size:.9rem">écr_</span> change tout</strong> — 
+    parce que c'est la seule zone que tu produis toi-même. 
+    Quand l'IA croise <span style="font-family:var(--mono);font-size:.85rem;background:#C8E6C9;color:#1B5E20;padding:1px 6px;border-radius:3px">lex_identite</span> avec 
+    <span style="font-family:var(--mono);font-size:.85rem;background:#C8E6C9;color:#1B5E20;padding:1px 6px;border-radius:3px">écr_diss·arg2</span>, 
+    elle ne te donne pas une réponse — elle répond à ce que <em>tu</em> as construit. 
+    C'est la différence entre un tuteur et un oracle.
+  </div>
+</section>
+
+<hr class="sep-wave">
+
+<!-- ═══════════════════════════════════════════════════════ HORIZON -->
+<section id="horizon" class="sec">
+  <div class="stag">06 — L'horizon</div>
+  <h2>Ce qui arrive <em>bientôt</em></h2>
+  <p class="lead">
+    L'analyse augmentée est déjà là pour les quatre livres Élise. Voici ce qui se prépare.
+  </p>
+
+  <ul class="rm">
+    <li>
+      <span class="rm-ico">✓</span>
+      <div class="rm-txt">
+        <strong>Toile thématique · radar · ACP · paires · duos</strong>
+        <span>Opérationnels sur Caligula, Britannicus, L'Île des esclaves, La Controverse de Valladolid</span>
+      </div>
+    </li>
+    <li>
+      <span class="rm-ico">✓</span>
+      <div class="rm-txt">
+        <strong>Bouton ✨ IA — analyse en un clic</strong>
+        <span>Génère paires, quadrants et commentaires depuis les données lexicales importées</span>
+      </div>
+    </li>
+    <li>
+      <span class="rm-ico">→</span>
+      <div class="rm-txt">
+        <strong>Relations inter-personnages</strong>
+        <span>Graphe de relations annotées pour les 4 livres Élise — cercles liés par des flèches labelisées</span>
+      </div>
+    </li>
+    <li>
+      <span class="rm-ico">→</span>
+      <div class="rm-txt">
+        <strong>Raisonnement IA référencé (zones §§)</strong>
+        <span>L'IA cite ses sources internes avec les identifiants arc_, lex_, cit_, duo_… Visible et imitable</span>
+      </div>
+    </li>
+    <li>
+      <span class="rm-ico">→</span>
+      <div class="rm-txt">
+        <strong>Passerelle Analyse → Écriture</strong>
+        <span>L'étape 3.5 — "que retenir pour écrire ?" — problématique guidée depuis les données</span>
+      </div>
+    </li>
+    <li>
+      <span class="rm-ico">◯</span>
+      <div class="rm-txt">
+        <strong>Zone écr_ — réponse à ce qu'Élise écrit</strong>
+        <span>L'IA croise ses données avec la problématique, les arguments, les rédactions en cours</span>
+      </div>
+    </li>
+    <li>
+      <span class="rm-ico">◯</span>
+      <div class="rm-txt">
+        <strong>Aide-mémoire distillé (1 page)</strong>
+        <span>Document généré par la passerelle, imprimable, à garder sous les yeux pendant la rédaction</span>
+      </div>
+    </li>
+  </ul>
+
+  <div class="quote">
+    "On ne lit pas pour se souvenir de tout. On lit pour apprendre à regarder."
+  </div>
+</section>
+
+<!-- LIGHTBOX -->
+<div id="lb-overlay" onclick="lbClose()">
+  <button id="lb-close" onclick="lbClose()">✕</button>
+  <img id="lb-img" src="" alt="">
+  <div id="lb-caption"></div>
+</div>
+
+<style>
+#lb-overlay{display:none;position:fixed;inset:0;z-index:9999;background:rgba(10,5,20,.92);
+  justify-content:center;align-items:center;padding:16px;cursor:zoom-out}
+#lb-overlay.open{display:flex}
+#lb-img{max-width:min(98vw,1200px);max-height:92vh;width:auto;height:auto;
+  border-radius:8px;box-shadow:0 8px 60px rgba(0,0,0,.7);object-fit:contain}
+#lb-close{position:fixed;top:14px;right:18px;width:38px;height:38px;border-radius:50%;
+  background:rgba(255,255,255,.18);border:none;color:#fff;font-size:1.3rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;z-index:10000}
+#lb-caption{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);
+  color:rgba(255,255,255,.7);font-size:.75rem;font-style:italic;
+  background:rgba(0,0,0,.45);padding:4px 14px;border-radius:12px;pointer-events:none}
+</style>
+<script>
+(function(){
+  window.lbClose=function(){
+    document.getElementById('lb-overlay').classList.remove('open');
+    document.body.style.overflow='';
+  };
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')lbClose();});
+})();
+</script>
+
+</body>
+</html>
