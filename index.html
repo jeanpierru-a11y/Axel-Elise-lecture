@@ -16744,10 +16744,16 @@ function _ppRenderCard(pi, activeKey) {
   row.appendChild(legDiv);
   card.appendChild(row);
 
-  // ── Commentaire IA ───────────────────────────────────────────────────────
+  // Commentaire IA pour cette paire — matching souple (accents, casse)
   var ppIA=(LIVRE_ACTIF&&LIVRE_ACTIF.lexique&&LIVRE_ACTIF.lexique.pairesPerso)||[];
+  function _normName(s){ return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim(); }
+  var nA=_normName(pA.nom), nB=_normName(pB.nom);
   var matchPP=ppIA.find(function(pp){
-    return Array.isArray(pp.noms)&&pp.noms.some(function(n){return n===pA.nom;})&&pp.noms.some(function(n){return n===pB.nom;});
+    if(!Array.isArray(pp.noms)||pp.noms.length<2) return false;
+    var n0=_normName(pp.noms[0]), n1=_normName(pp.noms[1]);
+    return (n0===nA&&n1===nB)||(n0===nB&&n1===nA)
+      ||(nA.indexOf(n0)>=0||n0.indexOf(nA)>=0)&&(nB.indexOf(n1)>=0||n1.indexOf(nB)>=0)
+      ||(nA.indexOf(n1)>=0||n1.indexOf(nA)>=0)&&(nB.indexOf(n0)>=0||n0.indexOf(nB)>=0);
   });
   if(matchPP&&matchPP.commentaire){
     var cDiv=document.createElement('div');
@@ -17165,7 +17171,7 @@ async function analyserAvecIA() {
     + '}\n'
     + 'R\u00e8gles : paires th\u00e9matiques = 2 \u00e0 4 paires les plus r\u00e9v\u00e9latrices de l\u0027\u0153uvre. '
     + 'Score 3-5. cles = noms exacts parmi [amour,pouvoir,liberte,identite,societe,nature]. '
-    + 'pairesPerso = toutes les paires de personnages pertinentes (max 6). '
+    + 'pairesPerso = TOUTES les paires de personnages sans exception (pas de limite). '
     + 'quadrants : hg=haut-gauche, hd=haut-droite, bg=bas-gauche, bd=bas-droite. '
     + 'Titres de quadrants : expressions \u00e9vocatrices du registre litt\u00e9raire (ex: "Tyrannie nihiliste", "Puret\u00e9 po\u00e9tique"). '
     + 'raisonnement.paragraphes : 4-5 paragraphes, niveau lyc\u00e9e, utilise §§xxx pour TOUTES les r\u00e9f\u00e9rences de zones. '
