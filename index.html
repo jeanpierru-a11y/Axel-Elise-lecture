@@ -16747,6 +16747,22 @@ function _ppRenderCard(pi, activeKey) {
 }
 
 
+var _tbRadarMode   = 'rel';   // 'rel' = profil normalisé | 'abs' = poids absolu
+var _tbRadarHidden = {};      // {persoId: true} → personnages masqués du radar
+
+function _tbRadarSetMode(m) {
+  _tbRadarMode = m;
+  var relBtn=document.getElementById('tb-radar-rel'), absBtn=document.getElementById('tb-radar-abs');
+  if(relBtn){ relBtn.style.background=(m==='rel'?'#9C27B0':'#F3E5F5'); relBtn.style.color=(m==='rel'?'#fff':'#9C27B0'); }
+  if(absBtn){ absBtn.style.background=(m==='abs'?'#9C27B0':'#F3E5F5'); absBtn.style.color=(m==='abs'?'#fff':'#9C27B0'); }
+  var r=document.getElementById('tb-radar'); if(r) _renderTbRadar(r);
+}
+
+function _tbRadarToggle(id) {
+  _tbRadarHidden[id] = !_tbRadarHidden[id];
+  var r=document.getElementById('tb-radar'); if(r) _renderTbRadar(r);
+}
+
 function _renderTbAll() {
   function _doRender() {
     var r=document.getElementById('tb-radar'), b=document.getElementById('tb-bubble');
