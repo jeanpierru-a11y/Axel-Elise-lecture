@@ -2248,7 +2248,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 .lm-wf-title{font-weight:800;margin-bottom:2px;}
 .lm-wf-btns{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px;}
 
-#ni-q-th-paires{display:none;flex:1;overflow-y:auto;min-height:0;padding:4px 6px;display:flex;flex-direction:column;gap:7px;}
+#ni-q-th-paires{display:none;flex:1;overflow-y:auto;min-height:0;padding:4px 6px;flex-direction:column;gap:7px;}
 .ni-paire-item{background:#fff;border:1px solid #e2d9f0;border-radius:8px;padding:8px 10px 6px;box-shadow:0 1px 4px rgba(106,27,154,.07);display:flex;flex-direction:column;gap:4px;}
 .ni-paire-ttl{font-size:11px;font-weight:800;display:flex;align-items:center;gap:5px;padding-bottom:5px;border-bottom:1px solid #f0e8f8;}
 .ni-paire-badge{margin-left:auto;font-size:9px;color:#7B5EA7;font-weight:700;background:#f5f0ff;padding:2px 8px;border-radius:8px;white-space:nowrap;}
@@ -2279,6 +2279,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 #ni-q-th-acp{background:#fff;}
 #acp-variance{border-bottom:1px solid #EDE7F6;}
 
+.acp-ia-comm{flex:0 0 auto;font-size:.62rem;font-style:italic;color:#7B1FA2;padding:2px 8px 3px;border-top:1px solid #F3E5F5;line-height:1.5;background:#FAFBFE;display:none;}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 </head>
@@ -2723,7 +2724,8 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
         <button class="ni-q-hdr-alpha" id="ni-th-xlsx-btn" onclick="exporterLexiqueExcel()" title="Exporter le lexique en Excel (scores + champs + phases)" style="display:none;margin-left:6px;">📊 Excel</button>
         <button class="ni-q-hdr-alpha" id="ni-th-json-btn" onclick="exporterJSONComplet()" title="Exporter lexique + scores personnages en JSON (sauvegarde complète)" style="display:none;margin-left:6px;">💾 JSON</button>
         <input type="file" id="ni-th-json-import" accept=".json" style="display:none;" onchange="importerJSONComplet(this)">
-        <button class="ni-q-hdr-alpha" id="ni-th-json-import-btn" onclick="document.getElementById('ni-th-json-import').click()" title="Importer un JSON complet (lexique + scores personnages)" style="display:none;margin-left:2px;">📂</button>
+        <button class="ni-q-hdr-alpha" id="ni-th-json-import-btn" onclick="document.getElementById('ni-th-json-import').click()" title="Importer un JSON complet (lexique + scores personnages)" style="display:none;margin-left:2px;">
+        <button class="ni-q-hdr-alpha" id="ni-th-ia-btn" onclick="analyserAvecIA()" title="Analyser avec l'IA (paires, quadrants, commentaires)" style="display:none;margin-left:8px;background:#4A148C;color:#fff;border-color:#7B1FA2;">✨ IA</button>📂</button>
         <div style="flex:1;min-width:0;"></div>
         <div style="display:flex;align-items:center;gap:3px;">
           <button class="ni-q-hdr-icon" id="ni-th-count-btn" onclick="openLexCount()" title="Compter sur texte complet (.txt)" style="display:none;">📄</button>
@@ -2944,22 +2946,26 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
             <div style="flex:0 0 30vh;display:flex;min-height:0;overflow:hidden;gap:6px;padding:4px 4px 0;">
               <div style="flex:1;display:flex;flex-direction:column;min-width:0;border:2px solid #9C27B0;border-radius:7px;overflow:hidden;background:#FAFAFE;">
                 <div class="acp-col-hdr">🏃 Plan de mouvement <span style="font-weight:400;font-size:.63rem;color:#7B1FA2;">(phases)</span><button onclick="_acpHelp('mouvement')" style="font-size:.65rem;background:none;border:1px solid #CE93D8;border-radius:50%;width:16px;height:16px;cursor:pointer;color:#9C27B0;padding:0;line-height:1;">?</button></div>
-                <div id="acp-biplot" style="flex:1;min-height:0;overflow:hidden;display:flex;"></div>
+                <div id="acp-biplot" style="flex:1;min-height:0;overflow:hidden;display:flex;">
+                <div id="acp-comm-mouvement" class="acp-ia-comm"></div></div>
               </div>
               <div style="flex:1;display:flex;flex-direction:column;min-width:0;border:2px solid #9C27B0;border-radius:7px;overflow:hidden;background:#FAFAFE;">
                 <div class="acp-col-hdr">🧩 Plan de structure <span style="font-weight:400;font-size:.63rem;color:#7B1FA2;">(personnages)</span><button onclick="_acpHelp('structure')" style="font-size:.65rem;background:none;border:1px solid #CE93D8;border-radius:50%;width:16px;height:16px;cursor:pointer;color:#9C27B0;padding:0;line-height:1;">?</button></div>
-                <div id="acp-structure" style="flex:1;min-height:0;overflow:hidden;display:flex;align-items:center;justify-content:center;"></div>
+                <div id="acp-structure" style="flex:1;min-height:0;overflow:hidden;display:flex;align-items:center;justify-content:center;">
+                <div id="acp-comm-structure" class="acp-ia-comm"></div></div>
               </div>
             </div>
             <!-- Ligne 2 : Cercle des corrélations | Heatmap -->
             <div style="flex:0 0 30vh;display:flex;min-height:0;overflow:hidden;gap:6px;padding:4px 4px 4px;">
               <div style="flex:1;display:flex;flex-direction:column;min-width:0;border:2px solid #7B1FA2;border-radius:7px;overflow:hidden;background:#FDF8FF;">
                 <div class="acp-col-hdr">🎯 Cercle des corrélations<button onclick="_acpHelp('cercle')" style="font-size:.65rem;background:none;border:1px solid #CE93D8;border-radius:50%;width:16px;height:16px;cursor:pointer;color:#9C27B0;padding:0;line-height:1;">?</button></div>
-                <div id="acp-cercle" style="flex:1;min-height:0;overflow:hidden;display:flex;align-items:center;justify-content:center;"></div>
+                <div id="acp-cercle" style="flex:1;min-height:0;overflow:hidden;display:flex;align-items:center;justify-content:center;">
+                <div id="acp-comm-cercle" class="acp-ia-comm"></div></div>
               </div>
               <div style="flex:1;display:flex;flex-direction:column;min-width:0;border:2px solid #7B1FA2;border-radius:7px;overflow:hidden;background:#F8FCF8;">
                 <div class="acp-col-hdr">🌡️ Heatmap thématique<button onclick="_acpHelp('heatmap')" style="font-size:.65rem;background:none;border:1px solid #CE93D8;border-radius:50%;width:16px;height:16px;cursor:pointer;color:#9C27B0;padding:0;line-height:1;">?</button></div>
-                <div id="acp-heatmap" style="flex:1;min-height:0;overflow:auto;padding:4px 6px;"></div>
+                <div id="acp-heatmap" style="flex:1;min-height:0;overflow:auto;padding:4px 6px;">
+                <div id="acp-comm-heatmap" class="acp-ia-comm"></div></div>
               </div>
             </div>
           </div>
@@ -13788,6 +13794,8 @@ function updateQ3LexViz() {
   var countBtn=document.getElementById('ni-th-count-btn');
   if(countBtn) countBtn.style.display=(lex&&lex.champLexical)?'inline':'none';
   // Badge source
+  var iaBtn=document.getElementById('ni-th-ia-btn');
+  if(iaBtn) iaBtn.style.display=(lex&&lex.tranches&&lex.tranches.length>=3)?'inline':'none';
   var badge=document.getElementById('ni-q-th-source-badge');
   if(badge){
     badge.className='';
@@ -15332,6 +15340,18 @@ function _buildPairScatter(lex, k1, k2) {
   return '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:auto;">'+s+'</svg>';
 }
 
+// Corrige les chaînes stockées avec caractères corrompus
+function _fixStr(s) {
+  if(!s) return '';
+  try { s = s.replace(/\\\\u([0-9a-fA-F]{4})/g,function(_,h){return String.fromCharCode(parseInt(h,16));}); } catch(e){}
+  var map=[['\u00c3\u00a9','\u00e9'],['\u00c3\u00a8','\u00e8'],['\u00c3\u00a0','\u00e0'],['\u00c3\u00ae','\u00ee'],
+           ['\u00c3\u00bb','\u00fb'],['\u00c3\u00b4','\u00f4'],['\u00c3\u00a7','\u00e7'],['\u00c3\u00ab','\u00eb'],
+           ['\u00c3\u00a2','\u00e2'],['\u00e2\u0080\u0099',"'"],['\u00e2\u0080\u0094','\u2014'],
+           ['\u00e2\u0080\u00a6','\u2026']];
+  map.forEach(function(p){s=s.split(p[0]).join(p[1]);});
+  return s;
+}
+
 function updateQ3PairesViz() {
   var L = LIVRE_ACTIF, lex = L && L.lexique;
   var el = document.getElementById('ni-q-th-paires');
@@ -15377,7 +15397,7 @@ function updateQ3PairesViz() {
           phLegHtml+
           '</div>' : '')+
       '</div>'+
-      '<div class="ni-paire-interp">'+p.interpretation+'</div>'+
+      '<div class="ni-paire-interp">'+_fixStr(p.interpretation)+'</div>'+
     '</div>';
   }).join('');
 }
@@ -15891,6 +15911,21 @@ function _renderACPBiplot(container, pca, phases, tranches) {
   bandTxtB(txR,cyTopC,'← '+THL2[kPos2],LEX_COLORS[kPos2],90);
   bandTxtB(txR,cyBotC,THL2[kNeg2]+' →',LEX_COLORS[kNeg2],90);
 
+
+  // ── Noms de quadrants IA ──────────────────────────────────────────────────
+  var qIA = (LIVRE_ACTIF&&LIVRE_ACTIF.lexique&&LIVRE_ACTIF.lexique.quadrantsIA&&LIVRE_ACTIF.lexique.quadrantsIA.planMouvement)||null;
+  if(qIA){
+    var qStyle = function(x,y,txt){ svg.append('text').attr('x',x).attr('y',y).attr('text-anchor','middle')
+      .attr('font-family','Arial,sans-serif').attr('font-size',9).attr('font-style','italic')
+      .attr('fill','#B39DDB').attr('opacity',0.85).text(txt); };
+    var qMT=MT, qCH=CH, qML=ML, qCW=CW;
+    var qcx=ML+scX(0), qcy=MT+scY(0);
+    if(qIA.hg) qStyle((qML+qcx)/2, qMT+10, qIA.hg);
+    if(qIA.hd) qStyle((qcx+qML+qCW)/2, qMT+10, qIA.hd);
+    if(qIA.bg) qStyle((qML+qcx)/2, qMT+qCH-6, qIA.bg);
+    if(qIA.bd) qStyle((qcx+qML+qCW)/2, qMT+qCH-6, qIA.bd);
+  }
+
   // Grille
   g.append('line').attr('x1',0).attr('y1',cy0).attr('x2',CW).attr('y2',cy0).attr('stroke','#DADADA').attr('stroke-width',1.2);
   g.append('line').attr('x1',cx0).attr('y1',0).attr('x2',cx0).attr('y2',CH).attr('stroke','#DADADA').attr('stroke-width',1.2);
@@ -16100,6 +16135,20 @@ function _renderACPStructure(container) {
   bandTxtB(txR,cyBotC,THL2[kNeg2]+' →',LEX_COLORS[kNeg2],90);
 
 
+
+  // ── Noms de quadrants IA ──────────────────────────────────────────────────
+  var qSIA = (LIVRE_ACTIF&&LIVRE_ACTIF.lexique&&LIVRE_ACTIF.lexique.quadrantsIA&&LIVRE_ACTIF.lexique.quadrantsIA.planStructure)||null;
+  if(qSIA){
+    var qsStyle = function(x,y,txt){ svg.append('text').attr('x',x).attr('y',y).attr('text-anchor','middle')
+      .attr('font-family','Arial,sans-serif').attr('font-size',9).attr('font-style','italic')
+      .attr('fill','#B39DDB').attr('opacity',0.85).text(txt); };
+    var qscx=ML+scX(0), qscy=MT+scY(0);
+    if(qSIA.hg) qsStyle((ML+qscx)/2, MT+10, qSIA.hg);
+    if(qSIA.hd) qsStyle((qscx+ML+CW)/2, MT+10, qSIA.hd);
+    if(qSIA.bg) qsStyle((ML+qscx)/2, MT+CH-6, qSIA.bg);
+    if(qSIA.bd) qsStyle((qscx+ML+CW)/2, MT+CH-6, qSIA.bd);
+  }
+
   g.append('line').attr('x1',0).attr('y1',cy0).attr('x2',CW).attr('y2',cy0).attr('stroke','#DADADA').attr('stroke-width',1.2);
   g.append('line').attr('x1',cx0).attr('y1',0).attr('x2',cx0).attr('y2',CH).attr('stroke','#DADADA').attr('stroke-width',1.2);
   var pts=coords.map(function(co,i){
@@ -16263,6 +16312,7 @@ function _renderACPWidget() {
     if(el2) _renderACPCercle(el2,pca);
     if(el3) _renderACPStructure(el3);
     if(hm) _renderACPHeatmap(hm,lex.phases,filtered);
+    _updateACPCommentaires();
   });});
 }
 
@@ -16316,9 +16366,12 @@ function importerJSONComplet(input) {
       var data = JSON.parse(e.target.result);
       var changed = false;
 
-      // Lexique
+      // Lexique — importe tranches/phases/champLexical/justifications SANS écraser les paires
       if (data.lexique && data.lexique.tranches && data.lexique.tranches.length) {
+        var pairesOrig = (LIVRE_ACTIF.lexique && LIVRE_ACTIF.lexique.paires) || [];
         LIVRE_ACTIF.lexique = data.lexique;
+        // Paires = toujours celles du démo/saisie, jamais celles du JSON importé
+        LIVRE_ACTIF.lexique.paires = pairesOrig;
         changed = true;
       }
 
@@ -16465,6 +16518,17 @@ function _renderPairesPerso(container) {
     var maxDiff=0, maxK=''; KEYS.forEach(function(k){var d=Math.abs((+(pA.scores[k]||0))-(+(pB.scores[k]||0)));if(d>maxDiff){maxDiff=d;maxK=k;}});
     if(maxK){badge.innerHTML+='<span style="font-size:.64rem;color:#555;">Écart max : <span style="color:'+LEX_COLORS[maxK]+';font-weight:800">'+THL[maxK]+'</span> (+'+maxDiff+')</span>';}
     block.appendChild(badge);
+    // Commentaire IA pour cette paire de personnages
+    var ppIA=(LIVRE_ACTIF&&LIVRE_ACTIF.lexique&&LIVRE_ACTIF.lexique.pairesPerso)||[];
+    var matchPP=ppIA.find(function(pp){
+      return Array.isArray(pp.noms)&&pp.noms.some(function(n){return n===pA.nom;})&&pp.noms.some(function(n){return n===pB.nom;});
+    });
+    if(matchPP&&matchPP.commentaire){
+      var commDiv=document.createElement('div');
+      commDiv.style.cssText='font-size:.62rem;font-style:italic;color:#6A1B9A;padding:3px 6px 2px;border-top:1px solid #F3E5F5;line-height:1.5;';
+      commDiv.textContent=matchPP.commentaire;
+      block.appendChild(commDiv);
+    }
     container.appendChild(block);
   });
 }
@@ -16609,6 +16673,7 @@ function _renderTbAll() {
     var m=document.getElementById('tb-matrice'), e=document.getElementById('tb-evol');
     if(r)_renderTbRadar(r); if(b)_renderTbBubble(b);
     if(m)_renderTbMatrice(m); if(e)_renderTbEvolution(e);
+    _updateACPCommentaires();
   }); });
 }
 
@@ -16855,6 +16920,164 @@ function _renderTbEvolution(container) {
   });
   container.appendChild(legDiv);
 }
+
+// ════════════════════════════════════════════════════════════════════════════
+// ✨ ANALYSE IA — Génère paires, commentaires et noms de quadrants via API
+// ════════════════════════════════════════════════════════════════════════════
+
+// ── Mise à jour des commentaires IA dans les panels ACP ──────────────────────
+function _updateACPCommentaires() {
+  var comm = (LIVRE_ACTIF&&LIVRE_ACTIF.lexique&&LIVRE_ACTIF.lexique.commentairesIA)||null;
+  var map = {'acp-comm-mouvement':'planMouvement','acp-comm-structure':'planStructure','acp-comm-cercle':'cercle','acp-comm-heatmap':'heatmap'};
+  Object.keys(map).forEach(function(id) {
+    var el=document.getElementById(id); if(!el) return;
+    var txt=comm&&comm[map[id]];
+    if(txt){el.textContent=txt;el.style.display='';}else{el.style.display='none';}
+  });
+}
+
+
+async function analyserAvecIA() {
+  if (!LIVRE_ACTIF) { showToast('Aucun livre ouvert', 'warn'); return; }
+  var lex = LIVRE_ACTIF.lexique;
+  if (!lex || !lex.tranches || lex.tranches.length < 3) {
+    showToast('Lexique insuffisant (min. 3 tranches)', 'warn'); return;
+  }
+  var cleIA = getCleIA ? getCleIA() : localStorage.getItem('anthropic_api_key');
+  if (!cleIA) {
+    showToast('\u274c Cl\u00e9 API manquante \u2014 configurer dans Param\u00e8tres', 'warn'); return;
+  }
+  var btn = document.getElementById('ni-th-ia-btn');
+  if (btn) { btn.textContent = '\u23f3 IA\u2026'; btn.disabled = true; }
+
+  var KEYS = LEX_KEYS;
+  var THL = {amour:'Amour',pouvoir:'Pouvoir',liberte:'Libert\u00e9',identite:'Identit\u00e9',societe:'Soci\u00e9t\u00e9',nature:'Nature'};
+  var titre = LIVRE_ACTIF.titre || '?';
+  var auteur = LIVRE_ACTIF.auteur || '?';
+
+  // Préparer les données compactes pour le prompt
+  var tranches = (lex.tranches || []).map(function(t) {
+    var row = {p: t.pageDebut + '-' + t.pageFin};
+    KEYS.forEach(function(k) { row[k.slice(0,2)] = t[k] || 0; });
+    return row;
+  });
+  var phases = (lex.phases || []).map(function(p, i) {
+    return (i+1) + ':' + (p.nom || '').slice(0, 40);
+  });
+  var persos = ((LIVRE_ACTIF.personnages || []).filter(function(p) {
+    return p.scores && typeof p.scores.amour === 'number';
+  })).map(function(p) {
+    var row = {nom: p.nom};
+    KEYS.forEach(function(k) { row[k.slice(0,2)] = p.scores[k] || 0; });
+    if (p.scoresParPhase && Object.keys(p.scoresParPhase).length) {
+      row.phases = p.scoresParPhase;
+    }
+    return row;
+  });
+
+  var prompt = 'Tu analyses l\u0027\u0153uvre "' + titre + '" de ' + auteur + '.\n\n'
+    + 'DONN\u00c9ES (scores 0-100) :\n'
+    + 'Th\u00e8mes : am=Amour, po=Pouvoir, li=Libert\u00e9, id=Identit\u00e9, so=Soci\u00e9t\u00e9, na=Nature\n'
+    + 'Tranches : ' + JSON.stringify(tranches) + '\n'
+    + 'Phases : ' + phases.join(' | ') + '\n'
+    + (persos.length ? 'Personnages : ' + JSON.stringify(persos) + '\n' : '')
+    + '\nG\u00e9n\u00e8re un JSON avec cette structure exacte (tous les champs) :\n'
+    + '{\n'
+    + '  "paires": [\n'
+    + '    {"cles":["theme1","theme2"],"score":4,"interpretation":"texte riche 2-4 phrases qui d\u00e9crit l\u0027\u00e9volution des courbes ET le sens litt\u00e9raire"}\n'
+    + '  ],\n'
+    + '  "pairesPerso": [\n'
+    + '    {"noms":["Perso1","Perso2"],"commentaire":"texte 2-3 phrases sur leur relation th\u00e9matique et dramatique"}\n'
+    + '  ],\n'
+    + '  "commentaires": {\n'
+    + '    "planMouvement": "2-3 phrases d\u00e9crivant le voyage th\u00e9matique de l\u0027\u0153uvre dans le plan factoriel",\n'
+    + '    "planStructure": "2-3 phrases sur les positions et oppositions des personnages",\n'
+    + '    "cercle": "2-3 phrases sur les th\u00e8mes structurants et leurs corr\u00e9lations",\n'
+    + '    "heatmap": "2-3 phrases sur l\u0027intensit\u00e9 th\u00e9matique phase par phase",\n'
+    + '    "radar": "2-3 phrases sur les profils et contrastes entre personnages",\n'
+    + '    "evolution": "2-3 phrases sur les arcs d\u0027\u00e9volution des personnages cl\u00e9s"\n'
+    + '  },\n'
+    + '  "quadrants": {\n'
+    + '    "planMouvement": {"hg":"titre court 2-3 mots","hd":"titre","bg":"titre","bd":"titre"},\n'
+    + '    "planStructure": {"hg":"titre","hd":"titre","bg":"titre","bd":"titre"}\n'
+    + '  }\n'
+    + '}\n'
+    + 'R\u00e8gles : paires th\u00e9matiques = 2 \u00e0 4 paires les plus r\u00e9v\u00e9latrices de l\u0027\u0153uvre. '
+    + 'Score 3-5. cles = noms exacts parmi [amour,pouvoir,liberte,identite,societe,nature]. '
+    + 'pairesPerso = toutes les paires de personnages pertinentes (max 6). '
+    + 'quadrants : hg=haut-gauche, hd=haut-droite, bg=bas-gauche, bd=bas-droite. '
+    + 'Titres de quadrants : expressions \u00e9vocatrices du registre litt\u00e9raire (ex: "Tyrannie nihiliste", "Puret\u00e9 po\u00e9tique"). '
+    + 'IMPORTANT : r\u00e9ponds UNIQUEMENT avec le JSON, sans texte avant ni apr\u00e8s.';
+
+  try {
+    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': cleIA,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 4000,
+        system: 'Tu es un expert en analyse litt\u00e9raire. R\u00e9ponds UNIQUEMENT en JSON valide, sans markdown ni texte.',
+        messages: [{role: 'user', content: prompt}]
+      })
+    });
+    var data = await resp.json();
+    if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
+    var raw = ((data.content || []).find(function(b) { return b.type === 'text'; }) || {}).text || '';
+    var start = raw.indexOf('{'), end = raw.lastIndexOf('}');
+    if (start === -1 || end === -1) throw new Error('Pas de JSON dans la r\u00e9ponse');
+    var result = JSON.parse(raw.slice(start, end + 1));
+
+    // Appliquer les r\u00e9sultats au livre actif
+    if (!LIVRE_ACTIF.lexique) LIVRE_ACTIF.lexique = {};
+    var L = LIVRE_ACTIF.lexique;
+
+    // Paires th\u00e9matiques — valider les cl\u00e9s
+    if (Array.isArray(result.paires)) {
+      var validKeys = ['amour','pouvoir','liberte','identite','societe','nature'];
+      L.paires = result.paires.filter(function(p) {
+        return Array.isArray(p.cles) && p.cles.length === 2
+          && validKeys.indexOf(p.cles[0]) >= 0 && validKeys.indexOf(p.cles[1]) >= 0;
+      });
+    }
+
+    // Paires personnages
+    if (Array.isArray(result.pairesPerso)) {
+      L.pairesPerso = result.pairesPerso;
+    }
+
+    // Commentaires des graphiques
+    if (result.commentaires && typeof result.commentaires === 'object') {
+      L.commentairesIA = result.commentaires;
+    }
+
+    // Noms de quadrants ACP
+    if (result.quadrants && typeof result.quadrants === 'object') {
+      L.quadrantsIA = result.quadrants;
+    }
+
+    // Marquer source IA si ce n'est pas déjà un comptage exhaustif
+    if (L.source !== 'comptage_exhaustif') {
+      L.source = 'modelisation_ia';
+      L.fiabilite = L.fiabilite || 80;
+    }
+
+    sauvegarderBiblio();
+    updateQ3LexViz();
+    showToast('\u2728 Analyse IA appliqu\u00e9e — paires, commentaires et quadrants mis \u00e0 jour', 'ok');
+
+  } catch(err) {
+    showToast('\u274c Erreur IA : ' + err.message, 'err');
+    console.error('analyserAvecIA error:', err);
+  } finally {
+    if (btn) { btn.textContent = '\u2728 IA'; btn.disabled = false; }
+  }
+}
+
 
 </script>
 
