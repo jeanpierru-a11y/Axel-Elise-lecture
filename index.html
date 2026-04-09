@@ -16521,223 +16521,193 @@ function _renderPairesPerso(container) {
     container.innerHTML='<div style="padding:12px;font-size:.72rem;color:#999;">Au moins 2 personnages avec scores requis.</div>';
     return;
   }
-  // Construire toutes les paires de personnages
   var pairs=[];
   for(var i=0;i<persos.length-1;i++) for(var j=i+1;j<persos.length;j++) pairs.push([persos[i],persos[j]]);
-
-  pairs.forEach(function(pair) {
+  // Stocker les paires pour les callbacks de thème
+  _ppPairsData=pairs;
+  pairs.forEach(function(pair,pi) {
     var pA=pair[0], pB=pair[1];
-    var block=document.createElement('div');
-    block.style.cssText='background:#fff;border-radius:9px;border:1px solid #E8E0F8;box-shadow:0 1px 4px rgba(74,20,140,.07);padding:8px 10px 6px;flex:0 0 auto;';
-    // En-tête
-    var hdr=document.createElement('div');
-    hdr.style.cssText='display:flex;align-items:center;gap:8px;margin-bottom:4px;';
-    hdr.innerHTML='<span style="font-size:.73rem;font-weight:800;color:'+pA.couleur+'">'+pA.nom+'</span>'
-      +'<span style="font-size:.65rem;color:#aaa;">/</span>'
-      +'<span style="font-size:.73rem;font-weight:800;color:'+pB.couleur+'">'+pB.nom+'</span>';
-    block.appendChild(hdr);
-    // Scatter radar en SVG
-    var W=420, H=90, ML=28, MR=6, MT=12, MB=20, CW=W-ML-MR, CH=H-MT-MB;
-    var maxV=100;
-    var svg='<svg width="'+W+'" height="'+H+'" style="display:block;max-width:100%;">';
-    // Fonds thèmes
-    KEYS.forEach(function(k,i){
-      var x=ML+i*(CW/KEYS.length), w2=CW/KEYS.length;
-      svg+='<rect x="'+x.toFixed(1)+'" y="'+MT+'" width="'+w2.toFixed(1)+'" height="'+CH+'" fill="'+LEX_BG[k]+'" opacity=".6"/>';
-    });
-    // Axe 0 et 100
-    svg+='<line x1="'+ML+'" y1="'+(MT+CH)+'" x2="'+(ML+CW)+'" y2="'+(MT+CH)+'" stroke="#ddd" stroke-width="1"/>';
-    svg+='<line x1="'+ML+'" y1="'+MT+'" x2="'+(ML+CW)+'" y2="'+MT+'" stroke="#eee" stroke-width="1" stroke-dasharray="3,3"/>';
-    // Mi-hauteur
-    svg+='<line x1="'+ML+'" y1="'+(MT+CH/2)+'" x2="'+(ML+CW)+'" y2="'+(MT+CH/2)+'" stroke="#eee" stroke-width="1" stroke-dasharray="3,3"/>';
-    // Courbe A
-    var ptA=KEYS.map(function(k,i){var x=ML+(i+0.5)*(CW/KEYS.length);var y=MT+(1-(+(pA.scores[k]||0))/maxV)*CH;return {x:x,y:y};});
-    var ptB=KEYS.map(function(k,i){var x=ML+(i+0.5)*(CW/KEYS.length);var y=MT+(1-(+(pB.scores[k]||0))/maxV)*CH;return {x:x,y:y};});
-    // Croisements entre A et B
-    var crossX=[];
-    for(var ci=0;ci<KEYS.length-1;ci++){
-      var d1=+(pA.scores[KEYS[ci]]||0)-(+(pB.scores[KEYS[ci]]||0));
-      var d2=+(pA.scores[KEYS[ci+1]]||0)-(+(pB.scores[KEYS[ci+1]]||0));
-      if(d1*d2<0){
-        var t2=Math.abs(d1)/(Math.abs(d1)+Math.abs(d2));
-        var cx2=ptA[ci].x+(ptA[ci+1].x-ptA[ci].x)*t2;
-        var cy2=ptA[ci].y+(ptA[ci+1].y-ptA[ci].y)*t2;
-        crossX.push({x:cx2,y:cy2});
-      }
-    }
-    var polyA=ptA.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ');
-    var polyB=ptB.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ');
-    svg+='<polyline points="'+polyA+'" fill="none" stroke="'+pA.couleur+'" stroke-width="2.5"/>';
-    svg+='<polyline points="'+polyB+'" fill="none" stroke="'+pB.couleur+'" stroke-width="2" stroke-dasharray="6,3"/>';
-    // Points
-    ptA.forEach(function(p){svg+='<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="3.5" fill="'+pA.couleur+'"/>';});
-    ptB.forEach(function(p){svg+='<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="3.5" fill="'+pB.couleur+'" stroke="#fff" stroke-width="1.5"/>';});
-    // Croisements
-    crossX.forEach(function(p){svg+='<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="5" fill="none" stroke="#888" stroke-width="1.5"/>';});
-    // Labels axes X
-    KEYS.forEach(function(k,i){
-      var x=ML+(i+0.5)*(CW/KEYS.length);
-      svg+='<text x="'+x.toFixed(1)+'" y="'+(H-3)+'" text-anchor="middle" font-size="8.5" fill="'+LEX_COLORS[k]+'" font-weight="700">'+THL[k]+'</text>';
-    });
-    svg+='</svg>';
-    var svgEl=document.createElement('div'); svgEl.innerHTML=svg; block.appendChild(svgEl);
-    // Badge croisements + mini analyse
-    var nCross=crossX.length;
-    var badge=document.createElement('div');
-    badge.style.cssText='display:flex;align-items:center;gap:6px;margin-top:3px;';
-    badge.innerHTML='<span style="font-size:.64rem;color:#888;">'+(nCross===0?'aucun croisement':nCross+' croisement'+(nCross>1?'s':''))+' &nbsp;·&nbsp;</span>';
-    // Thème où l'écart est le plus grand
-    var maxDiff=0, maxK=''; KEYS.forEach(function(k){var d=Math.abs((+(pA.scores[k]||0))-(+(pB.scores[k]||0)));if(d>maxDiff){maxDiff=d;maxK=k;}});
-    if(maxK){badge.innerHTML+='<span style="font-size:.64rem;color:#555;">Écart max : <span style="color:'+LEX_COLORS[maxK]+';font-weight:800">'+THL[maxK]+'</span> (+'+maxDiff+')</span>';}
-    block.appendChild(badge);
-    // Commentaire IA pour cette paire de personnages
-    var ppIA=(LIVRE_ACTIF&&LIVRE_ACTIF.lexique&&LIVRE_ACTIF.lexique.pairesPerso)||[];
-    var matchPP=ppIA.find(function(pp){
-      return Array.isArray(pp.noms)&&pp.noms.some(function(n){return n===pA.nom;})&&pp.noms.some(function(n){return n===pB.nom;});
-    });
-    if(matchPP&&matchPP.commentaire){
-      var commDiv=document.createElement('div');
-      commDiv.style.cssText='font-size:.62rem;font-style:italic;color:#6A1B9A;padding:3px 6px 2px;border-top:1px solid #F3E5F5;line-height:1.5;';
-      commDiv.textContent=matchPP.commentaire;
-      block.appendChild(commDiv);
-    }
-    container.appendChild(block);
+    // Thème par défaut = écart global max
+    var maxD=0, defKey=KEYS[0];
+    KEYS.forEach(function(k){var d=Math.abs((+(pA.scores[k]||0))-(+(pB.scores[k]||0)));if(d>maxD){maxD=d;defKey=k;}});
+    var card=document.createElement('div');
+    card.id='ppcard_'+pi;
+    card.style.cssText='background:#fff;border-radius:9px;border:1px solid #E8E0F8;box-shadow:0 1px 4px rgba(74,20,140,.07);padding:8px 10px 6px;flex:0 0 auto;';
+    container.appendChild(card);
+    _ppRenderCard(pi, defKey);
   });
 }
 
-// ── Aide contextuelle graphiques ACP ─────────────────────────────────────────
+// Données paires courantes
+var _ppPairsData=[];
 
-var _ACP_HELP = {
-  mouvement: {
-    titre: '🏃 Plan de mouvement',
-    texte: '<b>Ce graphique représente le voyage thématique de l\'œuvre.</b><br><br>'
-      + 'Chaque point est une <b>phase</b> (ou tranche). Deux phases proches ont des profils thématiques similaires. '
-      + 'La trajectoire fléchée ①→②→③… montre comment l\'œuvre se déplace dans l\'espace thématique au fil du récit.<br><br>'
-      + '<b>CP1</b> (axe horizontal) = opposition principale — le thème qui structure le plus l\'œuvre.<br>'
-      + '<b>CP2</b> (axe vertical) = opposition secondaire, orthogonale à CP1.<br><br>'
-      + '💡 Un zigzag prononcé = l\'œuvre oscille entre deux registres (ex. Pouvoir et Amour). '
-      + 'Un déplacement régulier = évolution linéaire du propos.'
-  },
-  structure: {
-    titre: '🧩 Plan de structure',
-    texte: '<b>Ce graphique représente la position thématique de chaque personnage.</b><br><br>'
-      + 'Chaque point est un <b>personnage</b>, positionné selon son profil lexical (% de ses mots dans chaque thème). '
-      + 'Deux personnages proches ont des registres similaires. Deux personnages éloignés s\'opposent thématiquement.<br><br>'
-      + '<b>CP1</b> = axe qui sépare le plus les personnages entre eux.<br>'
-      + '<b>CP2</b> = axe secondaire.<br><br>'
-      + '💡 Un personnage isolé est thématiquement singulier dans l\'œuvre. '
-      + 'Chercher à l\'interpréter : Caesonia isolée = figure de l\'Identité pure face aux autres personnages pluriels ?'
-  },
-  cercle: {
-    titre: '🎯 Cercle des corrélations',
-    texte: '<b>Ce graphique montre comment les thèmes contribuent aux composantes principales.</b><br><br>'
-      + 'Chaque flèche est un <b>thème</b>. Sa direction indique vers quel pôle de CP1/CP2 il pousse. '
-      + 'Sa longueur indique son pouvoir de discrimination : une flèche courte = thème peu structurant.<br><br>'
-      + 'Deux flèches dans la même direction = thèmes corrélés (ils évoluent ensemble). '
-      + 'Deux flèches opposées = thèmes en tension dans l\'œuvre.<br><br>'
-      + '💡 Le repère en bas à gauche indique les directions de CP1 (→) et CP2 (↑) pour lire les flèches.'
-  },
-  radar: {
-    titre: '🕸️ Radar superposé',
-    texte: '<b>Ce graphique superpose les profils thématiques de tous les personnages.</b><br><br>'
-      + 'Chaque axe représente un thème (0 au centre = absent, bord = dominant). '
-      + 'Plus le polygone d’un personnage est étendu sur un axe, plus ce thème est central dans son discours.<br><br>'
-      + '<b>Comparer les formes :</b> des formes similaires = personnages au registre proche. '
-      + 'Une forme très différente = personnage singulier (cf. Caesonia, quasi réduite à Identité).<br><br>'
-      + '💡 En mode profil normalisé, tous les personnages ont la même « masse » — on lit la répartition, pas le volume.'
-  },
-  bubble: {
-    titre: '🪺 Plan thématique',
-    texte: '<b>Ce graphique positionne chaque personnage dans un plan à 2 dimensions thématiques.</b><br><br>'
-      + 'X et Y sont librement choisis parmi les 6 thèmes. La taille du cercle représente un 3ème thème.<br><br>'
-      + 'Essayez <b>X = Identité / Y = Amour</b> pour voir Caligula isolé en haut à droite. '
-      + 'Essayez <b>X = Pouvoir / Y = Société</b> pour voir l’opposition Caligula / Pacificateurs.<br><br>'
-      + '💡 Un personnage seul dans un quadrant = profil thématique unique dans l’œuvre.'
-  },
-  matrice: {
-    titre: '🌡️ Matrice d’intensité',
-    texte: '<b>Ce tableau montre l’intensité de chaque thème pour chaque personnage.</b><br><br>'
-      + 'Chaque cellule = % du vocabulaire thématique du personnage consacré à ce thème. '
-      + 'Plus la cellule est foncée, plus le thème est dominant.<br><br>'
-      + 'Lecture verticale : qui parle le plus de <b>Pouvoir</b> ? Caligula et Chéréa.<br>'
-      + 'Lecture horizontale : quel thème domine chez <b>Caesonia</b> ? Identité à 75%.<br><br>'
-      + '💡 La matrice complète ce que le radar montre en forme : ici on lit les valeurs exactes.'
-  },
-  evolution: {
-    titre: '📈 Évolution par phase',
-    texte: '<b>Ce graphique montre comment les thèmes ou les personnages évoluent phase par phase.</b><br><br>'
-      + 'Mode <b>Personnage</b> : choisir un personnage, voir ses 6 thèmes évoluer. '
-      + 'Caligula passe d’un profil équilibré (Exposition) à Identité massive (Noeud) puis Nature/Identité (Climax).<br><br>'
-      + 'Mode <b>Thème</b> : choisir un thème, voir comment chaque personnage l’incarne phase par phase.<br><br>'
-      + '💡 Les croisements de courbes sont les moments dramatiques clés — quand un personnage change de registre.'
-  },
-  heatmap: {
-    titre: '🌡️ Heatmap thématique',
-    texte: '<b>Ce tableau montre l\'intensité de chaque thème phase par phase.</b><br><br>'
-      + 'Chaque cellule = score du thème dans la phase. Plus la cellule est foncée, plus le thème est présent. '
-      + 'Les scores sont comparables horizontalement (entre thèmes d\'une même phase) et verticalement (évolution d\'un thème).<br><br>'
-      + '💡 Repérer les pics (score élevé) et les creux. Un thème qui explose dans une seule phase = moment dramatique clé. '
-      + 'La heatmap confirme visuellement ce que le Plan de mouvement dessine.'
+function _ppRenderCard(pi, activeKey) {
+  var card=document.getElementById('ppcard_'+pi);
+  if(!card||!_ppPairsData[pi]) return;
+  var pA=_ppPairsData[pi][0], pB=_ppPairsData[pi][1];
+  var L=LIVRE_ACTIF; if(!L) return;
+  var KEYS=LEX_KEYS;
+  var THL={amour:'Amour',pouvoir:'Pouvoir',liberte:'Lib\u00e9rt\u00e9',identite:'Identit\u00e9',societe:'Soci\u00e9t\u00e9',nature:'Nature'};
+
+  // Données par phase : utiliser scoresParPhase si disponible
+  var phNames=[], scA=[], scB=[];
+  var hasSPP=pA.scoresParPhase&&pB.scoresParPhase&&Object.keys(pA.scoresParPhase).length>0;
+  if(hasSPP&&pA.scoresParPhase[Object.keys(pA.scoresParPhase)[0]][activeKey]!==undefined){
+    phNames=Object.keys(pA.scoresParPhase);
+    scA=phNames.map(function(ph){return +(pA.scoresParPhase[ph][activeKey]||0);});
+    scB=phNames.map(function(ph){return +(pB.scoresParPhase[ph][activeKey]||0);});
+  } else {
+    // Fallback : scores globaux sur les thèmes
+    phNames=KEYS.map(function(k){return THL[k];});
+    scA=KEYS.map(function(k){return +(pA.scores[k]||0);});
+    scB=KEYS.map(function(k){return +(pB.scores[k]||0);});
+    activeKey=null;
   }
-};
+  var N=scA.length;
 
-function _acpHelp(zone) {
-  var h = _ACP_HELP[zone]; if(!h) return;
-  var old = document.getElementById('acp-help-popup');
-  if(old) old.remove();
-  var pop = document.createElement('div');
-  pop.id = 'acp-help-popup';
-  pop.style.cssText = 'position:fixed;z-index:9999;top:50%;left:50%;transform:translate(-50%,-50%);'
-    + 'background:#fff;border:2px solid #9C27B0;border-radius:10px;box-shadow:0 8px 32px rgba(74,20,140,.22);'
-    + 'width:360px;max-width:92vw;padding:16px 18px 14px;font-size:.73rem;line-height:1.7;color:#222;';
-  pop.innerHTML = '<div style="display:flex;align-items:center;margin-bottom:10px;">'
-    + '<span style="flex:1;font-size:.8rem;font-weight:900;color:#4A148C;">'+h.titre+'</span>'
-    + '<button onclick="document.getElementById(\'acp-help-popup\').remove()" '
-    + 'style="background:#EDE7F6;border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;'
-    + 'font-size:.8rem;font-weight:900;color:#6A1B9A;">✕</button></div>'
-    + h.texte;
-  document.body.appendChild(pop);
-  pop.addEventListener('click', function(e){ e.stopPropagation(); });
-  setTimeout(function(){
-    document.addEventListener('click', function rm(){ pop.remove(); document.removeEventListener('click',rm); });
-  }, 100);
+  // Échelle adaptative
+  var maxV=Math.max(Math.max.apply(null,scA),Math.max.apply(null,scB),10);
+  maxV=Math.ceil(maxV*1.12/10)*10;
+
+  // Croisements
+  var nCross=0;
+  for(var ci=0;ci<N-1;ci++){var d1=scA[ci]-scB[ci],d2=scA[ci+1]-scB[ci+1];if(d1*d2<0)nCross++;}
+  // Amplitude max
+  var ampMax=0, ampIdx=0;
+  scA.forEach(function(v,i){var d=Math.abs(v-scB[i]);if(d>ampMax){ampMax=d;ampIdx=i;}});
+
+  card.innerHTML='';
+
+  // ── En-tête ───────────────────────────────────────────────────────────────
+  var hdr=document.createElement('div');
+  hdr.style.cssText='display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin-bottom:5px;';
+  var nameHTML='<span style="font-size:.73rem;font-weight:800;color:'+pA.couleur+'">'+pA.nom+'</span>'
+    +'<span style="font-size:.65rem;color:#bbb;"> / </span>'
+    +'<span style="font-size:.73rem;font-weight:800;color:'+pB.couleur+'">'+pB.nom+'</span>';
+  var statsHTML='';
+  if(activeKey){
+    statsHTML='<span style="margin-left:auto;display:flex;align-items:center;gap:5px;flex-shrink:0;">'
+      +'<span style="font-size:.63rem;font-weight:800;color:'+LEX_COLORS[activeKey]+';background:'+LEX_BG[activeKey]+';padding:1px 8px;border-radius:10px;">'+THL[activeKey]+'</span>'
+      +'<span style="font-size:.6rem;color:#999;">'+nCross+' crois.</span>'
+      +'<span style="font-size:.6rem;color:#555;">· amp. <b>+'+ampMax+'</b> (ph.'+(ampIdx+1)+')</span>'
+      +'</span>';
+  }
+  hdr.innerHTML=nameHTML+statsHTML;
+  card.appendChild(hdr);
+
+  // ── Ligne principale : SVG + légende ─────────────────────────────────────
+  var row=document.createElement('div');
+  row.style.cssText='display:flex;align-items:flex-start;gap:5px;';
+
+  // Constantes SVG
+  var VW=420, VH=130, ML=30, MR=4, MT=16, MB=4;
+  var CW=VW-ML-MR, CH=VH-MT-MB;
+  function xP(i){return ML+(i+0.5)*(CW/N);}
+  function yP(v){return MT+(1-v/maxV)*CH;}
+
+  var svg='<svg width="100%" viewBox="0 0 '+VW+' '+VH+'" style="display:block;">';
+
+  // Fonds colonnes alternés
+  for(var i=0;i<N;i++){
+    svg+='<rect x="'+(ML+i*(CW/N)).toFixed(1)+'" y="'+MT+'" width="'+(CW/N).toFixed(1)+'" height="'+CH+'" fill="'+(i%2===0?'#F8F5FF':'#FDFCFF')+'"/>';
+  }
+
+  // Grille Y (0, 25%, 50%, 75%, 100% de maxV)
+  [0,0.25,0.5,0.75,1].forEach(function(f){
+    var v=Math.round(maxV*f), y=yP(v);
+    var isBase=(f===0);
+    svg+='<line x1="'+ML+'" y1="'+y.toFixed(1)+'" x2="'+(ML+CW)+'" y2="'+y.toFixed(1)
+      +'" stroke="'+(isBase?'#ccc':'#ebebeb')+'" stroke-width="'+(isBase?'1.2':'0.7')+'"'+(isBase?'':' stroke-dasharray="3,3"')+'"/>';
+    svg+='<text x="'+(ML-3)+'" y="'+y.toFixed(1)+'" text-anchor="end" dominant-baseline="middle" font-size="7" fill="#bbb">'+v+'</text>';
+  });
+
+  // N° de phases en haut
+  for(var i=0;i<N;i++){
+    svg+='<text x="'+xP(i).toFixed(1)+'" y="'+(MT-3)+'" text-anchor="middle" font-size="7.5" font-weight="700" fill="#BDBDBD">'+(i+1)+'</text>';
+  }
+
+  // Séparateurs colonnes (fins)
+  for(var i=1;i<N;i++){
+    var lx=ML+i*(CW/N);
+    svg+='<line x1="'+lx.toFixed(1)+'" y1="'+MT+'" x2="'+lx.toFixed(1)+'" y2="'+(MT+CH)+'" stroke="#e8e0f8" stroke-width="0.5"/>';
+  }
+
+  // Points des courbes
+  var ptA=scA.map(function(v,i){return {x:xP(i),y:yP(v)};});
+  var ptB=scB.map(function(v,i){return {x:xP(i),y:yP(v)};});
+
+  // Croisements
+  for(var ci=0;ci<N-1;ci++){
+    var d1c=scA[ci]-scB[ci], d2c=scA[ci+1]-scB[ci+1];
+    if(d1c*d2c<0){
+      var tc=Math.abs(d1c)/(Math.abs(d1c)+Math.abs(d2c));
+      var cxc=ptA[ci].x+(ptA[ci+1].x-ptA[ci].x)*tc;
+      var cyc=ptA[ci].y+(ptA[ci+1].y-ptA[ci].y)*tc;
+      svg+='<circle cx="'+cxc.toFixed(1)+'" cy="'+cyc.toFixed(1)+'" r="5" fill="none" stroke="#aaa" stroke-width="1.2" stroke-dasharray="2,2"/>';
+    }
+  }
+
+  // Lignes
+  svg+='<polyline points="'+ptA.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ')+'" fill="none" stroke="'+pA.couleur+'" stroke-width="2.5"/>';
+  svg+='<polyline points="'+ptB.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ')+'" fill="none" stroke="'+pB.couleur+'" stroke-width="2" stroke-dasharray="6,3"/>';
+
+  // Points
+  ptA.forEach(function(p){svg+='<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="3.5" fill="'+pA.couleur+'"/>';});
+  ptB.forEach(function(p){svg+='<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="3.5" fill="'+pB.couleur+'" stroke="#fff" stroke-width="1.5"/>';});
+
+  svg+='</svg>';
+
+  var svgWrap=document.createElement('div');
+  svgWrap.style.cssText='flex:1;min-width:0;';
+  svgWrap.innerHTML=svg;
+  row.appendChild(svgWrap);
+
+  // Légende des phases (à droite)
+  var legDiv=document.createElement('div');
+  legDiv.style.cssText='flex:0 0 auto;width:108px;padding-top:'+(MT+2)+'px;font-size:.58rem;line-height:1.7;color:#888;';
+  phNames.forEach(function(ph,i){
+    var nom=ph||('Phase '+(i+1));
+    if(nom.length>20) nom=nom.slice(0,18)+'\u2026';
+    legDiv.innerHTML+='<div style="display:flex;align-items:baseline;gap:2px;">'
+      +'<span style="font-weight:800;color:#BDBDBD;min-width:14px;flex-shrink:0;">'+(i+1)+'.</span>'
+      +'<span>'+nom+'</span>'
+      +'</div>';
+  });
+  row.appendChild(legDiv);
+  card.appendChild(row);
+
+  // ── Sélecteur de thème ───────────────────────────────────────────────────
+  if(hasSPP){
+    var sel=document.createElement('div');
+    sel.style.cssText='display:flex;gap:3px;flex-wrap:wrap;margin-top:5px;padding-top:4px;border-top:1px solid #F3E5F5;';
+    KEYS.forEach(function(k){
+      var isAct=(k===activeKey);
+      var btn=document.createElement('button');
+      btn.style.cssText='font-size:.59rem;font-weight:800;padding:1px 7px;border-radius:8px;'
+        +'border:1.5px solid '+(isAct?LEX_COLORS[k]:'#e0e0e0')
+        +';background:'+(isAct?LEX_BG[k]:'#fafafa')
+        +';color:'+(isAct?LEX_COLORS[k]:'#bbb')+';cursor:pointer;line-height:1.5;';
+      btn.textContent=THL[k];
+      btn.dataset.pi=pi; btn.dataset.k=k;
+      btn.onclick=function(){_ppRenderCard(+this.dataset.pi, this.dataset.k);};
+      sel.appendChild(btn);
+    });
+    card.appendChild(sel);
+  }
+
+  // ── Commentaire IA ───────────────────────────────────────────────────────
+  var ppIA=(LIVRE_ACTIF&&LIVRE_ACTIF.lexique&&LIVRE_ACTIF.lexique.pairesPerso)||[];
+  var matchPP=ppIA.find(function(pp){
+    return Array.isArray(pp.noms)&&pp.noms.some(function(n){return n===pA.nom;})&&pp.noms.some(function(n){return n===pB.nom;});
+  });
+  if(matchPP&&matchPP.commentaire){
+    var cDiv=document.createElement('div');
+    cDiv.style.cssText='font-size:.62rem;font-style:italic;color:#6A1B9A;padding:3px 6px 2px;border-top:1px solid #F3E5F5;margin-top:3px;line-height:1.5;';
+    cDiv.textContent=matchPP.commentaire;
+    card.appendChild(cDiv);
+  }
 }
 
-// ── Tableau de bord personnages ───────────────────────────────────────────────
-
-var _q3TbPersoOpen  = false;
-var _tbBubbleX = 'identite', _tbBubbleY = 'amour', _tbBubbleZ = 'pouvoir';
-var _tbEvolMode = 'perso', _tbEvolSel = '';
-var _tbRadarMode   = 'rel';  // 'rel' = profil normalisé  |  'abs' = poids inter-perso
-var _tbRadarHidden = {};      // {p.id: true} → personnage caché du radar
-
-function _tbRadarToggle(pid) {
-  if(_tbRadarHidden[pid]) delete _tbRadarHidden[pid]; else _tbRadarHidden[pid]=true;
-  var c=document.getElementById('tb-radar'); if(c)_renderTbRadar(c);
-}
-function _tbRadarSetMode(m) {
-  _tbRadarMode=m;
-  var rel=document.getElementById('tb-radar-rel'), abs=document.getElementById('tb-radar-abs');
-  if(rel){rel.style.background=m==='rel'?'#9C27B0':'#F3E5F5';rel.style.color=m==='rel'?'#fff':'#9C27B0';}
-  if(abs){abs.style.background=m==='abs'?'#9C27B0':'#F3E5F5';abs.style.color=m==='abs'?'#fff':'#9C27B0';}
-  var c=document.getElementById('tb-radar'); if(c)_renderTbRadar(c);
-}
-
-function _q3ToggleTbPerso() {
-  ['ni-q-th-acp','ni-q-th-paires','ni-q-th-paires-perso'].forEach(function(id){ var el=document.getElementById(id);if(el)el.style.display='none'; });
-  ['ni-th-acp-btn','ni-th-pairs-btn','ni-th-pairs-perso-btn'].forEach(function(id){ var el=document.getElementById(id);if(el)el.classList.remove('active'); });
-  _q3AcpOpen=false;_q3PairesOpen=false;_q3PairesPersoOpen=false;
-  _q3TbPersoOpen=!_q3TbPersoOpen;
-  var glb=document.getElementById('ni-q-th-global');
-  var pan=document.getElementById('ni-q-th-tableau-perso');
-  var mod=document.getElementById('ni-q-th-mode');
-  var btn=document.getElementById('ni-th-tb-perso-btn');
-  if(glb) glb.style.display=_q3TbPersoOpen?'none':'flex';
-  if(mod) mod.style.display=_q3TbPersoOpen?'none':'block';
-  if(pan){ pan.style.display=_q3TbPersoOpen?'flex':'none'; if(_q3TbPersoOpen)_renderTbAll(); }
-  if(btn) btn.classList.toggle('active',_q3TbPersoOpen);
-  if(!_q3TbPersoOpen) updateQ3LexViz();
-}
 
 function _renderTbAll() {
   requestAnimationFrame(function(){ requestAnimationFrame(function(){
