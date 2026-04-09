@@ -2279,6 +2279,7 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 #ni-q-th-acp{background:#fff;}
 #acp-variance{border-bottom:1px solid #EDE7F6;}
 
+@keyframes iaSpin{0%,100%{opacity:1}50%{opacity:.6}}
 .acp-ia-comm{flex:0 0 auto;font-size:.62rem;font-style:italic;color:#7B1FA2;padding:2px 8px 3px;border-top:1px solid #F3E5F5;line-height:1.5;background:#FAFBFE;display:none;}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
@@ -16948,7 +16949,24 @@ async function analyserAvecIA() {
     showToast('\u274c Cl\u00e9 API manquante \u2014 configurer dans Param\u00e8tres', 'warn'); return;
   }
   var btn = document.getElementById('ni-th-ia-btn');
-  if (btn) { btn.textContent = '\u23f3 IA\u2026'; btn.disabled = true; }
+  // ── Bandeau sablier inline (ancré au bouton) ──────────────────────────────
+  var spinner = document.getElementById('ni-th-ia-spinner');
+  if (!spinner) {
+    spinner = document.createElement('span');
+    spinner.id = 'ni-th-ia-spinner';
+    spinner.style.cssText = 'margin-left:8px;font-size:.62rem;font-weight:700;color:#4A148C;'
+      + 'background:#E8D5F5;border:1px solid #CE93D8;border-radius:4px;padding:2px 8px;'
+      + 'animation:iaSpin 1.2s ease-in-out infinite;display:inline-block;';
+    if (btn && btn.parentNode) btn.parentNode.insertBefore(spinner, btn.nextSibling);
+  }
+  var dots = 0;
+  var spinTick = setInterval(function(){
+    dots = (dots+1)%4;
+    spinner.textContent = '\u231b IA at work' + '.'.repeat(dots);
+  }, 400);
+  spinner.textContent = '\u231b IA at work';
+  spinner.style.display = 'inline-block';
+  if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; }
 
   var KEYS = LEX_KEYS;
   var THL = {amour:'Amour',pouvoir:'Pouvoir',liberte:'Libert\u00e9',identite:'Identit\u00e9',societe:'Soci\u00e9t\u00e9',nature:'Nature'};
@@ -17067,14 +17085,34 @@ async function analyserAvecIA() {
     }
 
     sauvegarderBiblio();
-    updateQ3LexViz();
-    showToast('\u2728 Analyse IA appliqu\u00e9e — paires, commentaires et quadrants mis \u00e0 jour', 'ok');
+
+    // ── Rafraîchir la vue courante ────────────────────────────────────────
+    if (_q3PairesOpen) { updateQ3LexViz(); updateQ3PairesViz(); }
+    else if (_q3AcpOpen) { updateQ3LexViz(); _renderACPWidget(); }
+    else if (_q3TbPersoOpen) { _renderTbAll(); }
+    else if (_q3PairesPersoOpen) { var ppan=document.getElementById('ni-q-th-paires-perso'); if(ppan)_renderPairesPerso(ppan); }
+    else { updateQ3LexViz(); }
+
+    // ── Message inline près du bouton ─────────────────────────────────────
+    spinner.style.background = '#E8F5E9';
+    spinner.style.borderColor = '#66BB6A';
+    spinner.style.color = '#1B5E20';
+    spinner.textContent = '\u2728 Analyse appliqu\u00e9e !';
+    clearInterval(spinTick);
+    setTimeout(function(){ spinner.style.display='none'; }, 3000);
 
   } catch(err) {
-    showToast('\u274c Erreur IA : ' + err.message, 'err');
+    if (spinner) {
+      spinner.style.background = '#FFEBEE';
+      spinner.style.borderColor = '#EF9A9A';
+      spinner.style.color = '#B71C1C';
+      spinner.textContent = '\u274c ' + err.message.slice(0,40);
+      clearInterval(spinTick);
+      setTimeout(function(){ spinner.style.display='none'; }, 4000);
+    }
     console.error('analyserAvecIA error:', err);
   } finally {
-    if (btn) { btn.textContent = '\u2728 IA'; btn.disabled = false; }
+    if (btn) { btn.disabled = false; btn.style.opacity = ''; }
   }
 }
 
