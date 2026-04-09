@@ -13952,9 +13952,10 @@ function updateQ3LexViz() {
       '</div>';
     }).join('');
   }
-  // Panneau mode analyse (sous scatter)
+  // Panneau mode analyse (sous scatter) — seulement si aucun panel exclusif ouvert
   var modeEl=document.getElementById('ni-q-th-mode');
-  if(modeEl){ modeEl.style.display='block'; _lmRender(); }
+  var _anyExclusiveOpen=_q3PairesOpen||_q3AcpOpen||_q3PairesPersoOpen||_q3TbPersoOpen;
+  if(modeEl&&!_anyExclusiveOpen){ modeEl.style.display='block'; _lmRender(); }
   // Sélectionner thème dominant
   var dom=LEX_KEYS.reduce(function(b,k){return _lexAvg(lex.tranches,k)>_lexAvg(lex.tranches,b)?k:b;},LEX_KEYS[0]);
   _q3ThemeSelect(dom);
@@ -13986,6 +13987,18 @@ function updateQ3LexViz() {
         if(glb3) glb3.style.display='none';
         if(mod3) mod3.style.display='none';
         if(acp3){ acp3.style.display='flex'; _renderACPWidget(_acpActiveTab); }
+      }
+      if(_q3PairesPersoOpen){
+        var glb4=document.getElementById('ni-q-th-global');
+        var mod4=document.getElementById('ni-q-th-mode');
+        if(glb4) glb4.style.display='none';
+        if(mod4) mod4.style.display='none';
+      }
+      if(_q3TbPersoOpen){
+        var glb5=document.getElementById('ni-q-th-global');
+        var mod5=document.getElementById('ni-q-th-mode');
+        if(glb5) glb5.style.display='none';
+        if(mod5) mod5.style.display='none';
       }
     });
   });
@@ -16586,7 +16599,17 @@ function _renderPairesPerso(container) {
     return;
   }
   var pairs=[];
-  for(var i=0;i<persos.length-1;i++) for(var j=i+1;j<persos.length;j++) pairs.push([persos[i],persos[j]]);
+  for(var i=0;i<persos.length-1;i++) for(var j=i+1;j<persos.length;j++){
+    var pA=persos[i], pB=persos[j];
+    // Ne garder que les paires où les DEUX persos ont des données par phase
+    var okA=pA.scoresParPhase&&Object.keys(pA.scoresParPhase).length>0;
+    var okB=pB.scoresParPhase&&Object.keys(pB.scoresParPhase).length>0;
+    if(okA&&okB) pairs.push([pA,pB]);
+  }
+  if(!pairs.length){
+    container.innerHTML='<div style="padding:14px 12px;font-size:.78rem;color:#888;">Aucune paire — scores par phase requis pour les deux personnages.<br><small>Importer un JSON avec scoresParPhase pour activer cette vue.</small></div>';
+    return;
+  }
   _ppPairsData=pairs;
   pairs.forEach(function(pair,pi) {
     var pA=pair[0], pB=pair[1];
@@ -16612,21 +16635,11 @@ function _ppRenderCard(pi, activeKey) {
   var KEYS=LEX_KEYS;
   var THL={amour:'Amour',pouvoir:'Pouvoir',liberte:'Lib\u00e9rt\u00e9',identite:'Identit\u00e9',societe:'Soci\u00e9t\u00e9',nature:'Nature'};
 
-  // Données par phase : utiliser scoresParPhase si disponible
-  var phNames=[], scA=[], scB=[];
-  var hasSPP=pA.scoresParPhase&&pB.scoresParPhase&&Object.keys(pA.scoresParPhase).length>0;
-  if(hasSPP&&pA.scoresParPhase[Object.keys(pA.scoresParPhase)[0]][activeKey]!==undefined){
-    phNames=Object.keys(pA.scoresParPhase);
-    scA=phNames.map(function(ph){return +(pA.scoresParPhase[ph][activeKey]||0);});
-    scB=phNames.map(function(ph){return +(pB.scoresParPhase[ph][activeKey]||0);});
-  } else {
-    // Fallback : scores globaux sur les thèmes
-    hasSPP=false;
-    phNames=KEYS.map(function(k){return THL[k];});
-    scA=KEYS.map(function(k){return +(pA.scores[k]||0);});
-    scB=KEYS.map(function(k){return +(pB.scores[k]||0);});
-    activeKey=null;
-  }
+  // X axis = phases de l'arc narratif — les deux persos ont scoresParPhase (filtrés en amont)
+  var phNames=Object.keys(pA.scoresParPhase);
+  var hasSPP=true;
+  var scA=phNames.map(function(ph){return +(pA.scoresParPhase[ph]&&pA.scoresParPhase[ph][activeKey]||0);});
+  var scB=phNames.map(function(ph){return +(pB.scoresParPhase[ph]&&pB.scoresParPhase[ph][activeKey]||0);});
   var N=scA.length;
 
   // Échelle adaptative
