@@ -15307,6 +15307,7 @@ var _q3PairesOpen = false;
 function _q3TogglePaires() {
   if(_q3AcpOpen){ _q3AcpOpen=false; var ab=document.getElementById('ni-th-acp-btn'); if(ab)ab.classList.remove('active'); var ae=document.getElementById('ni-q-th-acp'); if(ae)ae.style.display='none'; }
   if(_q3PairesPersoOpen){ _q3PairesPersoOpen=false; var ppb=document.getElementById('ni-th-pairs-perso-btn'); if(ppb)ppb.classList.remove('active'); var ppe=document.getElementById('ni-q-th-paires-perso'); if(ppe)ppe.style.display='none'; }
+  if(_q3TbPersoOpen){ _q3TbPersoOpen=false; var tbb=document.getElementById('ni-th-tb-perso-btn'); if(tbb)tbb.classList.remove('active'); var tbp2=document.getElementById('ni-q-th-tableau-perso'); if(tbp2)tbp2.style.display='none'; }
   _q3PairesOpen = !_q3PairesOpen;
   var glb = document.getElementById('ni-q-th-global');
   var pai = document.getElementById('ni-q-th-paires');
@@ -16747,17 +16748,40 @@ function _ppRenderCard(pi, activeKey) {
 
 
 function _renderTbAll() {
-  requestAnimationFrame(function(){ requestAnimationFrame(function(){
+  function _doRender() {
     var r=document.getElementById('tb-radar'), b=document.getElementById('tb-bubble');
     var m=document.getElementById('tb-matrice'), e=document.getElementById('tb-evol');
+    // Vérifier que les containers ont des dimensions réelles
+    var h=(r&&r.clientHeight)||0;
+    if(h<10){
+      // Dimensions pas encore calculées — retry après 80ms
+      setTimeout(_doRender, 80);
+      return;
+    }
     if(r)_renderTbRadar(r); if(b)_renderTbBubble(b);
     if(m)_renderTbMatrice(m); if(e)_renderTbEvolution(e);
     _updateACPCommentaires();
-  }); });
+  }
+  requestAnimationFrame(function(){ requestAnimationFrame(_doRender); });
 }
 
 function _tbPersos() {
-  return ((LIVRE_ACTIF&&LIVRE_ACTIF.personnages)||[]).filter(function(p){ return p.scores&&typeof p.scores.amour==='number'; });
+  var all=((LIVRE_ACTIF&&LIVRE_ACTIF.personnages)||[]);
+  return all.filter(function(p){
+    var hasFlat=p.scores&&typeof p.scores.amour==='number';
+    var hasSPP=p.scoresParPhase&&Object.keys(p.scoresParPhase).length>0;
+    if(hasSPP&&!hasFlat){
+      var sc={};
+      var phK=Object.keys(p.scoresParPhase);
+      LEX_KEYS.forEach(function(k){
+        var sum=0; phK.forEach(function(ph){sum+=+(p.scoresParPhase[ph]&&p.scoresParPhase[ph][k]||0);});
+        sc[k]=phK.length?Math.round(sum/phK.length):0;
+      });
+      p.scores=sc;
+      return true;
+    }
+    return hasFlat;
+  });
 }
 function _tbNoData(c){ c.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:.72rem;color:#B39DDB;">Scores non disponibles</div>'; }
 
@@ -16765,8 +16789,8 @@ function _tbNoData(c){ c.innerHTML='<div style="display:flex;align-items:center;
 function _renderTbRadar(container) {
   container.innerHTML='';
   var allPersos=_tbPersos(); if(!allPersos.length){_tbNoData(container);return;}
-  var W=container.clientWidth||280, H=container.clientHeight||190;
-  if(W<30||H<30)return;
+  var W=container.clientWidth||300, H=container.clientHeight||200;
+  if(W<10||H<10)return;
   var KEYS=LEX_KEYS, n=KEYS.length, mode=_tbRadarMode;
   var THL=['Amour','Pouvoir','Libert\u00e9','Identit\u00e9','Soci\u00e9t\u00e9','Nature'];
   var legH=26, cH=H-legH, cx=W/2, cy=cH/2, R=Math.min(cx,cy)-32;
@@ -16891,8 +16915,8 @@ function _renderTbBubble(container) {
     +'<b style="color:#666;">\u2295</b><select style="'+ss+'" onchange="_tbBubbleZ=this.value;_renderTbBubble(document.getElementById(\''+bid+'\'))">'+opts(kz)+'</select>'
     +'<span style="color:#aaa;font-size:.57rem;">(taille)</span>';
   container.appendChild(ctrlEl);
-  var W=container.clientWidth||280, H=container.clientHeight||190;
-  if(W<30)return;
+  var W=container.clientWidth||300, H=container.clientHeight||200;
+  if(W<10)return;
   var Hc=26,Hs=Math.max(H-Hc,50),ML=12,MR=10,MT=12,MB=18,CW=W-ML-MR,CH=Hs-MT-MB;
   var scX=d3.scaleLinear().domain([0,100]).range([0,CW]);
   var scY=d3.scaleLinear().domain([0,100]).range([CH,0]);
@@ -16959,8 +16983,8 @@ function _renderTbEvolution(container) {
   var maxVal=0;
   lines.forEach(function(ln){ ln.vals.forEach(function(v){ if(v>maxVal) maxVal=v; }); });
   var yMax=Math.max(Math.ceil(maxVal*1.12/5)*5, 10); // arrondi au multiple de 5 supérieur, min 10
-  var W=container.clientWidth||280,H=container.clientHeight||190;
-  if(W<30)return;
+  var W=container.clientWidth||300,H=container.clientHeight||200;
+  if(W<10)return;
   // Réserver la place pour la légende HTML (14px) en bas
   var legH=18,Hs=Math.max(H-18-legH,40),ML=26,MR=8,MT=8,MB=22,CW=W-ML-MR,CH=Hs-MT-MB;
   var scX=d3.scaleLinear().domain([0,phNames.length-1]).range([0,CW]);
