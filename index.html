@@ -4259,24 +4259,20 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 
 <!-- ── FENÊTRE MÉTHODOLOGIE ── -->
 <!-- ── FENÊTRE RAISONNEMENT IA ── -->
-<div id="ia-raison-float" class="wfloat">
-  <div class="wfloat-rh rh-n"  data-win="ia-raison-float" data-dir="n"></div>
-  <div class="wfloat-rh rh-s"  data-win="ia-raison-float" data-dir="s"></div>
-  <div class="wfloat-rh rh-w"  data-win="ia-raison-float" data-dir="w"></div>
-  <div class="wfloat-rh rh-e"  data-win="ia-raison-float" data-dir="e"></div>
-  <div class="wfloat-rh rh-nw" data-win="ia-raison-float" data-dir="nw"></div>
-  <div class="wfloat-rh rh-ne" data-win="ia-raison-float" data-dir="ne"></div>
-  <div class="wfloat-rh rh-sw" data-win="ia-raison-float" data-dir="sw"></div>
-  <div class="wfloat-rh rh-se" data-win="ia-raison-float" data-dir="se"></div>
-  <div class="wfloat-hdr" id="ia-raison-float-hdr">
-    <div class="wfloat-drag-hint"><span></span><span></span><span></span></div>
-    <span class="wfloat-title" id="ia-raison-float-ttl">✦ Raisonnement IA</span>
-    <button class="wfloat-close" onclick="closeRaisonnementIA()" aria-label="Fermer">
-      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="1" y1="1" x2="10" y2="10"/><line x1="10" y1="1" x2="1" y2="10"/></svg>
-      <span>Fermer</span>
-    </button>
+<div id="ia-raison-float">
+  <div class="rsz2 rsz-n2" data-dir2="n"></div>
+  <div class="rsz2 rsz-s2" data-dir2="s"></div>
+  <div class="rsz2 rsz-e2" data-dir2="e"></div>
+  <div class="rsz2 rsz-w2" data-dir2="w"></div>
+  <div class="rsz2 rsz-ne2" data-dir2="ne"></div>
+  <div class="rsz2 rsz-nw2" data-dir2="nw"></div>
+  <div class="rsz2 rsz-se2" data-dir2="se"></div>
+  <div class="rsz2 rsz-sw2" data-dir2="sw"></div>
+  <div id="ia-raison-float-hdr">
+    <span id="ia-raison-float-ttl">✦ Raisonnement IA</span>
+    <button class="lex-win-cls" onclick="closeRaisonnementIA()">✕ Fermer</button>
   </div>
-  <div class="wfloat-body" id="ia-raison-float-body"></div>
+  <div id="ia-raison-float-body"></div>
 </div>
 
 <div id="lex-help-win">
@@ -8556,16 +8552,25 @@ ${styleExtra||''}
 
 /* ── Fenêtre Raisonnement IA ── */
 #ia-raison-float {
-  z-index: 9310;
-  top: 80px; left: 40px;
-  width: 520px; height: 460px;
-  min-width: 320px; min-height: 220px;
-  border: 1.5px solid #9FA8DA;
-  background: #fff;
-  overflow: visible;
+  position:fixed;z-index:9310;background:#fff;border-radius:12px;
+  box-shadow:0 8px 40px rgba(0,0,0,.28),0 2px 8px rgba(0,0,0,.12);
+  display:none;flex-direction:column;overflow:hidden;
+  min-width:320px;min-height:240px;width:520px;
+  max-height:calc(100vh - 100px);
 }
-#ia-raison-float .wfloat-hdr {
-  background: linear-gradient(135deg, #283593 0%, #5C6BC0 100%);
+#ia-raison-float-hdr {
+  display:flex;align-items:center;gap:8px;padding:9px 13px;flex-shrink:0;
+  cursor:grab;user-select:none;
+  background:linear-gradient(135deg,#283593 0%,#5C6BC0 100%);
+}
+#ia-raison-float-hdr:active { cursor:grabbing; }
+#ia-raison-float-ttl {
+  flex:1;font-size:.82rem;font-weight:900;color:#fff;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+#ia-raison-float-body {
+  flex:1;overflow-y:auto;padding:12px 14px;min-height:0;
+  -webkit-overflow-scrolling:touch;
 }
 .ia-rpar { font-size:.82rem; line-height:1.85; color:#1a1a2e; margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid #EEEEEE; }
 .ia-rpar:last-of-type { border-bottom:none; }
@@ -17459,17 +17464,21 @@ function _initRaisonnementDrag(){
   hdr.addEventListener('mousedown',function(e){
     if(e.target.closest&&e.target.closest('button')) return;
     var r=win.getBoundingClientRect();
-    _raisonnementDrag={sx:e.clientX,sy:e.clientY,sl:r.left,st:r.top};e.preventDefault();
+    _raisonnementDrag={sx:e.clientX,sy:e.clientY,sl:r.left,st:r.top};
+    e.preventDefault();
   });
   win.addEventListener('mousedown',function(e){
-    if(e.target&&e.target.classList&&e.target.classList.contains('wfloat-rh')){
+    if(e.target&&e.target.classList&&e.target.classList.contains('rsz2')){
       var r=win.getBoundingClientRect();
-      _raisonnementRsz={dir:e.target.dataset.dir,sx:e.clientX,sy:e.clientY,sw:r.width,sh:r.height,sl:r.left,st:r.top};
+      _raisonnementRsz={dir:e.target.dataset.dir2,sx:e.clientX,sy:e.clientY,sw:r.width,sh:r.height,sl:r.left,st:r.top};
       e.preventDefault();e.stopPropagation();
     }
   });
   document.addEventListener('mousemove',function(e){
-    if(_raisonnementDrag){win.style.left=(_raisonnementDrag.sl+e.clientX-_raisonnementDrag.sx)+'px';win.style.top=(_raisonnementDrag.st+e.clientY-_raisonnementDrag.sy)+'px';}
+    if(_raisonnementDrag){
+      win.style.left=(_raisonnementDrag.sl+e.clientX-_raisonnementDrag.sx)+'px';
+      win.style.top=(_raisonnementDrag.st+e.clientY-_raisonnementDrag.sy)+'px';
+    }
     if(_raisonnementRsz){
       var d=_raisonnementRsz.dir,dx=e.clientX-_raisonnementRsz.sx,dy=e.clientY-_raisonnementRsz.sy;
       var nw=_raisonnementRsz.sw,nh=_raisonnementRsz.sh,nl=_raisonnementRsz.sl,nt=_raisonnementRsz.st;
@@ -17485,7 +17494,7 @@ function _initRaisonnementDrag(){
 
 function closeRaisonnementIA() {
   var w = document.getElementById('ia-raison-float');
-  if (w) w.classList.remove('open');
+  if (w) w.style.display = 'none';
 }
 
 // Ouvre la fenêtre wfloat avec le raisonnement IA référencé
@@ -17519,14 +17528,10 @@ function openRaisonnementIA() {
 
   var win = document.getElementById('ia-raison-float');
   if (!win) return;
-  if (!win.dataset.positioned) {
-    win.style.left = Math.max(40, Math.round((window.innerWidth - 520) / 2)) + 'px';
-    win.style.top  = '80px';
-    win.style.right = 'auto';
-    win.style.bottom = 'auto';
-    win.dataset.positioned = '1';
-  }
-  win.classList.add('open');
+  win.style.display = 'flex';
+  win.style.transform = 'none';
+  win.style.left = (Math.max(20, window.innerWidth / 2 - 260)) + 'px';
+  win.style.top = '80px';
   _initRaisonnementDrag();
 }
 
