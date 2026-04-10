@@ -15453,12 +15453,14 @@ function _buildPairScatter(lex, k1, k2) {
   var CR   = 9;           // fixe — 9px rayon dans les deux cas
   var ROW_H = CR * 2 + 3; // hauteur d'une ligne de légende = diamètre + espacement
   var nPh  = phases.length || 1;
-  // CH = hauteur de la zone 0→100. Contrainte : CH ≥ hauteur de la légende des phases
   var CH   = Math.max(nPh * ROW_H, 56);
-  var MT   = CR * 2 + 4;  // 22px — espace pour les cercles numérotés au-dessus de la zone
-  // Exposer CH et MT pour l'alignement de la légende dans updateQ3PairesViz
+  var MT   = CR * 2 + 4;  // 22px
+  var MB   = 14;
+  // Exposer CH/MT/MB/total pour l'alignement % de la légende dans updateQ3PairesViz
   _buildPairScatter._lastCH = CH;
   _buildPairScatter._lastMT = MT;
+  _buildPairScatter._lastMB = MB;
+  _buildPairScatter._lastH  = MT + CH + MB;
   var MB   = 14;           // espace en bas pour la légende des 2 thèmes
   var H    = MT + CH + MB;
   var W    = 400, ML = 24, MR = 4;
@@ -15558,8 +15560,11 @@ function updateQ3PairesViz() {
     var k1 = p.cles[0], k2 = p.cles[1];
     var col1 = LEX_COLORS[k1], col2 = LEX_COLORS[k2];
     var svg = _buildPairScatter(lex, k1, k2);
-    var CH = _buildPairScatter._lastCH || 56;
-    var MT = _buildPairScatter._lastMT || 22;
+    var totalH = _buildPairScatter._lastH  || 120;
+    var MT     = _buildPairScatter._lastMT || 22;
+    var MB     = _buildPairScatter._lastMB || 14;
+    var ptPct  = (MT / totalH * 100).toFixed(2) + '%';
+    var pbPct  = (MB / totalH * 100).toFixed(2) + '%';
     var nb = _findCrossings(lex.tranches, k1, k2).length;
     var crTxt = nb === 0 ? 'pas de croisement' : nb + ' croisement'+(nb>1?'s':'');
     return '<div class="ni-paire-item">'+
@@ -15571,10 +15576,10 @@ function updateQ3PairesViz() {
         '<span style="color:'+col2+';">'+LEX_LABELS[k2]+'</span>'+
         '<span class="ni-paire-badge">'+crTxt+' \u00b7 \u2605'+p.score+'/4</span>'+
       '</div>'+
-      '<div style="display:flex;gap:8px;align-items:flex-start;margin:3px 0;">'+
+      '<div style="display:flex;gap:8px;align-items:stretch;margin:3px 0;">'+
         '<div style="flex:1;min-width:0;">'+svg+'</div>'+
         (phases.length ?
-          '<div style="flex:0 0 '+LEG_W+'px;height:'+CH+'px;margin-top:'+MT+'px;display:flex;flex-direction:column;justify-content:center;gap:0;">'+
+          '<div style="flex:0 0 '+LEG_W+'px;padding-top:'+ptPct+';padding-bottom:'+pbPct+';display:flex;flex-direction:column;justify-content:center;gap:0;box-sizing:border-box;">'+
           phLegHtml+
           '</div>' : '')+
       '</div>'+
