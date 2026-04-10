@@ -15482,7 +15482,7 @@ function _buildPairScatter(lex, k1, k2) {
   [0, 50, 100].forEach(function(v) {
     var y = yv(v);
     s += '<line x1="'+ML+'" y1="'+y.toFixed(1)+'" x2="'+(ML+CW)+'" y2="'+y.toFixed(1)+'" stroke="'+(v===0?'#bbb':'#eee')+'" stroke-width="'+(v===0?'0.8':'0.5')+'"'+(v===0?'':' stroke-dasharray="4,3"')+'"/>';
-    s += '<text x="'+(ML-4)+'" y="'+y.toFixed(1)+'" text-anchor="end" dominant-baseline="middle" font-size="7" font-weight="'+(v===0?'700':'500')+'" fill="#333">'+v+'</text>';
+    s += '<text x="'+(ML-4)+'" y="'+y.toFixed(1)+'" text-anchor="end" dominant-baseline="middle" font-size="9" font-weight="'+(v===0?'700':'500')+'" fill="#333">'+v+'</text>';
   });
   // ── Polylignes + points ──────────────────────────────────────────────────
   [k1, k2].forEach(function(k) {
