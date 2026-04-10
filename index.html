@@ -15577,10 +15577,12 @@ function updateQ3PairesViz() {
         '<span class="ni-paire-badge">'+crTxt+' \u00b7 \u2605'+p.score+'/4</span>'+
       '</div>'+
       '<div style="display:flex;gap:8px;align-items:stretch;margin:3px 0;">'+
-        '<div style="flex:1;min-width:0;">'+svg+'</div>'+
+        '<div style="flex:1;min-width:0;border:2px solid blue;">'+svg+'</div>'+
         (phases.length ?
-          '<div style="flex:0 0 '+LEG_W+'px;padding-top:'+ptPct+';padding-bottom:'+pbPct+';display:flex;flex-direction:column;justify-content:center;gap:0;box-sizing:border-box;">'+
-          phLegHtml+
+          '<div style="flex:0 0 '+LEG_W+'px;border:2px solid red;display:grid;grid-template-rows:'+MT+'fr '+CH+'fr '+MB+'fr;box-sizing:border-box;">'+
+            '<div></div>'+
+            '<div style="display:flex;flex-direction:column;justify-content:center;gap:0;">'+phLegHtml+'</div>'+
+            '<div></div>'+
           '</div>' : '')+
       '</div>'+
       '<div class="ni-paire-interp">'+_fixStr(p.interpretation)+'</div>'+
