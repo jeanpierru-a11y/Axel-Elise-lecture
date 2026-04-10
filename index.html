@@ -17477,10 +17477,12 @@ function _initRaisonnementDrag(){
   });
   document.addEventListener('mousemove',function(e){
     if(_raisonnementDrag){
+      win.style.right='auto';win.style.bottom='auto';
       win.style.left=(_raisonnementDrag.sl+e.clientX-_raisonnementDrag.sx)+'px';
       win.style.top=(_raisonnementDrag.st+e.clientY-_raisonnementDrag.sy)+'px';
     }
     if(_raisonnementRsz){
+      win.style.right='auto';win.style.bottom='auto';
       var d=_raisonnementRsz.dir,dx=e.clientX-_raisonnementRsz.sx,dy=e.clientY-_raisonnementRsz.sy;
       var nw=_raisonnementRsz.sw,nh=_raisonnementRsz.sh,nl=_raisonnementRsz.sl,nt=_raisonnementRsz.st;
       if(d.indexOf('e')>=0) nw=Math.max(320,_raisonnementRsz.sw+dx);
@@ -17529,14 +17531,11 @@ function openRaisonnementIA() {
 
   var win = document.getElementById('ia-raison-float');
   if (!win) return;
-  win.style.display = 'flex';
-  win.style.transform = 'none';
-  // Positionner en haut à droite — à droite du panel Mots
-  var right = 16;
-  var top = 60;
-  win.style.right = right + 'px';
-  win.style.left = 'auto';
-  win.style.top = top + 'px';
+  // Calcul position : haut à droite — dans la colonne droite de l'écran
+  var W = 480, H = 460;
+  var left = window.innerWidth - W - 20;
+  var top  = 68;
+  win.style.cssText = 'display:flex;left:'+left+'px;top:'+top+'px;width:'+W+'px;height:'+H+'px;right:auto;bottom:auto;';
   _initRaisonnementDrag();
 }
 
