@@ -2255,9 +2255,9 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 
 #ni-q-th-paires{display:none;flex:1;overflow-y:auto;min-height:0;padding:4px 6px;flex-direction:column;gap:7px;}
 .ni-paire-item{background:#fff;border:1px solid #e2d9f0;border-radius:8px;padding:8px 10px 6px;box-shadow:0 1px 4px rgba(106,27,154,.07);display:flex;flex-direction:column;gap:4px;}
-.ni-paire-ttl{font-size:11px;font-weight:800;display:flex;align-items:center;gap:5px;padding-bottom:5px;border-bottom:1px solid #f0e8f8;}
+.ni-paire-ttl{font-size:12px;font-weight:800;display:flex;align-items:center;gap:5px;padding-bottom:5px;border-bottom:1px solid #f0e8f8;}
 .ni-paire-badge{margin-left:auto;font-size:11px;color:#4A2FA0;font-weight:800;background:#ede8ff;padding:2px 10px;border-radius:8px;white-space:nowrap;border:1px solid #c4b8f0;}
-.ni-paire-interp{font-size:12px;color:#333;line-height:1.65;padding:3px 0 2px;}
+.ni-paire-interp{font-size:12.5px;color:#222;font-style:italic;line-height:1.65;padding:4px 0 3px;}
 .ni-paire-sep{display:none;}
 .ni-q-hdr-icon.active{background:rgba(106,27,154,.18);}
 .ni-q-hdr-alpha{background:#E0D7F5;color:#4A148C;border:1.5px solid #B39DDB;border-radius:5px;padding:2px 8px;font-size:.62rem;font-weight:800;cursor:pointer;font-family:inherit;flex-shrink:0;line-height:1.4;}
@@ -15454,7 +15454,7 @@ function _buildPairScatter(lex, k1, k2) {
   var ROW_H = CR * 2 + 3;
   var nPh  = phases.length || 1;
   var CH   = Math.max(nPh * ROW_H, 56);
-  var MT   = 0;            // cercles en HTML au-dessus du SVG — pas d'espace dans le SVG
+  var MT   = 8;            // marge top SVG pour éviter décapitation des points à valeur=100
   var MB   = 14;
   var H    = MT + CH + MB;
   var W    = 400, ML = 24, MR = 4;
@@ -15566,7 +15566,7 @@ function updateQ3PairesViz() {
     var MB     = _buildPairScatter._lastMB || 14;
     var centersPC = _buildPairScatter._phaseCentersPC || [];
     // Disques-phase HTML au-dessus du SVG — même taille que disque-phase-legende (18px)
-    var phDisquesHtml = '<div style="position:relative;height:22px;margin-bottom:1px;">'
+    var phDisquesHtml = '<div style="position:relative;height:22px;overflow:visible;">'
       + centersPC.map(function(pc,i){
           return '<span style="position:absolute;left:'+pc+'%;transform:translateX(-50%);'
             +'width:18px;height:18px;border-radius:50%;background:'+LEX_PH_LC[i%LEX_PH_LC.length]+';'
@@ -16763,7 +16763,7 @@ function _ppRenderCard(pi, activeKey) {
 
   // Constantes SVG — Régime B (scaling width:100%) : valeurs viewBox 420
   // Ratio affiché ≈ container/420 → compenser avec des valeurs plus petites dans la viewBox
-  var VW=420, ML=38, MR=5, MT=0, MB=4;
+  var VW=420, ML=38, MR=5, MT=8, MB=4;
   var CW=VW-ML-MR, CH=100;
   var VH=MT+CH+MB;
   function xP(i){return ML+(i+0.5)*(CW/N);}
@@ -16821,7 +16821,7 @@ function _ppRenderCard(pi, activeKey) {
 
   // Disques HTML au-dessus du SVG — même taille que disque-phase-legende (18px)
   var phColors=['#4B9FD6','#E8891A','#9B59D4','#E84040','#2E9E4F','#888'];
-  var phCirclesHtml='<div style="position:relative;height:22px;margin-bottom:1px;">';
+  var phCirclesHtml='<div style="position:relative;height:22px;overflow:visible;">';
   for(var pi2=0;pi2<N;pi2++){
     var pct=((ML+(pi2+0.5)*(CW/N))/VW*100).toFixed(2);
     phCirclesHtml+='<span style="position:absolute;left:'+pct+'%;transform:translateX(-50%);'
