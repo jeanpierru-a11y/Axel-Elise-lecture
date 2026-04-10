@@ -14128,7 +14128,7 @@ function _renderQ3ScatterDraw(svgEl,lex,W,H) {
   if(!tranches.length) return;
   var MP=tranches[tranches.length-1].pageFin||tranches[tranches.length-1].pageDebut;
   // Marges fixes (Régime A : pixels réels, pas de scaling)
-  var ML=34,MR=8,MT=22,MB=16;
+  var ML=34,MR=8,MT=28,MB=18;  // MT=28 : légère aération entre disques et scatter
   var CW=W-ML-MR,CH=H-MT-MB;
   function xp(p){return ML+(p/MP)*CW;}
   function yv(v){return MT+(1-v/100)*CH;}
@@ -14147,8 +14147,8 @@ function _renderQ3ScatterDraw(svgEl,lex,W,H) {
   // Grille Y (font 8px)
   [0,50,100].forEach(function(v){
     var y=yv(v);
-    s+='<line x1="'+ML+'" y1="'+y.toFixed(1)+'" x2="'+(ML+CW)+'" y2="'+y.toFixed(1)+'" stroke="#eee" stroke-width="0.6"/>';
-    s+='<text x="'+(ML-4)+'" y="'+(y+3)+'" text-anchor="end" font-family="Arial,sans-serif" font-size="9" fill="#333">'+v+'</text>';
+    s+='<line x1="'+ML+'" y1="'+y.toFixed(1)+'" x2="'+(ML+CW)+'" y2="'+y.toFixed(1)+'" stroke="'+(v===0?'#bbb':'#eee')+'" stroke-width="'+(v===0?'0.8':'0.5')+'"/>';
+    s+='<text x="'+(ML-4)+'" y="'+(y+3)+'" text-anchor="end" font-family="Arial,sans-serif" font-size="9" font-weight="'+(v===0?'700':'500')+'" fill="#333">'+v+'</text>';
   });
   // Points — filtrés par _q3ActiveThemes, trajectoires si ≤2 actifs
   var pr=Math.min(4,Math.max(2,Math.round(H/60)));
@@ -14175,7 +14175,7 @@ function _renderQ3ScatterDraw(svgEl,lex,W,H) {
   // Labels X : pages de début de chaque phase (comme PDF)
   phases.forEach(function(ph){
     var x=xp(ph.pageDebut||1);
-    s+='<text x="'+x.toFixed(1)+'" y="'+(MT+CH+Math.round(MB*0.82))+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#555">p.'+ph.pageDebut+'</text>';
+    s+='<text x="'+x.toFixed(1)+'" y="'+(MT+CH+Math.round(MB*0.82))+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" font-weight="600" fill="#333">p.'+ph.pageDebut+'</text>';
   });
   s+='<rect x="'+ML+'" y="'+MT+'" width="'+CW+'" height="'+CH+'" fill="none" stroke="#ccc" stroke-width="0.6"/>';
   // SVG dimensionné exactement → viewBox=dimensions → pas de distorsion
