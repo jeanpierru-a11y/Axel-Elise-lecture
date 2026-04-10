@@ -17450,6 +17450,39 @@ function _renderZoneRefs(html) {
   });
 }
 
+var _raisonnementDrag=null,_raisonnementRsz=null;
+function _initRaisonnementDrag(){
+  var win=document.getElementById('ia-raison-float');
+  var hdr=document.getElementById('ia-raison-float-hdr');
+  if(!win||!hdr||win._dragInit) return;
+  win._dragInit=true;
+  hdr.addEventListener('mousedown',function(e){
+    if(e.target.closest&&e.target.closest('button')) return;
+    var r=win.getBoundingClientRect();
+    _raisonnementDrag={sx:e.clientX,sy:e.clientY,sl:r.left,st:r.top};e.preventDefault();
+  });
+  win.addEventListener('mousedown',function(e){
+    if(e.target&&e.target.classList&&e.target.classList.contains('wfloat-rh')){
+      var r=win.getBoundingClientRect();
+      _raisonnementRsz={dir:e.target.dataset.dir,sx:e.clientX,sy:e.clientY,sw:r.width,sh:r.height,sl:r.left,st:r.top};
+      e.preventDefault();e.stopPropagation();
+    }
+  });
+  document.addEventListener('mousemove',function(e){
+    if(_raisonnementDrag){win.style.left=(_raisonnementDrag.sl+e.clientX-_raisonnementDrag.sx)+'px';win.style.top=(_raisonnementDrag.st+e.clientY-_raisonnementDrag.sy)+'px';}
+    if(_raisonnementRsz){
+      var d=_raisonnementRsz.dir,dx=e.clientX-_raisonnementRsz.sx,dy=e.clientY-_raisonnementRsz.sy;
+      var nw=_raisonnementRsz.sw,nh=_raisonnementRsz.sh,nl=_raisonnementRsz.sl,nt=_raisonnementRsz.st;
+      if(d.indexOf('e')>=0) nw=Math.max(320,_raisonnementRsz.sw+dx);
+      if(d.indexOf('w')>=0){nw=Math.max(320,_raisonnementRsz.sw-dx);nl=_raisonnementRsz.sl+(_raisonnementRsz.sw-nw);}
+      if(d.indexOf('s')>=0) nh=Math.max(220,_raisonnementRsz.sh+dy);
+      if(d.indexOf('n')>=0){nh=Math.max(220,_raisonnementRsz.sh-dy);nt=_raisonnementRsz.st+(_raisonnementRsz.sh-nh);}
+      win.style.width=nw+'px';win.style.height=nh+'px';win.style.left=nl+'px';win.style.top=nt+'px';
+    }
+  });
+  document.addEventListener('mouseup',function(){_raisonnementDrag=null;_raisonnementRsz=null;});
+}
+
 function closeRaisonnementIA() {
   var w = document.getElementById('ia-raison-float');
   if (w) w.classList.remove('open');
@@ -17494,6 +17527,7 @@ function openRaisonnementIA() {
     win.dataset.positioned = '1';
   }
   win.classList.add('open');
+  _initRaisonnementDrag();
 }
 
 // Construit la liste des zones §§ disponibles pour le livre actif
