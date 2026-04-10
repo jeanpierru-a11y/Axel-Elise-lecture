@@ -4253,6 +4253,27 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 </div>
 
 <!-- ── FENÊTRE MÉTHODOLOGIE ── -->
+<!-- ── FENÊTRE RAISONNEMENT IA ── -->
+<div id="ia-raison-float" class="wfloat">
+  <div class="wfloat-rh rh-n"  data-win="ia-raison-float" data-dir="n"></div>
+  <div class="wfloat-rh rh-s"  data-win="ia-raison-float" data-dir="s"></div>
+  <div class="wfloat-rh rh-w"  data-win="ia-raison-float" data-dir="w"></div>
+  <div class="wfloat-rh rh-e"  data-win="ia-raison-float" data-dir="e"></div>
+  <div class="wfloat-rh rh-nw" data-win="ia-raison-float" data-dir="nw"></div>
+  <div class="wfloat-rh rh-ne" data-win="ia-raison-float" data-dir="ne"></div>
+  <div class="wfloat-rh rh-sw" data-win="ia-raison-float" data-dir="sw"></div>
+  <div class="wfloat-rh rh-se" data-win="ia-raison-float" data-dir="se"></div>
+  <div class="wfloat-hdr" id="ia-raison-float-hdr">
+    <div class="wfloat-drag-hint"><span></span><span></span><span></span></div>
+    <span class="wfloat-title" id="ia-raison-float-ttl">✦ Raisonnement IA</span>
+    <button class="wfloat-close" onclick="closeRaisonnementIA()" aria-label="Fermer">
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="1" y1="1" x2="10" y2="10"/><line x1="10" y1="1" x2="1" y2="10"/></svg>
+      <span>Fermer</span>
+    </button>
+  </div>
+  <div class="wfloat-body" id="ia-raison-float-body"></div>
+</div>
+
 <div id="lex-help-win">
   <div class="rsz2 rsz-n2" data-dir2="n"></div>
   <div class="rsz2 rsz-s2" data-dir2="s"></div>
@@ -8527,6 +8548,35 @@ ${styleExtra||''}
 .ia-raison-para{font-size:.88rem;line-height:1.85;color:#1a1a2e;margin-bottom:10px;}
 .ia-raison-focus{font-size:.72rem;color:#7B1FA2;border-top:1px solid #E1D4F0;
   margin-top:10px;padding-top:8px;font-style:italic;}
+
+/* ── Fenêtre Raisonnement IA ── */
+#ia-raison-float {
+  z-index: 9310;
+  width: 520px; height: 460px;
+  min-width: 320px; min-height: 220px;
+  border: 1.5px solid #9FA8DA;
+  background: #fff;
+}
+#ia-raison-float .wfloat-hdr {
+  background: linear-gradient(135deg, #283593 0%, #5C6BC0 100%);
+}
+.ia-rpar { font-size:.82rem; line-height:1.85; color:#1a1a2e; margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid #EEEEEE; }
+.ia-rpar:last-of-type { border-bottom:none; }
+.ia-rfocus { font-size:.72rem; color:#5C6BC0; border-top:1px solid #E8EAF6; margin-top:8px; padding-top:8px; font-style:italic; }
+.ia-zref { display:inline-block; font-family:monospace; font-size:.7rem; font-weight:700;
+  padding:1px 5px; border-radius:3px; vertical-align:middle; margin:0 1px; cursor:default;
+  line-height:1.5; white-space:nowrap; }
+.ia-zref-ctx  { background:#C8E6C9; color:#1B5E20 }
+.ia-zref-arc  { background:#BBDEFB; color:#0D47A1 }
+.ia-zref-cit  { background:#FCE4EC; color:#880E4F }
+.ia-zref-lex  { background:#EDE7F6; color:#311B92 }
+.ia-zref-per  { background:#FFF9C4; color:#795548 }
+.ia-zref-lx   { background:#E0F7FA; color:#006064 }
+.ia-zref-acp  { background:#FFCCBC; color:#BF360C }
+.ia-zref-pair { background:#F3E5F5; color:#6A1B9A }
+.ia-zref-duo  { background:#FFCCBC; color:#BF360C }
+.ia-zref-ecr  { background:#E8F5E9; color:#1B5E20; border:1px solid #A5D6A7 }
+.ia-zref-label { font-size:.68rem; font-style:italic; color:#555; margin-left:2px; }
 </style></head><body>
 <button onclick="window.print()" style="background:${_phb};color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:12px;cursor:pointer;margin-bottom:14px;font-family:inherit;">🖨️ Imprimer / PDF</button>
 ${contenuHTML}
@@ -15323,6 +15373,8 @@ async function niLVPromptA() {
 
 // ── Fermeture de toutes les fenêtres flottantes lors d'un changement de vue ──
 function _closeAllFloatWins() {
+  // Raisonnement IA
+  closeRaisonnementIA();
   // Aide contextuelle (Écrire)
   niAideClose();
   // Machine à problématiques
@@ -17294,6 +17346,146 @@ async function analyserAvecIA() {
 // ════════════════════════════════════════════════════════════════════════════
 // ZONES §§ — Inventaire et rendu du raisonnement IA référencé
 // ════════════════════════════════════════════════════════════════════════════
+
+// Labels lisibles par famille de zone
+var _ZL = {
+  ctx_auteur:   'Contexte auteur',
+  arc:          'Arc narratif phase',
+  cit:          'Citation',
+  lex:          'Score lexical',
+  per:          'Personnage',
+  lx:           'Lieu',
+  acp_biplot:   'ACP — plan factoriel',
+  acp_cercle:   'ACP — cercle des corrélations',
+  acp_heatmap:  'ACP — heatmap',
+  pair:         'Paire thèmes',
+  duo:          'Duo personnages',
+  'écr_diss':   'Dissertation',
+  'écr_lin':    'Analyse linéaire',
+  'écr_com':    'Commentaire composé',
+  'écr_red':    'Rédaction',
+  'écr_avis':   'Avis & compréhension',
+  'écr_mots':   'Vocabulaire noté'
+};
+
+var _THL_FULL = {amour:'Amour',pouvoir:'Pouvoir',liberte:'Liberté',
+  identite:'Identité',societe:'Société',nature:'Nature'};
+var _PHASE_NAMES_CACHE = null;
+
+function _getZoneLabel(zid) {
+  // Tente de produire un libellé lisible depuis l'identifiant §§
+  if(!zid) return '';
+  // arc_N/T
+  var mArc=zid.match(/^arc_(\d+)\/(\d+)$/);
+  if(mArc){
+    var L=LIVRE_ACTIF, lex=L&&L.lexique, phs=lex&&lex.phases||[];
+    var ph=phs[parseInt(mArc[1])-1];
+    return 'Phase '+mArc[1]+'/'+mArc[2]+(ph?' — '+ph.nom:'');
+  }
+  // lex_theme·phN
+  var mLex=zid.match(/^lex_([a-z]+)(?:·ph(\d+))?$/);
+  if(mLex){
+    var th=_THL_FULL[mLex[1]]||mLex[1];
+    var L2=LIVRE_ACTIF, lex2=L2&&L2.lexique, phs2=lex2&&lex2.phases||[];
+    var phIdx=mLex[2]?parseInt(mLex[2])-1:-1;
+    var phName=phIdx>=0&&phs2[phIdx]?phs2[phIdx].nom:'';
+    return 'Lexique '+th+(phName?' — '+phName:mLex[2]?' phase '+mLex[2]:'');
+  }
+  // per_NN
+  var mPer=zid.match(/^per_(\d+)/);
+  if(mPer){
+    var L3=LIVRE_ACTIF, persos=L3&&L3.personnages||[];
+    var p=persos[parseInt(mPer[1])-1];
+    return 'Personnage'+(p?' '+p.nom:'');
+  }
+  // cit_NN·Theme
+  var mCit=zid.match(/^cit_(\d+)(?:·([^·]+))?/);
+  if(mCit){
+    var L4=LIVRE_ACTIF, cits=L4&&L4.citations||[];
+    var c=cits[parseInt(mCit[1])-1];
+    var texte=c&&c.texte?('« '+c.texte.slice(0,40)+(c.texte.length>40?'…':'')+'»'):'';
+    return 'Citation '+mCit[1]+(texte?' '+texte:'');
+  }
+  // acp_*
+  if(zid==='acp_biplot')   return _ZL.acp_biplot;
+  if(zid==='acp_cercle')   return _ZL.acp_cercle;
+  if(zid==='acp_heatmap')  return _ZL.acp_heatmap;
+  // pair_th1·th2
+  var mPair=zid.match(/^pair_([a-z]+)·([a-z]+)/);
+  if(mPair) return 'Paires '+(_THL_FULL[mPair[1]]||mPair[1])+' / '+(_THL_FULL[mPair[2]]||mPair[2]);
+  // duo_perNN·perNN
+  var mDuo=zid.match(/^duo_per(\d+)·per(\d+)/);
+  if(mDuo){
+    var L5=LIVRE_ACTIF, ps=L5&&L5.personnages||[];
+    var pa=ps[parseInt(mDuo[1])-1], pb=ps[parseInt(mDuo[2])-1];
+    return 'Face-à-face '+(pa?pa.nom:'perso'+mDuo[1])+' / '+(pb?pb.nom:'perso'+mDuo[2]);
+  }
+  // écr_diss·xxx
+  var mEcr=zid.match(/^(?:écr|ecr)_([^·]+)(?:·(.+))?/);
+  if(mEcr){
+    var cat={'diss':'Dissertation','lin':'Analyse linéaire','com':'Commentaire','red':'Rédaction','avis':'Avis','mots':'Vocabulaire','comprehension':'Compréhension'};
+    return (cat[mEcr[1]]||mEcr[1])+(mEcr[2]?' — '+mEcr[2]:'');
+  }
+  return zid; // fallback : afficher tel quel
+}
+
+// Convertit §§lex_identite·ph4 → badge coloré + label lisible
+function _renderZoneRefs(html) {
+  var FAM = {ctx:'ctx',arc:'arc',cit:'cit',lex:'lex',per:'per',
+    lx:'lx',acp:'acp',pair:'pair',duo:'duo'};
+  return html.replace(/§§([a-z\u00e9\u00e0_·\/0-9]+)/g, function(m, zid) {
+    var prefix = zid.split('_')[0].split('\u00b7')[0];
+    if (prefix === '\u00e9cr' || prefix === 'ecr') prefix = 'ecr';
+    var cls = FAM[prefix] || 'lex';
+    var label = _getZoneLabel(zid);
+    return '<span class="ia-zref ia-zref-' + cls + '" title="' + label + '">' + zid + '</span>'
+      + (label && label !== zid ? '<span class="ia-zref-label">(' + label + ')</span>' : '');
+  });
+}
+
+function closeRaisonnementIA() {
+  var w = document.getElementById('ia-raison-float');
+  if (w) w.classList.remove('open');
+}
+
+// Ouvre la fenêtre wfloat avec le raisonnement IA référencé
+function openRaisonnementIA() {
+  var L = LIVRE_ACTIF;
+  if (!L || !L.lexique || !L.lexique.raisonnementIA) {
+    showToast('Lance d\u2019abord \u2728 IA pour g\u00e9n\u00e9rer le raisonnement', 'warn'); return;
+  }
+  var r = L.lexique.raisonnementIA;
+
+  var html = '<div style="padding:10px 14px;">';
+  (r.paragraphes || []).forEach(function(para) {
+    if (!para || !para.trim()) return;
+    html += '<div class="ia-rpar">' + _renderZoneRefs(esc(para)) + '</div>';
+  });
+  if (r.focus && r.focus.length) {
+    html += '<div class="ia-rfocus"><b>Zones consult\u00e9es :</b> '
+      + r.focus.map(function(z) {
+          var lbl = _getZoneLabel(z);
+          return '<span class="ia-zref ia-zref-lex" title="'+lbl+'">'+esc(z)+'</span>'
+            + (lbl && lbl !== z ? ' <span class="ia-zref-label">('+lbl+')</span>' : '');
+        }).join(' \u2192 ')
+      + '</div>';
+  }
+  html += '</div>';
+
+  var body = document.getElementById('ia-raison-float-body');
+  if (body) body.innerHTML = html;
+  var ttl = document.getElementById('ia-raison-float-ttl');
+  if (ttl) ttl.textContent = '\u2746 Raisonnement IA \u2014 ' + esc(L.titre || '');
+
+  var win = document.getElementById('ia-raison-float');
+  if (!win) return;
+  if (!win.dataset.positioned) {
+    win.style.left = Math.max(40, (window.innerWidth  - 520) / 2) + 'px';
+    win.style.top  = Math.max(60, (window.innerHeight - 460) / 5) + 'px';
+    win.dataset.positioned = '1';
+  }
+  win.classList.add('open');
+}
 
 // Construit la liste des zones §§ disponibles pour le livre actif
 function _buildZoneInventory(L) {
