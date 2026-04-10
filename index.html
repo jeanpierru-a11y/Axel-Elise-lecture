@@ -15559,12 +15559,11 @@ function updateQ3PairesViz() {
   el.innerHTML = lex.paires.map(function(p) {
     var k1 = p.cles[0], k2 = p.cles[1];
     var col1 = LEX_COLORS[k1], col2 = LEX_COLORS[k2];
-    var svg = _buildPairScatter(lex, k1, k2);
+    var svg    = _buildPairScatter(lex, k1, k2);
     var totalH = _buildPairScatter._lastH  || 120;
     var MT     = _buildPairScatter._lastMT || 22;
+    var CH     = _buildPairScatter._lastCH || 56;
     var MB     = _buildPairScatter._lastMB || 14;
-    var ptPct  = (MT / totalH * 100).toFixed(2) + '%';
-    var pbPct  = (MB / totalH * 100).toFixed(2) + '%';
     var nb = _findCrossings(lex.tranches, k1, k2).length;
     var crTxt = nb === 0 ? 'pas de croisement' : nb + ' croisement'+(nb>1?'s':'');
     return '<div class="ni-paire-item">'+
