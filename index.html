@@ -2903,8 +2903,8 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
               <div id="ni-q-th-filters" style="flex:0 0 auto;display:flex;gap:3px;padding:2px 4px;flex-wrap:wrap;border-top:1px solid #ede7f6;background:#fafbfe;justify-content:center;"></div>
             </div>
 
-            <!-- Légende phases (colonne unique, largeur minimale, centrée sur zone graphique) -->
-            <div id="ni-q-th-ph-legend" style="display:none;flex:0 0 auto;width:auto;border-left:1px solid #ede7f6;padding:12px 6px 16px;overflow-y:auto;box-sizing:border-box;"></div>
+            <!-- Légende phases — centrée verticalement sur zone-traçage-scatter (padding=MT=22px haut, MB=16px bas) -->
+            <div id="ni-q-th-ph-legend" style="display:none;flex:0 0 auto;width:auto;align-self:stretch;border-left:1px solid #ede7f6;padding:22px 8px 16px;box-sizing:border-box;display:none;flex-direction:column;justify-content:center;overflow-y:auto;"></div>
 
           </div>
 
@@ -8297,7 +8297,7 @@ function _buildLexScatterSVG(lex, W, H) {
   [0,50,100].forEach(function(v){
     var y=yv(v);
     s+='<line x1="'+ML+'" y1="'+y.toFixed(1)+'" x2="'+(ML+CW)+'" y2="'+y.toFixed(1)+'" stroke="#eee" stroke-width="0.6"/>';
-    s+='<text x="'+(ML-4)+'" y="'+(y+3)+'" text-anchor="end" font-family="Arial,sans-serif" font-size="8" fill="#555">'+v+'</text>';
+    s+='<text x="'+(ML-4)+'" y="'+(y+3)+'" text-anchor="end" font-family="Arial,sans-serif" font-size="9" fill="#333">'+v+'</text>';
   });
   var pr=Math.min(5,Math.max(2,Math.round(H/42))); // plafonné à 5 — évite les cercles géants sur grands écrans
   LEX_KEYS.forEach(function(k){
@@ -8308,7 +8308,7 @@ function _buildLexScatterSVG(lex, W, H) {
   // Labels X : page de début de chaque phase (aux lignes de séparation)
   phases.forEach(function(ph,i){
     var x=xp(ph.pageDebut||1);
-    s+='<text x="'+x.toFixed(1)+'" y="'+(MT+CH+Math.round(MB*0.82))+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="8" fill="#555">p.'+ph.pageDebut+'</text>';
+    s+='<text x="'+x.toFixed(1)+'" y="'+(MT+CH+Math.round(MB*0.82))+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#333">p.'+ph.pageDebut+'</text>';
   });
   s+='<rect x="'+ML+'" y="'+MT+'" width="'+CW+'" height="'+CH+'" fill="none" stroke="#ccc" stroke-width="0.6"/>';
   return '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;max-width:100%;height:auto;">'+s+'</svg>';
@@ -14004,13 +14004,12 @@ function updateQ3LexViz() {
   // Légende phases — colonne unique à droite du scatter
   var phLgEl=document.getElementById('ni-q-th-ph-legend');
   if(phLgEl&&lex.phases&&lex.phases.length){
-    phLgEl.style.display='block';
+    phLgEl.style.display='flex';
     phLgEl.innerHTML=lex.phases.map(function(ph,i){
       var lc=LEX_PH_LC[i%LEX_PH_LC.length];
-      return '<div style="display:flex;align-items:center;gap:2px;padding:1px 0;border-bottom:1px solid #f3eeff;white-space:nowrap;">'+
-        '<span style="flex-shrink:0;width:12px;height:12px;border-radius:50%;background:'+lc+';display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:#fff;">'+(i+1)+'</span>'+
-        '<span style="font-size:11px;color:#444;white-space:nowrap;">p.'+ph.pageDebut+'</span>'+
-        '<span style="font-size:12px;color:#555;font-weight:500;white-space:nowrap;">'+ph.nom+'</span>'+
+      return '<div style="display:flex;align-items:center;gap:5px;padding:3px 0;border-bottom:1px solid #ede8f8;white-space:nowrap;">'+
+        '<span style="flex-shrink:0;width:18px;height:18px;border-radius:50%;background:'+lc+';display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:#fff;">'+(i+1)+'</span>'+
+        '<span style="font-size:11px;font-weight:600;color:#222;white-space:nowrap;">p.'+ph.pageDebut+'\u00a0'+ph.nom+'</span>'+
       '</div>';
     }).join('');
   }
@@ -14135,21 +14134,21 @@ function _renderQ3ScatterDraw(svgEl,lex,W,H) {
   function yv(v){return MT+(1-v/100)*CH;}
   function xtr(tr){return xp(((tr.pageDebut||0)+(tr.pageFin||tr.pageDebut||0))/2);}
   var s='';
-  // Fonds phases + numéros — cercles petits comme légende (CR=5)
-  var CR=5;
+  // Fonds phases + numéros — CR=9 (Régime A réel px = 18px = HTML legend)
+  var CR=9;
   phases.forEach(function(ph,i){
     var p2=phases[i+1]?phases[i+1].pageDebut-1:MP;
     var x1=xp((ph.pageDebut||1)-0.5),x2=xp(p2+0.5),mx=(x1+x2)/2;
     s+='<rect x="'+x1.toFixed(1)+'" y="'+MT+'" width="'+(x2-x1).toFixed(1)+'" height="'+CH+'" fill="'+LEX_PH_BG[i%LEX_PH_BG.length]+'"/>';
     s+='<circle cx="'+mx.toFixed(1)+'" cy="'+(MT/2)+'" r="'+CR+'" fill="'+LEX_PH_LC[i%LEX_PH_LC.length]+'" data-pname="'+ph.nom+'" style="cursor:pointer"/>';
-    s+='<text x="'+mx.toFixed(1)+'" y="'+(MT/2+2)+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="6" font-weight="900" fill="#fff" pointer-events="none">'+(i+1)+'</text>';
+    s+='<text x="'+mx.toFixed(1)+'" y="'+(MT/2+3.5)+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" font-weight="900" fill="#fff" pointer-events="none">'+(i+1)+'</text>';
     if(i>0) s+='<line x1="'+x1.toFixed(1)+'" y1="'+MT+'" x2="'+x1.toFixed(1)+'" y2="'+(MT+CH)+'" stroke="#ccc" stroke-width="0.6" stroke-dasharray="2,2"/>';
   });
   // Grille Y (font 8px)
   [0,50,100].forEach(function(v){
     var y=yv(v);
     s+='<line x1="'+ML+'" y1="'+y.toFixed(1)+'" x2="'+(ML+CW)+'" y2="'+y.toFixed(1)+'" stroke="#eee" stroke-width="0.6"/>';
-    s+='<text x="'+(ML-4)+'" y="'+(y+3)+'" text-anchor="end" font-family="Arial,sans-serif" font-size="8" fill="#555">'+v+'</text>';
+    s+='<text x="'+(ML-4)+'" y="'+(y+3)+'" text-anchor="end" font-family="Arial,sans-serif" font-size="9" fill="#333">'+v+'</text>';
   });
   // Points — filtrés par _q3ActiveThemes, trajectoires si ≤2 actifs
   var pr=Math.min(4,Math.max(2,Math.round(H/60)));
