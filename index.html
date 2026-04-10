@@ -15454,25 +15454,22 @@ function _buildPairScatter(lex, k1, k2) {
   var ROW_H = CR * 2 + 3;
   var nPh  = phases.length || 1;
   var CH   = Math.max(nPh * ROW_H, 56);
-  var MT   = 4;            // plus de cercles dans le SVG — les disques sont en HTML
+  var MT   = 0;            // cercles en HTML au-dessus du SVG — pas d'espace dans le SVG
   var MB   = 14;
-  // Exposer CH/MT/MB/total + centres de phases (%) pour les disques HTML
-  _buildPairScatter._lastCH = CH;
-  _buildPairScatter._lastMT = MT;
-  _buildPairScatter._lastMB = MB;
-  _buildPairScatter._lastH  = MT + CH + MB;
-  // Centres des bandes de phase exprimés en % de la largeur SVG totale
-  var MP2 = tranches[tranches.length-1].pageFin || tranches[tranches.length-1].pageDebut;
-  _buildPairScatter._phaseCentersPC = phases.map(function(ph,i){
-    var p2=(phases[i+1]?phases[i+1].pageDebut-1:MP2);
-    var cx=(ML+((((ph.pageDebut||1)+p2)/2)/MP2)*CW)/W;
-    return (cx*100).toFixed(2);
-  });
-  var MB   = 14;           // espace en bas pour la légende des 2 thèmes
   var H    = MT + CH + MB;
   var W    = 400, ML = 24, MR = 4;
   var CW   = W - ML - MR;
   var MP   = tranches[tranches.length-1].pageFin || tranches[tranches.length-1].pageDebut;
+  // Exposer CH/MT/MB + centres de phases (%) — calcul APRÈS W/ML/CW/MP définis
+  _buildPairScatter._lastCH = CH;
+  _buildPairScatter._lastMT = MT;
+  _buildPairScatter._lastMB = MB;
+  _buildPairScatter._lastH  = H;
+  _buildPairScatter._phaseCentersPC = phases.map(function(ph,i){
+    var p2=(phases[i+1]?phases[i+1].pageDebut-1:MP);
+    var cx=(ML+((((ph.pageDebut||1)+p2)/2)/MP)*CW)/W;
+    return (cx*100).toFixed(2);
+  });
   var col1 = LEX_COLORS[k1], col2 = LEX_COLORS[k2];
   function xp(p)  { return ML + (p / MP) * CW; }
   function yv(v)  { return MT + (1 - v / 100) * CH; }
@@ -15555,7 +15552,7 @@ function updateQ3PairesViz() {
       '<span style="flex-shrink:0;width:18px;height:18px;border-radius:50%;background:'+lc+
         ';display:inline-flex;align-items:center;justify-content:center;'+
         'font-size:9px;font-weight:900;color:#fff;">'+(i+1)+'</span>'+
-      '<span style="font-size:9.5px;color:#555;line-height:1.3;white-space:nowrap;">p.'+(ph.pageDebut||'')+'\u00a0'+(ph.nom||'')+'</span>'+
+      '<span style="font-size:11px;font-weight:600;color:#222;line-height:1.3;white-space:nowrap;">p.'+(ph.pageDebut||'')+'\u00a0'+(ph.nom||'')+'</span>'+
     '</div>';
   }).join('');
 
@@ -16762,11 +16759,11 @@ function _ppRenderCard(pi, activeKey) {
 
   // ── Ligne principale : SVG + légende ─────────────────────────────────────
   var row=document.createElement('div');
-  row.style.cssText='display:flex;align-items:flex-start;gap:8px;';
+  row.style.cssText='display:flex;align-items:stretch;gap:8px;';
 
   // Constantes SVG — Régime B (scaling width:100%) : valeurs viewBox 420
   // Ratio affiché ≈ container/420 → compenser avec des valeurs plus petites dans la viewBox
-  var VW=420, ML=38, MR=5, MT=4, MB=4;
+  var VW=420, ML=38, MR=5, MT=0, MB=4;
   var CW=VW-ML-MR, CH=100;
   var VH=MT+CH+MB;
   function xP(i){return ML+(i+0.5)*(CW/N);}
