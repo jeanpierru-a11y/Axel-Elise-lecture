@@ -8552,13 +8552,12 @@ ${styleExtra||''}
 /* ── Fenêtre Raisonnement IA ── */
 #ia-raison-float {
   z-index: 9310;
-  top: 80px; left: 50%;
-  transform: translateX(-50%);
+  top: 80px; left: 40px;
   width: 520px; height: 460px;
   min-width: 320px; min-height: 220px;
   border: 1.5px solid #9FA8DA;
   background: #fff;
-  overflow: visible; /* obligatoire pour que les handles -4px ne soient pas clippés */
+  overflow: visible;
 }
 #ia-raison-float .wfloat-hdr {
   background: linear-gradient(135deg, #283593 0%, #5C6BC0 100%);
@@ -17483,9 +17482,10 @@ function openRaisonnementIA() {
   var win = document.getElementById('ia-raison-float');
   if (!win) return;
   if (!win.dataset.positioned) {
-    win.style.transform = 'none'; // supprimer translateX(-50%) du CSS initial
-    win.style.left = Math.max(40, (window.innerWidth  - 520) / 2) + 'px';
+    win.style.left = Math.max(40, Math.round((window.innerWidth - 520) / 2)) + 'px';
     win.style.top  = '80px';
+    win.style.right = 'auto';
+    win.style.bottom = 'auto';
     win.dataset.positioned = '1';
   }
   win.classList.add('open');
