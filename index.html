@@ -15450,36 +15450,33 @@ function _buildPairScatter(lex, k1, k2) {
   if (!tranches.length) return '';
   // ── Dimensions adaptatives basées sur le nombre de phases ──────────────────
   // CR : rayon des cercles de phase — IDENTIQUE dans le scatter (au-dessus) et dans la légende (à droite)
-  var CR   = 9;           // rayon légende HTML — référence taille
+  var CR   = 9;
   var ROW_H = CR * 2 + 3;
   var nPh  = phases.length || 1;
   var CH   = Math.max(nPh * ROW_H, 56);
-  var MT   = 8;            // marge top SVG pour éviter décapitation des points à valeur=100
+  var MT   = CR * 2 + 4;  // 22px — espace pour cercles numérotés au-dessus
   var MB   = 14;
   var H    = MT + CH + MB;
   var W    = 400, ML = 24, MR = 4;
   var CW   = W - ML - MR;
   var MP   = tranches[tranches.length-1].pageFin || tranches[tranches.length-1].pageDebut;
-  // Exposer CH/MT/MB + centres de phases (%) — calcul APRÈS W/ML/CW/MP définis
   _buildPairScatter._lastCH = CH;
   _buildPairScatter._lastMT = MT;
   _buildPairScatter._lastMB = MB;
   _buildPairScatter._lastH  = H;
-  _buildPairScatter._phaseCentersPC = phases.map(function(ph,i){
-    var p2=(phases[i+1]?phases[i+1].pageDebut-1:MP);
-    var cx=(ML+((((ph.pageDebut||1)+p2)/2)/MP)*CW)/W;
-    return (cx*100).toFixed(2);
-  });
   var col1 = LEX_COLORS[k1], col2 = LEX_COLORS[k2];
   function xp(p)  { return ML + (p / MP) * CW; }
   function yv(v)  { return MT + (1 - v / 100) * CH; }
   function xtr(t) { return xp(((t.pageDebut||0) + (t.pageFin||t.pageDebut||0)) / 2); }
   var s = '';
-  // ── Bandes de phase (plus de cercles SVG — ils sont en HTML au-dessus) ────
+  // ── Bandes de phase + cercles numérotés au-dessus ────────────────────────
   phases.forEach(function(ph, i) {
     var p2 = phases[i+1] ? phases[i+1].pageDebut - 1 : MP;
-    var x1 = xp((ph.pageDebut||1) - 0.5), x2 = xp(p2 + 0.5);
+    var x1 = xp((ph.pageDebut||1) - 0.5), x2 = xp(p2 + 0.5), mx = (x1 + x2) / 2;
     s += '<rect x="'+x1.toFixed(1)+'" y="'+MT+'" width="'+(x2-x1).toFixed(1)+'" height="'+CH+'" fill="'+LEX_PH_BG[i%LEX_PH_BG.length]+'"/>';
+    var cy = MT / 2;
+    s += '<circle cx="'+mx.toFixed(1)+'" cy="'+cy.toFixed(1)+'" r="'+CR+'" fill="'+LEX_PH_LC[i%LEX_PH_LC.length]+'"/>';
+    s += '<text x="'+mx.toFixed(1)+'" y="'+(cy+3.5).toFixed(1)+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" font-weight="900" fill="#fff">'+(i+1)+'</text>';
     if (i > 0) s += '<line x1="'+x1.toFixed(1)+'" y1="'+MT+'" x2="'+x1.toFixed(1)+'" y2="'+(MT+CH)+'" stroke="#ccc" stroke-width="0.5" stroke-dasharray="2,2"/>';
   });
   // ── Grilles Y ────────────────────────────────────────────────────────────
@@ -15560,20 +15557,11 @@ function updateQ3PairesViz() {
     var k1 = p.cles[0], k2 = p.cles[1];
     var col1 = LEX_COLORS[k1], col2 = LEX_COLORS[k2];
     var svg    = _buildPairScatter(lex, k1, k2);
-    var totalH = _buildPairScatter._lastH  || 74;
-    var MT     = _buildPairScatter._lastMT || 4;
+    var MT     = _buildPairScatter._lastMT || 22;
     var CH     = _buildPairScatter._lastCH || 56;
     var MB     = _buildPairScatter._lastMB || 14;
-    var centersPC = _buildPairScatter._phaseCentersPC || [];
     // Disques-phase HTML au-dessus du SVG — même taille que disque-phase-legende (18px)
-    var phDisquesHtml = '<div style="position:relative;height:22px;overflow:visible;">'
-      + centersPC.map(function(pc,i){
-          return '<span style="position:absolute;left:'+pc+'%;transform:translateX(-50%);'
-            +'width:18px;height:18px;border-radius:50%;background:'+LEX_PH_LC[i%LEX_PH_LC.length]+';'
-            +'display:inline-flex;align-items:center;justify-content:center;'
-            +'font-size:9px;font-weight:900;color:#fff;box-sizing:border-box;">'+(i+1)+'</span>';
-        }).join('')
-      + '</div>';
+    /* disques-phase dans le SVG (MT=22) */
     var nb = _findCrossings(lex.tranches, k1, k2).length;
     var crTxt = nb === 0 ? 'pas de croisement' : nb + ' croisement'+(nb>1?'s':'');
     return '<div class="ni-paire-item">'+
@@ -16759,11 +16747,11 @@ function _ppRenderCard(pi, activeKey) {
 
   // ── Ligne principale : SVG + légende ─────────────────────────────────────
   var row=document.createElement('div');
-  row.style.cssText='display:flex;align-items:stretch;gap:8px;';
+  row.style.cssText='display:flex;align-items:stretch;gap:6px;';
 
   // Constantes SVG — Régime B (scaling width:100%) : valeurs viewBox 420
   // Ratio affiché ≈ container/420 → compenser avec des valeurs plus petites dans la viewBox
-  var VW=420, ML=38, MR=5, MT=8, MB=4;
+  var VW=420, ML=38, MR=5, MT=18, MB=4;
   var CW=VW-ML-MR, CH=100;
   var VH=MT+CH+MB;
   function xP(i){return ML+(i+0.5)*(CW/N);}
@@ -16785,7 +16773,12 @@ function _ppRenderCard(pi, activeKey) {
     svg+='<text x="'+(ML-4)+'" y="'+y.toFixed(1)+'" text-anchor="end" dominant-baseline="middle" font-size="9" fill="#333" font-weight="'+(isBase?'700':'500')+'">'+v+'</text>';
   });
 
-  // N° de phases : désormais en HTML au-dessus du SVG (voir phCirclesHtml)
+  // N° de phases en haut — cercles dans le SVG
+  for(var i=0;i<N;i++){
+    var cx2=xP(i), cy2=MT/2;
+    svg+='<circle cx="'+cx2.toFixed(1)+'" cy="'+cy2.toFixed(1)+'" r="9" fill="'+['#4B9FD6','#E8891A','#9B59D4','#E84040','#2E9E4F','#888'][i%6]+'"/>';
+    svg+='<text x="'+cx2.toFixed(1)+'" y="'+(cy2+3.5)+'" text-anchor="middle" font-size="9" font-weight="900" fill="#fff">'+(i+1)+'</text>';
+  }
 
   // Séparateurs colonnes
   for(var i=1;i<N;i++){
@@ -16819,21 +16812,9 @@ function _ppRenderCard(pi, activeKey) {
 
   svg+='</svg>';
 
-  // Disques HTML au-dessus du SVG — même taille que disque-phase-legende (18px)
-  var phColors=['#4B9FD6','#E8891A','#9B59D4','#E84040','#2E9E4F','#888'];
-  var phCirclesHtml='<div style="position:relative;height:22px;overflow:visible;">';
-  for(var pi2=0;pi2<N;pi2++){
-    var pct=((ML+(pi2+0.5)*(CW/N))/VW*100).toFixed(2);
-    phCirclesHtml+='<span style="position:absolute;left:'+pct+'%;transform:translateX(-50%);'
-      +'width:18px;height:18px;border-radius:50%;background:'+phColors[pi2%phColors.length]+';'
-      +'display:inline-flex;align-items:center;justify-content:center;'
-      +'font-size:9px;font-weight:900;color:#fff;">'+(pi2+1)+'</span>';
-  }
-  phCirclesHtml+='</div>';
-
   var svgWrap=document.createElement('div');
   svgWrap.style.cssText='flex:1;min-width:0;overflow:hidden;';
-  svgWrap.innerHTML=phCirclesHtml+svg;
+  svgWrap.innerHTML=svg;
   row.appendChild(svgWrap);
 
   // Légende des phases (à droite) — plus lisible
