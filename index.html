@@ -17593,40 +17593,6 @@ function _renderZoneRefs(html) {
 }
 
 // Ouvre lex-expl-win avec le raisonnement IA référencé
-function openRaisonnementIA() {
-  var L = LIVRE_ACTIF;
-  if (!L || !L.lexique || !L.lexique.raisonnementIA) {
-    showToast('Lance d’abord ✨ IA pour générer le raisonnement', 'warn'); return;
-  }
-  var r = L.lexique.raisonnementIA;
-  var html = '<h4 style="color:#283593;font-size:.85rem;font-weight:800;margin:0 0 10px;display:flex;align-items:center;gap:6px;">'
-    + '<span style="font-size:1rem">✦</span> Raisonnement IA — <em style="font-weight:400">' + esc(L.titre || '') + '</em></h4>';
-  html += '<div id="ia-raison-win">';
-  (r.paragraphes || []).forEach(function(para) {
-    if (!para || !para.trim()) return;
-    // esc() d'abord, puis on rend les refs (esc ne touche pas §§)
-    html += '<div class="ia-raison-para">' + _renderZoneRefs(esc(para)) + '</div>';
-  });
-  if (r.focus && r.focus.length) {
-    html += '<div class="ia-raison-focus">'
-      + '<strong>Zones consultées dans l’ordre&nbsp;:</strong> '
-      + r.focus.map(function(z) { return '<span class="ia-zref ia-zref-lex" style="font-size:.68rem;">' + esc(z) + '</span>'; }).join(' → ')
-      + '</div>';
-  }
-  html += '</div>';
-  var win = document.getElementById('lex-expl-win');
-  if (!win) return;
-  var body = document.getElementById('lex-expl-body');
-  if (body) body.innerHTML = html;
-  var ttl = document.getElementById('lex-expl-ttl');
-  if (ttl) { ttl.textContent = '✦ Raisonnement IA'; ttl.style.color = '#283593'; }
-  var hdr = document.getElementById('lex-expl-hdr');
-  if (hdr) hdr.style.background = '#E8EAF6';
-  win.style.display = 'flex';
-  win.style.transform = 'none';
-  win.style.left = (Math.max(20, window.innerWidth / 2 - 260)) + 'px';
-  win.style.top = '80px';
-}
 
 </script>
 
