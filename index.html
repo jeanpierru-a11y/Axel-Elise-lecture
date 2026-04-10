@@ -17531,11 +17531,16 @@ function openRaisonnementIA() {
 
   var win = document.getElementById('ia-raison-float');
   if (!win) return;
-  // Calcul position : haut à droite — dans la colonne droite de l'écran
-  var W = 480, H = 460;
-  var left = window.innerWidth - W - 20;
-  var top  = 68;
-  win.style.cssText = 'display:flex;left:'+left+'px;top:'+top+'px;width:'+W+'px;height:'+H+'px;right:auto;bottom:auto;';
+  // Forcer toutes les propriétés de positionnement en inline style
+  win.style.position = 'fixed';
+  win.style.display  = 'flex';
+  win.style.zIndex   = '9310';
+  win.style.width    = '480px';
+  win.style.height   = '460px';
+  win.style.right    = 'auto';
+  win.style.bottom   = 'auto';
+  win.style.left     = Math.max(20, window.innerWidth - 500) + 'px';
+  win.style.top      = '68px';
   _initRaisonnementDrag();
 }
 
