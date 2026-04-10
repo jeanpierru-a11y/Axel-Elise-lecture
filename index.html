@@ -14175,7 +14175,7 @@ function _renderQ3ScatterDraw(svgEl,lex,W,H) {
   // Labels X : pages de début de chaque phase (comme PDF)
   phases.forEach(function(ph){
     var x=xp(ph.pageDebut||1);
-    s+='<text x="'+x.toFixed(1)+'" y="'+(MT+CH+Math.round(MB*0.82))+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" font-weight="600" fill="#333">p.'+ph.pageDebut+'</text>';
+    s+='<text x="'+x.toFixed(1)+'" y="'+(MT+CH+Math.round(MB*0.82))+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="8" font-weight="600" fill="#333">p.'+ph.pageDebut+'</text>';
   });
   s+='<rect x="'+ML+'" y="'+MT+'" width="'+CW+'" height="'+CH+'" fill="none" stroke="#ccc" stroke-width="0.6"/>';
   // SVG dimensionné exactement → viewBox=dimensions → pas de distorsion
