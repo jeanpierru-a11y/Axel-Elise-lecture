@@ -1624,9 +1624,14 @@ html.a11y-hc{
   display:none;
   flex-direction:column;
   border-radius:14px;
-  overflow:hidden;
+  overflow:visible;
   box-shadow:0 12px 48px rgba(0,0,0,.26), 0 2px 8px rgba(0,0,0,.12);
-  /* pas d'overflow:hidden sur le parent pour laisser les handles dépasser */
+}
+.wfloat-body{
+  flex:1;overflow-y:auto;min-height:0;
+  border-radius:0 0 14px 14px;
+  background:#fff;
+  -webkit-overflow-scrolling:touch;
 }
 .wfloat.open{ display:flex; }
 
