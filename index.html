@@ -16730,16 +16730,16 @@ function _ppRenderCard(pi, activeKey) {
 
   // ── En-tête ───────────────────────────────────────────────────────────────
   var hdr=document.createElement('div');
-  hdr.style.cssText='display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin-bottom:5px;';
-  var nameHTML='<span style="font-size:.73rem;font-weight:800;color:'+pA.couleur+'">'+pA.nom+'</span>'
-    +'<span style="font-size:.65rem;color:#bbb;"> / </span>'
-    +'<span style="font-size:.73rem;font-weight:800;color:'+pB.couleur+'">'+pB.nom+'</span>';
+  hdr.style.cssText='display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin-bottom:5px;border-bottom:1px solid #f0e8f8;padding-bottom:5px;';
+  var nameHTML='<span style="font-size:12px;font-weight:800;color:'+pA.couleur+'">'+pA.nom+'</span>'
+    +'<span style="font-size:11px;color:#bbb;font-weight:300;"> / </span>'
+    +'<span style="font-size:12px;font-weight:800;color:'+pB.couleur+'">'+pB.nom+'</span>';
   var statsHTML='';
   if(activeKey){
     statsHTML='<span style="margin-left:auto;display:flex;align-items:center;gap:5px;flex-shrink:0;">'
-      +'<span style="font-size:.63rem;font-weight:800;color:'+LEX_COLORS[activeKey]+';background:'+LEX_BG[activeKey]+';padding:1px 8px;border-radius:10px;">'+THL[activeKey]+'</span>'
-      +'<span style="font-size:.6rem;color:#999;">'+nCross+' crois.</span>'
-      +'<span style="font-size:.6rem;color:#555;">· amp. <b>+'+ampMax+'</b> (ph.'+(ampIdx+1)+')</span>'
+      +'<span style="font-size:11px;font-weight:800;color:'+LEX_COLORS[activeKey]+';background:'+LEX_BG[activeKey]+';padding:1px 8px;border-radius:10px;border:1px solid '+LEX_COLORS[activeKey]+'33;">'+THL[activeKey]+'</span>'
+      +'<span style="font-size:10px;color:#777;">'+nCross+' crois.</span>'
+      +'<span style="font-size:10px;color:#444;">· amp. <b>+'+ampMax+'</b> (ph.'+(ampIdx+1)+')</span>'
       +'</span>';
   }
   hdr.innerHTML=nameHTML+statsHTML;
@@ -16809,6 +16809,9 @@ function _ppRenderCard(pi, activeKey) {
   // Points — r=3, stroke blanc fin (identique Paires)
   ptA.forEach(function(p){svg+='<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="3" fill="'+pA.couleur+'" stroke="#fff" stroke-width="0.8"/>';});
   ptB.forEach(function(p){svg+='<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="3" fill="'+pB.couleur+'" stroke="#fff" stroke-width="0.8"/>';});
+
+  // Bordure zone-traçage-scatter (identique Paires)
+  svg+='<rect x="'+ML+'" y="'+MT+'" width="'+CW+'" height="'+CH+'" fill="none" stroke="#ccc" stroke-width="0.6"/>';
 
   svg+='</svg>';
 
