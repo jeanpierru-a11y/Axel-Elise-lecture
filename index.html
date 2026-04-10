@@ -17531,16 +17531,36 @@ function openRaisonnementIA() {
 
   var win = document.getElementById('ia-raison-float');
   if (!win) return;
-  // Forcer toutes les propriétés de positionnement en inline style
-  win.style.position = 'fixed';
-  win.style.display  = 'flex';
-  win.style.zIndex   = '9310';
-  win.style.width    = '480px';
-  win.style.height   = '460px';
-  win.style.right    = 'auto';
-  win.style.bottom   = 'auto';
-  win.style.left     = Math.max(20, window.innerWidth - 500) + 'px';
-  win.style.top      = '68px';
+  win.style.position    = 'fixed';
+  win.style.display     = 'flex';
+  win.style.flexDirection = 'column';
+  win.style.zIndex      = '9310';
+  win.style.width       = '480px';
+  win.style.height      = '460px';
+  win.style.right       = 'auto';
+  win.style.bottom      = 'auto';
+  win.style.left        = Math.max(20, window.innerWidth - 500) + 'px';
+  win.style.top         = '68px';
+  win.style.background  = '#fff';
+  win.style.borderRadius = '12px';
+  win.style.overflow    = 'hidden';
+  win.style.boxShadow   = '0 8px 40px rgba(0,0,0,.28),0 2px 8px rgba(0,0,0,.12)';
+  win.style.border      = '1.5px solid #9FA8DA';
+  var hdr = document.getElementById('ia-raison-float-hdr');
+  if(hdr){
+    hdr.style.background = 'linear-gradient(135deg,#283593 0%,#5C6BC0 100%)';
+    hdr.style.display    = 'flex';
+    hdr.style.alignItems = 'center';
+    hdr.style.padding    = '9px 13px';
+    hdr.style.flexShrink = '0';
+    hdr.style.cursor     = 'grab';
+    hdr.style.userSelect = 'none';
+    hdr.style.gap        = '8px';
+  }
+  var ttl = document.getElementById('ia-raison-float-ttl');
+  if(ttl){ ttl.style.color = '#fff'; ttl.style.fontWeight = '900'; ttl.style.flex = '1'; ttl.style.fontSize = '.82rem'; }
+  var body = document.getElementById('ia-raison-float-body');
+  if(body){ body.style.flex = '1'; body.style.overflowY = 'auto'; body.style.minHeight = '0'; body.style.padding = '12px 14px'; }
   _initRaisonnementDrag();
 }
 
