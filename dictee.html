@@ -595,10 +595,16 @@ textarea#saisie:focus { border-color: var(--ink); }
     </div>
 
     <div class="speed-row">
-      <label>Vitesse de lecture</label>
-      <input type="range" id="speed" min="0.5" max="1.4" step="0.1" value="0.9"
-        oninput="document.getElementById('speed-val').textContent=parseFloat(this.value).toFixed(1)+'×'">
-      <span class="speed-val" id="speed-val">0.9×</span>
+      <label>Rythme des pauses</label>
+      <input type="range" id="speed" min="1" max="5" step="1" value="3"
+        oninput="document.getElementById('speed-val').textContent=RYTHME_LABELS[this.value-1]">
+      <span class="speed-val" id="speed-val">Moyen</span>
+    </div>
+    <div class="speed-row" style="margin-top:8px">
+      <label>Répétitions par groupe</label>
+      <input type="range" id="repetitions" min="1" max="3" step="1" value="2"
+        oninput="document.getElementById('rep-val').textContent=this.value+'×'">
+      <span class="speed-val" id="rep-val">2×</span>
     </div>
   </div>
 
@@ -651,19 +657,44 @@ var phraseIdx = 0;
 var enLecture = false;
 var synth = window.speechSynthesis;
 var VOIX_FR = null;
+var RYTHME_LABELS = ['Très lent','Lent','Moyen','Rapide','Très rapide'];
+// Pauses en ms pour chaque niveau de rythme
+var RYTHME_PAUSES = {
+  entre_groupes: [2800, 2000, 1400, 900, 500],
+  apres_rep:     [1800, 1300,  900, 600, 350],
+  avant_relect:  [3500, 2500, 1800, 1200, 700]
+};
 
-// Charger les voix dès qu'elles sont disponibles (Chrome les charge en async)
 function chargerVoix() {
   var voix = synth.getVoices();
   var fr = voix.filter(function(v){ return v.lang.startsWith('fr'); });
   if (fr.length > 0) {
-    // Préférer une voix locale (plus stable pour le rate)
     VOIX_FR = fr.find(function(v){ return v.localService; }) || fr[0];
   }
 }
 chargerVoix();
-if (synth.onvoiceschanged !== undefined) {
-  synth.onvoiceschanged = chargerVoix;
+if (synth.onvoiceschanged !== undefined) { synth.onvoiceschanged = chargerVoix; }
+
+// Découper une phrase en groupes de souffle (~4 mots)
+function decouper(phrase) {
+  // Couper sur la ponctuation interne d'abord
+  var groupes = phrase.split(/(?<=[,;:])\s+/);
+  var result = [];
+  groupes.forEach(function(g) {
+    g = g.trim();
+    if (!g) return;
+    var mots = g.split(/\s+/);
+    // Si le groupe > 5 mots, le redécouper
+    if (mots.length > 5) {
+      for (var i = 0; i < mots.length; i += 4) {
+        var chunk = mots.slice(i, i+4).join(' ');
+        if (chunk) result.push(chunk);
+      }
+    } else {
+      result.push(g);
+    }
+  });
+  return result.length ? result : [phrase];
 }
 
 // ── API KEY ──
@@ -867,63 +898,124 @@ function _afficherDictee(texte) {
 }
 
 // ── LECTURE ──
-function togglePlay() {
-  if (enLecture) { pauseLecture(); } else { lireSuite(); }
+var _stopRequested = false;
+
+function getRythme() {
+  return parseInt(document.getElementById('speed').value) - 1; // 0..4
+}
+function getReps() {
+  return parseInt(document.getElementById('repetitions').value); // 1..3
 }
 
-function lireSuite() {
-  if (phraseIdx >= PHRASES.length) { finLecture(); return; }
+function _dire(texte, rate) {
+  return new Promise(function(resolve) {
+    if (_stopRequested) { resolve(); return; }
+    var utt = new SpeechSynthesisUtterance(texte);
+    utt.lang = 'fr-FR';
+    utt.rate = rate || 0.95;
+    utt.pitch = 1.0;
+    utt.volume = 1.0;
+    if (VOIX_FR) utt.voice = VOIX_FR;
+    utt.onend = resolve;
+    utt.onerror = resolve;
+    synth.speak(utt);
+  });
+}
+
+function _pause(ms) {
+  return new Promise(function(resolve) {
+    setTimeout(resolve, ms);
+  });
+}
+
+function _setInfo(txt) {
+  document.getElementById('player-phrase').textContent = txt;
+}
+function _setProgress(pct) {
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
+
+async function lireSuite() {
+  _stopRequested = false;
   enLecture = true;
   document.getElementById('btn-play').textContent = '⏸';
+  var rythme = getRythme();
+  var reps = getReps();
+  var pauses = RYTHME_PAUSES;
 
-  var rate = parseFloat(document.getElementById('speed').value);
-  var utt = new SpeechSynthesisUtterance(PHRASES[phraseIdx]);
-  utt.lang = 'fr-FR';
-  utt.rate = rate;
-  utt.pitch = 1.0;
-  utt.volume = 1.0;
-  if (VOIX_FR) utt.voice = VOIX_FR;
+  for (var pi = phraseIdx; pi < PHRASES.length; pi++) {
+    if (_stopRequested) break;
+    phraseIdx = pi;
+    var phrase = PHRASES[pi];
+    var groupes = decouper(phrase);
 
-  document.getElementById('player-phrase').textContent = (phraseIdx+1) + ' / ' + PHRASES.length + ' phrases';
-  document.getElementById('progress-fill').style.width = Math.round((phraseIdx+1)/PHRASES.length*100) + '%';
+    _setInfo('Phrase ' + (pi+1) + '/' + PHRASES.length + ' — lecture');
+    _setProgress(Math.round((pi+1)/PHRASES.length*100));
 
-  utt.onend = function() {
-    phraseIdx++;
-    if (phraseIdx < PHRASES.length) {
-      // Pause naturelle entre phrases
-      setTimeout(lireSuite, 600);
-    } else {
-      finLecture();
+    // 1. Lecture complète de la phrase (compréhension)
+    await _dire(phrase, 0.95);
+    if (_stopRequested) break;
+    await _pause(pauses.entre_groupes[rythme]);
+
+    // 2. Groupes répétés
+    for (var gi = 0; gi < groupes.length; gi++) {
+      if (_stopRequested) break;
+      var g = groupes[gi];
+      _setInfo('Groupe ' + (gi+1) + '/' + groupes.length + ' — ' + g.substring(0,30));
+      for (var r = 0; r < reps; r++) {
+        if (_stopRequested) break;
+        await _dire(g, 0.90);
+        await _pause(pauses.apres_rep[rythme]);
+      }
+      await _pause(pauses.entre_groupes[rythme]);
     }
-  };
-  synth.speak(utt);
+
+    if (_stopRequested) break;
+
+    // 3. Relecture finale de la phrase entière
+    _setInfo('Phrase ' + (pi+1) + '/' + PHRASES.length + ' — relecture');
+    await _dire(phrase, 1.0);
+    await _pause(pauses.avant_relect[rythme]);
+    phraseIdx = pi + 1;
+  }
+
+  if (!_stopRequested) finLecture();
 }
 
-function pauseLecture() {
-  enLecture = false;
-  synth.cancel();
-  document.getElementById('btn-play').textContent = '▶';
+function togglePlay() {
+  if (enLecture) {
+    _stopRequested = true;
+    enLecture = false;
+    synth.cancel();
+    document.getElementById('btn-play').textContent = '▶';
+  } else {
+    lireSuite();
+  }
 }
 
 function stopLecture() {
+  _stopRequested = true;
   enLecture = false;
   phraseIdx = 0;
   synth.cancel();
   document.getElementById('btn-play').textContent = '▶';
-  document.getElementById('player-phrase').textContent = 'Prêt';
-  document.getElementById('progress-fill').style.width = '0%';
+  _setInfo('Prêt');
+  _setProgress(0);
 }
 
 function finLecture() {
   enLecture = false;
   document.getElementById('btn-play').textContent = '▶';
-  document.getElementById('player-phrase').textContent = '✓ Lecture terminée';
-  document.getElementById('progress-fill').style.width = '100%';
+  _setInfo('✓ Terminée — relisez votre texte');
+  _setProgress(100);
 }
 
 function reLire() {
-  stopLecture();
-  setTimeout(lireSuite, 200);
+  _stopRequested = true;
+  synth.cancel();
+  phraseIdx = 0;
+  enLecture = false;
+  setTimeout(lireSuite, 300);
 }
 
 // ── CORRECTION ──
