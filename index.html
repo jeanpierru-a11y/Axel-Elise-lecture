@@ -17782,18 +17782,28 @@ function _naviguerHash(hash) {
     } else if (section === 'commentaire') {
       niGoEcrire('commentaire', document.getElementById('ni-com'));
     }
-    // Ouvrir l'aide contextuelle si -help détecté
+    // Ouvrir/fermer l'aide contextuelle si -help détecté
     if (wantHelp) {
       var ECRIRE_SECS = ['dissertation','lineaire','commentaire'];
       if (ECRIRE_SECS.indexOf(section) !== -1) {
-        // Drawer aide Écrire
         setTimeout(function() { niAideToggle(); }, 400);
       } else if (section === 'mots') {
-        // Fenêtre méthodologie analyse lexicale
-        setTimeout(function() { openLexHelp(); }, 400);
+        setTimeout(function() {
+          var w = document.getElementById('lex-help-win');
+          if (w && w.style.display === 'flex') {
+            w.style.display = 'none';
+          } else {
+            openLexHelp();
+          }
+        }, 400);
       }
     }
   }, delay);
+  // Effacer le hash après traitement — indispensable pour que le prochain appui
+  // StreamDeck sur la même URL déclenche bien un nouveau hashchange (toggle)
+  setTimeout(function() {
+    history.replaceState(null, '', window.location.pathname + window.location.search);
+  }, 50);
 }
 
 // Listener hashchange (StreamDeck, lien direct, barre d'adresse)
