@@ -418,6 +418,89 @@ textarea#saisie:focus { border-color: var(--ink); }
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* ── PANEL BANQUE ── */
+.banque-panel {
+  display: none;
+  background: white;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+.banque-panel.visible { display: block; }
+.banque-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--cream);
+  background: var(--cream);
+}
+.banque-hdr-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.banque-hdr-count {
+  font-size: 12px;
+  color: var(--muted);
+  font-family: 'DM Mono', monospace;
+}
+.banque-list { max-height: 340px; overflow-y: auto; }
+.banque-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--cream);
+  cursor: pointer;
+  transition: background .1s;
+}
+.banque-item:last-child { border-bottom: none; }
+.banque-item:hover { background: var(--accent-light); }
+.banque-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  min-width: 24px;
+  flex-shrink: 0;
+}
+.banque-apercu {
+  font-family: 'Playfair Display', serif;
+  font-size: 13px;
+  color: var(--ink);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.banque-badge {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: var(--cream);
+  color: var(--muted);
+  border: 1px solid var(--rule);
+  flex-shrink: 0;
+  font-family: 'DM Mono', monospace;
+}
+.btn-banque {
+  width: 100%;
+  padding: 13px;
+  background: white;
+  color: var(--ink);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  cursor: pointer;
+  letter-spacing: .02em;
+  transition: background .15s;
+  margin-bottom: 10px;
+}
+.btn-banque:hover { background: var(--cream); }
+
 /* ── CLAVIER API ── */
 .api-banner {
   background: var(--warning-bg);
@@ -519,10 +602,20 @@ textarea#saisie:focus { border-color: var(--ink); }
     </div>
   </div>
 
+  <button class="btn-banque" onclick="ouvrirBanque()">📚 Choisir dans la banque</button>
   <button class="btn-gen" id="btn-gen" onclick="generer()">
     <div class="spinner" id="spinner"></div>
-    <span id="btn-gen-txt">✦ Générer la dictée</span>
+    <span id="btn-gen-txt">✦ Générer (aléatoire ou IA)</span>
   </button>
+
+  <!-- PANEL BANQUE -->
+  <div class="banque-panel" id="banque-panel">
+    <div class="banque-hdr">
+      <span class="banque-hdr-title">Banque de dictées</span>
+      <span class="banque-hdr-count" id="banque-count"></span>
+    </div>
+    <div class="banque-list" id="banque-list"></div>
+  </div>
 
   <!-- ZONE DICTÉE -->
   <div class="dictee-zone" id="dictee-zone">
@@ -599,6 +692,50 @@ function getTheme() {
 }
 
 // ── GÉNÉRATION ──
+function ouvrirBanque() {
+  var panel = document.getElementById('banque-panel');
+  if (panel.classList.contains('visible')) {
+    panel.classList.remove('visible');
+    return;
+  }
+  var niveau = document.getElementById('niveau').value;
+  var theme = getTheme();
+  var groupeAxel = ['6eme','5eme','4eme','3eme'];
+  var isAxel = groupeAxel.indexOf(niveau) !== -1;
+
+  var pool;
+  if (isAxel) {
+    pool = BANQUE.axel;
+  } else {
+    pool = BANQUE.lycee[theme] || BANQUE.lycee['mixte'];
+  }
+
+  var list = document.getElementById('banque-list');
+  var count = document.getElementById('banque-count');
+  count.textContent = pool.length + ' dictée' + (pool.length > 1 ? 's' : '');
+
+  // Stocker le pool courant pour y accéder par index (évite les pb d'échappement)
+  window._banquePool = pool;
+
+  list.innerHTML = pool.map(function(d, i) {
+    var apercu = d.texte.replace(/\n/g, ' ').substring(0, 90) + '…';
+    return '<div class="banque-item" onclick="choisirDictee(' + i + ')">' +
+      '<span class="banque-num">' + (i+1) + '</span>' +
+      '<span class="banque-apercu">' + apercu + '</span>' +
+      '<span class="banque-badge">' + d.niveau + '</span>' +
+      '</div>';
+  }).join('');
+
+  panel.classList.add('visible');
+}
+
+function choisirDictee(idx) {
+  var pool = window._banquePool || [];
+  var texte = pool[idx] ? pool[idx].texte : '';
+  document.getElementById('banque-panel').classList.remove('visible');
+  if (texte) _afficherDictee(texte);
+}
+
 function piocherBanque(niveau, theme) {
   // Normaliser le niveau
   var groupeLycee = ['2nde','1ere','terminale'];
