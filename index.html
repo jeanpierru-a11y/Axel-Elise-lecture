@@ -17702,13 +17702,19 @@ function _naviguerHash(hash) {
     'carnet':'carnet','notes':'carnet',
     'livre':'livre','fiche':'livre'
   };
+  // Tenter la correspondance en retirant jusqu'à 2 segments inconnus en fin
   var ALIAS_KEYS = Object.keys(ALIAS);
-  for (var i = 0; i < ALIAS_KEYS.length; i++) {
-    var s = ALIAS_KEYS[i];
-    if (hash.slice(-s.length) === s && (hash.length === s.length || hash[hash.length - s.length - 1] === '-')) {
-      section = ALIAS[s];
-      livreSlug = hash.slice(0, hash.length - s.length).replace(/-$/, '');
-      break;
+  var hashParts = hash.split('-');
+  for (var strip = 0; strip <= 2 && !section; strip++) {
+    var hashTry = strip ? hashParts.slice(0, hashParts.length - strip).join('-') : hash;
+    if (!hashTry) break;
+    for (var i = 0; i < ALIAS_KEYS.length; i++) {
+      var s = ALIAS_KEYS[i];
+      if (hashTry.slice(-s.length) === s && (hashTry.length === s.length || hashTry[hashTry.length - s.length - 1] === '-')) {
+        section = ALIAS[s];
+        livreSlug = hashTry.slice(0, hashTry.length - s.length).replace(/-$/, '');
+        break;
+      }
     }
   }
   if (!section) { livreSlug = hash; section = 'livre'; }
