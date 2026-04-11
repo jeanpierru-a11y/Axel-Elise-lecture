@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dictée — Axel & Élise</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #faf8f4;
+  --cream: #f0ece3;
+  --rule: #d4c9b0;
+  --accent: #c0392b;
+  --accent-light: #fdf0ee;
+  --muted: #8a7e6e;
+  --success: #1a6b3a;
+  --success-bg: #edf7f1;
+  --error: #c0392b;
+  --error-bg: #fdf0ee;
+  --warning: #b8860b;
+  --warning-bg: #fdfaed;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 0;
+}
+
+/* ── HEADER ── */
+.hdr {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 18px 32px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.hdr-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  letter-spacing: .02em;
+}
+.hdr-logo span { color: var(--accent); }
+.hdr-sub {
+  font-size: 12px;
+  color: #aaa;
+  font-weight: 300;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.hdr-sep { flex: 1; }
+.hdr-key {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  background: #333;
+  color: #ccc;
+  padding: 3px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+}
+
+/* ── LAYOUT ── */
+.main {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+}
+
+/* ── CONFIGURATION ── */
+.config-card {
+  background: white;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+.config-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.config-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+.config-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.config-group label {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.config-group select, .config-group input[type="range"] {
+  width: 100%;
+}
+select {
+  appearance: none;
+  background: var(--cream);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 9px 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--ink);
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238a7e6e' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.chip {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid var(--rule);
+  background: var(--cream);
+  cursor: pointer;
+  transition: all .15s;
+  color: var(--ink);
+}
+.chip.active {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: white;
+}
+.chip:hover:not(.active) { background: var(--rule); }
+
+/* ── VITESSE ── */
+.speed-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--cream);
+}
+.speed-row label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+input[type="range"] {
+  flex: 1;
+  height: 4px;
+  accent-color: var(--accent);
+}
+.speed-val {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: var(--ink);
+  min-width: 36px;
+  text-align: right;
+}
+
+/* ── BOUTON GÉNÉRER ── */
+.btn-gen {
+  width: 100%;
+  padding: 16px;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  border-radius: 10px;
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  cursor: pointer;
+  letter-spacing: .02em;
+  transition: background .15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.btn-gen:hover { background: #2d2820; }
+.btn-gen:disabled { background: #999; cursor: not-allowed; }
+.btn-gen .spinner {
+  width: 18px; height: 18px;
+  border: 2px solid rgba(255,255,255,.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  display: none;
+}
+.btn-gen.loading .spinner { display: block; }
+
+/* ── ZONE DICTÉE ── */
+.dictee-zone {
+  display: none;
+  background: white;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+.dictee-zone.visible { display: block; }
+
+.player-bar {
+  background: var(--ink);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.btn-play {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background .15s;
+  font-size: 16px;
+  color: white;
+}
+.btn-play:hover { background: #a93226; }
+.btn-stop {
+  width: 32px; height: 32px;
+  border-radius: 6px;
+  background: #333;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 14px;
+  color: #aaa;
+  transition: background .15s;
+}
+.btn-stop:hover { background: #444; }
+.player-progress {
+  flex: 1;
+  height: 3px;
+  background: #333;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.player-progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  width: 0%;
+  transition: width .3s;
+}
+.player-phrase {
+  font-size: 11px;
+  color: #aaa;
+  font-family: 'DM Mono', monospace;
+  white-space: nowrap;
+}
+
+.dictee-input-wrap {
+  padding: 20px;
+}
+.dictee-input-wrap label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 8px;
+}
+textarea#saisie {
+  width: 100%;
+  min-height: 160px;
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  line-height: 1.9;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 14px 16px;
+  background: var(--paper);
+  color: var(--ink);
+  resize: vertical;
+  outline: none;
+  transition: border-color .15s;
+}
+textarea#saisie:focus { border-color: var(--ink); }
+
+.btn-row { display: flex; gap: 10px; margin-top: 12px; }
+.btn-sec {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .15s;
+  border: 1px solid var(--rule);
+  background: var(--cream);
+  color: var(--ink);
+}
+.btn-sec:hover { background: var(--rule); }
+.btn-primary {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+.btn-primary:hover { background: #a93226; border-color: #a93226; }
+
+/* ── CORRECTION ── */
+.correction-zone {
+  display: none;
+  background: white;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 24px;
+}
+.correction-zone.visible { display: block; }
+
+.score-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--cream);
+}
+.score-circle {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 600;
+}
+.score-info h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  font-weight: 600;
+}
+.score-info p { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+.correction-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  line-height: 2.1;
+  white-space: pre-wrap;
+  margin-bottom: 20px;
+}
+.correction-text .ok { color: var(--ink); }
+.correction-text .err {
+  color: var(--error);
+  text-decoration: underline wavy var(--error);
+  background: var(--error-bg);
+  border-radius: 2px;
+  padding: 0 1px;
+}
+.correction-text .missing {
+  color: var(--success);
+  font-style: italic;
+  background: var(--success-bg);
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+.erreurs-list { margin-top: 16px; }
+.erreurs-title {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.erreur-item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--cream);
+}
+.erreur-item:last-child { border-bottom: none; }
+.erreur-saisi { color: var(--error); font-family: 'DM Mono', monospace; }
+.erreur-arrow { color: var(--muted); }
+.erreur-bon { color: var(--success); font-family: 'DM Mono', monospace; }
+.erreur-expl { color: var(--muted); font-style: italic; flex: 1; text-align: right; font-size: 12px; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── CLAVIER API ── */
+.api-banner {
+  background: var(--warning-bg);
+  border: 1px solid #e8d5a0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--warning);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.api-banner input {
+  flex: 1;
+  border: 1px solid #e8d5a0;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  background: white;
+  color: var(--ink);
+}
+.api-banner button {
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: none;
+  background: var(--warning);
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div>
+    <div class="hdr-logo">Axel <span>&</span> Élise</div>
+    <div class="hdr-sub">Atelier Dictée</div>
+  </div>
+  <div class="hdr-sep"></div>
+  <button class="hdr-key" onclick="window.location='https://jeanpierru-a11y.github.io/Axel-Elise-lecture/'">← Application</button>
+</div>
+
+<div class="main">
+
+  <div class="api-banner" id="api-banner" style="display:none">
+    ⚠️ Clé API Anthropic requise :
+    <input type="password" id="api-key-input" placeholder="sk-ant-...">
+    <button onclick="saveKey()">Enregistrer</button>
+  </div>
+
+  <!-- CONFIG -->
+  <div class="config-card">
+    <div class="config-title">Configuration</div>
+    <div class="config-grid">
+      <div class="config-group">
+        <label>Niveau</label>
+        <select id="niveau">
+          <option value="6eme">6ème</option>
+          <option value="5eme">5ème</option>
+          <option value="4eme">4ème</option>
+          <option value="3eme">3ème</option>
+          <option value="2nde" selected>2nde</option>
+          <option value="1ere">1ère</option>
+          <option value="terminale">Terminale</option>
+        </select>
+      </div>
+      <div class="config-group">
+        <label>Longueur</label>
+        <select id="longueur">
+          <option value="courte">Courte (~80 mots)</option>
+          <option value="moyenne" selected>Moyenne (~150 mots)</option>
+          <option value="longue">Longue (~250 mots)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="config-group" style="margin-top:16px">
+      <label>Thème d'entraînement</label>
+      <div class="chips" id="chips">
+        <div class="chip active" data-val="accords">Accords sujet-verbe</div>
+        <div class="chip" data-val="homophones">Homophones</div>
+        <div class="chip" data-val="participes">Participes passés</div>
+        <div class="chip" data-val="conjugaison">Conjugaison</div>
+        <div class="chip" data-val="ponctuation">Ponctuation</div>
+        <div class="chip" data-val="pluriel">Pluriel & genre</div>
+        <div class="chip" data-val="apostrophe">Apostrophe & élision</div>
+        <div class="chip" data-val="mixte">Mixte (tout)</div>
+      </div>
+    </div>
+
+    <div class="speed-row">
+      <label>Vitesse de lecture</label>
+      <input type="range" id="speed" min="0.5" max="1.4" step="0.1" value="0.9"
+        oninput="document.getElementById('speed-val').textContent=parseFloat(this.value).toFixed(1)+'×'">
+      <span class="speed-val" id="speed-val">0.9×</span>
+    </div>
+  </div>
+
+  <button class="btn-gen" id="btn-gen" onclick="generer()">
+    <div class="spinner" id="spinner"></div>
+    <span id="btn-gen-txt">✦ Générer la dictée</span>
+  </button>
+
+  <!-- ZONE DICTÉE -->
+  <div class="dictee-zone" id="dictee-zone">
+    <div class="player-bar">
+      <button class="btn-play" id="btn-play" onclick="togglePlay()">▶</button>
+      <button class="btn-stop" onclick="stopLecture()">■</button>
+      <div class="player-progress">
+        <div class="player-progress-fill" id="progress-fill"></div>
+      </div>
+      <div class="player-phrase" id="player-phrase">Prêt</div>
+    </div>
+    <div class="dictee-input-wrap">
+      <label>Votre dictée</label>
+      <textarea id="saisie" placeholder="Écoutez et écrivez ici…"></textarea>
+      <div class="btn-row">
+        <button class="btn-sec" onclick="reLire()">↺ Réécouter</button>
+        <button class="btn-sec btn-primary" onclick="corriger()">✓ Corriger</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CORRECTION -->
+  <div class="correction-zone" id="correction-zone"></div>
+
+</div>
+
+<script>
+var TEXTE_DICTEE = '';
+var PHRASES = [];
+var phraseIdx = 0;
+var enLecture = false;
+var synth = window.speechSynthesis;
+
+// ── API KEY ──
+function getKey() {
+  return localStorage.getItem('anthropic_api_key') || '';
+}
+function saveKey() {
+  var k = document.getElementById('api-key-input').value.trim();
+  if (k) { localStorage.setItem('anthropic_api_key', k); document.getElementById('api-banner').style.display='none'; alert('Clé enregistrée !'); }
+}
+function checkKey() {
+  if (!getKey()) { document.getElementById('api-banner').style.display='flex'; return false; }
+  return true;
+}
+
+// ── CHIPS ──
+document.getElementById('chips').addEventListener('click', function(e) {
+  var chip = e.target.closest('.chip');
+  if (!chip) return;
+  document.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('active'); });
+  chip.classList.add('active');
+});
+function getTheme() {
+  var a = document.querySelector('.chip.active');
+  return a ? a.dataset.val : 'mixte';
+}
+
+// ── GÉNÉRATION ──
+async function generer() {
+  if (!checkKey()) return;
+  var btn = document.getElementById('btn-gen');
+  btn.disabled = true;
+  btn.classList.add('loading');
+  document.getElementById('btn-gen-txt').textContent = 'Génération en cours…';
+
+  var niveau = document.getElementById('niveau').value;
+  var longueur = document.getElementById('longueur').value;
+  var theme = getTheme();
+
+  var THEMES = {
+    accords: "accords sujet-verbe, notamment avec des sujets inversés, collectifs ou séparés du verbe",
+    homophones: "homophones grammaticaux : a/à, on/ont, son/sont, ou/où, et/est, ce/se, mes/mais/met/mets, ces/ses/c'est/s'est",
+    participes: "accord des participes passés (avec être et avoir), distinctions infinitif/-é/-er",
+    conjugaison: "formes verbales complexes, temps composés, subjonctif, conditionnel",
+    ponctuation: "virgules, points-virgules, deux-points, tirets de dialogue, guillemets",
+    pluriel: "accords en genre et nombre, pluriels irréguliers, adjectifs composés",
+    apostrophe: "élisions, apostrophes, liaisons obligatoires ou interdites",
+    mixte: "variété de difficultés orthographiques et grammaticales classiques"
+  };
+  var LONGUEURS = { courte: '75 à 90', moyenne: '140 à 160', longue: '230 à 260' };
+  var NIVEAUX = {
+    '6eme':'6ème (11-12 ans, niveau CM2 amélioré)',
+    '5eme':'5ème (12-13 ans)',
+    '4eme':'4ème (13-14 ans)',
+    '3eme':'3ème (14-15 ans, préparation brevet)',
+    '2nde':'2nde (15-16 ans)',
+    '1ere':'1ère (16-17 ans)',
+    'terminale':'Terminale (17-18 ans, niveau bac)'
+  };
+
+  var prompt = `Tu es professeur de français. Rédige une dictée originale pour le niveau ${NIVEAUX[niveau]}.
+
+CONTRAINTES IMPÉRATIVES :
+- Longueur : ${LONGUEURS[longueur]} mots exactement
+- Difficulté cible : ${THEMES[theme]}
+- Style : texte littéraire cohérent (pas une liste de phrases isolées), avec une unité thématique
+- Pas de titre dans le texte
+- Pas d'explication, pas de commentaire — SEULEMENT le texte de la dictée
+- Le texte doit naturellement contenir de nombreux exemples de la difficulté cible
+
+Écris uniquement le texte de la dictée, sans rien d'autre.`;
+
+  try {
+    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': getKey(), 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 800,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    var data = await resp.json();
+    TEXTE_DICTEE = (data.content && data.content[0] && data.content[0].text) || '';
+    if (!TEXTE_DICTEE) throw new Error('Réponse vide');
+
+    // Découper en phrases pour la lecture progressive
+    PHRASES = TEXTE_DICTEE.match(/[^.!?…]+[.!?…]+/g) || [TEXTE_DICTEE];
+    PHRASES = PHRASES.map(function(p){ return p.trim(); }).filter(function(p){ return p.length > 0; });
+
+    phraseIdx = 0;
+    document.getElementById('dictee-zone').classList.add('visible');
+    document.getElementById('correction-zone').classList.remove('visible');
+    document.getElementById('saisie').value = '';
+    document.getElementById('player-phrase').textContent = '0 / ' + PHRASES.length + ' phrases';
+    document.getElementById('progress-fill').style.width = '0%';
+
+  } catch(e) {
+    alert('Erreur : ' + e.message);
+  }
+
+  btn.disabled = false;
+  btn.classList.remove('loading');
+  document.getElementById('btn-gen-txt').textContent = '✦ Générer une nouvelle dictée';
+}
+
+// ── LECTURE ──
+function togglePlay() {
+  if (enLecture) { pauseLecture(); } else { lireSuite(); }
+}
+
+function lireSuite() {
+  if (phraseIdx >= PHRASES.length) { finLecture(); return; }
+  enLecture = true;
+  document.getElementById('btn-play').textContent = '⏸';
+
+  var utt = new SpeechSynthesisUtterance(PHRASES[phraseIdx]);
+  utt.lang = 'fr-FR';
+  utt.rate = parseFloat(document.getElementById('speed').value);
+  utt.pitch = 1;
+
+  // Choisir une voix française si disponible
+  var voix = synth.getVoices().filter(function(v){ return v.lang.startsWith('fr'); });
+  if (voix.length > 0) utt.voice = voix[0];
+
+  document.getElementById('player-phrase').textContent = (phraseIdx+1) + ' / ' + PHRASES.length + ' phrases';
+  document.getElementById('progress-fill').style.width = Math.round((phraseIdx+1)/PHRASES.length*100) + '%';
+
+  utt.onend = function() {
+    phraseIdx++;
+    if (phraseIdx < PHRASES.length) {
+      // Pause naturelle entre phrases
+      setTimeout(lireSuite, 600);
+    } else {
+      finLecture();
+    }
+  };
+  synth.speak(utt);
+}
+
+function pauseLecture() {
+  enLecture = false;
+  synth.cancel();
+  document.getElementById('btn-play').textContent = '▶';
+}
+
+function stopLecture() {
+  enLecture = false;
+  phraseIdx = 0;
+  synth.cancel();
+  document.getElementById('btn-play').textContent = '▶';
+  document.getElementById('player-phrase').textContent = 'Prêt';
+  document.getElementById('progress-fill').style.width = '0%';
+}
+
+function finLecture() {
+  enLecture = false;
+  document.getElementById('btn-play').textContent = '▶';
+  document.getElementById('player-phrase').textContent = '✓ Lecture terminée';
+  document.getElementById('progress-fill').style.width = '100%';
+}
+
+function reLire() {
+  stopLecture();
+  setTimeout(lireSuite, 200);
+}
+
+// ── CORRECTION ──
+async function corriger() {
+  var saisie = document.getElementById('saisie').value.trim();
+  if (!saisie) { alert('Écrivez d\'abord votre dictée !'); return; }
+  if (!TEXTE_DICTEE) return;
+
+  var prompt = `Tu es correcteur de dictée. Compare le texte saisi par l'élève avec le texte original.
+
+TEXTE ORIGINAL :
+${TEXTE_DICTEE}
+
+TEXTE SAISI PAR L'ÉLÈVE :
+${saisie}
+
+Réponds UNIQUEMENT en JSON valide (pas de markdown, pas d'explication) :
+{
+  "nbMots": <nombre de mots dans l'original>,
+  "nbErreurs": <nombre d'erreurs>,
+  "note": "<note sur 20 sous forme '18/20'>",
+  "mention": "<Excellent|Très bien|Bien|Passable|À retravailler>",
+  "commentaire": "<une phrase d'encouragement personnalisée>",
+  "erreurs": [
+    {"saisi": "<mot mal écrit>", "correct": "<orthographe correcte>", "explication": "<règle en 5 mots max>"}
+  ]
+}`;
+
+  document.querySelector('.btn-primary').textContent = '…';
+  document.querySelector('.btn-primary').disabled = true;
+
+  try {
+    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': getKey(), 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    var data = await resp.json();
+    var txt = (data.content && data.content[0] && data.content[0].text) || '{}';
+    txt = txt.replace(/```json|```/g, '').trim();
+    var res = JSON.parse(txt);
+    afficherCorrection(res, saisie);
+  } catch(e) {
+    alert('Erreur correction : ' + e.message);
+  }
+
+  document.querySelector('.btn-primary').textContent = '✓ Corriger';
+  document.querySelector('.btn-primary').disabled = false;
+}
+
+function afficherCorrection(res, saisie) {
+  var nb = res.nbErreurs || 0;
+  var score = parseInt((res.note||'0').split('/')[0]) || (20 - nb*2);
+  var couleur = score >= 16 ? '#1a6b3a' : score >= 12 ? '#b8860b' : '#c0392b';
+  var bg = score >= 16 ? '#edf7f1' : score >= 12 ? '#fdfaed' : '#fdf0ee';
+
+  var errs = res.erreurs || [];
+  var errsHtml = errs.map(function(e){
+    return '<div class="erreur-item">' +
+      '<span class="erreur-saisi">' + esc(e.saisi) + '</span>' +
+      '<span class="erreur-arrow">→</span>' +
+      '<span class="erreur-bon">' + esc(e.correct) + '</span>' +
+      '<span class="erreur-expl">' + esc(e.explication) + '</span>' +
+      '</div>';
+  }).join('');
+
+  var cz = document.getElementById('correction-zone');
+  cz.innerHTML =
+    '<div class="score-bar">' +
+      '<div class="score-circle" style="background:'+bg+';color:'+couleur+'">' + esc(res.note||'—') + '</div>' +
+      '<div class="score-info">' +
+        '<h3>' + esc(res.mention||'') + '</h3>' +
+        '<p>' + esc(res.commentaire||'') + '</p>' +
+      '</div>' +
+    '</div>' +
+    '<div class="correction-text">' + buildDiff(TEXTE_DICTEE, saisie, errs) + '</div>' +
+    (errs.length > 0 ?
+      '<div class="erreurs-list">' +
+        '<div class="erreurs-title">' + nb + ' erreur' + (nb>1?'s':'') + ' détectée' + (nb>1?'s':'') + '</div>' +
+        errsHtml +
+      '</div>' : '<p style="color:#1a6b3a;font-size:13px">✓ Aucune erreur détectée — parfait !</p>');
+
+  cz.classList.add('visible');
+  cz.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function buildDiff(original, saisie, erreurs) {
+  // Surligner les erreurs dans le texte original
+  var txt = esc(original);
+  (erreurs || []).forEach(function(e) {
+    if (e.correct) {
+      var re = new RegExp('\\b' + escReg(e.correct) + '\\b', 'gi');
+      txt = txt.replace(re, '<span class="ok">$&</span>');
+    }
+  });
+  return txt;
+}
+
+function esc(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function escReg(s) {
+  return (s||'').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// Init
+checkKey();
+</script>
+</body>
+</html>
