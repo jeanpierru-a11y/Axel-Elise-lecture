@@ -17754,6 +17754,12 @@ function _naviguerHash(hash) {
 
   // Délai pour laisser ouvrirLivre s'initialiser
   var delay = (livre && (!LIVRE_ACTIF || LIVRE_ACTIF.id !== livre.id)) ? 250 : 0;
+  // Capturer l'état des fenêtres d'aide AVANT navigation (qui ferme tout)
+  var _aideWasOpen = typeof _aideOpen !== 'undefined' && _aideOpen;
+  var _lexHelpWasOpen = (function() {
+    var w = document.getElementById('lex-help-win');
+    return w && w.style.display === 'flex';
+  })();
   setTimeout(function() {
     var btn;
     if (section === 'livre' || !section) {
@@ -17782,19 +17788,18 @@ function _naviguerHash(hash) {
     } else if (section === 'commentaire') {
       niGoEcrire('commentaire', document.getElementById('ni-com'));
     }
-    // Ouvrir/fermer l'aide contextuelle si -help détecté
+    // Toggle aide : capturer l'état AVANT navigation (niGoEcrire ferme tout)
     if (wantHelp) {
       var ECRIRE_SECS = ['dissertation','lineaire','commentaire'];
       if (ECRIRE_SECS.indexOf(section) !== -1) {
-        setTimeout(function() { niAideToggle(); }, 400);
+        setTimeout(function() {
+          // _aideWasOpen capturé avant la navigation dans la closure externe
+          if (_aideWasOpen) { niAideClose(); } else { if (!_aideOpen) niAideToggle(); }
+        }, 400);
       } else if (section === 'mots') {
         setTimeout(function() {
           var w = document.getElementById('lex-help-win');
-          if (w && w.style.display === 'flex') {
-            w.style.display = 'none';
-          } else {
-            openLexHelp();
-          }
+          if (_lexHelpWasOpen) { w.style.display = 'none'; } else { openLexHelp(); }
         }, 400);
       }
     }
