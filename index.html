@@ -17673,8 +17673,12 @@ function _naviguerHash(hash) {
   hash = (hash || '').replace(/^#/, '').trim();
   if (!hash) return;
 
-  // Retour bibliothèque
-  if (hash === 'biblio') { retourBiblio(); return; }
+  // Retour bibliothèque — effacer le hash sans déclencher un nouveau hashchange
+  if (hash === 'biblio') {
+    retourBiblio();
+    history.replaceState(null, '', window.location.pathname + window.location.search);
+    return;
+  }
 
   // Sections connues (sans livre) → ignorer si pas de livre actif
   var SECTIONS_SEULES = ['personnages','lieux','temps','mots','intrigue',
@@ -17683,12 +17687,26 @@ function _naviguerHash(hash) {
 
   // Décomposer hash en slug-livre + section
   var livreSlug = '', section = '';
-  var SECTIONS = ['personnages','lieux','temps','mots','intrigue3','intrigue5',
-                  'intrigue8','dissertation','lineaire','commentaire','carnet','livre'];
-  for (var i = 0; i < SECTIONS.length; i++) {
-    var s = SECTIONS[i];
+  var ALIAS = {
+    'personnages':'personnages','perso':'personnages','personnage':'personnages',
+    'lieux':'lieux','lieu':'lieux',
+    'temps':'temps',
+    'mots':'mots','themes':'mots','theme':'mots','analyse':'mots',
+    'acp':'mots','radar':'mots','paires':'mots','lexique':'mots',
+    'intrigue3':'intrigue3','aristote':'intrigue3','i3':'intrigue3',
+    'intrigue5':'intrigue5','freytag':'intrigue5','i5':'intrigue5',
+    'intrigue8':'intrigue8','moderne':'intrigue8','i8':'intrigue8',
+    'dissertation':'dissertation','diss':'dissertation',
+    'lineaire':'lineaire','lin':'lineaire',
+    'commentaire':'commentaire','com':'commentaire',
+    'carnet':'carnet','notes':'carnet',
+    'livre':'livre','fiche':'livre'
+  };
+  var ALIAS_KEYS = Object.keys(ALIAS);
+  for (var i = 0; i < ALIAS_KEYS.length; i++) {
+    var s = ALIAS_KEYS[i];
     if (hash.slice(-s.length) === s && (hash.length === s.length || hash[hash.length - s.length - 1] === '-')) {
-      section = s;
+      section = ALIAS[s];
       livreSlug = hash.slice(0, hash.length - s.length).replace(/-$/, '');
       break;
     }
