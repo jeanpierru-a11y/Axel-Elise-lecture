@@ -17702,10 +17702,19 @@ function _naviguerHash(hash) {
     'carnet':'carnet','notes':'carnet',
     'livre':'livre','fiche':'livre'
   };
-  // Tenter la correspondance en retirant jusqu'à 2 segments inconnus en fin
-  var ALIAS_KEYS = Object.keys(ALIAS);
+  // Détecter modificateur -help / -aide en fin de hash
+  var MODS = ['help','aide'];
+  var wantHelp = false;
   var hashParts = hash.split('-');
-  for (var strip = 0; strip <= 2 && !section; strip++) {
+  if (MODS.indexOf(hashParts[hashParts.length - 1]) !== -1) {
+    wantHelp = true;
+    hashParts = hashParts.slice(0, hashParts.length - 1);
+    hash = hashParts.join('-');
+  }
+
+  // Tenter la correspondance (tolérance 1 segment inconnu résiduel)
+  var ALIAS_KEYS = Object.keys(ALIAS);
+  for (var strip = 0; strip <= 1 && !section; strip++) {
     var hashTry = strip ? hashParts.slice(0, hashParts.length - strip).join('-') : hash;
     if (!hashTry) break;
     for (var i = 0; i < ALIAS_KEYS.length; i++) {
@@ -17772,6 +17781,17 @@ function _naviguerHash(hash) {
       niGoEcrire('lineaire', document.getElementById('ni-lin'));
     } else if (section === 'commentaire') {
       niGoEcrire('commentaire', document.getElementById('ni-com'));
+    }
+    // Ouvrir l'aide contextuelle si -help détecté
+    if (wantHelp) {
+      var ECRIRE_SECS = ['dissertation','lineaire','commentaire'];
+      if (ECRIRE_SECS.indexOf(section) !== -1) {
+        // Drawer aide Écrire
+        setTimeout(function() { niAideToggle(); }, 400);
+      } else if (section === 'mots') {
+        // Fenêtre méthodologie analyse lexicale
+        setTimeout(function() { openLexHelp(); }, 400);
+      }
     }
   }, delay);
 }
