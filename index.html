@@ -2286,6 +2286,16 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 
 @keyframes iaSpin{0%,100%{opacity:1}50%{opacity:.6}}
 .acp-ia-comm{flex:0 0 auto;font-size:.62rem;font-style:italic;color:#7B1FA2;padding:2px 8px 3px;border-top:1px solid #F3E5F5;line-height:1.5;background:#FAFBFE;display:none;}
+/* ── Onglets vues toile (Option B) ── */
+.ni-q-tab{background:transparent;color:#6A1B9A;border:1.5px solid #B39DDB;border-radius:5px;padding:2px 9px;font-size:.62rem;font-weight:800;cursor:pointer;font-family:inherit;flex-shrink:0;line-height:1.4;transition:background .12s;}
+.ni-q-tab:hover{background:#E8D5F5;}
+.ni-q-tab.active{background:#7B1FA2;color:#fff;border-color:#7B1FA2;}
+/* ── Sous-bandeau contextuel ── */
+#ni-q-sub-hdr{background:#F3E5F5;border-bottom:1px solid #CE93D8;padding:2px 6px;display:none;align-items:center;gap:4px;flex-wrap:wrap;flex-shrink:0;}
+.ni-q-sub-btn{background:#EDE7F6;color:#4A148C;border:1.5px solid #B39DDB;border-radius:5px;padding:2px 8px;font-size:.6rem;font-weight:800;cursor:pointer;font-family:inherit;flex-shrink:0;line-height:1.5;transition:background .12s;}
+.ni-q-sub-btn:hover{background:#C5B3E6;}
+.ni-q-sub-btn.ia{background:#4A148C;color:#fff;border-color:#7B1FA2;}
+.ni-q-sub-btn.ia:hover{background:#6A1B9A;}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 </head>
@@ -2719,27 +2729,27 @@ html.a11y-cb-tritan{filter:url(#cb-tritan);}
 
     <!-- COL 1 : TOILE THÉMATIQUE (pleine hauteur, large) -->
     <div class="ni-q" id="ni-q-themes">
-      <div class="ni-q-hdr" style="background:#EDE7F6;color:#4A148C;gap:0;">
-        <span class="ni-q-hdr-lbl" style="flex:0 0 auto;">🕸️ Toile thématique</span>
-        <span id="ni-q-th-source-badge" style="margin-left:5px;flex-shrink:0;"></span>
-        <button class="ni-q-hdr-alpha" id="ni-th-pairs-btn" onclick="_q3TogglePaires()" title="Comparer les paires de thèmes" style="display:none;margin-left:10px;">Paires</button>
-        <button class="ni-q-hdr-alpha" id="ni-th-acp-btn" onclick="_q3ToggleACP()" title="Analyse Augmentée — ACP des profils thématiques" style="display:none;margin-left:6px;">🔬 ACP</button>
-        <button class="ni-q-hdr-alpha" id="ni-th-pdf-btn" onclick="genererPDF_lex()" title="Exporter la toile en PDF" style="display:none;margin-left:10px;">PDF toile</button>
-        <button class="ni-q-hdr-alpha" id="ni-th-pairs-perso-btn" onclick="_q3TogglePairesPerso()" title="Comparer les paires de personnages" style="display:none;margin-left:6px;">👥 Paires perso</button>
-        <button class="ni-q-hdr-alpha" id="ni-th-tb-perso-btn" onclick="_q3ToggleTbPerso()" title="Tableau de bord personnages" style="display:none;margin-left:6px;">📊 Tableau perso</button>
-        <button class="ni-q-hdr-alpha" id="ni-th-xlsx-btn" onclick="exporterLexiqueExcel()" title="Exporter le lexique en Excel (scores + champs + phases)" style="display:none;margin-left:6px;">📊 Excel</button>
-        <button class="ni-q-hdr-alpha" id="ni-th-json-btn" onclick="exporterJSONComplet()" title="Exporter lexique + scores personnages en JSON (sauvegarde complète)" style="display:none;margin-left:6px;">💾 JSON</button>
-        <input type="file" id="ni-th-json-import" accept=".json" style="display:none;" onchange="importerJSONComplet(this)">
-        <button class="ni-q-hdr-alpha" id="ni-th-json-import-btn" onclick="document.getElementById('ni-th-json-import').click()" title="Importer un JSON complet (lexique + scores personnages)" style="display:none;margin-left:2px;">
-        <button class="ni-q-hdr-alpha" id="ni-th-ia-btn" onclick="analyserAvecIA()" title="Analyser avec l'IA (paires, quadrants, commentaires)" style="display:none;margin-left:8px;background:#4A148C;color:#fff;border-color:#7B1FA2;">✨ IA</button>
-        <button class="ni-q-hdr-alpha" id="ni-th-raison-btn" onclick="openRaisonnementIA()" title="Raisonnement IA référencé — comment l'IA a raisonné, zone par zone" style="display:none;margin-left:4px;background:#E8EAF6;color:#283593;border-color:#9FA8DA;">✦ Raison.</button>📂</button>
-        <div style="flex:1;min-width:0;"></div>
-        <div style="display:flex;align-items:center;gap:3px;">
-          <button class="ni-q-hdr-icon" id="ni-th-count-btn" onclick="openLexCount()" title="Compter sur texte complet (.txt)" style="display:none;">📄</button>
-          <button class="ni-q-hdr-icon" onclick="openLexiqueImport()" title="Importer analyse lexicale">📋</button>
-          <button class="ni-q-hdr-icon" id="ni-th-help-btn" onclick="openLexHelp()" title="Méthodologie — Analyse lexicale">?</button>
+      <!-- BANDEAU PRINCIPAL : label + onglets vues + outils fixes -->
+      <div class="ni-q-hdr" style="background:#EDE7F6;color:#4A148C;gap:4px;padding:3px 6px;">
+        <span style="flex:0 0 auto;font-size:.72rem;font-weight:800;color:#4A148C;white-space:nowrap;">🕸️ Toile</span>
+        <span id="ni-q-th-source-badge" style="flex-shrink:0;font-size:.6rem;margin-left:2px;"></span>
+        <!-- Onglets vues (masqués si pas de lexique) -->
+        <div id="ni-q-th-tabs" style="display:none;align-items:center;gap:3px;margin-left:6px;">
+          <button class="ni-q-tab active" id="ni-tab-radar" onclick="_q3SetView('radar')" title="Toile thématique">Radar</button>
+          <button class="ni-q-tab" id="ni-tab-paires" style="display:none;" onclick="_q3SetView('paires')" title="Paires de thèmes">Paires</button>
+          <button class="ni-q-tab" id="ni-tab-acp" style="display:none;" onclick="_q3SetView('acp')" title="ACP">ACP</button>
+          <button class="ni-q-tab" id="ni-tab-paires-perso" style="display:none;" onclick="_q3SetView('paires-perso')" title="Paires de personnages">Perso ×2</button>
+          <button class="ni-q-tab" id="ni-tab-tableau" style="display:none;" onclick="_q3SetView('tableau')" title="Tableau de bord personnages">Tableau</button>
         </div>
+        <div style="flex:1;min-width:0;"></div>
+        <!-- Outils fixes -->
+        <input type="file" id="ni-th-json-import" accept=".json" style="display:none;" onchange="importerJSONComplet(this)">
+        <button class="ni-q-hdr-icon" id="ni-th-count-btn" onclick="openLexCount()" title="Compter sur texte complet (.txt)" style="display:none;">📄</button>
+        <button class="ni-q-hdr-icon" onclick="openLexiqueImport()" title="Importer analyse lexicale">📋</button>
+        <button class="ni-q-hdr-icon" id="ni-th-help-btn" onclick="openLexHelp()" title="Méthodologie — Analyse lexicale">?</button>
       </div>
+      <!-- SOUS-BANDEAU CONTEXTUEL -->
+      <div id="ni-q-sub-hdr"></div>
       <div class="ni-q-body" style="padding:4px 6px;display:flex;flex-direction:column;overflow:hidden;">
 
         <!-- Pas de lexique : panneau de démarrage -->
@@ -12370,31 +12380,20 @@ function niTSave() {
 // ════ NI MOTS — fonctions ════
 function niMLoad() {
   if (!LIVRE_ACTIF) return;
-  // Fermer proprement tous les panels exclusifs de la toile thématique
-  // (peut rester ouvert si on navigue vers un autre menu puis on revient)
-  if(_q3PairesOpen){
-    _q3PairesOpen=false;
-    var pb=document.getElementById('ni-th-pairs-btn'); if(pb)pb.classList.remove('active');
-    var pe=document.getElementById('ni-q-th-paires'); if(pe)pe.style.display='none';
-  }
-  if(_q3AcpOpen){
-    _q3AcpOpen=false;
-    var ab=document.getElementById('ni-th-acp-btn'); if(ab)ab.classList.remove('active');
-    var ae=document.getElementById('ni-q-th-acp'); if(ae)ae.style.display='none';
-  }
-  if(_q3PairesPersoOpen){
-    _q3PairesPersoOpen=false;
-    var ppb=document.getElementById('ni-th-pairs-perso-btn'); if(ppb)ppb.classList.remove('active');
-    var ppe=document.getElementById('ni-q-th-paires-perso'); if(ppe)ppe.style.display='none';
-  }
-  if(_q3TbPersoOpen){
-    _q3TbPersoOpen=false;
-    var tbb=document.getElementById('ni-th-tb-perso-btn'); if(tbb)tbb.classList.remove('active');
-    var tbp=document.getElementById('ni-q-th-tableau-perso'); if(tbp)tbp.style.display='none';
-  }
-  // Restaurer la vue globale (radar + scatter + mode)
+  // Réinitialiser sur la vue Radar (ferme tous les autres panels)
+  _q3ActiveView = 'radar';
+  _q3PairesOpen = false; _q3AcpOpen = false; _q3PairesPersoOpen = false; _q3TbPersoOpen = false;
+  // Masquer tous les panels exclusifs
+  ['ni-q-th-paires','ni-q-th-acp','ni-q-th-paires-perso','ni-q-th-tableau-perso'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.style.display='none';
+  });
+  // Restaurer radar
   var glb=document.getElementById('ni-q-th-global'); if(glb) glb.style.display='flex';
   var mod=document.getElementById('ni-q-th-mode');   if(mod) mod.style.display='block';
+  // Activer onglet Radar
+  ['radar','paires','acp','paires-perso','tableau'].forEach(function(t){
+    var tb=document.getElementById('ni-tab-'+t); if(tb) tb.classList.toggle('active', t==='radar');
+  });
 
   var ta = document.getElementById('ni-m-mots-ta');
   if (ta) ta.value = LIVRE_ACTIF.mots || '';
@@ -13928,35 +13927,30 @@ function updateQ3LexViz() {
     svg.setAttribute('preserveAspectRatio','xMidYMid meet');
     _attachLexRadarClick('ni-lex-radar-q3','q3');
   }
+  // Bouton aide — toujours visible avec lexique
   var helpBtn=document.getElementById('ni-th-help-btn');
   if(helpBtn) helpBtn.style.display='inline';
-  var pdfBtn=document.getElementById('ni-th-pdf-btn');
-  if(pdfBtn) pdfBtn.style.display='inline';
-  var xlsxBtn=document.getElementById('ni-th-xlsx-btn');
-  if(xlsxBtn) xlsxBtn.style.display='inline';
-  var jsonBtn=document.getElementById('ni-th-json-btn');
-  if(jsonBtn) jsonBtn.style.display='inline';
-  var jsonImpBtn=document.getElementById('ni-th-json-import-btn');
-  if(jsonImpBtn) jsonImpBtn.style.display='inline';
-  var pairsBtn=document.getElementById('ni-th-pairs-btn');
-  if(pairsBtn) pairsBtn.style.display=(lex&&lex.paires&&lex.paires.length)?'inline':'none';
-  var acpBtn=document.getElementById('ni-th-acp-btn');
-  if(acpBtn) acpBtn.style.display=(lex&&lex.tranches&&lex.tranches.length>=3)?'inline':'none';
-  var pairsPersoBtn=document.getElementById('ni-th-pairs-perso-btn');
-  if(pairsPersoBtn){var persos=(LIVRE_ACTIF&&LIVRE_ACTIF.personnages)||[];
-    var hasSc=persos.filter(function(p){return p.scores&&typeof p.scores.amour==='number';}).length>=3;
-    pairsPersoBtn.style.display=hasSc?'inline':'none';}
-  var tbPersoBtn=document.getElementById('ni-th-tb-perso-btn');
-  if(tbPersoBtn) tbPersoBtn.style.display=hasSc?'inline':'none';
-  // Bouton comptage : visible si champLexical défini
+  // Bouton comptage — visible si champLexical défini
   var countBtn=document.getElementById('ni-th-count-btn');
   if(countBtn) countBtn.style.display=(lex&&lex.champLexical)?'inline':'none';
+  // ── Afficher les onglets + activer conditionnellement ──
+  var tabs=document.getElementById('ni-q-th-tabs');
+  if(tabs) tabs.style.display='flex';
+  var persos=(LIVRE_ACTIF&&LIVRE_ACTIF.personnages)||[];
+  var hasSc=persos.filter(function(p){return p.scores&&typeof p.scores.amour==='number';}).length>=3;
+  var tabCfg={
+    'paires':  (lex&&lex.paires&&lex.paires.length>0),
+    'acp':     (lex&&lex.tranches&&lex.tranches.length>=3),
+    'paires-perso': hasSc,
+    'tableau': hasSc
+  };
+  Object.keys(tabCfg).forEach(function(t){
+    var tb=document.getElementById('ni-tab-'+t);
+    if(tb) tb.style.display=tabCfg[t]?'inline-flex':'none';
+  });
+  // Mettre à jour le sous-bandeau
+  _q3UpdateSubHdr();
   // Badge source
-  var iaBtn=document.getElementById('ni-th-ia-btn');
-  if(iaBtn) iaBtn.style.display=(lex&&lex.tranches&&lex.tranches.length>=3)?'inline':'none';
-  var raisonBtn=document.getElementById('ni-th-raison-btn');
-  if(raisonBtn) raisonBtn.style.display=(lex&&lex.raisonnementIA)?'inline':'none';
-  var badge=document.getElementById('ni-q-th-source-badge');
   if(badge){
     badge.className='';
     if(lex.source==='comptage_exhaustif'){
@@ -15404,7 +15398,89 @@ function _closeAllFloatWins() {
 // PAIRES DE THÈMES — Comparaison & Scatters
 // ════════════════════════════════════════════════════════
 
-var _q3PairesOpen = false;
+var _q3PairesOpen      = false;
+var _q3AcpOpen         = false;  // conservé pour compatibilité descendante
+var _q3PairesPersoOpen = false;
+var _q3TbPersoOpen     = false;
+var _q3ActiveView      = 'radar'; // 'radar'|'paires'|'acp'|'paires-perso'|'tableau'
+
+// ── Navigation unifiée — remplace les 4 anciens _q3Toggle* ─────────────────
+function _q3SetView(v) {
+  _q3ActiveView = v;
+  // Masquer tous les panels de contenu
+  ['ni-q-th-global','ni-q-th-mode','ni-q-th-paires',
+   'ni-q-th-acp','ni-q-th-paires-perso','ni-q-th-tableau-perso'].forEach(function(id) {
+    var el = document.getElementById(id); if (el) el.style.display = 'none';
+  });
+  // Activer l'onglet
+  ['radar','paires','acp','paires-perso','tableau'].forEach(function(t) {
+    var tb = document.getElementById('ni-tab-' + t);
+    if (tb) tb.classList.toggle('active', t === v);
+  });
+  // Afficher le panel cible + déclencher le rendu
+  if (v === 'radar') {
+    var g = document.getElementById('ni-q-th-global'); if (g) g.style.display = 'flex';
+    var m = document.getElementById('ni-q-th-mode');   if (m) m.style.display = 'block';
+    updateQ3LexViz();
+  } else if (v === 'paires') {
+    var p = document.getElementById('ni-q-th-paires');
+    if (p) { p.style.display = 'flex'; updateQ3PairesViz(); }
+  } else if (v === 'acp') {
+    var a = document.getElementById('ni-q-th-acp');
+    if (a) { a.style.display = 'flex'; _renderACPWidget(); }
+  } else if (v === 'paires-perso') {
+    var pp = document.getElementById('ni-q-th-paires-perso');
+    if (pp) { pp.style.display = 'flex'; _renderPairesPerso(pp); }
+  } else if (v === 'tableau') {
+    var tb2 = document.getElementById('ni-q-th-tableau-perso');
+    if (tb2) { tb2.style.display = 'flex'; _renderTbAll(); }
+  }
+  // Flags booléens — compatibilité avec le code existant
+  _q3PairesOpen      = (v === 'paires');
+  _q3AcpOpen         = (v === 'acp');
+  _q3PairesPersoOpen = (v === 'paires-perso');
+  _q3TbPersoOpen     = (v === 'tableau');
+  _q3UpdateSubHdr();
+}
+
+// ── Sous-bandeau contextuel — contenu selon la vue active ──────────────────
+function _q3UpdateSubHdr() {
+  var sub = document.getElementById('ni-q-sub-hdr');
+  if (!sub) return;
+  var L = LIVRE_ACTIF;
+  var lex = L && L.lexique;
+  var hasTranches = lex && lex.tranches && lex.tranches.length >= 1;
+  if (!hasTranches) { sub.style.display = 'none'; sub.innerHTML = ''; return; }
+  var v    = _q3ActiveView;
+  var isEl = typeof _axelMode !== 'undefined' ? !_axelMode : true;
+  var html = '';
+  // PDF — présent sur toutes les vues
+  html += '<button class="ni-q-sub-btn" onclick="genererPDF_lex()" title="Exporter en PDF">📑 PDF</button>';
+  if (v === 'radar') {
+    html += '<button class="ni-q-sub-btn" onclick="exporterLexiqueExcel()" title="Exporter en Excel">📊 Excel</button>';
+    html += '<button class="ni-q-sub-btn" onclick="exporterJSONComplet()" title="Exporter JSON">💾 JSON ↓</button>';
+    html += '<button class="ni-q-sub-btn" onclick="document.getElementById(\'ni-th-json-import\').click()" title="Importer JSON">📂 JSON ↑</button>';
+    if (isEl && lex.tranches.length >= 3) {
+      html += '<button class="ni-q-sub-btn ia" onclick="analyserAvecIA()">✨ Analyser</button>';
+    }
+  } else if (v === 'paires') {
+    if (isEl && lex.tranches.length >= 3) {
+      html += '<button class="ni-q-sub-btn ia" onclick="analyserAvecIA()">✨ Analyser</button>';
+    }
+  } else if (v === 'acp') {
+    if (isEl && lex.tranches.length >= 3) {
+      html += '<button class="ni-q-sub-btn ia" onclick="analyserAvecIA()">✨ Analyser</button>';
+    }
+  } else if (v === 'tableau') {
+    html += '<button class="ni-q-sub-btn" onclick="exporterJSONComplet()">💾 JSON ↓</button>';
+    if (isEl) html += '<button class="ni-q-sub-btn ia" onclick="analyserAvecIA()">✨ Analyser</button>';
+  }
+  if (lex.raisonnementIA && isEl) {
+    html += '<button class="ni-q-sub-btn" style="background:#E8EAF6;color:#283593;border-color:#9FA8DA;" onclick="openRaisonnementIA()">✦ Raison.</button>';
+  }
+  sub.style.display = 'flex';
+  sub.innerHTML = html;
+}
 
 function _q3TogglePaires() {
   if(_q3AcpOpen){ _q3AcpOpen=false; var ab=document.getElementById('ni-th-acp-btn'); if(ab)ab.classList.remove('active'); var ae=document.getElementById('ni-q-th-acp'); if(ae)ae.style.display='none'; }
@@ -17184,8 +17260,8 @@ async function analyserAvecIA() {
   if (!cleIA) {
     showToast('\u274c Cl\u00e9 API manquante \u2014 configurer dans Param\u00e8tres', 'warn'); return;
   }
-  var btn = document.getElementById('ni-th-ia-btn');
-  // ── Bandeau sablier inline (ancré au bouton) ──────────────────────────────
+  var btn = null; // bouton IA maintenant dans le sous-bandeau (dynamique)
+  // ── Bandeau sablier inline (ancré au sous-bandeau) ───────────────────────
   var spinner = document.getElementById('ni-th-ia-spinner');
   if (!spinner) {
     spinner = document.createElement('span');
@@ -17194,7 +17270,9 @@ async function analyserAvecIA() {
       + 'background:#E8D5F5;border:1px solid #CE93D8;border-radius:4px;padding:2px 10px;'
       + 'white-space:nowrap;min-width:130px;text-align:center;'
       + 'animation:iaSpin 1.2s ease-in-out infinite;display:inline-block;';
-    if (btn && btn.parentNode) btn.parentNode.insertBefore(spinner, btn.nextSibling);
+    var subHdr = document.getElementById('ni-q-sub-hdr');
+    if (subHdr) subHdr.appendChild(spinner);
+    else document.body.appendChild(spinner);
   }
   var dots = 0;
   var spinTick = setInterval(function(){
@@ -17333,8 +17411,7 @@ async function analyserAvecIA() {
         paragraphes: result.raisonnement.paragraphes,
         focus: Array.isArray(result.raisonnement.focus) ? result.raisonnement.focus : []
       };
-      var raisonBtn = document.getElementById('ni-th-raison-btn');
-      if (raisonBtn) raisonBtn.style.display = 'inline';
+      _q3UpdateSubHdr(); // rafraîchit le sous-bandeau (bouton Raison. apparaît si raisonnementIA présent)
     }
 
     // Marquer source IA si ce n'est pas déjà un comptage exhaustif
