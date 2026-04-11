@@ -17644,6 +17644,134 @@ function _renderZoneRefs(html) {
 
 // Ouvre lex-expl-win avec le raisonnement IA référencé
 
+// ─────────────────────────────────────────────────────────────────────────────
+// NAVIGATION PAR HASH — StreamDeck & liens directs
+// ─────────────────────────────────────────────────────────────────────────────
+// Format : #<slug-livre>   ou   #<slug-livre>-<section>
+// Exemples :
+//   #caligula                → ouvre Caligula, onglet Livre
+//   #caligula-personnages    → ouvre Caligula, onglet Personnages
+//   #caligula-mots           → ouvre Caligula, onglet Thèmes
+//   #caligula-dissertation   → ouvre Caligula, sous-onglet Dissertation
+//   #caligula-lineaire       → ouvre Caligula, sous-onglet Ana. linéaire
+//   #caligula-commentaire    → ouvre Caligula, sous-onglet Commentaire
+//   #caligula-intrigue3      → ouvre Caligula, intrigue 3 parties
+//   #caligula-intrigue5      → ouvre Caligula, intrigue 5 parties
+//   #caligula-intrigue8      → ouvre Caligula, intrigue 8 parties
+//   #biblio                  → retour bibliothèque
+
+// Construit un slug depuis un titre (ex: "L'Île des esclaves" → "ile-esclaves")
+function _hashSlug(str) {
+  return (str || '').toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+// Navigation principale : interprète le hash et navigue
+function _naviguerHash(hash) {
+  hash = (hash || '').replace(/^#/, '').trim();
+  if (!hash) return;
+
+  // Retour bibliothèque
+  if (hash === 'biblio') { retourBiblio(); return; }
+
+  // Sections connues (sans livre) → ignorer si pas de livre actif
+  var SECTIONS_SEULES = ['personnages','lieux','temps','mots','intrigue',
+                         'intrigue3','intrigue5','intrigue8','ecrire',
+                         'dissertation','lineaire','commentaire','carnet'];
+
+  // Décomposer hash en slug-livre + section
+  var livreSlug = '', section = '';
+  var SECTIONS = ['personnages','lieux','temps','mots','intrigue3','intrigue5',
+                  'intrigue8','dissertation','lineaire','commentaire','carnet','livre'];
+  for (var i = 0; i < SECTIONS.length; i++) {
+    var s = SECTIONS[i];
+    if (hash.slice(-s.length) === s && (hash.length === s.length || hash[hash.length - s.length - 1] === '-')) {
+      section = s;
+      livreSlug = hash.slice(0, hash.length - s.length).replace(/-$/, '');
+      break;
+    }
+  }
+  if (!section) { livreSlug = hash; section = 'livre'; }
+
+  // Trouver le livre par slug (correspondance partielle tolérée)
+  var livre = null;
+  if (livreSlug) {
+    livre = BIBLIO.livres.find(function(l) {
+      return _hashSlug(l.titre) === livreSlug;
+    });
+    // Correspondance partielle si exact introuvable
+    if (!livre) {
+      livre = BIBLIO.livres.find(function(l) {
+        return _hashSlug(l.titre).indexOf(livreSlug) === 0 || livreSlug.indexOf(_hashSlug(l.titre).split('-')[0]) === 0;
+      });
+    }
+  }
+
+  // Si on a un livre et qu'on n'est pas déjà dessus → l'ouvrir
+  if (livre) {
+    if (!LIVRE_ACTIF || LIVRE_ACTIF.id !== livre.id) {
+      ouvrirLivre(livre.id);
+    }
+  } else if (livreSlug) {
+    showToast('Livre introuvable : ' + livreSlug, 'warn');
+    return;
+  }
+
+  // Délai pour laisser ouvrirLivre s'initialiser
+  var delay = (livre && (!LIVRE_ACTIF || LIVRE_ACTIF.id !== livre.id)) ? 250 : 0;
+  setTimeout(function() {
+    var btn;
+    if (section === 'livre' || !section) {
+      btn = document.querySelector('[onclick*="showTab(\'livre\'"]') || document.getElementById('ni-livre');
+      niGo('livre', document.getElementById('ni-livre'));
+    } else if (section === 'personnages') {
+      niGo('personnages', document.getElementById('ni-personnages'));
+    } else if (section === 'lieux') {
+      niGo('lieux', document.getElementById('ni-lieux'));
+    } else if (section === 'temps') {
+      niGo('temps', document.getElementById('ni-temps'));
+    } else if (section === 'mots') {
+      niGo('mots', document.getElementById('ni-analyse'));
+    } else if (section === 'carnet') {
+      niGo('carnet', document.getElementById('ni-carnet'));
+    } else if (section === 'intrigue3') {
+      niGoIntrigue('aristote', document.getElementById('ni-i3'));
+    } else if (section === 'intrigue5') {
+      niGoIntrigue('freytag', document.getElementById('ni-i5'));
+    } else if (section === 'intrigue8') {
+      niGoIntrigue('moderne', document.getElementById('ni-i8'));
+    } else if (section === 'dissertation') {
+      niGoEcrire('diss', document.getElementById('ni-diss'));
+    } else if (section === 'lineaire') {
+      niGoEcrire('lineaire', document.getElementById('ni-lin'));
+    } else if (section === 'commentaire') {
+      niGoEcrire('commentaire', document.getElementById('ni-com'));
+    }
+  }, delay);
+}
+
+// Listener hashchange (StreamDeck, lien direct, barre d'adresse)
+window.addEventListener('hashchange', function() {
+  _naviguerHash(window.location.hash);
+});
+
+// Au chargement initial : attendre que l'app soit prête puis traiter le hash
+(function() {
+  var _hashInitial = window.location.hash;
+  if (!_hashInitial) return;
+  var _tries = 0;
+  var _attendre = setInterval(function() {
+    _tries++;
+    if (typeof BIBLIO !== 'undefined' && BIBLIO.livres && BIBLIO.livres.length > 0 && _appDemarree) {
+      clearInterval(_attendre);
+      _naviguerHash(_hashInitial);
+    }
+    if (_tries > 40) clearInterval(_attendre); // timeout 4s
+  }, 100);
+})();
+
 </script>
 
 <!-- ── BOUTON FLOTTANT CARNET ── -->
