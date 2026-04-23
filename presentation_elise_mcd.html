@@ -1,0 +1,243 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.pres{font-family:var(--font-sans);color:var(--color-text-primary);max-width:720px;margin:0 auto;padding-bottom:3rem}
+.hero{padding:2.5rem 2rem 2rem;border-bottom:.5px solid var(--color-border-tertiary)}
+.hero-tag{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-text-tertiary);margin-bottom:.6rem}
+.hero-title{font-size:22px;font-weight:500;color:var(--color-text-primary);margin-bottom:.6rem;line-height:1.3}
+.hero-sub{font-size:14px;color:var(--color-text-secondary);line-height:1.7;max-width:520px}
+.sec{padding:2rem}.sec+.sec{border-top:.5px solid var(--color-border-tertiary)}
+.sec-head{font-size:16px;font-weight:500;margin-bottom:.35rem}
+.sec-num{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;margin-bottom:.4rem}
+.intro{font-size:13.5px;color:var(--color-text-secondary);line-height:1.75;margin-bottom:1.25rem}
+.intro em{color:var(--color-text-primary);font-style:italic}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:10px;margin-top:1rem}
+.card{border-radius:8px;padding:.75rem .9rem;border-left:3px solid}
+.card-b{background:#edf4fc;border-color:#185FA5}.card-g{background:#e6f5ef;border-color:#0F6E56}
+.card-c{background:#fdf0ea;border-color:#993C1D}.card-p{background:#eeecfb;border-color:#534AB7}
+.card-a{background:#fdf6e8;border-color:#BA7517}
+.card-name{font-size:11.5px;font-weight:600;margin-bottom:3px}
+.card-b .card-name{color:#185FA5}.card-g .card-name{color:#0F6E56}.card-c .card-name{color:#993C1D}
+.card-p .card-name{color:#534AB7}.card-a .card-name{color:#BA7517}
+.card-desc{font-size:11.5px;color:var(--color-text-secondary);line-height:1.5}
+.gran{display:flex;gap:8px;align-items:stretch;flex-wrap:wrap;margin-top:1rem}
+.gran-box{flex:1;min-width:120px;border-radius:8px;padding:.8rem;text-align:center;border:1px solid}
+.gran-b{background:#edf4fc;border-color:#185FA5}.gran-a{background:#fdf6e8;border-color:#BA7517}
+.gran-p{background:#eeecfb;border-color:#534AB7}
+.gran-n{font-size:20px;font-weight:500;margin-bottom:3px}.gran-l{font-size:11px;font-weight:600;margin-bottom:4px}
+.gran-d{font-size:11px;color:var(--color-text-secondary);line-height:1.4}
+.gran-b .gran-n,.gran-b .gran-l{color:#185FA5}.gran-a .gran-n,.gran-a .gran-l{color:#BA7517}
+.gran-p .gran-n,.gran-p .gran-l{color:#534AB7}
+.arr{align-self:center;color:var(--color-text-tertiary);font-size:16px;flex-shrink:0}
+.sd-row{display:flex;gap:1rem;margin-top:1rem;flex-wrap:wrap}
+.sd-box{flex:1;min-width:180px;padding:.75rem 1rem;border-radius:8px;background:var(--color-background-secondary);border:.5px solid var(--color-border-tertiary)}
+.sd-title{font-size:12px;font-weight:600;margin-bottom:4px}.sd-desc{font-size:11.5px;color:var(--color-text-secondary);line-height:1.5}
+.chart-card{background:var(--color-background-secondary);border-radius:10px;border:.5px solid var(--color-border-tertiary);padding:1.25rem;margin-bottom:1.25rem}
+.chart-title{font-size:14px;font-weight:500;margin-bottom:2px}
+.chart-q{font-size:12px;color:var(--color-text-secondary);font-style:italic;margin-bottom:1rem}
+.comment{margin-top:1rem;font-size:12px;color:var(--color-text-secondary);line-height:1.7;padding:.75rem 1rem;background:var(--color-background-primary);border-radius:6px;border-left:2px solid var(--color-border-secondary)}
+.comment strong{color:var(--color-text-primary);font-weight:500}
+.footer{padding:1.25rem 2rem;font-size:11px;color:var(--color-text-tertiary);border-top:.5px solid var(--color-border-tertiary);line-height:1.7}
+</style>
+
+<div class="pres">
+<div class="hero">
+  <div class="hero-tag">Guide de Lecture — Note de présentation</div>
+  <div class="hero-title">Lire L'Adversaire<br>avec les yeux des données</div>
+  <div class="hero-sub">Ce document explique, sans jargon, comment on organise les informations d'un roman pour pouvoir l'analyser de façon systématique — et ce que les graphiques qui en résultent peuvent révéler à l'analyse littéraire.</div>
+</div>
+
+<div class="sec">
+  <div class="sec-num">01</div>
+  <div class="sec-head">Pourquoi organiser le texte en catégories ?</div>
+  <p class="intro">Analyser L'Adversaire, c'est pouvoir répondre à des questions comme :<br>
+  <em>Romand parle-t-il davantage de la mort au fil du récit ?</em> — <em>Les scènes de famille emploient-elles les mêmes mots que les scènes de mensonge ?</em> — <em>Qui occupe le plus d'espace dans chaque grande étape du livre ?</em><br><br>
+  Pour répondre à ces questions, on a besoin d'un <strong style="color:var(--color-text-primary)">plan de rangement</strong> : chaque information à sa place, et tout ce qui est rangé dans la même case est comparable et comptable. Ces cases sont reliées entre elles — comme des tiroirs connectés — pour qu'on puisse naviguer d'une information à l'autre sans rien perdre.</p>
+  <div class="cards">
+    <div class="card card-b"><div class="card-name">L'Œuvre</div><div class="card-desc">La fiche d'identité du livre et le texte source à partir duquel tout est extrait.</div></div>
+    <div class="card card-b"><div class="card-name">La Scène</div><div class="card-desc">Un moment délimité du récit, avec son lieu, ses personnages présents, et deux repères temporels : où on en est dans le livre, et où on en est dans la vraie chronologie de Romand.</div></div>
+    <div class="card card-b"><div class="card-name">Les Phases</div><div class="card-desc">Les grandes étapes de l'arc narratif : apparences, mensonge, fuite, crise, meurtre, révélation. Chaque scène appartient à une phase.</div></div>
+    <div class="card card-b"><div class="card-name">La Fenêtre glissante</div><div class="card-desc">Une loupe de quelques pages qu'on fait glisser sur tout le roman, pour voir les évolutions continues sans être limité par les frontières des phases.</div></div>
+    <div class="card card-g"><div class="card-name">Les Personnages</div><div class="card-desc">Chaque voix du roman, y compris le narrateur. On sait qui est présent dans chaque scène, qui parle, à qui, et sous quel mode.</div></div>
+    <div class="card card-g"><div class="card-name">Les Lieux</div><div class="card-desc">Où se déroule chaque scène. On pourra croiser : certains thèmes n'apparaissent-ils que dans certains espaces ?</div></div>
+    <div class="card card-g"><div class="card-name">Relations entre perso.</div><div class="card-desc">Le type et la qualité (positive/négative) de chaque relation, avec sa durée — qui permet de voir comment les liens évoluent.</div></div>
+    <div class="card card-c"><div class="card-name">Prise de parole</div><div class="card-desc">Chaque fois qu'un personnage parle : monologue, dialogue ou discours indirect. C'est ici qu'est stocké le texte brut à analyser.</div></div>
+    <div class="card card-c"><div class="card-name">Les Mots (lemmes)</div><div class="card-desc">Les mots sous leur forme de base (mourir = mort, mouraient…). Chaque occurrence est comptée et rattachée à un thème.</div></div>
+    <div class="card card-p"><div class="card-name">Les Thèmes</div><div class="card-desc">Les grandes questions du livre : Mensonge, Mort, Famille, Identité, Temps… Chaque mot est rattaché à un thème principal.</div></div>
+    <div class="card card-a"><div class="card-name">Les Citations</div><div class="card-desc">Les passages qu'on choisit de retenir — différents d'un comptage automatique. Liée à un personnage, une scène et un thème.</div></div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-num">02</div>
+  <div class="sec-head">Trois niveaux de zoom</div>
+  <p class="intro">L'une des forces du système est qu'on peut analyser le même roman à trois échelles différentes — et croiser les points de vue.</p>
+  <div class="gran">
+    <div class="gran-box gran-b"><div class="gran-n">3 pg</div><div class="gran-l">Fenêtre</div><div class="gran-d">Vue fine et continue. Capte chaque inflexion, même entre deux scènes.</div></div>
+    <div class="arr">›</div>
+    <div class="gran-box gran-a"><div class="gran-n">~20 pg</div><div class="gran-l">Scène</div><div class="gran-d">L'unité de base. Un lieu, un moment, des personnages présents.</div></div>
+    <div class="arr">›</div>
+    <div class="gran-box gran-p"><div class="gran-n">~50 pg</div><div class="gran-l">Phase</div><div class="gran-d">Vue large. Les grandes tendances de l'arc narratif.</div></div>
+  </div>
+  <div class="sd-row">
+    <div class="sd-box"><div class="sd-title" style="color:#185FA5">Analyse statique</div><div class="sd-desc">Une photo à un niveau donné : combien de fois "mensonge" apparaît dans chaque phase, qui parle le plus dans chaque lieu, quelle est la couleur thématique de chaque scène.</div></div>
+    <div class="sd-box"><div class="sd-title" style="color:#534AB7">Analyse dynamique</div><div class="sd-desc">Un film : comment un thème, un personnage ou une relation évolue scène après scène, ou page après page via la fenêtre glissante. On voit la pulsation du texte.</div></div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-num">03</div>
+  <div class="sec-head">Ce que les données révèlent</div>
+  <p class="intro">Les quatre graphiques ci-dessous sont construits à partir de données représentatives de L'Adversaire. Ils illustrent ce que le système permet de voir.</p>
+
+  <div class="chart-card">
+    <div class="chart-title">Carte thermique — Qui parle de quoi ?</div>
+    <div class="chart-q">Quelle intensité thématique pour chaque personnage sur l'ensemble du roman ?</div>
+    <div style="overflow-x:auto"><svg id="hm" style="font-family:var(--font-sans)"></svg></div>
+    <div class="comment"><strong>Comment lire ce graphique.</strong> Chaque case = l'intensité d'un thème dans les prises de parole d'un personnage. Plus c'est foncé, plus le thème est présent. On voit que <strong>Romand concentre le champ lexical du Mensonge et de l'Identité</strong>, tandis que Florence est davantage ancrée dans la Famille. Le Narrateur se distingue par une forte présence du thème <em>Temps</em> — cohérent avec la construction rétrospective du récit.</div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title">Évolution par phase — Romand face au Narrateur</div>
+    <div class="chart-q">Comment le thème "Mensonge" progresse-t-il pour chacun au fil des phases de l'arc narratif ?</div>
+    <canvas id="lineChart" height="210"></canvas>
+    <div class="comment"><strong>Comment lire ce graphique.</strong> L'axe horizontal représente les <strong>six phases de l'arc narratif</strong> du roman, de la mise en place des apparences jusqu'à la révélation judiciaire. Les courbes montrent la densité du thème Mensonge pour chaque personnage dans chaque phase. La courbe de Romand monte jusqu'à la phase Meurtre puis s'effondre — le mensonge n'a plus d'objet. Celle du Narrateur fait l'inverse : c'est dans la Révélation qu'il nomme enfin ce qui était tu. <strong>Cette divergence de trajectoire est l'un des ressorts formels du livre.</strong></div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title">Carte des personnages (ACP)</div>
+    <div class="chart-q">Quels personnages partagent le même univers thématique ? Qui est isolé ?</div>
+    <div style="display:flex;justify-content:center"><svg id="bip" width="100%" viewBox="0 0 380 300" style="max-width:400px;font-family:var(--font-sans)"></svg></div>
+    <div class="comment"><strong>Comment lire ce graphique.</strong> Chaque point est un personnage. Deux points proches partagent un lexique similaire. Les flèches indiquent dans quelle direction chaque thème tire l'espace. <strong>Romand est seul dans le quadrant Mensonge + Identité</strong> — aucun autre personnage n'occupe cet espace lexical. Florence, Luc et les parents se regroupent du côté Famille. Le Narrateur est à mi-chemin, tiré vers Temps et Identité — il porte le regard analytique sur l'ensemble.</div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title">Fenêtre glissante — La pulsation du Mensonge</div>
+    <div class="chart-q">Comment la densité du thème "Mensonge" évolue-t-elle page après page, sans découpage forcé ?</div>
+    <canvas id="winChart" height="175"></canvas>
+    <div class="comment"><strong>Comment lire ce graphique.</strong> La fenêtre glissante révèle la continuité là où les phases imposent des frontières. On voit <strong>deux pics distincts</strong> : un premier au milieu du roman (la mise en place active du mensonge), et un second plus intense vers la fin (la révélation). La vallée entre les deux correspond aux scènes d'"apparence normale" que Romand maintient. <strong>Cette structure en M est invisible dans une analyse par phases.</strong></div>
+  </div>
+</div>
+
+<div class="footer">Les données de ces graphiques sont construites à des fins d'illustration. L'analyse réelle sera produite automatiquement à partir du texte source de L'Adversaire une fois le système opérationnel.</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+const dark=matchMedia('(prefers-color-scheme:dark)').matches;
+const gc=dark?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.06)';
+const textC=dark?'#b0ae a6':'#6e6c64';
+
+// ── Heatmap ──────────────────────────────────────────────────────
+const themes=['Mensonge','Mort','Famille','Identité','Temps','Solitude'];
+const persos=['Romand','Narrateur','Florence','Luc','Parents'];
+const hmRaw=[[89,45,62,78,55,67],[34,28,18,45,62,38],[12,35,48,15,8,22],[8,12,28,12,5,18],[15,22,38,8,4,15]];
+const ramps=[
+  ['#fdf0ea','#f5c4b3','#f0997b','#D85A30','#7a2810'],
+  ['#f1efea','#ccc9bc','#8a877f','#5a5956','#252523'],
+  ['#e6f5ef','#9fe1cb','#5DCAA5','#0F6E56','#04342C'],
+  ['#edf4fc','#b5d4f4','#378ADD','#185FA5','#042C53'],
+  ['#fdf6e8','#fac775','#EF9F27','#BA7517','#412402'],
+  ['#eeecfb','#cbc7f2','#9990e4','#534AB7','#26215C'],
+];
+const NS='http://www.w3.org/2000/svg';
+function se(t,a,tx){const e=document.createElementNS(NS,t);Object.entries(a).forEach(([k,v])=>e.setAttribute(k,v));if(tx!=null)e.textContent=tx;return e;}
+const cW=76,cH=26,pL=74,pT=36,sW=pL+themes.length*cW+8,sH=pT+persos.length*cH+8;
+const hm=document.getElementById('hm');
+hm.setAttribute('viewBox',`0 0 ${sW} ${sH}`);hm.setAttribute('width','100%');
+const maxV=Math.max(...hmRaw.flat());
+themes.forEach((th,j)=>hm.appendChild(se('text',{x:pL+j*cW+cW/2,y:pT-6,'font-size':'9','text-anchor':'middle',fill:dark?'#c2c0b6':'#555','font-weight':'500'},th)));
+hmRaw.forEach((row,i)=>{
+  hm.appendChild(se('text',{x:pL-6,y:pT+i*cH+cH/2+1,'font-size':'10.5','text-anchor':'end','dominant-baseline':'central',fill:dark?'#c2c0b6':'#333','font-weight':'500'},persos[i]));
+  row.forEach((val,j)=>{
+    const ci=Math.min(4,Math.floor(val/maxV*5));
+    hm.appendChild(se('rect',{x:pL+j*cW+1,y:pT+i*cH+1,width:cW-2,height:cH-2,rx:'3',fill:ramps[j][ci]}));
+    hm.appendChild(se('text',{x:pL+j*cW+cW/2,y:pT+i*cH+cH/2+1,'font-size':'10','text-anchor':'middle','dominant-baseline':'central',fill:ci>=3?'#fff':'#2c2b28','font-weight':'500'},val));
+  });
+});
+
+// ── Courbes par phase ────────────────────────────────────────────
+// ← Labels = phases de l'arc, préfixés Ph.1…Ph.6 pour éviter toute confusion avec les thèmes
+const phaseLabels=[
+  ['Ph. 1','Apparences'],
+  ['Ph. 2','Instal. du mensonge'],
+  ['Ph. 3','Fuite en avant'],
+  ['Ph. 4','La crise'],
+  ['Ph. 5','Le meurtre'],
+  ['Ph. 6','La révélation']
+];
+const ctxL=document.getElementById('lineChart').getContext('2d');
+new Chart(ctxL,{type:'line',data:{
+  labels:phaseLabels,
+  datasets:[
+    {label:'Romand',data:[14,33,56,70,86,37],borderColor:'#993C1D',backgroundColor:'rgba(153,60,29,0.07)',borderWidth:2,pointRadius:5,pointBackgroundColor:'#993C1D',tension:0.35,fill:true},
+    {label:'Narrateur',data:[7,13,21,34,44,80],borderColor:'#185FA5',backgroundColor:'rgba(24,95,165,0.07)',borderWidth:2,pointRadius:5,pointBackgroundColor:'#185FA5',tension:0.35,fill:true}
+  ]},
+  options:{responsive:true,
+    plugins:{
+      legend:{labels:{color:textC,font:{size:12},boxWidth:20,padding:16}}
+    },
+    scales:{
+      x:{
+        grid:{color:gc},
+        ticks:{color:textC,font:{size:10},maxRotation:0},
+        border:{color:'transparent'},
+        // ← titre d'axe explicite
+        title:{display:true,text:'Phases de l\'arc narratif',color:textC,font:{size:11.5,weight:'500'}}
+      },
+      y:{
+        grid:{color:gc},
+        ticks:{color:textC,font:{size:11}},
+        border:{color:'transparent'},
+        title:{display:true,text:'Densité thématique',color:textC,font:{size:11}}
+      }
+    }
+  }
+});
+
+// ── ACP Biplot SVG ───────────────────────────────────────────────
+const bp=document.getElementById('bip');
+const cx=185,cy=152,sc=52;
+bp.appendChild(se('rect',{x:0,y:0,width:380,height:300,rx:'8',fill:dark?'rgba(255,255,255,0.03)':'rgba(0,0,0,0.02)',stroke:'none'}));
+[1,2].forEach(r=>bp.appendChild(se('circle',{cx,cy,r:r*sc,fill:'none',stroke:dark?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.06)','stroke-width':'0.5'})));
+bp.appendChild(se('line',{x1:cx-2.6*sc,y1:cy,x2:cx+2.6*sc,y2:cy,stroke:dark?'rgba(255,255,255,0.14)':'rgba(0,0,0,0.12)','stroke-width':'0.8'}));
+bp.appendChild(se('line',{x1:cx,y1:cy-2.6*sc,x2:cx,y2:cy+2.6*sc,stroke:dark?'rgba(255,255,255,0.14)':'rgba(0,0,0,0.12)','stroke-width':'0.8'}));
+bp.appendChild(se('text',{x:cx+2.6*sc+5,y:cy+4,'font-size':'9',fill:textC,'font-style':'italic'},'PC1'));
+bp.appendChild(se('text',{x:cx+5,y:cy-2.6*sc-5,'font-size':'9',fill:textC,'font-style':'italic'},'PC2'));
+const loads=[
+  {dx:1.65,dy:-0.25,l:'Mensonge',c:'#993C1D'},{dx:-0.35,dy:1.45,l:'Mort',c:'#666'},
+  {dx:-1.45,dy:0.55,l:'Famille',c:'#0F6E56'},{dx:1.05,dy:1.15,l:'Identité',c:'#185FA5'},
+  {dx:0.55,dy:-1.55,l:'Temps',c:'#BA7517'},{dx:0.75,dy:0.85,l:'Solitude',c:'#534AB7'}
+];
+loads.forEach(({dx,dy,l,c})=>{
+  const ex=cx+dx*sc,ey=cy-dy*sc,a=Math.atan2(ey-cy,ex-cx),h=6;
+  bp.appendChild(se('line',{x1:cx,y1:cy,x2:ex,y2:ey,stroke:c,'stroke-width':'1.2',opacity:'0.55'}));
+  bp.appendChild(se('polygon',{points:`${ex},${ey} ${ex-h*Math.cos(a-.4)},${ey-h*Math.sin(a-.4)} ${ex-h*Math.cos(a+.4)},${ey-h*Math.sin(a+.4)}`,fill:c,opacity:'.7'}));
+  bp.appendChild(se('text',{x:cx+dx*sc*1.28,y:cy-dy*sc*1.28,'font-size':'8.5',fill:c,'text-anchor':'middle','dominant-baseline':'central','font-weight':'600'},l));
+});
+const chars=[
+  {x:2.35,y:0.8,l:'Romand',c:'#993C1D',a:'start'},{x:1.6,y:-1.4,l:'Narrateur',c:'#185FA5',a:'start'},
+  {x:-1.65,y:0.5,l:'Florence',c:'#0F6E56',a:'end'},{x:-1.95,y:-.45,l:'Luc',c:'#0F6E56',a:'end'},
+  {x:-.55,y:1.75,l:'Parents',c:'#BA7517',a:'end'}
+];
+chars.forEach(({x,y,l,c,a})=>{
+  const px=cx+x*sc,py=cy-y*sc,ox=a==='start'?10:-10;
+  bp.appendChild(se('circle',{cx:px,cy:py,r:'6.5',fill:c,opacity:'.92'}));
+  bp.appendChild(se('text',{x:px+ox,y:py-9,'font-size':'10',fill:dark?'#ddd':c,'text-anchor':a,'font-weight':'600'},l));
+});
+
+// ── Fenêtre glissante ────────────────────────────────────────────
+const n=80;
+const wins=Array.from({length:n},(_,i)=>{
+  const t=i/n;
+  return Math.max(3,Math.round(8+28*Math.pow(t,.7)+18*Math.sin(t*Math.PI*2.8)+6*(Math.sin(i*7.1)*.4+Math.sin(i*3.3)*.3)));
+});
+const ctxW=document.getElementById('winChart').getContext('2d');
+new Chart(ctxW,{type:'line',data:{
+  labels:wins.map((_,i)=>i%20===0?`p. ${Math.round(i/n*250)}`:''),
+  datasets:[{label:'Densité "Mensonge"',data:wins,borderColor:'#993C1D',backgroundColor:'rgba(153,60,29,0.1)',borderWidth:1.5,pointRadius:0,tension:0.4,fill:true}]
+},options:{responsive:true,plugins:{legend:{display:false}},scales:{
+  x:{grid:{color:gc},ticks:{color:textC,font:{size:10},maxRotation:0},border:{color:'transparent'},title:{display:true,text:'Pages →',color:textC,font:{size:11}}},
+  y:{grid:{color:gc},ticks:{color:textC,font:{size:10}},border:{color:'transparent'},title:{display:true,text:'Densité',color:textC,font:{size:11}}}
+}}});
+</script>
