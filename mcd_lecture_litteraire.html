@@ -1,0 +1,162 @@
+
+<style>
+#erd svg { width: 100%; height: auto; }
+#erd svg.erDiagram .divider path { stroke-opacity: 0.5; }
+#erd svg.erDiagram .row-rect-odd path,
+#erd svg.erDiagram .row-rect-odd rect,
+#erd svg.erDiagram .row-rect-even path,
+#erd svg.erDiagram .row-rect-even rect { stroke: none !important; }
+#legend { display: flex; gap: 20px; flex-wrap: wrap; padding: 12px 0 0; font-size: 12px; color: var(--color-text-secondary); }
+.leg-item { display: flex; align-items: center; gap: 6px; }
+.leg-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+</style>
+<div id="erd" style="padding: 4px 0;"></div>
+<div id="legend">
+  <div class="leg-item"><div class="leg-dot" style="background:#185FA5"></div>Structure narrative</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#0F6E56"></div>Espace &amp; Acteurs</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#993C1D"></div>Discours &amp; Lexique</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#534AB7"></div>Analyse thématique</div>
+</div>
+<script type="module">
+import mermaid from 'https://esm.sh/mermaid@11/dist/mermaid.esm.min.mjs';
+const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+await document.fonts.ready;
+mermaid.initialize({
+  startOnLoad: false,
+  theme: 'base',
+  fontFamily: '"Anthropic Sans", sans-serif',
+  themeVariables: {
+    darkMode: dark,
+    fontSize: '12px',
+    fontFamily: '"Anthropic Sans", sans-serif',
+    lineColor: dark ? '#9c9a92' : '#73726c',
+    textColor: dark ? '#c2c0b6' : '#3d3d3a',
+    primaryColor: dark ? '#1a2a3a' : '#E6F1FB',
+    primaryBorderColor: dark ? '#378ADD' : '#185FA5',
+    primaryTextColor: dark ? '#B5D4F4' : '#042C53',
+    secondaryColor: dark ? '#0f2a1f' : '#E1F5EE',
+    secondaryBorderColor: dark ? '#1D9E75' : '#0F6E56',
+    tertiaryColor: dark ? '#2a1a10' : '#FAECE7',
+    tertiaryBorderColor: dark ? '#D85A30' : '#993C1D',
+    noteBkgColor: dark ? '#26215C' : '#EEEDFE',
+    noteBorderColor: dark ? '#AFA9EC' : '#534AB7',
+  },
+});
+
+const diag = `erDiagram
+    OEUVRE {
+        int id PK
+        string titre
+        string auteur
+        string genre
+        int annee
+    }
+    PERSONNAGE {
+        int id PK
+        string nom
+        string type
+        string description
+    }
+    LIEU {
+        int id PK
+        string nom
+        string type
+    }
+    PHASE {
+        int id PK
+        int numero
+        string nom
+        int pg_debut
+        int pg_fin
+    }
+    FENETRE {
+        int id PK
+        int numero
+        int pg_debut
+        int pg_fin
+        int taille
+        int pas
+    }
+    SCENE {
+        int id PK
+        int numero
+        string titre
+        int pg_debut
+        int pg_fin
+    }
+    PRISE_DE_PAROLE {
+        int id PK
+        string type
+        string texte_brut
+    }
+    OCCURRENCE {
+        int id PK
+        string forme_graphique
+        int position
+    }
+    LEMME {
+        int id PK
+        string forme_canonique
+        string categorie
+    }
+    THEME {
+        int id PK
+        string nom
+        string couleur
+    }
+    RELATION_PERSO {
+        int id PK
+        string type_relation
+        string valence
+        int pg_debut
+        int pg_fin
+    }
+
+    OEUVRE ||--o{ PERSONNAGE : "met en scene"
+    OEUVRE ||--o{ LIEU : "comprend"
+    OEUVRE ||--o{ PHASE : "structure en"
+    OEUVRE ||--o{ SCENE : "contient"
+    SCENE }o--|| LIEU : "se situe dans"
+    SCENE }o--|| PHASE : "releve de"
+    SCENE }o--o{ FENETRE : "fenetre par"
+    SCENE }o--o{ PERSONNAGE : "presence"
+    SCENE ||--o{ PRISE_DE_PAROLE : "regroupe"
+    PRISE_DE_PAROLE }o--|| PERSONNAGE : "locuteur"
+    PRISE_DE_PAROLE }o--o{ PERSONNAGE : "allocutaire"
+    PRISE_DE_PAROLE ||--o{ OCCURRENCE : "contient"
+    OCCURRENCE }o--|| LEMME : "instance de"
+    LEMME }o--o{ THEME : "indexe par"
+    RELATION_PERSO }o--|| PERSONNAGE : "perso A"
+    RELATION_PERSO }o--|| PERSONNAGE : "perso B"
+    RELATION_PERSO }o--o| PHASE : "en phase"`;
+
+try {
+  const { svg } = await mermaid.render('erd-svg', diag);
+  document.getElementById('erd').innerHTML = svg;
+
+  document.querySelectorAll('#erd svg.erDiagram .node').forEach(node => {
+    const firstPath = node.querySelector('path[d]');
+    if (!firstPath) return;
+    const d = firstPath.getAttribute('d');
+    const nums = d.match(/-?[\d.]+/g)?.map(Number);
+    if (!nums || nums.length < 8) return;
+    const xs = [nums[0], nums[2], nums[4], nums[6]];
+    const ys = [nums[1], nums[3], nums[5], nums[7]];
+    const x = Math.min(...xs), y = Math.min(...ys);
+    const w = Math.max(...xs) - x, h = Math.max(...ys) - y;
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    rect.setAttribute('x', x); rect.setAttribute('y', y);
+    rect.setAttribute('width', w); rect.setAttribute('height', h);
+    rect.setAttribute('rx', '8');
+    for (const a of ['fill', 'stroke', 'stroke-width', 'class', 'style']) {
+      if (firstPath.hasAttribute(a)) rect.setAttribute(a, firstPath.getAttribute(a));
+    }
+    firstPath.replaceWith(rect);
+  });
+  document.querySelectorAll('#erd svg.erDiagram .row-rect-odd path, #erd svg.erDiagram .row-rect-even path').forEach(p => {
+    p.setAttribute('stroke', 'none');
+  });
+} catch(e) {
+  document.getElementById('erd').innerHTML = '<p style="color:var(--color-text-secondary);font-size:13px;padding:1rem">Erreur de rendu : ' + e.message + '</p>';
+}
+</script>
